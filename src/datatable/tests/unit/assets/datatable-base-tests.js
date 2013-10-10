@@ -341,6 +341,97 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: 'render table with different widths',
+
+    'render table with percentage': function () {
+        var div = Y.Node.create('<div/>'),
+            dt = new Y.DataTable({
+                columns: [ 'a', 'b' ],
+                data: [
+                    { a: 1, b: 'foo' }
+                ],
+                width: '50%'
+            });
+
+        div.setStyles({
+            border: '1px solid blue',
+            width: '400px'
+        });
+
+        Y.one('body').append(div);
+
+        dt.render(div);
+
+        var bb =  dt.get('boundingBox');
+
+        Y.Assert.areSame(200, bb.get('offsetWidth'));
+        Y.Assert.areSame(200, bb.one('table').get('offsetWidth'));
+
+        dt.destroy(true);
+        div.remove(true);
+    },
+
+    'render table with pixel width': function () {
+        var div = Y.Node.create('<div/>'),
+            dt = new Y.DataTable({
+                columns: [ 'a', 'b' ],
+                data: [
+                    { a: 1, b: 'foo' }
+                ],
+                width: '500px'
+            });
+
+        div.setStyles({
+            border: '1px solid blue',
+            width: '400px'
+        });
+
+        Y.one('body').append(div);
+
+        dt.render(div);
+
+        var bb =  dt.get('boundingBox');
+
+        Y.Assert.areSame(500, bb.get('offsetWidth'));
+        Y.Assert.areSame(500, bb.one('table').get('offsetWidth'));
+
+        dt.destroy(true);
+        div.remove(true);
+    },
+
+    'render table with no width': function () {
+        var div = Y.Node.create('<div/>'),
+            dt = new Y.DataTable({
+                columns: [ 'a', 'b' ],
+                data: [
+                    { a: 1, b: 'foo' }
+                ]
+            });
+
+        div.setStyles({
+            border: '1px solid blue',
+            width: '400px'
+        });
+
+        Y.one('body').append(div);
+
+        dt.render(div);
+
+        var bb =  dt.get('boundingBox');
+
+        Y.Assert.areSame(400, bb.get('offsetWidth'));
+
+        // less than 100 because natural width is variable based on the font size
+        Y.Assert.isTrue(bb.one('table').get('offsetWidth') < 100);
+
+        dt.destroy(true);
+        div.remove(true);
+    }
+
+
+}));
+
 /*
 suite.add(new Y.Test.Case({
     name: "destroy",

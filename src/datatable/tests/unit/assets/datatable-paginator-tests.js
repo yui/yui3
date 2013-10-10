@@ -446,4 +446,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['datatable', 'datatable-paginator', 'node-event-simulate', 'test']});
+}, '@VERSION@' ,{requires:['selector-css3', 'datatable', 'datatable-paginator', 'node-event-simulate', 'test']});
