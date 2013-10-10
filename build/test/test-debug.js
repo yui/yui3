@@ -2285,14 +2285,10 @@ YUITest.ArrayAssert = {
             throw new TypeError("First argument must be an array");
         }
 
-        var deduped = Y.Array.dedupe(array);
-
-        if (array.length == deduped.length) {
-            return;
+        if (Y.Array.dedupe(array).length < array.length){
+            message = YUITest.Assert._formatMessage(message, "Array contains duplicate(s)");
+            YUITest.Assert.fail(message);
         }
-
-        message = YUITest.Assert._formatMessage(message, "Array contains duplicate(s)");
-        YUITest.Assert.fail(message);
     }
 
 };
