@@ -1250,7 +1250,7 @@ ChartBase.prototype = {
      */
     _setText: function(textField, val)
     {
-        textField.setContent("");
+        textField.empty();
         if(Y_Lang.isNumber(val))
         {
             val = val + "";
