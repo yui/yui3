@@ -167,7 +167,7 @@ YUI.add('series-tests', function(Y) {
                                         clientX: markerXY[0] + markerWidth/2,
                                         clientY: markerXY[1] + markerHeight/2
                                     }); 
-                                    nodeReferences.push(marker.node._yuid);
+                                    nodeReferences.push(marker.node._yuid || marker.node.uniqueID);
                                     markerData = this.getMarkerData(this.result);                
                                     categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
                                     if(this.chart.get("categoryType") == "time")
