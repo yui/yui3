@@ -276,6 +276,42 @@ Y.example.test.ArrayTestCase = new Y.Test.Case({
   to 7 to account for the new value. After that, <code>Y.ArrayAssert.indexOf()</code> is used to determine if the value has been placed in the
   correct location. The final assertions tests that the entire array is expected by using <code>Y.ArrayAssert.itemsAreEqual()</code>.</p>
 
+<h3>Testing for duplicate values</h3>
+<p>The following test shows how to make sure that an array doesn't have any duplicate values. It is assumed that your array consists entirely of strings or numbers.</p>
+```
+Y.example.test.ArrayTestCase = new Y.Test.Case({
+
+    ...
+
+    "[1,2,3] should have no duplicates": function () {
+        Y.ArrayAssert.hasNoDuplicates([1,2,3]);
+    },
+
+    "['foo'] should have no duplicates": function () {
+        Y.ArrayAssert.hasNoDuplicates(['foo']);
+    },
+
+    "An empty array should have no duplicates": function () {
+        Y.ArrayAssert.hasNoDuplicates([]);
+    },
+
+    "[1,1,2] should fail because it has duplicates": function () {
+        Y.ArrayAssert.hasNoDuplicates([1,1,2]);
+    },
+
+    "['bye','bye'] should fail because it has duplicates": function () {
+        Y.ArrayAssert.hasNoDuplicates(['bye','bye']);
+    },
+
+    _should: {
+        fail: {
+            "[1,1,2] should fail because it has duplicates": true,
+            "['bye','bye'] should fail because it has duplicates": true
+        }
+    }
+});
+```
+
 <h3>Running the tests</h3>
 
 <p>With all of the tests defined, the last step is to run them:</p>

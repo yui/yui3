@@ -2268,6 +2268,27 @@ YUITest.ArrayAssert = {
 
         //if it makes it here, it wasn't found at all
         YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array."));
+    },
+
+    /**
+     * Asserts that given array has no duplicate values assuming that they are all either strings or numbers.
+     * @param {String[]|Number[]} array The array to check.
+     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @method hasNoDuplicates
+     * @static
+     */
+    hasNoDuplicates: function (array, message) {
+
+        YUITest.Assert._increment();
+
+        if (!Y.Lang.isArray(array)){
+            throw new TypeError("First argument must be an array");
+        }
+
+        if (Y.Array.dedupe(array).length < array.length){
+            message = YUITest.Assert._formatMessage(message, "Array contains duplicate(s)");
+            YUITest.Assert.fail(message);
+        }
     }
 
 };

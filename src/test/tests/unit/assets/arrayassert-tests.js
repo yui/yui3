@@ -293,6 +293,48 @@ YUI.add('arrayassert-tests', function(Y) {
         }
     }));
 
+    //-------------------------------------------------------------------------
+    // Test Case for hasNoDuplicates()
+    //-------------------------------------------------------------------------
+
+    suite.add(new Y.Test.Case({
+
+        name: "hasNoDuplicates Assert Tests",
+
+        _should: {
+            error: {
+                testNonArray: true
+            },
+            fail: {
+                testDuplicateNumbersArray: new Y.Assert.Error("Array contains duplicate(s)"),
+                testDuplicateStringsArray: new Y.Assert.Error("Array contains duplicate(s)")
+            }
+        },
+
+        testNonArray: function () {
+            ArrayAssert.hasNoDuplicates({});
+        },
+
+        testEmptyArray: function () {
+            ArrayAssert.hasNoDuplicates([]);
+        },
+
+        testSingleNumbersArray: function () {
+            ArrayAssert.hasNoDuplicates([1, 2, 3]);
+        },
+
+        testSingleStringsArray: function () {
+            ArrayAssert.hasNoDuplicates(['foo', 'bar', 'baz']);
+        },
+
+        testDuplicateNumbersArray: function () {
+            ArrayAssert.hasNoDuplicates([1, 1, 2, 3]);
+        },
+
+        testDuplicateStringsArray: function () {
+            ArrayAssert.hasNoDuplicates(['foo', 'foo', 'foo']);
+        }
+    }));
 
     Y.Test.Runner.add(suite);
 
