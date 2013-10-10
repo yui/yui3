@@ -408,7 +408,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          */
         value: {
             value : 0,
-            setter: '_setNewValue'
+            setter: '_setNewValue',
+            validator: Y.Lang.isNumber
         }
     }
 }, true );
