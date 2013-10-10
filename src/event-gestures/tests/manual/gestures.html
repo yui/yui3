@@ -2,28 +2,57 @@
 <html id="ht">
     <head>
         <title>Touch/Gesture Events</title>
-        
+
+
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
-
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
         <style>
-        #testNode, #testNode2 {
-            background-color: #ddd;
-            width:200px;
-            height:200px;
+        body {
+            font-family: sans-serif;
+        }
+
+        h2 {
+            font-size: 15px;
+            text-align: center;
+            height: 60px;
+        }
+        #testNode {
+            background: rgb(240, 240, 188);
+        }
+
+        #testNode2 {
+            background: rgb(148, 231, 148);
+        }
+
+        #testNode3 {
+            background: rgb(211, 225, 255);
+        }
+
+        #testNode4 {
+            background: rgb(156, 173, 207);
+        }
+
+        #testNode, #testNode2, #testNode3, #testNode4 {
+            height:600px;
             font-family:monospace;
             font-size:7pt;
-            position:relative;
         }
 
-        #testNode div {
-            white-space:nowrap;
+        #testNode div, #testNode2 div, #testNode3 div {
+            white-space: nowrap;
         }
 
-        #testNode.active {
-            background-color:#aaa;
+        #clearBtn {
+            padding: 20px 30px;
+            font-size: 160%;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+
         }
         </style>
+
 
         <script src="../../../../build/yui/yui.js"></script>
 
@@ -31,66 +60,92 @@
 
     <body id="bd">
 
-        Left Mouse or Finger
-        <div id="testNode"></div>
-        Center Mouse or Finger, no flick, needs to move 10px
-        <div id="testNode2"></div>
+        <div class="pure-g">
+            <div class="pure-u-1" style="text-align: center; padding: 20px;">
+                <button class="pure-button pure-button-primary" id="clearBtn">Clear <code>&lt;div&gt;</code> contents</button>
+            </div>
+
+            <div class="pure-u-1-4">
+                <h2>No options with flick (preventDefault: true)</h2>
+                <div id="testNode"></div>
+            </div>
+            <div class="pure-u-1-4">
+                <h2>Needs to move 100px, no flick (preventDefault: false)</h2>
+                <div id="testNode2"></div>
+            </div>
+            <div class="pure-u-1-4">
+                <h2>Needs to move 100px, no flick (preventDefault: true)</h2>
+                <div id="testNode3"></div>
+            </div>
+            <div class="pure-u-1-4">
+                <h2>Needs to move 100px and fire after 2 seconds (no flick, preventDefault: true)</h2>
+                <div id="testNode4"></div>
+            </div>
+        </div>
 
         <script>
             YUI({filter:"raw", combine:false}).use("event-gestures", function(Y) {
-
-                var div = Y.Node.one("#testNode"),
-                    div2 = Y.Node.one("#testNode2");
+                var div = Y.one("#testNode"),
+                    div2 = Y.one("#testNode2"),
+                    div3 = Y.one('#testNode3'),
+                    div4 = Y.one('#testNode4'),
+                    button = Y.one('#clearBtn'),
+                    count = 0;
 
                 var flickHandler = function(e) {
-                    div.append("<div>flick, e:" + [e.flick.velocity, e.flick.distance, e.flick.button] + "</div>");
+                    div.append("flick, e:" + [e.flick.velocity, e.flick.distance, e.flick.button] + "<br/>");
                 };
 
                 var moveStartHandler = function(e) {
+                    count++;
                     Y.log("MoveStart: " + e.target + ", " + e.currentTarget);
-
-                    e.target.set("innerHTML", "");
-                    e.target.append("<div>gesturemovestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.append( + count + ': gesturemovestart (' + e._event.type + ') ' + [e.pageX, e.pageY, e.button] + '<br/>');
+                    // e.target.append( + count + ": gesturemovestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
                 };
 
                 var moveHandler = function(e) {
+                    count++;
                     Y.log("Move: " + e.target + ", " + e.currentTarget);
-
-                    e.target.append("<div>gesturemove, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    e.target.append( + count + ': gesturemove (' + e._event.type + ') ' + [e.pageX, e.pageY, e.button] + '<br/>');
                 };
 
                 var moveEndHandler = function(e) {
+                    count++;
                     Y.log("MoveEnd: " + e.target + ", " + e.currentTarget);
+                    e.target.append( + count + ': gesturemoveend (' + e._event.type + ') ' + [e.pageX, e.pageY, e.button] + '<br/>');
 
-                    e.target.append("<div>gesturemoveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                    count = 0;
                 };
 
                 var flickCfg = {
                     minDistance:20,
                     minVelocity:0.3,
-		    preventDefault:true
+		            preventDefault:true
                 };
 
-                var moveStartCfg = {
-                    minDistance: 10,
-                    minTime: 5000,
-                    button:1,
-                    preventDefault:true
-                };
+                var moveStartCfg = {};
 
                 var moveStartCfg2 = {
-                    minDistance: 10,
-                    minTime: -1, // must move at least 10 pixels
-                    button:2,
-                    preventDefault: function(e) {
-                        var prevent = false;
-                        if (e.target === div2) {
-                            prevent = true;
-                        }
-                        Y.log("prevent:" + prevent);
-                        return prevent;
-                    }
+                    minDistance: 100
                 };
+
+                var moveStartCfg3 = {
+                    minDistance: 100,
+                    preventDefault: true
+                };
+
+                var moveStartCfg4 = {
+                    minDistance: 100,
+                    minTime: 2000,
+                    preventDefault: true
+                };
+
+                button.on('click', function () {
+                    div.set("innerHTML", "");
+                    div2.set('innerHTML', "");
+                    div3.set('innerHTML', "");
+                    div4.set('innerHTML', "");
+                });
 
                 div.on("flick", flickHandler, flickCfg);
 
@@ -102,7 +157,15 @@
                 div2.on("gesturemove", moveHandler);
                 div2.on("gesturemoveend", moveEndHandler);
 
-                div.addClass("active");
+
+                div3.on("gesturemovestart", moveStartHandler, moveStartCfg3);
+                div3.on("gesturemove", moveHandler);
+                div3.on("gesturemoveend", moveEndHandler);
+
+                div4.on("gesturemovestart", moveStartHandler, moveStartCfg4);
+                div4.on("gesturemove", moveHandler);
+                div4.on("gesturemoveend", moveEndHandler);
+
             });
         </script>
     </body>
