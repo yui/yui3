@@ -342,7 +342,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @protected
     **/
     _defRenderViewFn: function (e) {
-        e.view.render();
+        e.view.render({ src: e.src });
     },
 
     /**
@@ -418,8 +418,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     **/
     _relayCoreAttrChange: function (e) {
         var attr = (e.attrName === 'data') ? 'modelList' : e.attrName;
-
-        this.view.set(attr, e.newVal);
+        this.view.set(attr, e.newVal, { src: 'widget' });
     },
 
     /**
@@ -517,7 +516,10 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     **/
     syncUI: function () {
         if (this.view) {
-            this.fire('renderView', { view: this.view });
+            this.fire('renderView', {
+                view: this.view,
+                src: 'widget'
+            });
         }
     },
 

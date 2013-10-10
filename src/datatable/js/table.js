@@ -185,6 +185,57 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     //-----------------------------------------------------------------------//
     // Protected and private methods
     //-----------------------------------------------------------------------//
+
+    /**
+    Constructor logic.
+
+    @method intializer
+    @param {Object} config Configuration object passed to the constructor
+    @protected
+    @since 3.6.0
+    **/
+    initializer: function (config) {
+        this.host = config.host;
+
+        this._initEvents();
+
+        this._extractDisplayColumns();
+
+        this.after('columnsChange', this._extractDisplayColumns, this);
+    },
+
+    /**
+    Cleans up state, destroys child views, etc.
+
+    @method destructor
+    @protected
+    **/
+    destructor: function () {
+        if (this.head && this.head.destroy) {
+            this.head.destroy();
+        }
+        delete this.head;
+
+        if (this.foot && this.foot.destroy) {
+            this.foot.destroy();
+        }
+        delete this.foot;
+
+        if (this.body && this.body.destroy) {
+            this.body.destroy();
+        }
+        delete this.body;
+
+        if (this._eventHandles) {
+            this._eventHandles.detach();
+            delete this._eventHandles;
+        }
+
+        if (this.tableNode) {
+            this.tableNode.remove().destroy(true);
+        }
+    },
+
     /**
     Updates the table's `summary` attribute.
 
@@ -218,7 +269,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.6.0
     **/
     _afterWidthChange: function (e) {
-        this._uiSetWidth(e.newVal);
+        this._uiSetWidth(e.newVal, { src: e.src || null});
     },
 
     /**
@@ -322,7 +373,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
 
         this._uiSetCaption(this.get('caption'));
         this._uiSetSummary(this.get('summary'));
-        this._uiSetWidth(this.get('width'));
+        this._uiSetWidth(this.get('width'), { src: e.src || null });
 
         if (this.head || e.headerView) {
             if (!this.head) {
@@ -355,38 +406,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         }
 
         this._bindUI();
-    },
-
-    /**
-    Cleans up state, destroys child views, etc.
-
-    @method destructor
-    @protected
-    **/
-    destructor: function () {
-        if (this.head && this.head.destroy) {
-            this.head.destroy();
-        }
-        delete this.head;
-
-        if (this.foot && this.foot.destroy) {
-            this.foot.destroy();
-        }
-        delete this.foot;
-
-        if (this.body && this.body.destroy) {
-            this.body.destroy();
-        }
-        delete this.body;
-
-        if (this._eventHandles) {
-            this._eventHandles.detach();
-            delete this._eventHandles;
-        }
-
-        if (this.tableNode) {
-            this.tableNode.remove().destroy(true);
-        }
     },
 
     /**
@@ -447,24 +466,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     },
 
     /**
-    Constructor logic.
-
-    @method intializer
-    @param {Object} config Configuration object passed to the constructor
-    @protected
-    @since 3.6.0
-    **/
-    initializer: function (config) {
-        this.host = config.host;
-
-        this._initEvents();
-
-        this._extractDisplayColumns();
-
-        this.after('columnsChange', this._extractDisplayColumns, this);
-    },
-
-    /**
     Relays attribute changes to the child Views.
 
     @method _relayAttrChange
@@ -497,12 +498,17 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     Creates the UI in the configured `container`.
 
     @method render
+    @param {Object} options used to pass the renderer's source to the table
     @return {TableView}
     @chainable
     **/
-    render: function () {
+    render: function (options) {
+        options || (options = {});
+
         if (this.get('container')) {
             this.fire('renderTable', {
+                src: options.src || null,
+
                 headerView  : this.get('headerView'),
                 headerConfig: this.get('headerConfig'),
 
@@ -569,20 +575,33 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
 
     @method _uiSetWidth
     @param {Number|String} width The width to make the table
+    @param {Object} options Object used to pass the source of the width setter
+        to update the table's width correctly
     @protected
     @since 3.5.0
     **/
-    _uiSetWidth: function (width) {
-        var table = this.tableNode;
+    _uiSetWidth: function (width, options) {
+        var table = this.tableNode,
+            isPercentage = !!(width && width.toString().charAt(width.length - 1) === '%');
 
-        // Table width needs to account for borders
-        table.setStyle('width', !width ? '' :
-            (this.get('container').get('offsetWidth') -
-             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)||0) -
-             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)||0)) +
-             'px');
 
-        table.setStyle('width', width);
+        // need to determine if the table view is inside a table widget
+        // if inside a widget, the table gets set to 100% width (contained by the table)
+        // if not inside a widget,
+        if (options && options.src === 'widget') {
+            if (isPercentage) {
+                table.setStyle('width', '100%');
+            } else {
+                // Table width needs to account for borders
+                table.setStyle('width', !width ? '' :
+                    (this.get('container').get('offsetWidth') -
+                     (parseInt(table.getComputedStyle('borderLeftWidth'), 10)||0) -
+                     (parseInt(table.getComputedStyle('borderRightWidth'), 10)||0)
+                    ) + 'px');
+            }
+        } else {
+            table.setStyle('width', width);
+        }
     },
 
     /**
