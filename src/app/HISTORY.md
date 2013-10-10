@@ -4,7 +4,10 @@ App Framework Change History
 @VERSION@
 ------
 
-* No changes.
+### Model
+
+* For ModelSync.REST, added optional XDR config pass-through to Y.io in load() 
+  options.
 
 3.13.0
 ------
