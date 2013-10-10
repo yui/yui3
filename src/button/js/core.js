@@ -27,7 +27,7 @@ ButtonCore.prototype = {
      * @type {String}
      * @default <button/>
      */
-    TEMPLATE: '<button/>',
+    TEMPLATE: '<button type="button"/>',
 
     /**
      *
@@ -57,7 +57,7 @@ ButtonCore.prototype = {
      * @private
      */
     _initNode: function(config) {
-        if (config.host) {
+        if (config && config.host) {
             this._host = Y.one(config.host);
         } else {
             this._host = Y.Node.create(this.TEMPLATE);
