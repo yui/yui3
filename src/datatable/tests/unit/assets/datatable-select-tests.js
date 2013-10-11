@@ -101,6 +101,8 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.row).size());
         Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.col).size());
         Y.Assert.areSame(1, dt.body.tbodyNode.all('.' + classNames.cell).size());
+
+        dt.destroy();
     },
 
 
