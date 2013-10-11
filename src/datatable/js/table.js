@@ -269,7 +269,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.6.0
     **/
     _afterWidthChange: function (e) {
-        this._uiSetWidth(e.newVal, { src: e.src || null});
+        this._uiSetWidth(e.newVal, { src: e.src });
     },
 
     /**
@@ -373,7 +373,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
 
         this._uiSetCaption(this.get('caption'));
         this._uiSetSummary(this.get('summary'));
-        this._uiSetWidth(this.get('width'), { src: e.src || null });
+        this._uiSetWidth(this.get('width'), { src: e.src });
 
         if (this.head || e.headerView) {
             if (!this.head) {
