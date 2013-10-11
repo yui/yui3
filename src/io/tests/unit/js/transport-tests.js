@@ -2,7 +2,7 @@ YUI.add('transport-tests', function(Y) {
 
     var suite = new Y.Test.Suite('Transport Tests');
 
-    Y.io.transport( { id:'flash', src:'../../../build/io-xdr/io.swf' } );
+    Y.io.transport( { id:'flash', src:'io.swf' } );
     Y.IO.transports.iframe = function() { return {}; };
 
     suite.add(new Y.Test.Case({

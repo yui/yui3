@@ -62,7 +62,7 @@
             },
             "datatable-column-widths": {
                 "requires": [
-                    "datatable-base"
+                "datatable-base"
                 ]
             },
             "datatable-message": {
@@ -82,7 +82,7 @@
                     "datatable-base",
                     "plugin",
                     "datasource-local"
-                ]
+                    ]
             },
             "datatable-sort": {
                 "requires": [
@@ -91,14 +91,14 @@
                 "lang": ["en", "fr", "es", "hu"],
                 "skinnable": true
             },
-			"datatable-scroll": {
-				"requires": [
-					"datatable-base",
-					"datatable-column-widths",
-					"dom-screen"
-				],
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base",
+                    "datatable-column-widths",
+                    "dom-screen"
+                ],
                 "skinnable": true
-			},
+            },
             "datatable-formatters": {
                 "requires": [
                     "datatable-body",
@@ -129,6 +129,11 @@
             "datatable-paginator-templates": {
                 "requires": [
                     "template"
+                ]
+            },
+            "datatable-keynav": {
+                "requires": [
+                    "datatable-base"
                 ]
             },
             "datatable-highlight": {

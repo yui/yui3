@@ -55,7 +55,18 @@ suite.add(new Y.Test.Case({
     test_is_date_xframe: function() {
         Assert.isFalse(Lang.isDate(xframe.fun), "Cross frame function should be false");
         Assert.isTrue(Lang.isDate(xframe.dat), "Cross frame date should be true");
-    }
+    },
+
+    test_is_regexp_xframe: function() {
+        Assert.isTrue(Lang.isRegExp(xframe.re), "Cross frame regexp is a regexp");
+        Assert.isTrue(Lang.isRegExp(xframe.nre), "Cross frame  new RegExp is a regexp");
+        Assert.isFalse(Lang.isRegExp(xframe.obj), "Cross frame  object is not a regexp");
+        Assert.isFalse(Lang.isRegExp(xframe.arr), "Cross frame  array is not a regexp");
+        Assert.isFalse(Lang.isRegExp(xframe.fun), "Cross frame  function is not a regexp");
+        Assert.isFalse(Lang.isRegExp(xframe.nul), "Cross frame null is not a regexp");
+        Assert.isFalse(Lang.isRegExp(xframe.und), "Cross frame undefined is not a regexp");
+        Assert.isFalse(Lang.isRegExp(xframe.num), "Cross frame  number is not a regexp");
+    },
 }));
 
 Y.Test.Runner.add(suite);

@@ -84,9 +84,8 @@ VC = {
         var domNode  = node._node, // performance cheat; getValue() is a big hit when polling
             event    = options.e,
             vcData   = node._data && node._data[DATA_KEY], // another perf cheat
-            nodeName  = vcData.nodeName,
             stopped  = 0,
-            facade, prevVal, newVal, selectedOption, stopElement;
+            facade, prevVal, newVal, nodeName, selectedOption, stopElement;
 
         if (!(domNode && vcData)) {
             VC._stopPolling(node);
@@ -94,6 +93,7 @@ VC = {
         }
 
         prevVal = vcData.prevVal;
+        nodeName  = vcData.nodeName;
 
         if (vcData.isEditable) {
             // Use innerHTML for performance

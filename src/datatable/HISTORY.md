@@ -3,7 +3,14 @@ DataTable Change History
 
 @VERSION@
 ------
+
 * Add Selection module [Pull Request #1195]
+
+* Added datatable-keynav module, providing keyboard navigation within the
+  datatable. [Pull Request #596]
+
+3.13.0
+------
 
 * Add highlight module [Pull Request #1196]
 

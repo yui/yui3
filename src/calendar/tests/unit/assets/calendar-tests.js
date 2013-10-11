@@ -225,6 +225,20 @@ YUI.add('calendar-tests', function(Y) {
 
             },
 
+            testMinDatesSelection : function () {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5),
+                    minimumDate: new Date(2011,11,5)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();
+                this.firstcalendar.selectDates(new Date(2011,11,5));
+
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,11,5)).hasClass("yui3-calendar-day-selected"));
+            },
+
             testRules : function () {
                 var myRules = {
                    "2011": "fullyear",

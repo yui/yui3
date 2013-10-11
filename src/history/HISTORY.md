@@ -2,6 +2,11 @@ History Change History
 ======================
 
 @VERSION@
+------
+
+* No changes.
+
+3.13.0
 ---------
 
 * Fixed a possible exception in `HistoryHTML5._init()` in IE10.

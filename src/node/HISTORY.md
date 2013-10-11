@@ -4,6 +4,11 @@ Node Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.13.0
+------
+
 * Fix issue causing `inDoc` to fail if Node wasn't bound to a node.
   [Pull Request #1169][Issue #1168]
 

@@ -4,8 +4,15 @@ Calendar Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.13.0
+------
+
+* Fix a issue with cloudn't select a date when passing minimumDate. ([#1030][])
 * Removed superfluous strings from Hungarian calendar translations. ([#1054][]: @drjayvee)
 
+[#1030]: https://github.com/yui/yui3/issues/1030
 [#1054]: https://github.com/yui/yui3/issues/1054
 
 3.12.0
