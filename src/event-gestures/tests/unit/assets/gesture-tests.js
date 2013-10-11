@@ -64,12 +64,12 @@ YUI.add('gesture-tests', function(Y) {
                 target: node,
                 currentTarget: node,
                 type: "mousedown",
-                pageX: 100,
-                pageY: 100,
-                clientX: 100,
-                clientY: 100,
-                screenX: 100,
-                screenY: 100
+                pageX: 101,
+                pageY: 101,
+                clientX: 101,
+                clientY: 101,
+                screenX: 101,
+                screenY: 101
             };
 
             eventMSPointer = {
@@ -199,7 +199,7 @@ YUI.add('gesture-tests', function(Y) {
             var retVal;
             eventData.start._onStart(eventNoTouch,node, {
                 _extra: {
-                    minDistance: 100,
+                    minDistance: 400,
                     minTime: 0
                 }
             }, {
@@ -213,7 +213,7 @@ YUI.add('gesture-tests', function(Y) {
 
             //fire a touchMove event
             Y.Event.simulate(node.getDOMNode(), 'mousemove', moveEvent2);
-            Assert.isFalse(flag, 'Event should fire since minDistance threshold was not met');
+            Assert.isFalse(flag, 'Event should not fire since minDistance threshold was not met');
             Assert.isUndefined(retVal);
         },
 
@@ -222,7 +222,7 @@ YUI.add('gesture-tests', function(Y) {
             var retVal;
             eventData.start._onStart(eventNoTouch,node, {
                 _extra: {
-                    minDistance: 100,
+                    minDistance: 75,
                     minTime: 0
                 }
             }, {
@@ -251,7 +251,7 @@ YUI.add('gesture-tests', function(Y) {
             var retVal;
             eventData.start._onStart(eventNoTouch,node, {
                 _extra: {
-                    minDistance: 100,
+                    minDistance: 75,
                     minTime: 0
                 }
             }, {
@@ -279,7 +279,7 @@ YUI.add('gesture-tests', function(Y) {
             eventData.start._onStart(eventNoTouch,node, {
                 _extra: {
                     minTime: 500,
-                    minDistance: 100
+                    minDistance: 75
                 }
             }, {
                 fire: function(e) {
