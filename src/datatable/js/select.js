@@ -157,7 +157,10 @@ Select.prototype = {
     },
 
     /**
-     Selects all items in the table depending on the mode specified.
+     Selects all items in the table depending on the mode specified in the
+     datatable's configuration. If 'row' is the specified `'selectMode'` and
+     you wish to select a column, you will need to update the `'selectMode'`
+     and then call `selectAll`.
 
      @public
      @method selectAll
@@ -205,14 +208,15 @@ Select.prototype = {
     /**
      Select a specific row, cell, or column. The type provided must be 'row',
      'col' or 'cell' to specify what to select. The cell provided must be an
-     Array or a Node. The Node can be the raw DOM node or a Y.Node of the cell,
-     a cell's child, or a cell's direct ancestor. Modifiers will be passed
-     through to the selectRow, selectCol, or selectCell method.
+     Array as [row, column] or a Node. The Node can be the raw DOM node or a
+     Y.Node of the cell, a cell's child, or a cell's direct ancestor.
+     Modifiers will be passed through to the selectRow, selectCol, or
+     selectCell method.
 
      @public
      @method select
      @param {String} type Type of selection to be made
-     @param {Array|Node} cell Array, Y.Node or Node
+     @param {Array|Node} cell Array (`[row,col]`), Y.Node or DOM Node
      @param {Object} [modifiers] Modifier for cell selection
      @return Current DataTable instance
      @chainable
@@ -264,6 +268,10 @@ Select.prototype = {
      @param {Object} [modifiers] Object specifying whether the shift key or
         control key was used. Passed through automatically when called through
         UI interaction.
+     @param {Boolean} [modifiers.shift] Specifies if the shift key was pressed
+        or not
+     @param {Boolean} [modifiers.ctrl] Specifies if the control or meta key
+        was pressed or not
      @return Current DataTable instance
      @chainable
      */
@@ -361,6 +369,10 @@ Select.prototype = {
      @param {Object} [modifiers] Object specifying whether the shift key or
         control key was used. Passed through automatically when called through
         UI interaction.
+     @param {Boolean} [modifiers.shift] Specifies if the shift key was pressed
+        or not
+     @param {Boolean} [modifiers.ctrl] Specifies if the control or meta key
+        was pressed or not
      @return Current DataTable instance
      @chainable
      */
@@ -469,6 +481,10 @@ Select.prototype = {
      @param {Object} [modifiers] Object specifying whether the shift key or
         control key was used. Passed through automatically when called through
         UI interaction.
+     @param {Boolean} [modifiers.shift] Specifies if the shift key was pressed
+        or not
+     @param {Boolean} [modifiers.ctrl] Specifies if the control or meta key
+        was pressed or not
      @return Current DataTable instance
      @chainable
      */
