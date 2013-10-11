@@ -587,7 +587,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
 
         // need to determine if the table view is inside a table widget
         // if inside a widget, the table gets set to 100% width (contained by the table)
-        // if not inside a widget,
+        // if not inside a widget, apply width directly to table view
         if (options && options.src === 'widget') {
             if (isPercentage) {
                 table.setStyle('width', '100%');
