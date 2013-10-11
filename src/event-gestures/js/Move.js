@@ -410,7 +410,7 @@ define(GESTURE_MOVE_START, {
         //or if it's an MSPointer event, fire gesturemovestart
         if ((e.touches) ||
             (e.type.indexOf('mouse') !== -1 && !subscriber.preventMouse) ||
-            e.type.indexOf('MSPointer')) {
+            e.type.indexOf('MSPointer') !== -1) {
             e.type = GESTURE_MOVE_START;
             Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
             node.setData(_MOVE_START, e);
