@@ -4035,7 +4035,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",
@@ -5897,7 +5901,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '3cf02e5f307a6e9470df4ea0dc7eb41e';
+YUI.Env[Y.version].md5 = '0bbfe58fcbf2c4ab90bf1e34ab849d74';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

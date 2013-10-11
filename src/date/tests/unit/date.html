@@ -1,76 +1,86 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
     <title>Date Tests</title>
-    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
+<body lang="en" class="yui3-skin-sam">
 
-<body class="yui3-skin-sam">
+    <div id="testbed"></div>
 
-<h1>Date Tests</h1>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/date-tests.js"></script>
+    <script src="./assets/date-fr-tests.js"></script>
+    <script src="./assets/date-ko-tests.js"></script>
 
-<div id="log"></div>
+    <script>
 
+        var curLang, dateUS, dateFR, dateKR;
+        var langs = ['fr-FR', 'ko-KR'];
+        var YLog;
 
-<script type="text/javascript">
-
-YUI.applyConfig({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-});
-
-var dateUS, dateFR, dateKR;
-(function() {
-
-    var start = function() {
-        if (!dateUS || !dateFR || !dateKR) {
-            return;
-        }
         YUI({
-            lang: "en-US",
-            coverage: ['datatype-date'],
-            modules: {
-                'date-tests': {
-                    fullpath: './assets/date-tests.js',
-                    requires: [ "test", "dump", "datatype-date" ]
-                }
-            }
-        }).use('date-tests', "test-console", function(Y) {
+            coverage: ['datatype-date-format','datatype-date-parse'],
+            lang: 'en-US,pa-IN',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'date-tests', function (Y){
 
-            (new Y.Test.Console()).render('#log');
+            YLog = Y.log;
+            new Y.Test.Console().render();
 
+            var TestRunner = Y.Test.Runner;
+
+            TestRunner.subscribe(TestRunner.COMPLETE_EVENT, function (e) {
+                Y.Test.Runner.clear();
+                next();
+            });
+
+            curLang = 'en-US';
+            dateUS = Y.Date;
             Y.Test.Runner.run();
         });
-    };
-
-    YUI({
-        coverage: ['datatype-date'],
-        lang: "en-US"
-    }).use("datatype-date", function(Y) {
-        dateUS = Y.Date;
-        start();
-    });
 
 
-    YUI({
-        coverage: ['datatype-date'],
-        lang: "fr-FR"
-    }).use("datatype-date", function(Y) {
-        dateFR = Y.Date;
-        start();
-    });
-    
-    YUI({
-        coverage: ['datatype-date'],
-        lang: "ko-KR"
-    }).use("datatype-date", function(Y) {
-        dateKR = Y.Date;
-        start();
-    });
+        function next() {
+            var lang, test;
 
+            if (langs.length) {
+                lang = langs.shift();
 
-    
-})();
-</script>
+                YLog('Switching to language ' + lang, 'info');
+
+                switch (lang) {
+                    case 'fr-FR':
+                        test = 'date-fr-tests';
+                        break;
+                    case 'ko-KR':
+                        test = 'date-ko-tests';
+                        break;
+                }
+
+                YUI({
+                    combine: false, filter: 'raw',
+                    lang: 'en-US,' + lang + ',en-US,pa-IN'
+                }).use(test, 'lang/datatype-date-format_' + lang, function (Y) {
+                    curLang = lang;
+
+                    Y.Intl.setLang('datatype-date-format', lang);
+
+                    switch (lang) {
+                        case 'fr-FR':
+                            dateFR = Y.Date;
+                            break;
+                        case 'ko-KR':
+                            dateKR = Y.Date;
+                            break;
+                    }
+
+                    Y.Test.Runner.run();
+                });
+            }
+        }
+
+    </script>
 </body>
 </html>
+
