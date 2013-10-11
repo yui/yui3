@@ -127,6 +127,13 @@
                 "requires": [
                     "datatable-base"
                 ]
+            },
+            "datatable-highlight": {
+                "requires": [
+                    "datatable-base",
+                    "event-hover"
+                ],
+                "skinnable": true
             }
         }
     }

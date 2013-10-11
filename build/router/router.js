@@ -121,6 +121,23 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
+    Regex used to break up a URL string around the URL's path.
+
+    Subpattern captures:
+
+      1. Origin, everything before the URL's path-part.
+      2. The URL's path-part.
+      3. The URL's query.
+      4. The URL's hash fragment.
+
+    @property _regexURL
+    @type RegExp
+    @protected
+    @since 3.5.0
+    **/
+    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
+
+    /**
     Regex used to match parameter placeholders in route paths.
 
     Subpattern captures:
@@ -238,10 +255,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     dispatch: function () {
         this.once(EVT_READY, function () {
+            var req, res;
+
             this._ready = true;
 
             if (!this.upgrade()) {
-                this._dispatch(this._getPath(), this._getURL());
+                req = this._getRequest('dispatch');
+                res = this._getResponse(req);
+
+                this._dispatch(req, res);
             }
         });
 
@@ -249,7 +271,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Gets the current route path, relative to the `root` (if any).
+    Gets the current route path.
 
     @method getPath
     @return {String} Current route path.
@@ -282,13 +304,17 @@ Y.Router = Y.extend(Router, Y.Base, {
             url = this._upgradeURL(url);
         }
 
-        path = this.removeQuery(this.removeRoot(url));
+        // Get just the path portion of the specified `url`.
+        path = this.removeQuery(url.replace(this._regexUrlOrigin, ''));
 
         return !!this.match(path).length;
     },
 
     /**
     Returns an array of route objects that match the specified URL path.
+
+    If this router has a `root`, then the specified `path` _must_ be
+    semantically within the `root` path to match any routes.
 
     This method is called internally to determine which routes match the current
     path whenever the URL changes. You may override it if you want to customize
@@ -314,10 +340,26 @@ Y.Router = Y.extend(Router, Y.Base, {
         // => [{callback: ..., keys: [], path: '/foo', regex: ...}]
 
     @method match
-    @param {String} path URL path to match.
+    @param {String} path URL path to match. This should be an absolute path that
+        starts with a slash: "/".
     @return {Object[]} Array of route objects that match the specified path.
     **/
     match: function (path) {
+        var root = this.get('root');
+
+        if (root) {
+            // The `path` must be semantically within this router's `root` path
+            // or mount point, if it's not then no routes should be considered a
+            // match.
+            if (!this._pathHasRoot(root, path)) {
+                return [];
+            }
+
+            // Remove this router's `root` from the `path` before checking the
+            // routes for any matches.
+            path = this.removeRoot(path);
+        }
+
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
@@ -391,13 +433,23 @@ Y.Router = Y.extend(Router, Y.Base, {
     @return {String} Rootless path.
     **/
     removeRoot: function (url) {
-        var root = this.get('root');
+        var root = this.get('root'),
+            path;
 
         // Strip out the non-path part of the URL, if any (e.g.
         // "http://foo.com"), so that we're left with just the path.
         url = url.replace(this._regexUrlOrigin, '');
 
-        if (root && url.indexOf(root) === 0) {
+        // Return the host-less URL if there's no `root` path to further remove.
+        if (!root) {
+            return url;
+        }
+
+        path = this.removeQuery(url);
+
+        // Remove the `root` from the `url` if it's the same or its path is
+        // semantically within the root path.
+        if (path === root || this._pathHasRoot(root, path)) {
             url = url.substring(root.length);
         }
 
@@ -451,18 +503,28 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Adds a route handler for the specified URL _path_.
+    Adds a route handler for the specified `route`.
 
-    The _path_ parameter may be either a string or a regular expression. If it's
-    a string, it may contain named parameters: `:param` will match any single
-    part of a URL path (not including `/` characters), and `*param` will match
-    any number of parts of a URL path (including `/` characters). These named
-    parameters will be made available as keys on the `req.params` object that's
-    passed to route handlers.
+    The `route` parameter may be a string or regular expression to represent a
+    URL path, or a route object. If it's a string (which is most common), it may
+    contain named parameters: `:param` will match any single part of a URL path
+    (not including `/` characters), and `*param` will match any number of parts
+    of a URL path (including `/` characters). These named parameters will be
+    made available as keys on the `req.params` object that's passed to route
+    handlers.
 
-    If the _path_ parameter is a regex, all pattern matches will be made
+    If the `route` parameter is a regex, all pattern matches will be made
     available as numbered keys on `req.params`, starting with `0` for the full
     match, then `1` for the first subpattern match, and so on.
+
+    Alternatively, an object can be provided to represent the route and it may
+    contain a `path` property which is a string or regular expression which
+    causes the route to be process as described above. If the route object
+    already contains a `regex` or `regexp` property, the route will be
+    considered fully-processed and will be associated with any `callacks`
+    specified on the object and those specified as parameters to this method.
+    **Note:** Any additional data contained on the route object will be
+    preserved.
 
     Here's a set of sample routes along with URL paths that they match:
 
@@ -507,8 +569,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         });
 
     @method route
-    @param {String|RegExp} path Path to match. May be a string or a regular
-      expression.
+    @param {String|RegExp|Object} route Route to match. May be a string or a
+      regular expression, or a route object.
     @param {Array|Function|String} callbacks* Callback functions to call
         whenever this route is triggered. These can be specified as separate
         arguments, or in arrays, or both. If a callback is specified as a
@@ -517,12 +579,12 @@ Y.Router = Y.extend(Router, Y.Base, {
       @param {Object} callbacks.req Request object containing information about
           the request. It contains the following properties.
 
-        @param {Array|Object} callbacks.req.params Captured parameters matched by
-          the route path specification. If a string path was used and contained
-          named parameters, then this will be a key/value hash mapping parameter
-          names to their matched values. If a regex path was used, this will be
-          an array of subpattern matches starting at index 0 for the full match,
-          then 1 for the first subpattern match, and so on.
+        @param {Array|Object} callbacks.req.params Captured parameters matched
+          by the route path specification. If a string path was used and
+          contained named parameters, then this will be a key/value hash mapping
+          parameter names to their matched values. If a regex path was used,
+          this will be an array of subpattern matches starting at index 0 for
+          the full match, then 1 for the first subpattern match, and so on.
         @param {String} callbacks.req.path The current URL path.
         @param {Number} callbacks.req.pendingCallbacks Number of remaining
           callbacks the route handler has after this one in the dispatch chain.
@@ -531,10 +593,14 @@ Y.Router = Y.extend(Router, Y.Base, {
         @param {Object} callbacks.req.query Query hash representing the URL
           query string, if any. Parameter names are keys, and are mapped to
           parameter values.
-        @param {String} callbacks.req.url The full URL.
+        @param {Object} callbacks.req.route Reference to the current route
+          object whose callbacks are being dispatched.
+        @param {Object} callbacks.req.router Reference to this router instance.
         @param {String} callbacks.req.src What initiated the dispatch. In an
           HTML5 browser, when the back/forward buttons are used, this property
-          will have a value of "popstate".
+          will have a value of "popstate". When the `dispath()` method is
+          called, the `src` will be `"dispatch"`.
+        @param {String} callbacks.req.url The full URL.
 
       @param {Object} callbacks.res Response object containing methods and
           information that relate to responding to a request. It contains the
@@ -556,21 +622,56 @@ Y.Router = Y.extend(Router, Y.Base, {
           and pass control the next route handler.
     @chainable
     **/
-    route: function (path, callbacks) {
-        callbacks = YArray.flatten(YArray(arguments, 1, true));
+    route: function (route, callbacks) {
+        // Grab callback functions from var-args.
+        callbacks = YArray(arguments, 1, true);
 
-        var keys = [];
+        var keys, regex;
 
-        this._routes.push({
-            callbacks: callbacks,
-            keys     : keys,
-            path     : path,
-            regex    : this._getRegex(path, keys),
+        // Supports both the `route(path, callbacks)` and `route(config)` call
+        // signatures, allowing for fully-processed route configs to be passed.
+        if (typeof route === 'string' || YLang.isRegExp(route)) {
+            // Flatten `callbacks` into a single dimension array.
+            callbacks = YArray.flatten(callbacks);
 
-            // For back-compat.
-            callback: callbacks[0]
-        });
+            keys  = [];
+            regex = this._getRegex(route, keys);
 
+            route = {
+                callbacks: callbacks,
+                keys     : keys,
+                path     : route,
+                regex    : regex
+            };
+        } else {
+            // Look for any configured `route.callbacks` and fallback to
+            // `route.callback` for back-compat, append var-arg `callbacks`,
+            // then flatten the entire collection to a single dimension array.
+            callbacks = YArray.flatten(
+                [route.callbacks || route.callback || []].concat(callbacks)
+            );
+
+            // Check for previously generated regex, also fallback to `regexp`
+            // for greater interop.
+            keys  = route.keys;
+            regex = route.regex || route.regexp;
+
+            // Generates the route's regex if it doesn't already have one.
+            if (!regex) {
+                keys  = [];
+                regex = this._getRegex(route.path, keys);
+            }
+
+            // Merge specified `route` config object with processed data.
+            route = Y.merge(route, {
+                callbacks: callbacks,
+                keys     : keys,
+                path     : route.path || regex,
+                regex    : regex
+            });
+        }
+
+        this._routes.push(route);
         return this;
     },
 
@@ -689,18 +790,17 @@ Y.Router = Y.extend(Router, Y.Base, {
     event on every pageview) and other browsers (which do not).
 
     @method _dispatch
-    @param {String} path URL path.
-    @param {String} url Full URL.
-    @param {String} src What initiated the dispatch.
+    @param {object} req Request object.
+    @param {String} res Response object.
     @chainable
     @protected
     **/
-    _dispatch: function (path, url, src) {
+    _dispatch: function (req, res) {
         var self      = this,
             decode    = self._decode,
-            routes    = self.match(path),
+            routes    = self.match(req.path),
             callbacks = [],
-            matches, paramsMatch, req, res;
+            matches, paramsMatch, routePath;
 
         self._dispatching = self._dispatched = true;
 
@@ -709,10 +809,9 @@ Y.Router = Y.extend(Router, Y.Base, {
             return self;
         }
 
-        req = self._getRequest(path, url, src);
-        res = self._getResponse(req);
+        routePath = self.removeRoot(req.path);
 
-        req.next = function (err) {
+        function next(err) {
             var callback, name, route;
 
             if (err) {
@@ -720,7 +819,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // avoiding any additional callbacks for the current route.
                 if (err === 'route') {
                     callbacks = [];
-                    req.next();
+                    next();
                 } else {
                     Y.error(err);
                 }
@@ -739,7 +838,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // route.
                 req.pendingCallbacks = callbacks.length;
 
-                callback.call(self, req, res, req.next);
+                callback.call(self, req, res, next);
 
             } else if ((route = routes.shift())) {
                 // Make a copy of this route's `callbacks` so the original array
@@ -748,11 +847,13 @@ Y.Router = Y.extend(Router, Y.Base, {
 
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
-                matches = YArray.map(route.regex.exec(path) || [], function (match) {
+                matches = YArray.map(route.regex.exec(routePath) || [],
+                        function (match) {
+
                     // Decode matches, or coerce `undefined` matches to an empty
                     // string to match expectations of working with `req.params`
                     // in the content of route dispatching, and normalize
-                    // browser differences in their handling of regexp NPCGs:
+                    // browser differences in their handling of regex NPCGs:
                     // https://github.com/yui/yui3/issues/1076
                     return (match && decode(match)) || '';
                 });
@@ -773,7 +874,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                             // Check if `paramHandler` is a RegExp, becuase this
                             // is true in Android 2.3 and other browsers!
                             // `typeof /.*/ === 'function'`
-                            value = paramHandler instanceof RegExp ?
+                            value = YLang.isRegExp(paramHandler) ?
                                     paramHandler.exec(value) :
                                     paramHandler.call(self, value, key);
 
@@ -791,21 +892,22 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                // Allow access to the number of remaining routes for this
-                // request.
+                // Allow access to current route and the number of remaining
+                // routes for this request.
+                req.route         = route;
                 req.pendingRoutes = routes.length;
 
                 // Execute this route's `callbacks` or skip this route because
                 // some of the param regexps don't match.
                 if (paramsMatch) {
-                    req.next();
+                    next();
                 } else {
-                    req.next('route');
+                    next('route');
                 }
             }
-        };
+        }
 
-        req.next();
+        next();
 
         self._dispatching = false;
         return self._dequeue();
@@ -860,7 +962,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Gets the current route path, relative to the `root` (if any).
+    Gets the current route path.
 
     @method _getPath
     @return {String} Current route path.
@@ -870,7 +972,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         var path = (!this._html5 && this._getHashPath()) ||
                 Y.getLocation().pathname;
 
-        return this.removeQuery(this.removeRoot(path));
+        return this.removeQuery(path);
     },
 
     /**
@@ -932,7 +1034,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getRegex: function (path, keys) {
-        if (path instanceof RegExp) {
+        if (YLang.isRegExp(path)) {
             return path;
         }
 
@@ -959,18 +1061,17 @@ Y.Router = Y.extend(Router, Y.Base, {
     Gets a request object that can be passed to a route handler.
 
     @method _getRequest
-    @param {String} path Current path being dispatched.
-    @param {String} url Current full URL being dispatched.
-    @param {String} src What initiated the dispatch.
+    @param {String} src What initiated the URL change and need for the request.
     @return {Object} Request object.
     @protected
     **/
-    _getRequest: function (path, url, src) {
+    _getRequest: function (src) {
         return {
-            path : path,
-            query: this._parseQuery(this._getQuery()),
-            url  : url,
-            src  : src
+            path  : this._getPath(),
+            query : this._parseQuery(this._getQuery()),
+            url   : this._getURL(),
+            router: this,
+            src   : src
         };
     },
 
@@ -983,14 +1084,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getResponse: function (req) {
-        // For backwards compatibility, the response object is a function that
-        // calls `next()` on the request object and returns the result.
-        var res = function () {
-            return req.next.apply(this, arguments);
-        };
-
-        res.req = req;
-        return res;
+        return {req: req};
     },
 
     /**
@@ -1145,6 +1239,38 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         return result;
+    },
+
+    /**
+    Returns `true` when the specified `path` is semantically within the
+    specified `root` path.
+
+    If the `root` does not end with a trailing slash ("/"), one will be added
+    before the `path` is evaluated against the root path.
+
+    @example
+        this._pathHasRoot('/app',  '/app/foo'); // => true
+        this._pathHasRoot('/app/', '/app/foo'); // => true
+        this._pathHasRoot('/app/', '/app/');    // => true
+
+        this._pathHasRoot('/app',  '/foo/bar'); // => false
+        this._pathHasRoot('/app/', '/foo/bar'); // => false
+        this._pathHasRoot('/app/', '/app');     // => false
+        this._pathHasRoot('/app',  '/app');     // => false
+
+    @method _pathHasRoot
+    @param {String} root Root path used to evaluate whether the specificed
+        `path` is semantically within. A trailing slash ("/") will be added if
+        it does not already end with one.
+    @param {String} path Path to evaluate for containing the specified `root`.
+    @return {Boolean} Whether or not the `path` is semantically within the
+        `root` path.
+    @protected
+    @since 3.13.0
+    **/
+    _pathHasRoot: function (root, path) {
+        var rootPath = root.charAt(root.length - 1) === '/' ? root : root + '/';
+        return path.indexOf(rootPath) === 0;
     },
 
     /**
@@ -1360,10 +1486,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         this._routes = [];
 
         YArray.each(routes, function (route) {
-            // Makes sure to check `callback` for back-compat.
-            var callbacks = route.callbacks || route.callback;
-
-            this.route(route.path, callbacks);
+            this.route(route);
         }, this);
 
         return this._routes.concat();
@@ -1425,7 +1548,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         var self       = this,
             src        = e.src,
             prevURL    = self._url,
-            currentURL = self._getURL();
+            currentURL = self._getURL(),
+            req, res;
 
         self._url = currentURL;
 
@@ -1440,7 +1564,10 @@ Y.Router = Y.extend(Router, Y.Base, {
             return;
         }
 
-        self._dispatch(self._getPath(), currentURL, src);
+        req = self._getRequest(src);
+        res = self._getResponse(req);
+
+        self._dispatch(req, res);
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -1515,6 +1642,14 @@ Y.Router = Y.extend(Router, Y.Base, {
         evaluated relative to that root URL, so the `/` route would then execute
         when the user browses to `http://example.com/myapp/`.
 
+        @example
+            router.set('root', '/myapp');
+            router.route('/foo', function () { ... });
+
+
+            // Updates the URL to: "/myapp/foo"
+            router.save('/foo');
+
         @attribute root
         @type String
         @default `''`
@@ -1526,7 +1661,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         /**
         Array of route objects.
 
-        Each item in the array must be an object with the following properties:
+        Each item in the array must be an object with the following properties
+        in order to be processed by the router:
 
           * `path`: String or regex representing the path to match. See the docs
             for the `route()` method for more details.
@@ -1535,6 +1671,21 @@ Y.Router = Y.extend(Router, Y.Base, {
             function on this router instance that should be called when the
             route is triggered. An array of functions and/or strings may also be
             provided. See the docs for the `route()` method for more details.
+
+        If a route object contains a `regex` or `regexp` property, or if its
+        `path` is a regular express, then the route will be considered to be
+        fully-processed. Any fully-processed routes may contain the following
+        properties:
+
+          * `regex`: The regular expression representing the path to match, this
+            property may also be named `regexp` for greater compatibility.
+
+          * `keys`: Array of named path parameters used to populate `req.params`
+            objects when dispatching to route handlers.
+
+        Any additional data contained on these route objects will be retained.
+        This is useful to store extra metadata about a route; e.g., a `name` to
+        give routes logical names.
 
         This attribute is intended to be used to set routes at init time, or to
         completely reset all routes after init. To add routes after init without
@@ -1571,13 +1722,16 @@ Y.Router = Y.extend(Router, Y.Base, {
     @since 3.6.0
     **/
     dispatch: function () {
-        var i, len, router;
+        var i, len, router, req, res;
 
         for (i = 0, len = instances.length; i < len; i += 1) {
             router = instances[i];
 
             if (router) {
-                router._dispatch(router._getPath(), router._getURL());
+                req = router._getRequest('dispatch');
+                res = router._getResponse(req);
+
+                router._dispatch(req, res);
             }
         }
     }

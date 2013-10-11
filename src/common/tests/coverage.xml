@@ -245,7 +245,6 @@
         <url>scrollview/tests/unit/scrollview-base-unit-test.html</url>
         <url>scrollview/tests/unit/scrollview-list-unit-test.html</url>
         <url>scrollview/tests/unit/scrollview-paginator-unit-test.html</url>
-        <url>simpleyui/tests/unit/simpleyui.html</url>
         <url>slider/tests/unit/slider.html</url>
         <url>sortable/tests/unit/sortable.html</url>
         <url>substitute/tests/unit/substitute.html</url>

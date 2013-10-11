@@ -6,6 +6,16 @@ DataTable Change History
 * Added datatable-keynav module, providing keyboard navigation within the
   datatable. [Pull Request #596]
 
+3.13.0
+------
+* Add highlight module [Pull Request #1196]
+
+* Document updates and variable changes to improve understanding of code
+  [Pull Request #946] [Satyam]
+
+* Add Show All to language packs. [Pull Request #1173] [Issue #1167]
+>>>>>>> 691f2e31c1befb102796c4f94a3a9fe16c748d4c
+
 * Added 'contentUpdate' after the DataTable has been updated when triggered
   from a `dataChange` event. [Pull Request #1072][Issue #1052]
 

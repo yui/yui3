@@ -203,6 +203,43 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(callback2, router.get('routes')[0].callbacks[0]);
     },
 
+    '`routes` should retain all their properties': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('routes', [
+            {
+                path     : '/',
+                callbacks: ['home'],
+                name     : 'home'
+            }
+        ]);
+
+        Assert.areSame('home', router.get('routes')[0].name);
+    },
+
+    '`routes` with a `regex` or `regexp` property should be considered "pre-parsed"': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('routes', [
+            {
+                path : '/foo/:bar',
+                regex: /^abc$/
+            },
+
+            {
+                path  : '/foo/:baz',
+                regexp: /^cba$/
+            },
+
+            {regex: /^asdf$/}
+        ]);
+
+        Assert.isTrue(router.get('routes')[0].regex.test('abc'));
+        Assert.isTrue(router.get('routes')[1].regex.test('cba'));
+        Assert.isTrue(router.get('routes')[1].regexp.test('cba'));
+        Assert.isTrue(router.get('routes')[2].regex.test('asdf'));
+    },
+
     '`params` attribute should have a default value': function () {
         var router = this.router = new Y.Router();
 
@@ -262,7 +299,7 @@ routerSuite.add(new Y.Test.Case({
         this.router = new Y.Router({
             on: {
                 initializedChange: function () {
-                    this._dispatch('/fake', {});
+                    this._dispatch({path: '/fake'}, {});
                 },
 
                 ready: function (e) {
@@ -353,6 +390,20 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(two, router._routes[1].callbacks[0]);
     },
 
+    'route() should accept a "pre-parsed" route object': function () {
+        var router = this.router = new Y.Router();
+
+        router.route({
+            path : '/',
+            regex: /^abc$/,
+            name : 'foo'
+        }, function () {});
+
+        Assert.isTrue(router.get('routes')[0].regex.test('abc'));
+        Assert.areSame('/', router.get('routes')[0].path);
+        Assert.areSame('foo', router.get('routes')[0].name);
+    },
+
     'param() should add a param': function () {
         var router = this.router = new Y.Router();
 
@@ -387,6 +438,32 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(two, routes[1].callbacks[0]);
     },
 
+    'match() should return an array of routes that match the given path under a `root`': function () {
+        var router = this.router = new Y.Router(),
+            routes;
+
+        function one() {}
+        function two() {}
+        function three() {}
+
+        router.set('root', '/app/');
+
+        router.route('/:foo', one);
+        router.route(/foo/, two);
+        router.route('/bar', three);
+
+        Assert.areSame(0, router.match('/').length);
+        Assert.areSame(0, router.match('/foo').length);
+        Assert.areSame(0, router.match('/foo/').length);
+        Assert.areSame(0, router.match('/bar').length);
+
+        routes = router.match('/app/foo');
+
+        Assert.areSame(2, routes.length);
+        Assert.areSame(one, routes[0].callbacks[0]);
+        Assert.areSame(two, routes[1].callbacks[0]);
+    },
+
     'hasRoute() should return `true` if one or more routes match the given path': function () {
         var router = this.router = new Y.Router(),
             router2 = new Y.Router();
@@ -414,6 +491,53 @@ routerSuite.add(new Y.Test.Case({
         Assert.isFalse(router2.hasRoute('/baz?a=b'));
 
         // Cleanup router2.
+        router2.destroy();
+    },
+
+    'hasRoute() should always return `false` for paths not under the `root`': function () {
+        var location = Y.getLocation(),
+            router1  = new Y.Router({root: '/app'}),
+            router2  = new Y.Router({root: '/app/'});
+
+        function noop () {}
+
+        router1.route('/', noop);
+        router1.route('/:foo', noop);
+        router1.route(/foo/, noop);
+        router1.route('/bar', noop);
+
+        router2.route('/', noop);
+        router2.route('/:foo', noop);
+        router2.route(/foo/, noop);
+        router2.route('/bar', noop);
+
+        Assert.isFalse(router1.hasRoute('/'));
+        Assert.isFalse(router1.hasRoute('/app'));
+        Assert.isFalse(router1.hasRoute('/foo/'));
+        Assert.isFalse(router1.hasRoute('/bar'));
+        Assert.isFalse(router1.hasRoute('/baz'));
+        Assert.isFalse(router1.hasRoute(router1._getOrigin() + '/bar'));
+
+        Assert.isFalse(router2.hasRoute('/'));
+        Assert.isFalse(router2.hasRoute('/app'));
+        Assert.isFalse(router2.hasRoute('/foo/'));
+        Assert.isFalse(router2.hasRoute('/bar'));
+        Assert.isFalse(router2.hasRoute('/baz'));
+        Assert.isFalse(router2.hasRoute(router2._getOrigin() + '/bar'));
+
+        Assert.isTrue(router1.hasRoute('/app/'));
+        Assert.isTrue(router1.hasRoute('/app/foo/'));
+        Assert.isTrue(router1.hasRoute('/app/bar'));
+        Assert.isTrue(router1.hasRoute('/app/baz'));
+        Assert.isTrue(router1.hasRoute(router1._getOrigin() + '/app/bar'));
+
+        Assert.isTrue(router2.hasRoute('/app/'));
+        Assert.isTrue(router2.hasRoute('/app/foo/'));
+        Assert.isTrue(router2.hasRoute('/app/bar'));
+        Assert.isTrue(router2.hasRoute('/app/baz'));
+        Assert.isTrue(router2.hasRoute(router2._getOrigin() + '/app/bar'));
+
+        router1.destroy();
         router2.destroy();
     },
 
@@ -452,11 +576,28 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'dispatch() should dispatch to the first route that matches the current URL': function () {
-        var test       = this,
+        var test   = this,
             router = this.router = new Y.Router();
 
         router.route(/./, function () {
             test.resume();
+        });
+
+        setTimeout(function () {
+            router.dispatch();
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'dispatch() should set `req.src` to "dispatch"': function () {
+        var test   = this,
+            router = this.router = new Y.Router({html5: false});
+
+        router.route(/./, function (req) {
+            test.resume(function () {
+                Assert.areSame('dispatch', req.src);
+            });
         });
 
         setTimeout(function () {
@@ -482,7 +623,7 @@ routerSuite.add(new Y.Test.Case({
 
         router.route('/hashpath', function (req) {
             test.resume(function () {
-                Assert.areSame('/hashpath', req.path);
+                Assert.areSame('/foo/hashpath', req.path);
                 Assert.areSame(Y.getLocation().pathname, root + 'hashpath');
             });
         });
@@ -497,15 +638,28 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', '/');
         Assert.areSame('/bar', router.removeRoot('/bar'));
         Assert.areSame('/bar', router.removeRoot('bar'));
+        Assert.areSame('/bar/', router.removeRoot('/bar/'));
+        Assert.areSame('/bar/', router.removeRoot('bar/'));
 
         router.set('root', '/foo');
+        Assert.areSame('/', router.removeRoot('/foo'));
+        Assert.areSame('/', router.removeRoot('/foo/'));
         Assert.areSame('/bar', router.removeRoot('/foo/bar'));
+        Assert.areSame('/bar/', router.removeRoot('/foo/bar/'));
+        Assert.areSame('/foobar', router.removeRoot('/foobar'));
+        Assert.areSame('/foobar/', router.removeRoot('/foobar/'));
 
         router.set('root', '/foo/');
+        Assert.areSame('/foo', router.removeRoot('/foo'));
+        Assert.areSame('/', router.removeRoot('/foo/'));
         Assert.areSame('/bar', router.removeRoot('/foo/bar'));
+        Assert.areSame('/bar/', router.removeRoot('/foo/bar/'));
+        Assert.areSame('/foobar', router.removeRoot('/foobar'));
+        Assert.areSame('/foobar/', router.removeRoot('/foobar/'));
 
         router.set('root', '/moo');
         Assert.areSame('/foo/bar', router.removeRoot('/foo/bar'));
+        Assert.areSame('/foo/moo', router.removeRoot('/foo/moo'));
     },
 
     'removeRoot() should strip the origin ("http://foo.com") portion of the URL, if any': function () {
@@ -653,7 +807,7 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', pathRoot);
         router.route('/save', function (req) {
             test.resume(function () {
-                Assert.areSame('/save', req.path);
+                Assert.areSame(router._joinURL('/save'), req.path);
                 Assert.areSame('/save', Y.HistoryHash.getHash());
             });
         });
@@ -674,7 +828,7 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', '/app');
         router.route('/save', function (req) {
             test.resume(function () {
-                Assert.areSame('/save', req.path);
+                Assert.areSame('/app/save', req.path);
                 Assert.areSame('/app/save', Y.HistoryHash.getHash());
             });
         });
@@ -773,6 +927,15 @@ routerSuite.add(new Y.Test.Case({
         this.wait(500);
     },
 
+    'upgrade() should upgrade return `false` by default': function () {
+        Y.HistoryHash.setHash('');
+
+        var test   = this,
+            router = this.router = new Y.Router({html5: true});
+
+        Assert.isFalse(router.upgrade());
+    },
+
     '_joinURL() should normalize "/" separators': function () {
         var router = this.router = new Y.Router();
 
@@ -797,7 +960,10 @@ routerSuite.add(new Y.Test.Case({
             Assert.areSame(src, req.src);
         });
 
-        router._dispatch('/foo', {}, src);
+        router._dispatch({
+            path: '/foo',
+            src : src
+        }, {});
     },
 
     '_getRegex() should return regexes that do not match too much' : function() {
@@ -887,28 +1053,37 @@ routerSuite.add(new Y.Test.Case({
         };
 
         router.route('/bar', router.foo);
-        router._dispatch('/foo', {});
-        router._dispatch('/bar', {});
+        router._dispatch({path: '/foo'}, {});
+        router._dispatch({path: '/bar'}, {});
 
         Assert.areSame(2, calls);
     },
 
     'routes should receive a request object, response object, and `next` function as params': function () {
         var calls  = 0,
-            router = this.router = new Y.Router();
+            router = this.router = new Y.Router(),
+            req, res;
 
         router.route('/foo', function (req, res, next) {
             calls += 1;
 
             Assert.isObject(req);
-            Assert.isObject(res);
-            Assert.isFunction(next);
-            Assert.areSame(next, req.next);
+            Assert.areSame(router, req.router);
+            Assert.isObject(req.route);
+            Assert.areSame('/foo', req.route.path);
             Assert.isObject(req.params);
             Assert.isTrue(Y.Object.isEmpty(req.params));
+            Assert.isNumber(req.pendingCallbacks);
             Assert.isNumber(req.pendingRoutes);
             Assert.areSame('/foo', req.path);
+            Assert.areSame(router._getURL(), req.url);
             ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
+            Assert.areSame('dispatch', req.src);
+
+            Assert.isObject(res);
+            Assert.areSame(req, res.req);
+
+            Assert.isFunction(next);
         });
 
         // Duckpunching _getQuery so we can test req.query.
@@ -916,7 +1091,15 @@ routerSuite.add(new Y.Test.Case({
             return 'bar=baz%20quux&moo';
         };
 
-        router._dispatch('/foo', {foo: 'foo'});
+        // Duckpunching _getPath so we can test req.path.
+        router._getPath = function () {
+            return '/foo';
+        };
+
+        req = router._getRequest('dispatch');
+        res = router._getResponse(req);
+
+        router._dispatch(req, res);
 
         Assert.areSame(1, calls);
     },
@@ -936,7 +1119,7 @@ routerSuite.add(new Y.Test.Case({
         }
 
         router.route('/foo', callback1, callback2);
-        router._dispatch('/foo', {});
+        router._dispatch({path: '/foo'}, {});
 
         Assert.areSame(2, calls);
     },
@@ -956,7 +1139,7 @@ routerSuite.add(new Y.Test.Case({
         }
 
         router.route('/foo', [callback1, callback2]);
-        router._dispatch('/foo', {});
+        router._dispatch({path: '/foo'}, {});
 
         Assert.areSame(2, calls);
     },
@@ -976,7 +1159,7 @@ routerSuite.add(new Y.Test.Case({
         };
 
         router.route('/foo', ['callback1', 'callback2']);
-        router._dispatch('/foo', {});
+        router._dispatch({path: '/foo'}, {});
 
         Assert.areSame(2, calls);
     },
@@ -1007,7 +1190,7 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
         });
 
-        router._dispatch('/foo', {});
+        router._dispatch({path: '/foo'}, {});
 
         Assert.areSame(5, calls);
     },
@@ -1031,7 +1214,7 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
         });
 
-        router._dispatch('/ryan', {});
+        router._dispatch({path: '/ryan'}, {});
 
         Assert.areSame(1, calls);
     },
@@ -1076,11 +1259,62 @@ routerSuite.add(new Y.Test.Case({
             ArrayAssert.itemsAreSame(['/blerf/quux', 'blerf', '', 'blerf', 'quux'], req.params);
         });
 
-        router._dispatch('/foo/one/two', {});
-        router._dispatch('/bar/one/two', {});
-        router._dispatch('/baz/quux', {});
-        router._dispatch('/fnord/quux', {});
-        router._dispatch('/blerf/quux', {});
+        router._dispatch({path: '/foo/one/two'}, {});
+        router._dispatch({path: '/bar/one/two'}, {});
+        router._dispatch({path: '/baz/quux'}, {});
+        router._dispatch({path: '/fnord/quux'}, {});
+        router._dispatch({path: '/blerf/quux'}, {});
+
+        Assert.areSame(5, calls);
+    },
+
+    'request object should contain captured route parameters for Router with non-default root': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router({
+                root: '/root/'
+            });
+
+        router.route('/foo/:bar/:baz', function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['bar', 'baz'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one', 'two'], Y.Object.values(req.params));
+        });
+
+        router.route('/bar/*path', function (req) {
+            calls += 1;
+
+            Assert.isObject(req.params);
+            ArrayAssert.itemsAreSame(['path'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one/two'], Y.Object.values(req.params));
+        });
+
+        router.route(/^\/(baz)\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], req.params);
+        });
+
+        router.route(/^\/((fnord)|(fnarf))\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/fnord/quux', 'fnord', 'fnord', '', 'quux'], req.params);
+        });
+
+        router.route(/^\/((blorp)|(blerf))\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/blerf/quux', 'blerf', '', 'blerf', 'quux'], req.params);
+        });
+
+        router._dispatch({path: '/root/foo/one/two'}, {});
+        router._dispatch({path: '/root/bar/one/two'}, {});
+        router._dispatch({path: '/root/baz/quux'}, {});
+        router._dispatch({path: '/root/fnord/quux'}, {});
+        router._dispatch({path: '/root/blerf/quux'}, {});
 
         Assert.areSame(5, calls);
     },
@@ -1099,8 +1333,8 @@ routerSuite.add(new Y.Test.Case({
 
         Assert.areSame('path%20with%20spaces', encodeURIComponent(pathSegment));
 
-        router._dispatch('/' + pathSegment, {});
-        router._dispatch('/' + encodeURIComponent(pathSegment), {});
+        router._dispatch({path: '/' + pathSegment}, {});
+        router._dispatch({path: '/' + encodeURIComponent(pathSegment)}, {});
 
         Assert.areSame(2, calls);
     },
@@ -1187,19 +1421,19 @@ routerSuite.add(new Y.Test.Case({
             Assert.fail(req.path + ' should not match `nan` param');
         });
 
-        router._dispatch('/posts/1', {});
-        router._dispatch('/users/', {});
-        router._dispatch('/files/app.js', {});
+        router._dispatch({path: '/posts/1'}, {});
+        router._dispatch({path: '/users/'}, {});
+        router._dispatch({path: '/files/app.js'}, {});
 
         // Truthy checks.
-        router._dispatch('/zero/0', {});
-        router._dispatch('/empty/bla', {});
+        router._dispatch({path: '/zero/0'}, {});
+        router._dispatch({path: '/empty/bla'}, {});
 
         // Falsy checks.
-        router._dispatch('/falze/false', {});
-        router._dispatch('/nul/null', {});
-        router._dispatch('/undef/undefined', {});
-        router._dispatch('/nan/NaN', {});
+        router._dispatch({path: '/falze/false'}, {});
+        router._dispatch({path: '/nul/null'}, {});
+        router._dispatch({path: '/undef/undefined'}, {});
+        router._dispatch({path: '/nan/NaN'}, {});
 
         Assert.areSame(5, calls);
         Assert.areSame(4, paramCalls);
@@ -1223,7 +1457,7 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
         });
 
-        router._dispatch('/users/ericf', {});
+        router._dispatch({path: '/users/ericf'}, {});
 
         Assert.areSame(1, calls);
         Assert.areSame(1, paramCalls);
@@ -1254,7 +1488,7 @@ routerSuite.add(new Y.Test.Case({
             Assert.areSame('ericf', req.params.username);
         });
 
-        router._dispatch('/users/EricF', {});
+        router._dispatch({path: '/users/EricF'}, {});
 
         Assert.areSame(1, calls);
         Assert.areSame(1, paramCalls);
@@ -1283,8 +1517,8 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
         });
 
-        router._dispatch('/posts/asdf', {});
-        router._dispatch('/users/eric,ryan', {});
+        router._dispatch({path: '/posts/asdf'}, {});
+        router._dispatch({path: '/users/eric,ryan'}, {});
 
         Assert.areSame(2, calls);
     },
@@ -1310,34 +1544,9 @@ routerSuite.add(new Y.Test.Case({
             Assert.areSame(0, req.pendingRoutes, 'there should be 0 pending routes');
         });
 
-        router._dispatch('/abc', {});
+        router._dispatch({path: '/abc'}, {});
 
         Assert.areSame(3, calls, '3 routes should be called');
-    },
-
-    'calling `res()` should have the same result as calling `next()`': function () {
-        var calls  = 0,
-            router = this.router = new Y.Router();
-
-        router.route('/foo', function (req, res, next) {
-            calls += 1;
-            Assert.isFunction(res);
-            res();
-        });
-
-        router.route('/foo', function (req, res, next) {
-            calls += 1;
-            Assert.isFunction(next);
-            next();
-        });
-
-        router.route('/foo', function () {
-            calls += 1;
-        });
-
-        router._dispatch('/foo', {});
-
-        Assert.areSame(3, calls);
     },
 
     'calling `next()` should pass control to the next matching route': function () {
@@ -1363,7 +1572,7 @@ routerSuite.add(new Y.Test.Case({
             Assert.fail('final route should not be called');
         });
 
-        router._dispatch('/foo', {});
+        router._dispatch({path: '/foo'}, {});
 
         Assert.areSame(3, calls);
     },
@@ -1376,8 +1585,8 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
         });
 
-        router._dispatch('/foo', {});
-        router._dispatch('/bar', {});
+        router._dispatch({path: '/foo'}, {});
+        router._dispatch({path: '/bar'}, {});
 
         Assert.areSame(2, calls);
     },
@@ -1398,10 +1607,10 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
         });
 
-        router._dispatch('/foo/1', {});
-        router._dispatch('/foo/1/2/bar', {});
-        router._dispatch('/barbar', {});
-        router._dispatch('/bar/1', {});
+        router._dispatch({path: '/foo/1'}, {});
+        router._dispatch({path: '/foo/1/2/bar'}, {});
+        router._dispatch({path: '/barbar'}, {});
+        router._dispatch({path: '/bar/1'}, {});
 
         Assert.areSame(4, calls);
     },

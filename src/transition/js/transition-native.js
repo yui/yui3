@@ -505,7 +505,7 @@ Y.Node.prototype.transition = function(name, config, callback) {
 
         fxConfig = Transition.fx[name];
 
-        if (config && typeof config !== 'boolean') {
+        if (config && typeof config === 'object') {
             config = Y.clone(config);
 
             for (prop in fxConfig) {
@@ -634,15 +634,23 @@ Y.NodeList.prototype.hide = function(name, config, callback) {
  *   @param {Object} config An object containing one or more style properties, a duration and an easing.
  *   @param {Function} callback A function to run after the transition has completed. The callback fires
  *       once per item in the NodeList.
+ *   @param {Boolean} callbackOnce If true, the callback will be called only after the
+ *       last transition has completed
  *   @chainable
 */
-Y.NodeList.prototype.transition = function(config, callback) {
+Y.NodeList.prototype.transition = function(config, callback, callbackOnce) {
     var nodes = this._nodes,
-        i = 0,
+        size = this.size(),
+         i = 0,
+        callbackOnce = callbackOnce === true,
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).transition(config, callback);
+        if (i < size && callbackOnce){
+            Y.one(node).transition(config);
+        } else {
+            Y.one(node).transition(config, callback);
+        }
     }
 
     return this;

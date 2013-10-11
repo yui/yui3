@@ -402,6 +402,7 @@ var columns = [
             }
 
             o.cell.set('text', prefix + profit.toFixed(2));
+            return false;
         }
     }
 ];
@@ -600,7 +601,7 @@ Y.DataTable.BodyView.Formatters.currency = function (col) {
 
 <p>
     <strong>`nodeFormatter`s should return `false`</strong>.
-    <a href="formatter-vs-nodeformatter">See below</a> for details.
+    <a href="#formatter-vs-nodeformatter">See below</a> for details.
 </p>
 
 <p>
@@ -2690,6 +2691,7 @@ nodeFormatter: function (o) {
     }
 
     o.cell.setHTML(o.value);
+    return false;
 }
 ```
 

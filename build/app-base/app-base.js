@@ -555,6 +555,24 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Gets a request object that can be passed to a route handler.
+
+    This delegates to `Y.Router`'s `_getRequest()` method and adds a reference
+    to this app instance at `req.app`.
+
+    @method _getRequest
+    @param {String} src What initiated the URL change and need for the request.
+    @return {Object} Request object.
+    @protected
+    @see Router._getRequest
+    **/
+    _getRequest: function () {
+        var req = Router.prototype._getRequest.apply(this, arguments);
+        req.app = this;
+        return req;
+    },
+
+    /**
     Getter for the `viewContainer` attribute.
 
     @method _getViewContainer

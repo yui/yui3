@@ -6,6 +6,66 @@ App Framework Change History
 
 * No changes.
 
+3.13.0
+------
+
+### App
+
+* Added `req.aoo` which is a reference to the app instance.
+
+### Router
+
+* __[!]__ A router's `root` path is now enforced as its mount point. Routers
+  with a specified `root` will only consider paths as matching its route handles
+  if that path is semantically within the router's `root` path. For example:
+
+    ```js
+    router.set('root', '/app/');
+
+    router.hasRoute('/app/');    // => true
+    router.hasRoute('/app/foo'); // => true
+    router.hasRoute('/bar/');    // => false
+    ```
+
+  This fixed some issues with paths being erroneously considered matching even
+  when they were not semantically within the router's `root` path. ([#1083][])
+
+* __[!]__ The `getPath()` method now returns the _full_ current path, whereas
+  before it returned the current path relative to the router's `root`. This also
+  affects `req.path` which is now the full path as well.
+
+* __[!]__ Changed Router's dispatching process to take `req` and `res` objects
+  instead of creating them inside the `_dispatch()` method. This refactor also
+  removed the deprecated support for calling `res()` as an alias for `next()`.
+
+* Router now accepts route objects through its `route()` method. These route
+  objects are the same as those specified in a router's `routes` attribute and
+  what Router uses for its internal storage of its routes. If these route
+  objects contain a regular expression as their `path` or they contain a `regex`
+  or `regexp` property, then they are considered fully-processed. Route objects
+  can also contain any arbitrary metadata which will be preserved. ([#1067][])
+
+* Added `req.router` which is a reference to the router instance.
+
+* Added `req.route` which is a reference to the current route object whose
+  callbacks are being dispatched.
+
+* Calling the `dispatch()` method will now set `req.src` to `"dispatch"`.
+
+### Model
+
+* Added ModelSync.Local, an extension which provides a `sync()` implementation
+  for `localStorage` that can be mixed into your Models and ModelLists.
+  Examples of it in use can be seen in the [YUI TodoMVC][] example. ([#1218][])
+
+
+[#1067]: https://github.com/yui/yui3/issues/1067
+[#1083]: https://github.com/yui/yui3/issues/1083
+[#1218]: https://github.com/yui/yui3/issues/1218
+
+[YUI TodoMVC]: https://github.com/tastejs/todomvc/tree/gh-pages/architecture-examples/yui
+
+
 3.12.0
 ------
 

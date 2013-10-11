@@ -80,6 +80,11 @@
             "jsfiles": [
                 "keynav.js"
             ]
+        },
+        "datatable-highlight": {
+            "jsfiles": [
+                "highlight.js"
+            ]
         }
     }
 }
