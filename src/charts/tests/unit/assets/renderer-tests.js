@@ -1,5 +1,6 @@
 YUI.add('renderer-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: Renderer"),
+        DOC = Y.config.doc,
 
     RendererTests = new Y.Test.Case({
         name: "Renderer Tests",
@@ -11,6 +12,7 @@ YUI.add('renderer-tests', function(Y) {
 
         tearDown: function() {
             this.renderer.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
 
         testRenderer: function() {
