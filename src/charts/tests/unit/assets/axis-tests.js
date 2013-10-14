@@ -133,6 +133,17 @@ YUI.add('axis-tests', function(Y) {
         },
 
         _setTitle: function() {
+        },
+        
+        _setBB: function() {
+            return this._mockGraphic;
+        },
+
+        _setCB: function() {
+            if(!this._mockContentBox) {
+                this._mockContentBox = new Y.MockNode(this);
+            }
+            return this._mockContentBox;
         }
     }, { 
        ATTRS: {
@@ -147,7 +158,7 @@ YUI.add('axis-tests', function(Y) {
                     };
                 }
             },
-
+/*
             boundingBox: {
                 lazyAdd: true,
 
@@ -170,7 +181,7 @@ YUI.add('axis-tests', function(Y) {
                     return this._mockContentBox;
                 }
             },
-
+*/
             graphic: {
                 readOnly: true,
                 getter: function() {
@@ -990,6 +1001,7 @@ YUI.add('axis-tests', function(Y) {
 
         tearDown: function() {
             this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: Axis()" : function() {
@@ -998,8 +1010,9 @@ YUI.add('axis-tests', function(Y) {
         },
 
         "test: _getDefaultMargins()" : function() {
-            var defaultMargins = this._defaultMargins[this.position];
-            margins = this.axisLayout._getDefaultMargins();
+            var key,
+                defaultMargins = this._defaultMargins[this.position],
+                margins = this.axisLayout._getDefaultMargins();
             for(key in defaultMargins) {
                 if(defaultMargins.hasOwnProperty(key)) {
                     Y.Assert.isTrue(margins.hasOwnProperty(key), "The _defaultMargins object should have a " + key + " property.");
@@ -1077,7 +1090,7 @@ YUI.add('axis-tests', function(Y) {
                                 right: 0,
                                 bottom: 0
                             }
-                        }
+                        };
                     }
                 },
                 point = {
@@ -1089,7 +1102,7 @@ YUI.add('axis-tests', function(Y) {
             mockAxis.drawLine = function(path, start, end) {
                 mockAxis.start = start;
                 mockAxis.end = end;
-            }
+            };
             this.axisLayout.drawTick.apply(mockAxis, [{}, point, {tickLength: tickLength}]);
         },
 
@@ -1273,6 +1286,7 @@ YUI.add('axis-tests', function(Y) {
                     Y.Assert.areEqual(testProps[key], positionLabelProps[key], "The value of " + key + " should equal " + testProps[key] + ".");
                 }
             }
+            mockAxis.destroy(true);
         },
 
         "test: positionLabel()" : function() {
@@ -1301,7 +1315,7 @@ YUI.add('axis-tests', function(Y) {
                   offsetHeight: labelHeight
                 },
                 styles = mockAxis.get("styles"),
-                titleMargin = 
+                titleMargin, 
                 tickOffset = mockAxis.get(position + "TickOffset"),
                 testBounds,
                 margin = styles.title.margin,
@@ -1341,7 +1355,7 @@ YUI.add('axis-tests', function(Y) {
                 mockAxis._labelRotationProps = this._getRotationProps(rotation); 
                 mockAxis._totalTitleSize = totalTitleSize;
                 rotationProps = this._getRotationProps(rotation);
-                this.axisLayout.positionLabel.apply(mockAxis, [mockLabel, point, styles, 5])
+                this.axisLayout.positionLabel.apply(mockAxis, [mockLabel, point, styles, 5]);
                 positionLabelProps = mockAxis.positionLabelProps;
                 testProps = this._getPositionLabelProps(labelWidth, labelHeight, point, tickOffset, rotationProps, maxLabelSize, totalTitleSize, margin); 
                 for(key in testProps) {
@@ -1369,7 +1383,7 @@ YUI.add('axis-tests', function(Y) {
                 mockAxis._labelRotationProps = this._getRotationProps(rotation); 
                 mockAxis._totalTitleSize = totalTitleSize;
                 rotationProps = this._getRotationProps(rotation);
-                this.axisLayout.positionLabel.apply(mockAxis, [mockLabel, point, styles, 5])
+                this.axisLayout.positionLabel.apply(mockAxis, [mockLabel, point, styles, 5]);
                 positionLabelProps = mockAxis.positionLabelProps;
                 testProps = this._getPositionLabelProps(labelWidth, labelHeight, point, tickOffset, rotationProps, maxLabelSize, totalTitleSize, margin); 
                 for(key in testProps) {
@@ -1379,6 +1393,7 @@ YUI.add('axis-tests', function(Y) {
                     }
                 }
             }
+            mockAxis.destroy(true);
         },
 
         "test: _setRotationCoords()" : function() {
@@ -1407,8 +1422,7 @@ YUI.add('axis-tests', function(Y) {
         },
 
         "test: setCalculatedSize()" : function() {
-            var dumbdiv = document.createElement('div'),
-                margin = {top: 0, right: 0, bottom: 0, left: 0},
+            var margin = {top: 0, right: 0, bottom: 0, left: 0},
                 mockAxis = new Y.MockAxisWithBucket({
                     styles: {
                         label: {
@@ -1424,7 +1438,6 @@ YUI.add('axis-tests', function(Y) {
                 tickOffset = axis.get(position + "TickOffset"),
                 maxLabelSize = 130,
                 totalTitleSize = 22,
-                explicitSize,
                 bucket,
                 key,
                 testProps;
@@ -1433,7 +1446,6 @@ YUI.add('axis-tests', function(Y) {
             axisLayout.setCalculatedSize.apply(mockAxis);
             bucket = mockAxis._bucket;
             testProps = this._getCalculatedSize(tickOffset, margin, maxLabelSize, totalTitleSize);
-            
             for(key in testProps) {
                 if(testProps.hasOwnProperty(key)) { 
                     Y.Assert.isTrue(bucket.hasOwnProperty(key), "The " + key + " property should exist on the mockAxis' " + bucket + ".");
@@ -1598,7 +1610,7 @@ YUI.add('axis-tests', function(Y) {
                 };
             mockAxis._getLabelByIndex = function() {
                 mockAxis.index = arguments[0];
-                mockAxis.length = arguments[1]
+                mockAxis.length = arguments[1];
             };
             this.axis.getLabelByIndex.apply(mockAxis, [index, length]);
             Y.Assert.areEqual(index, mockAxis.index, "The index should equal " + index + ".");
@@ -1612,7 +1624,7 @@ YUI.add('axis-tests', function(Y) {
                 axisDrawn = false;
             mockAxis._drawAxis = function() {
                 axisDrawn = true;
-            }
+            };
             mockAxis.get = function(val) {
                 return mockAxis.rendered;  
             };
@@ -1721,6 +1733,7 @@ YUI.add('axis-tests', function(Y) {
             mockAxis._thisHasRendered = true;
             axis._updateHandler.apply(mockAxis);
             Y.Assert.isTrue(mockAxis._thisHasDrawn, "The axis should have drawn.");
+            mockAxis.destroy(true);
         },
 
         "test: renderUI()" : function() {
@@ -1735,6 +1748,7 @@ YUI.add('axis-tests', function(Y) {
                 });
             this.axis.renderUI.apply(mockAxis);
             Y.Assert.areEqual(position, mockAxis._updateGraphicResult, "The position of the axis should be " + position + ".");
+            mockAxis.destroy(true);
         },
 
         "test: syncUI()" : function() {
@@ -1748,11 +1762,12 @@ YUI.add('axis-tests', function(Y) {
                 mockAxis = new SyncUIAxis(),
                 axisLayout = this.axisLayout;
                 
-                this.axis.syncUI.apply(mockAxis);
-                Y.Assert.isTrue(mockAxis._thisHasDrawn, "The axis should have drawn.");
-                mockAxis._layout = axisLayout;
-                this.axis.syncUI.apply(mockAxis);
-                Y.Assert.isTrue(mockAxis._thisHasDrawn, "The axis should have drawn.");
+            this.axis.syncUI.apply(mockAxis);
+            Y.Assert.isTrue(mockAxis._thisHasDrawn, "The axis should have drawn.");
+            mockAxis._layout = axisLayout;
+            this.axis.syncUI.apply(mockAxis);
+            Y.Assert.isTrue(mockAxis._thisHasDrawn, "The axis should have drawn.");
+            mockAxis.destroy(true);
         },
 
         "test: _setCanvas()" : function() {
@@ -1849,7 +1864,6 @@ YUI.add('axis-tests', function(Y) {
                     Y.Assert.areEqual(testBucket[key], bucket[key], "The " + key + " property should be equal to " + testBucket[key] + ".");
                 }
             }
-
         },
 
         "test: drawLine()" : function() {
@@ -1886,7 +1900,8 @@ YUI.add('axis-tests', function(Y) {
                 testRotationProps,
                 axisRotationProps,
                 testRotation,
-                setRotation = 45;
+                setRotation = 45,
+                key;
             this.axis.set("position", position);
             if(position === "left") {
                 testRotation = -90;
@@ -1922,7 +1937,6 @@ YUI.add('axis-tests', function(Y) {
 
                 }
             }
-
         },
 
         "test: _drawAxis()" : function() {
@@ -2181,7 +2195,8 @@ YUI.add('axis-tests', function(Y) {
                     bottom: 0,
                     left: 0
                 },
-                totalTitleSize;
+                totalTitleSize,
+                key;
             mockLabel.appendChild = function(val) {
                 mockLabel.children.push(val);
             };
@@ -2370,7 +2385,6 @@ YUI.add('axis-tests', function(Y) {
                     Y.Assert.areEqual(testMatrix.dx, matrix.dx, "The dx property of the matrices should be the same.");
                     Y.Assert.areEqual(testMatrix.dy, matrix.dy, "The dy property of the matrices should be the same.");
                 }
-
         },
 
         "test: getMaxLabelBounds()/getMinLabelBounds()" : function() {
@@ -2506,6 +2520,7 @@ YUI.add('axis-tests', function(Y) {
                     }
                 }
             }
+            mockAxis.destroy(true);
         },
 
         "test: destructor()" : function() {
@@ -2563,7 +2578,6 @@ YUI.add('axis-tests', function(Y) {
             var axis = this.axis,
                 label,
                 labels = [],
-                axis = this.axis,
                 i,
                 len = 11;
             this.axis._clearLabelCache();
@@ -2578,6 +2592,7 @@ YUI.add('axis-tests', function(Y) {
             this.axis._clearLabelCache();
             Y.Assert.areEqual(0, axis._labelCache.length, "The should not be any labels in the cache.");
         },
+        
         "test: getMajorUnitDistance()" : function() {
             var position = this.position,
                 vertical = position === "left" || position === "right",
@@ -2680,8 +2695,7 @@ YUI.add('axis-tests', function(Y) {
             Y.Assert.isTrue(axis._labelValuesExplicitlySet, "The value of the _labelValuesExplicitlySet should bet true.");
             axis.set("labelValues", testLabelValues2, {src: "internal"});
             Y.Assert.areEqual(testLabelValues2, axis.get("labelValues"), "The labelValues attribute should have been set.");
-            //Don't run this test until fix for #2533172 is available  
-            //Y.Assert.isFalse(axis._labelValuesExplicitlySet, "The value of the _labelValuesExplicitlySet should be false.");
+            Y.Assert.isFalse(axis._labelValuesExplicitlySet, "The value of the _labelValuesExplicitlySet should be false.");
 
         },
 
@@ -2713,6 +2727,7 @@ YUI.add('axis-tests', function(Y) {
     });
 
     var suite = new Y.Test.Suite("Charts: Axis"),
+        DOC = Y.config.doc,
         leftAxisTests = new Y.AxisTest({
             name: "Left Axis Tests",
             position: "left",
@@ -2733,7 +2748,7 @@ YUI.add('axis-tests', function(Y) {
             position: "bottom",
             width: 700
         });
-
+    
     suite.add(leftAxisTests);
     suite.add(topAxisTests);
     suite.add(rightAxisTests);

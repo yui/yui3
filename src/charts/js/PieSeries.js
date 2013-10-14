@@ -126,7 +126,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
         }
         this.after("categoryAxisChange", this.categoryAxisChangeHandler);
         this.after("valueAxisChange", this.valueAxisChangeHandler);
-        this.after("stylesChange", this._updateHandler);
+        this._stylesChangeHandle = this.after("stylesChange", this._updateHandler);
         this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
 

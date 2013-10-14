@@ -1,5 +1,6 @@
 YUI.add('series-line-tests', function(Y) {
-    var MockLineSeries = Y.Base.create("mockLineSeries", Y.LineSeries, [], {
+    var DOC = Y.config.doc,
+        MockLineSeries = Y.Base.create("mockLineSeries", Y.LineSeries, [], {
             _linesDrawn: false,
 
             drawLines: function() {
@@ -16,7 +17,8 @@ YUI.add('series-line-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {
