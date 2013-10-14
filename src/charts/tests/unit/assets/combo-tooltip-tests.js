@@ -1,7 +1,10 @@
 YUI.add('combo-tooltip-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: ComboTooltip"),
         ASSERT = Y.Assert,
-        ObjectAssert = Y.ObjectAssert;
+        ObjectAssert = Y.ObjectAssert,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
             
             
     //-------------------------------------------------------------------------
@@ -34,9 +37,6 @@ YUI.add('combo-tooltip-tests', function(Y) {
          */
         setUp : function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
-            
             //create the chart 
             this.chart = new Y.Chart(this.attrCfg);
 
@@ -56,7 +56,7 @@ YUI.add('combo-tooltip-tests', function(Y) {
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
         
         //---------------------------------------------------------------------
@@ -209,7 +209,7 @@ YUI.add('combo-tooltip-tests', function(Y) {
                 seriesAxis = direction == "horizontal" ? "y" : "x",
                 markerXY,
                 markerWidth,
-                markerHeight
+                markerHeight,
                 getNumber = Y.TimeAxis.prototype._getNumber;
             for(; i < len; ++i)
             {
@@ -309,7 +309,7 @@ YUI.add('combo-tooltip-tests', function(Y) {
         var cfg = {
             type: chartType,
             dataProvider: dataValues,
-            render: "#mychart",
+            render: "#testdiv",
             horizontalGridlines: true,
             verticalGridlines: true,
             seriesCollection: [

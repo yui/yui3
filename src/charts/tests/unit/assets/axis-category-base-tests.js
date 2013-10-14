@@ -2,7 +2,7 @@ YUI.add('axis-category-base-tests', function(Y) {
     Y.CategoryAxisBaseTest = function() {
         Y.CategoryAxisBaseTest.superclass.constructor.apply(this, arguments);
         this.prepValues();
-    }
+    };
     Y.extend(Y.CategoryAxisBaseTest, Y.ChartTestTemplate, {
         prepValues : function() {
             this.dataMaximum = this.dataProvider.length - 1;
@@ -17,7 +17,9 @@ YUI.add('axis-category-base-tests', function(Y) {
 
         tearDown: function() {
             this.axis = null;
+            Y.Event.purgeElement(DOC, false);
         },
+
 
         "test: get('type')" : function() {
             Y.Assert.isInstanceOf(Y.CategoryAxisBase, this.axis, "The axis should be and instanceof CategoryAxisBase.");
@@ -126,7 +128,7 @@ YUI.add('axis-category-base-tests', function(Y) {
         "test: get('dataMaximum')" : function() {
             var dataMaximum;
             this.axis.set("keys", this.keys);
-            dataMaximum = this.axis.get("dataMaximum")
+            dataMaximum = this.axis.get("dataMaximum");
             Y.Assert.isTrue(dataMaximum >= this.dataMaximum, "The value for the attribute dataMaximum (" + dataMaximum + ") should be greater than or equal to " + this.dataMaximum + ".");
         },
 
@@ -233,6 +235,7 @@ YUI.add('axis-category-base-tests', function(Y) {
     });
     
     var suite = new Y.Test.Suite("Charts: CategoryAxisBase"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

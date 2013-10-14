@@ -97,8 +97,7 @@ ChartBase.ATTRS = {
         {
             if(this._description)
             {
-                this._description.setContent("");
-                this._description.appendChild(DOCUMENT.createTextNode(val));
+                this._description.set("text", val);
             }
             return val;
         }
@@ -548,7 +547,7 @@ ChartBase.prototype = {
         cb.setAttribute("aria-describedby", id);
         description.set("id", id);
         description.set("tabIndex", -1);
-        description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
+        description.set("text", this.get("ariaDescription"));
         liveRegion.set("id", "live-region");
         liveRegion.set("aria-live", "polite");
         liveRegion.set("aria-atomic", "true");
@@ -616,8 +615,7 @@ ChartBase.prototype = {
             {
                 e.halt();
                 msg = this._getAriaMessage(numKey);
-                this._liveRegion.setContent("");
-                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
+                this._liveRegion.set("text", msg);
             }
         }, this), this.get("contentBox"));
         if(interactionType === "marker")
@@ -1016,7 +1014,15 @@ ChartBase.prototype = {
         if(Y_Lang.isObject(val))
         {
             styles = val.styles;
-            node = Y.one(val.node) || tt.node;
+            if(val.node && tt.node)
+            {
+                tt.node.destroy(true);
+                node = Y.one(val.node);
+            }
+            else
+            {
+                node = tt.node;
+            }
             if(styles)
             {
                 for(i in styles)

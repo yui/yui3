@@ -1,4 +1,5 @@
 YUI.add('series-cartesian-tests', function(Y) {
+    var DOC = Y.config.doc;
     Y.CartesianSeriesTest = function() {
         Y.CartesianSeriesTest.superclass.constructor.apply(this, arguments);
     };
@@ -8,7 +9,8 @@ YUI.add('series-cartesian-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
         
         //Returns an object literal containing x and y coordinates, xMarkerPlane and yMarkerPlane arrays, leftOrigin and bottomOrigin.
@@ -296,7 +298,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                 xKey2: xKeyData,
                 yKey1: yKeyData,
                 yKey2: yKeyData   
-            }
+            };
             Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");    
         },
     
@@ -729,7 +731,6 @@ YUI.add('series-cartesian-tests', function(Y) {
                 },
                 series = this.series,
                 len = 10,
-                data1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                 data1 = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                 data2 = {
                     key1: data1,
