@@ -104,6 +104,7 @@ Y.mix(Resolver.prototype, {
         }
 
         if (this._status === 'rejected') {
+            if (!this._errbacks.length) { Y.log('This promise was rejected but no error handlers were registered to it', 'info'); }
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
