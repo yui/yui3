@@ -1,5 +1,6 @@
 YUI.add('series-areaspline-stacked-tests', function(Y) {
-    var MockStackedAreaSplineSeries = Y.Base.create("mockStackedAreaSplineSeries", Y.StackedAreaSplineSeries, [], {
+    var DOC = Y.config.doc,
+        MockStackedAreaSplineSeries = Y.Base.create("mockStackedAreaSplineSeries", Y.StackedAreaSplineSeries, [], {
             _areaSplineDrawn: false,
             
             _coordinatesStacked: false,
@@ -22,7 +23,8 @@ YUI.add('series-areaspline-stacked-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {

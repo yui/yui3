@@ -18,14 +18,17 @@ YUI.add('charts-ariaspline-tests', function(Y) {
         defaultPieAriaDescription = "Use the left and right keys to navigate through items.",
         seriesKeys = ["values", "revenue"],
         width = 400,
-        height = 300;
+        height = 300,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     function AriaTests(cfg, testConfig)
     {
         AriaTests.superclass.constructor.apply(this);
         this.attrConfig = cfg;
         this.name = testConfig.type + " Aria Tests";
-        this.defaultAriaDescription = testConfig.defaultAriaDescription;;
+        this.defaultAriaDescription = testConfig.defaultAriaDescription;
     }
     Y.extend(AriaTests, Y.Test.Case, {
         defaultAriaLabel: "Chart Application",
@@ -33,15 +36,13 @@ YUI.add('charts-ariaspline-tests', function(Y) {
         changedAriaLabel: "This is a new ariaLabel value.",
 
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var mychart = new Y.Chart(this.attrConfig);
             this.chart = mychart;
         },
         
         tearDown: function() {
             this.chart.destroy();
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
         
         "test:getAriaLabel()": function()
@@ -72,7 +73,7 @@ YUI.add('charts-ariaspline-tests', function(Y) {
     
     var splineTests = new Y.AriaTests({
         dataProvider: myDataValues,
-        render: "#mychart",
+        render: "#testdiv",
         type: "spline",
         width: width,
         height: height
@@ -82,7 +83,7 @@ YUI.add('charts-ariaspline-tests', function(Y) {
     }),
     stackedSplineTests = new Y.AriaTests({
         dataProvider: myDataValues,
-        render: "#mychart",
+        render: "#testdiv",
         type: "spline",
         stacked: true,
         width: width,
@@ -93,7 +94,7 @@ YUI.add('charts-ariaspline-tests', function(Y) {
     }),
     comboSplineTests = new Y.AriaTests({
         dataProvider: myDataValues,
-        render: "#mychart",
+        render: "#testdiv",
         type: "combospline",
         width: width,
         height: height
@@ -103,7 +104,7 @@ YUI.add('charts-ariaspline-tests', function(Y) {
     }),
     stackedComboSplineTests = new Y.AriaTests({
         dataProvider: myDataValues,
-        render: "#mychart",
+        render: "#testdiv",
         type: "combospline",
         stacked: true,
         width: width,

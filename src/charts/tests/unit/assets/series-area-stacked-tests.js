@@ -1,5 +1,6 @@
 YUI.add('series-area-stacked-tests', function(Y) {
-    var MockStackedAreaSeries = Y.Base.create("mockStackedAreaSeries", Y.Base, [], {
+    var DOC = Y.config.doc,
+        MockStackedAreaSeries = Y.Base.create("mockStackedAreaSeries", Y.Base, [], {
             _getStackedClosingPoints: function() {
                 return [true];
             },
@@ -26,7 +27,8 @@ YUI.add('series-area-stacked-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {
