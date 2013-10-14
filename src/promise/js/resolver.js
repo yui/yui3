@@ -52,7 +52,7 @@ function Resolver(promise) {
     @type Any
     @private
     **/
-    this._result = null
+    this._result = null;
 }
 
 Y.mix(Resolver.prototype, {
