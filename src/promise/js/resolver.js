@@ -224,8 +224,10 @@ Y.mix(Resolver.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
+        Y.log('resolver.getStatus() will be deprecated in the future', 'warn');
         return this._status;
     },
 

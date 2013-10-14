@@ -101,8 +101,10 @@ Y.mix(Promise.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
+        Y.log('promise.getStatus() will be deprecated in the future', 'warn');
         return this._resolver.getStatus();
     }
 });
