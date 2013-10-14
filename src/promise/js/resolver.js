@@ -44,6 +44,15 @@ function Resolver(promise) {
     @private
     **/
     this._status = 'pending';
+
+    /**
+    This value that this promise represents.
+
+    @property _result
+    @type Any
+    @private
+    **/
+    this._result = null
 }
 
 Y.mix(Resolver.prototype, {
@@ -59,9 +68,10 @@ Y.mix(Resolver.prototype, {
     fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
+            this._status = 'fulfilled';
         }
 
-        if (this._status !== 'rejected') {
+        if (this._status === 'fulfilled') {
             this._notify(this._callbacks, this._result);
 
             // Reset the callback list so that future calls to fulfill()
@@ -75,8 +85,6 @@ Y.mix(Resolver.prototype, {
             // there is no point in keeping the list. Remove it to help
             // garbage collection
             this._errbacks = null;
-
-            this._status = 'fulfilled';
         }
     },
 
@@ -92,16 +100,15 @@ Y.mix(Resolver.prototype, {
     reject: function (reason) {
         if (this._status === 'pending') {
             this._result = reason;
+            this._status = 'rejected';
         }
 
-        if (this._status !== 'fulfilled') {
+        if (this._status === 'rejected') {
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
             this._callbacks = null;
             this._errbacks = [];
-
-            this._status = 'rejected';
         }
     },
 
