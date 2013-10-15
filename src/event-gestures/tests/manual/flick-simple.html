@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
+    <title>event-flick simple manual test</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        h1 {
+            margin-bottom: 0;
+        }
+        h2 {
+            font-weight: normal;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        #flickContainer, #flickContainer2, #flickContainer3 {
+            text-align: center;
+            height: 50%;
+            color: white;
+            padding: 40px 0;
+        }
+
+        #flickContainer {
+            background: #42d692;
+        }
+
+        #flickContainer2 {
+            background: rgb(253, 122, 2);
+        }
+
+        #flickContainer3 {
+            background: blue;
+        }
+
+
+        #clearBtn {
+            padding: 20px 30px;
+            font-size: 160%;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+
+        }
+        #log, #log2 {
+            font-family: monospace;
+            font-size: 18px;
+            color: black;
+            text-align: center;
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <button class="pure-button pure-button-primary" id="clearBtn">Clear log</button>
+    <div class="pure-g-r">
+        <div class="pure-u-1-2">
+            <div id="flickContainer">
+
+                <h1>Flick!</h1>
+                <h2 id="flickDirection">Basic Flick with no options</h2>
+                <div id="log"></div>
+            </div>
+        </div>
+        <div class="pure-u-1-2">
+            <div id="flickContainer2">
+
+                <h1>Flick!</h1>
+                <h2 id="flickDirection">Flick with minDistance = 50, minVelocity = 1 px/s, preventDefault = true</h2>
+                <div id="log2"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="../../../../build/yui/yui.js"></script>
+
+
+    <script>
+        YUI({
+            filter: 'raw',
+            combine: false
+        }).use('event-flick', 'node', function (Y) {
+
+            var container = Y.one('#flickContainer'),
+                container2 = Y.one('#flickContainer2'),
+                h2 = Y.one('#flickDirection'),
+                log = Y.one('#log'),
+                log2 = Y.one('#log2'),
+                clearBtn = Y.one('#clearBtn');
+
+            clearBtn.on('click', function (e) {
+                log.set('innerHTML', '');
+                log2.set('innerHTML', '');
+            });
+
+
+
+            container.on(['flick', 'flickright', 'flickleft', 'flickup', 'flickdown'], function (e) {
+                log.appendChild('<li><strong>' + e.type + '</strong> with distance: ' + e.flick.distance + ' and velocity: ' + e.flick.velocity + '</li>');
+                console.log(e);
+            });
+
+            container2.on(['flick', 'flickright', 'flickleft', 'flickup', 'flickdown'], function (e) {
+                log2.appendChild('<li><strong>' + e.type + '</strong> with distance: ' + e.flick.distance + ' and velocity: ' + e.flick.velocity + '</li>');
+                console.log(e);
+            }, {minDistance: 50, minVelocity: 1, preventDefault: true});
+
+
+
+
+        });
+    </script>
+</body>
+</html>
