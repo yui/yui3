@@ -104,7 +104,7 @@ Y.mix(Promise.prototype, {
     @deprecated
     **/
     getStatus: function () {
-        Y.log('promise.getStatus() will be deprecated in the future', 'warn');
+        Y.log('promise.getStatus() will be removed in the future', 'warn', 'Promise');
         return this._resolver.getStatus();
     }
 });
