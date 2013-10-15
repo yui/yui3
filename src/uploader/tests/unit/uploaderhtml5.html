@@ -241,13 +241,12 @@
                     ev.preventDefault();
                     ev.stopPropagation();
                     return false;
-                }
+                };
 
                 this.basicuploader._fileInputField.on("click", function (ev) {ev.preventDefault(); ev.stopPropagation(); return false;});
 
                 this.basicuploader.openFileSelectDialog();
             },
-            */
 
             testUploadCalls: function () {
                var cfg = {
