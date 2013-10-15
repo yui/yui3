@@ -268,8 +268,20 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList,
+            errbackList;
+
+        if (this._callbacks) {
+            callbackList = this._callbacks;
+        } else {
+            callbackList = this._callbacks = [];
+        }
+
+        if (this._errbacks) {
+            errbackList = this._errbacks;
+        } else {
+            errbackList = this._errbacks = [];
+        }
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.

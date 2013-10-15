@@ -1935,10 +1935,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
-                    if (found.configFn) {
-                        m.configFn = found.configFn;
+                    if(m) {
+                        if (found.configFn) {
+                            m.configFn = found.configFn;
+                        }
+                        m.temp = true;
                     }
-                    m.temp = true;
                 }
             }
         } else {
