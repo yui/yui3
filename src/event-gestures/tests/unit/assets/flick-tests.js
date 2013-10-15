@@ -109,7 +109,6 @@ YUI.add('flick-tests', function(Y) {
                 }
             };
             eventData.flick._onStart(event, node, sub, {});
-            console.log(sub['_fs']);
             Assert.isNotUndefined(sub['_feh'], 'End Event Handle not set');
             Assert.isNotUndefined(sub['_fs'], 'Event should be stored stored on sub[_fs]');
         },
@@ -583,7 +582,7 @@ YUI.add('flick-tests', function(Y) {
             }, 'y');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
-        },
+        }
     }));
 
 

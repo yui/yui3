@@ -103,12 +103,10 @@
 
             container.on(['flick', 'flickright', 'flickleft', 'flickup', 'flickdown'], function (e) {
                 log.appendChild('<li><strong>' + e.type + '</strong> with distance: ' + e.flick.distance + ' and velocity: ' + e.flick.velocity + '</li>');
-                console.log(e);
             });
 
             container2.on(['flick', 'flickright', 'flickleft', 'flickup', 'flickdown'], function (e) {
                 log2.appendChild('<li><strong>' + e.type + '</strong> with distance: ' + e.flick.distance + ' and velocity: ' + e.flick.velocity + '</li>');
-                console.log(e);
             }, {minDistance: 50, minVelocity: 1, preventDefault: true});
 
 
