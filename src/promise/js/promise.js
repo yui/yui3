@@ -121,18 +121,16 @@ method.
 @static
 **/
 Promise.isPromise = function (obj) {
+    var then;
     // We test promises by structure to be able to identify other
     // implementations' promises. This is important for cross compatibility and
     // In particular Y.when which should recognize any kind of promise
-    if (obj) {
-        // Use try...catch when retrieving obj.then. Return false if it throws
-        // See Promises/A+ 1.1
-        try {
-            return typeof obj.then === 'function';
-        } catch (e) {
-        }
-    }
-    return false;
+    // Use try...catch when retrieving obj.then. Return false if it throws
+    // See Promises/A+ 1.1
+    try {
+        then = obj.then;
+    } catch (_) {}
+    return typeof then === 'function';
 };
 
 Y.Promise = Promise;
