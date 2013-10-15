@@ -48,8 +48,8 @@ var GESTURE_MAP = Y.Event._GESTURE_MAP,
     _FLICK_START_HANDLE = "_fsh",
     _FLICK_END_HANDLE = "_feh",
     _FLICK_MOVE_HANDLE = "_fmh",
-
-    NODE_TYPE = "nodeType";
+    NODE_TYPE = "nodeType",
+    config;
 
 /**
  * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
@@ -68,7 +68,7 @@ var GESTURE_MAP = Y.Event._GESTURE_MAP,
  * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
  * @param cfg {Object} Optional. An object which specifies any of the following:
  * <dl>
- * <dt>minDistance (in pixels, defaults to 10)</dt>
+ * <dt>minDistance (in pixels, defaults to 100)</dt>
  * <dd>The minimum distance between start and end points, which would qualify the gesture as a flick.</dd>
  * <dt>minVelocity (in pixels/ms, defaults to 0)</dt>
  * <dd>The minimum velocity which would qualify the gesture as a flick.</dd>
@@ -81,18 +81,18 @@ var GESTURE_MAP = Y.Event._GESTURE_MAP,
  * </dl>
  * @return {EventHandle} the detach handle
  */
-
-Y.Event.define('flick', {
+config = {
+    _eventType: "flick",
 
     on: function (node, subscriber, ce) {
 
-        var startHandle = node.on(EVENT[START],
-            this._onStart,
-            this,
-            node,
-            subscriber,
-            ce);
-
+        //Using this instead of Y.bind() here because I find
+        //the order of arguments easier to read in this case
+        //since the callback gets the DOMEventFacade as it's first arg.
+        var self = this;
+        var startHandle = node.on(EVENT[START], function (e) {
+            self._onStart(e, node, subscriber, ce);
+        });
         subscriber[_FLICK_START_HANDLE] = startHandle;
     },
 
@@ -112,32 +112,37 @@ Y.Event.define('flick', {
         }
     },
 
-    processArgs: function(args) {
-        var params = (args.length > 3) ? Y.merge(args.splice(3, 1)[0]) : {};
+    processArgs: function(args, delegate) {
+        if (!delegate) {
+            var extra = args[3] || {};
+            // remove the extra arguments from the array as specified by
+            // http://yuilibrary.com/yui/docs/event/synths.html
+            args.splice(3,1);
 
-        if (!(MIN_VELOCITY in params)) {
-            params[MIN_VELOCITY] = this.MIN_VELOCITY;
+            if (extra && !extra[MIN_DISTANCE]) {
+                extra[MIN_DISTANCE] = this.MIN_DISTANCE;
+            }
+
+            if (extra && !extra[MIN_VELOCITY]) {
+                extra[MIN_VELOCITY] = this.MIN_VELOCITY;
+            }
+
+            if (extra && !extra[PREVENT_DEFAULT]) {
+                extra[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
+            }
+
+            return extra;
         }
-
-        if (!(MIN_DISTANCE in params)) {
-            params[MIN_DISTANCE] = this.MIN_DISTANCE;
-        }
-
-        if (!(PREVENT_DEFAULT in params)) {
-            params[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
-        }
-
-        return params;
     },
 
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
             endHandle,
-            moveHandle,
             doc,
-            preventDefault = subscriber._extra.preventDefault,
-            origE = e;
+            preventDefault = subscriber._extra[PREVENT_DEFAULT],
+            origE = e,
+            self = this;
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -163,7 +168,9 @@ Y.Event.define('flick', {
 
             doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
             if (!endHandle) {
-                endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
+                endHandle = doc.on(EVENT[END], function (e) {
+                    self._onEnd(e, node, subscriber, ce);
+                }, { standAlone: true });
                 subscriber[_FLICK_END_HANDLE] = endHandle;
             }
 
@@ -235,33 +242,106 @@ Y.Event.define('flick', {
                 if (params.axis) {
                     axis = params.axis;
                 } else {
-                    axis = (Math.abs(xyDistance[0]) >= Math.abs(xyDistance[1])) ? 'x' : 'y';
+                    axis = (Math.abs(xyDistance[0]) >= Math.abs(xyDistance[1])) ? "x" : "y";
                 }
 
-                distance = xyDistance[(axis === 'x') ? 0 : 1];
+                distance = xyDistance[(axis === "x") ? 0 : 1];
                 velocity = (time !== 0) ? distance/time : 0;
 
-                if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) && (Math.abs(velocity)  >= params[MIN_VELOCITY])) {
-
-                    e.type = "flick";
-                    e.flick = {
-                        time:time,
-                        distance: distance,
-                        velocity:velocity,
-                        axis: axis,
-                        start : start
-                    };
-
-                    ce.fire(e);
-
-                }
-
+                this._fireEvent(e, time, distance, velocity, axis, start, params, ce);
                 subscriber[_FLICK_START] = null;
             }
         }
     },
 
+    _fireEvent: function (e, time, distance, velocity, axis, start, params, ce) {
+        if (this._isValidFlick(velocity, distance, params, axis)) {
+
+            e.type = this._eventType;
+            e.flick = {
+                time:time,
+                distance: distance,
+                velocity:velocity,
+                axis: axis,
+                start : start
+            };
+
+            ce.fire(e);
+        }
+    },
+
+    _isValidFlick: function (velocity, distance, params, axis) {
+        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) && (Math.abs(velocity)  >= params[MIN_VELOCITY])) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 0,
+    MIN_DISTANCE : 100,
     PREVENT_DEFAULT : false
-});
+};
+
+
+Y.Event.define('flick', config);
+Y.Event.define('flickleft', Y.merge(config, {
+    _eventType: 'flickleft',
+    _isValidFlick: function (velocity, distance, params, axis) {
+        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
+            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
+            axis === 'x' && distance < 0) {
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}));
+
+Y.Event.define('flickright', Y.merge(config, {
+    _eventType: 'flickright',
+    _isValidFlick: function (velocity, distance, params, axis) {
+        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
+            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
+            axis === 'x' && distance > 0) {
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}));
+
+Y.Event.define('flickup', Y.merge(config, {
+    _eventType: 'flickup',
+    _isValidFlick: function (velocity, distance, params, axis) {
+        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
+            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
+            axis === 'y' && distance < 0) {
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}));
+
+Y.Event.define('flickdown', Y.merge(config, {
+    _eventType: 'flickdown',
+    _isValidFlick: function (velocity, distance, params, axis) {
+        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
+            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
+            axis === 'y' && distance > 0) {
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}));
