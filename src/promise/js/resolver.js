@@ -104,7 +104,7 @@ Y.mix(Resolver.prototype, {
         }
 
         if (this._status === 'rejected') {
-            if (!this._errbacks.length) { Y.log('This promise was rejected but no error handlers were registered to it', 'info', 'Promise.Resolver'); }
+            if (!this._errbacks.length) { Y.log('This promise was rejected but no error handlers were registered to it', 'info', NAME); }
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
@@ -228,7 +228,7 @@ Y.mix(Resolver.prototype, {
     @deprecated
     **/
     getStatus: function () {
-        Y.log('resolver.getStatus() will be removed in the future', 'warn', 'Promise.Resolver');
+        Y.log('resolver.getStatus() will be removed in the future', 'warn', NAME);
         return this._status;
     },
 
