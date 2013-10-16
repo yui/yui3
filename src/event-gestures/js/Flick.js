@@ -68,7 +68,7 @@ var GESTURE_MAP = Y.Event._GESTURE_MAP,
  * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.
  * @param cfg {Object} Optional. An object which specifies any of the following:
  * <dl>
- * <dt>minDistance (in pixels, defaults to 100)</dt>
+ * <dt>minDistance (in pixels, defaults to 10)</dt>
  * <dd>The minimum distance between start and end points, which would qualify the gesture as a flick.</dd>
  * <dt>minVelocity (in pixels/ms, defaults to 0)</dt>
  * <dd>The minimum velocity which would qualify the gesture as a flick.</dd>
@@ -89,10 +89,10 @@ config = {
         //Using this instead of Y.bind() here because I find
         //the order of arguments easier to read in this case
         //since the callback gets the DOMEventFacade as it's first arg.
-        var self = this;
-        var startHandle = node.on(EVENT[START], function (e) {
-            self._onStart(e, node, subscriber, ce);
-        });
+        var self = this,
+            startHandle = node.on(EVENT[START], function (e) {
+                self._onStart(e, node, subscriber, ce);
+            });
         subscriber[_FLICK_START_HANDLE] = startHandle;
     },
 
@@ -113,26 +113,26 @@ config = {
     },
 
     processArgs: function(args, delegate) {
-        if (!delegate) {
-            var extra = args[3] || {};
-            // remove the extra arguments from the array as specified by
-            // http://yuilibrary.com/yui/docs/event/synths.html
-            args.splice(3,1);
-
-            if (extra && !extra[MIN_DISTANCE]) {
-                extra[MIN_DISTANCE] = this.MIN_DISTANCE;
-            }
-
-            if (extra && !extra[MIN_VELOCITY]) {
-                extra[MIN_VELOCITY] = this.MIN_VELOCITY;
-            }
-
-            if (extra && !extra[PREVENT_DEFAULT]) {
-                extra[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
-            }
-
-            return extra;
+        var extra;
+        if (delegate) {
+            return;
         }
+        //Making a copy of the object so that we don't manipulate an object
+        //that we don't own.
+        extra = (args.length > 3) ? Y.merge(args.splice(3, 1)[0]) : {};
+
+        if (!(MIN_DISTANCE in extra)) {
+            extra[MIN_DISTANCE] = this.MIN_DISTANCE;
+        }
+
+        if (!(MIN_VELOCITY in extra)) {
+            extra[MIN_VELOCITY] = this.MIN_VELOCITY;
+        }
+
+        if (!(PREVENT_DEFAULT in extra)) {
+            extra[PREVENT_DEFAULT] = this.PREVENT_DEFAULT;
+        }
+        return extra;
     },
 
     _onStart: function(e, node, subscriber, ce) {
@@ -145,6 +145,8 @@ config = {
             self = this;
 
         if (e.touches) {
+            //If more than one finger is on the screen, we won't fire flick,
+            //so set start to `false`
             start = (e.touches.length === 1);
             e = e.touches[0];
         }
@@ -162,10 +164,17 @@ config = {
                 time : new Date().getTime()
             };
 
+            //Store the original flick event properties in the subscriber.
+            //This will be used to calculate velocity, distance and axis.
             subscriber[_FLICK_START] = e;
 
             endHandle = subscriber[_FLICK_END_HANDLE];
 
+            //We want to get access to the `document` and listen for the end-event on it,
+            //since the touchEnd/mouseUp of the flick can occur outside the bounds of `node`.
+            //We check to see if the current node is the document node by checking its
+            //`nodeType` property, and if it's not, we get the node's top-level document
+            //by using `ownerDocument`.
             doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
             if (!endHandle) {
                 endHandle = doc.on(EVENT[END], function (e) {
@@ -255,7 +264,10 @@ config = {
     },
 
     _fireEvent: function (e, time, distance, velocity, axis, start, params, ce) {
-        if (this._isValidFlick(velocity, distance, params, axis)) {
+        //Check to see if it's a valid axis (return early), and then if it's a
+        //valid flick.
+        if (this._isValidAxis(distance, axis) &&
+            this._isValidFlick(velocity, distance, params, axis)) {
 
             e.type = this._eventType;
             e.flick = {
@@ -270,7 +282,18 @@ config = {
         }
     },
 
+    _isValidAxis: function (distance, axis) {
+        //`_isValidAxis()` returns true for all cases since the flick event fires
+        //regardless of axis or direction, provided that the minimum criteria
+        //has been met (`_isValidFlick()`).
+        //However, this function is overwritten by `flickleft`, `flickright`,
+        //`flickup`, and `flickdown`.
+        return true;
+    },
+
     _isValidFlick: function (velocity, distance, params, axis) {
+        //If it's a finite velocity and the distance is greater than `minDistance`,
+        //and the velocity is greater than `minVelocity`, return true.
         if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) && (Math.abs(velocity)  >= params[MIN_VELOCITY])) {
             return true;
         }
@@ -280,7 +303,7 @@ config = {
     },
 
     MIN_VELOCITY : 0,
-    MIN_DISTANCE : 100,
+    MIN_DISTANCE : 10,
     PREVENT_DEFAULT : false
 };
 
@@ -288,11 +311,8 @@ config = {
 Y.Event.define('flick', config);
 Y.Event.define('flickleft', Y.merge(config, {
     _eventType: 'flickleft',
-    _isValidFlick: function (velocity, distance, params, axis) {
-        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
-            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
-            axis === 'x' && distance < 0) {
-
+    _isValidAxis: function (distance, axis) {
+        if (axis === 'x' && distance < 0) {
             return true;
         }
         else {
@@ -303,11 +323,8 @@ Y.Event.define('flickleft', Y.merge(config, {
 
 Y.Event.define('flickright', Y.merge(config, {
     _eventType: 'flickright',
-    _isValidFlick: function (velocity, distance, params, axis) {
-        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
-            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
-            axis === 'x' && distance > 0) {
-
+    _isValidAxis: function (distance, axis) {
+        if (axis === 'x' && distance > 0) {
             return true;
         }
         else {
@@ -318,11 +335,8 @@ Y.Event.define('flickright', Y.merge(config, {
 
 Y.Event.define('flickup', Y.merge(config, {
     _eventType: 'flickup',
-    _isValidFlick: function (velocity, distance, params, axis) {
-        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
-            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
-            axis === 'y' && distance < 0) {
-
+    _isValidAxis: function (distance, axis) {
+        if (axis === 'y' && distance < 0) {
             return true;
         }
         else {
@@ -333,11 +347,8 @@ Y.Event.define('flickup', Y.merge(config, {
 
 Y.Event.define('flickdown', Y.merge(config, {
     _eventType: 'flickdown',
-    _isValidFlick: function (velocity, distance, params, axis) {
-        if (isFinite(velocity) && (Math.abs(distance) >= params[MIN_DISTANCE]) &&
-            (Math.abs(velocity)  >= params[MIN_VELOCITY]) &&
-            axis === 'y' && distance > 0) {
-
+    _isValidAxis: function (distance, axis) {
+        if (axis === 'y' && distance > 0) {
             return true;
         }
         else {
