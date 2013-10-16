@@ -14,6 +14,7 @@ YUI.add('flick-tests', function(Y) {
         },
         node = Y.one('#tester'),
         event = {},
+        eventMultipleTouch = {},
         invalidEvent = {},
         xAxisEvent = {},
         yAxisEvent = {},
@@ -37,6 +38,30 @@ YUI.add('flick-tests', function(Y) {
                         clientY: 100,
                         screenX: 100,
                         screenY: 100
+                    }
+                ]
+            },
+
+            eventMultipleTouch = {
+                target: node,
+                type: 'touchstart',
+                currentTarget: node,
+                touches: [
+                    {
+                        pageX: 100,
+                        pageY: 100,
+                        clientX: 100,
+                        clientY: 100,
+                        screenX: 100,
+                        screenY: 100
+                    },
+                    {
+                        pageX: 200,
+                        pageY: 200,
+                        clientX: 200,
+                        clientY: 200,
+                        screenX: 200,
+                        screenY: 200
                     }
                 ]
             },
@@ -111,6 +136,18 @@ YUI.add('flick-tests', function(Y) {
             eventData.flick._onStart(event, node, sub, {});
             Assert.isNotUndefined(sub['_feh'], 'End Event Handle not set');
             Assert.isNotUndefined(sub['_fs'], 'Event should be stored stored on sub[_fs]');
+        },
+
+        'test: _onStart() with multiple touches': function() {
+            var sub = {
+                _extra: {
+                    minDistance: 5,
+                    minVelocity: 5
+                }
+            };
+            eventData.flick._onStart(eventMultipleTouch, node, sub, {});
+            Assert.isUndefined(sub['_feh'], 'End Event Handle should not be set');
+            Assert.isUndefined(sub['_fs'], 'Event should be stored not be stored');
         },
 
         'test: _onStart() with preventDefault': function () {
@@ -455,7 +492,7 @@ YUI.add('flick-tests', function(Y) {
             var args = ['foo', 'bar', 'baz'];
             var retVal = eventData.flick.processArgs(args, false);
 
-            Assert.areSame(100, retVal.minDistance, 'default minDistance should be 100px');
+            Assert.areSame(10, retVal.minDistance, 'default minDistance should be 10px');
             Assert.areSame(0, retVal.minVelocity, 'default minVelocity should be 0');
             Assert.isFalse(retVal.preventDefault, 'default preventDefault should be false');
         },
@@ -464,29 +501,20 @@ YUI.add('flick-tests', function(Y) {
          * FLICK LEFT *
          * -----------*/
 
-        'test: flickleft _isValidFlick() with valid flick': function () {
-            var retVal = eventData.flickleft._isValidFlick(3, -100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'x');
+        'test: flickleft _isValidAxis() with valid flick': function () {
+            var retVal = eventData.flickleft._isValidAxis(-100, 'x');
 
             Assert.isTrue(retVal, 'Flick should be valid');
         },
 
-        'test: flickleft _isValidFlick() with invalid flick (axis)': function () {
-            var retVal = eventData.flickleft._isValidFlick(3, -100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'y');
+        'test: flickleft _isValidAxis() with invalid flick (axis)': function () {
+            var retVal = eventData.flickleft._isValidAxis(-100, 'y');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
 
-        'test: flickleft _isValidFlick() with invalid flick (distance)': function () {
-            var retVal = eventData.flickleft._isValidFlick(3, 100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'x');
+        'test: flickleft _isValidAxis() with invalid flick (distance)': function () {
+            var retVal = eventData.flickleft._isValidAxis(100, 'x');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
@@ -495,29 +523,20 @@ YUI.add('flick-tests', function(Y) {
          * FLICK RIGHT *
          * ------------*/
 
-        'test: flickright _isValidFlick() with valid flick': function () {
-            var retVal = eventData.flickright._isValidFlick(3, 100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'x');
+        'test: flickright _isValidAxis() with valid flick': function () {
+            var retVal = eventData.flickright._isValidAxis(100, 'x');
 
             Assert.isTrue(retVal, 'Flick should be valid');
         },
 
-        'test: flickright _isValidFlick() with invalid flick (axis)': function () {
-            var retVal = eventData.flickright._isValidFlick(3, 100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'y');
+        'test: flickright _isValidAxis() with invalid flick (axis)': function () {
+            var retVal = eventData.flickright._isValidAxis(100, 'y');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
 
-        'test: flickright _isValidFlick() with invalid flick (distance)': function () {
-            var retVal = eventData.flickright._isValidFlick(3, -100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'x');
+        'test: flickright _isValidAxis() with invalid flick (distance)': function () {
+            var retVal = eventData.flickright._isValidAxis(-100, 'x');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
@@ -526,29 +545,20 @@ YUI.add('flick-tests', function(Y) {
          * FLICK UP *
          * ---------*/
 
-        'test: flickup _isValidFlick() with valid flick': function () {
-            var retVal = eventData.flickup._isValidFlick(3, -100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'y');
+        'test: flickup _isValidAxis() with valid flick': function () {
+            var retVal = eventData.flickup._isValidAxis(-100, 'y');
 
             Assert.isTrue(retVal, 'Flick should be valid');
         },
 
-        'test: flickup _isValidFlick() with invalid flick (axis)': function () {
-            var retVal = eventData.flickup._isValidFlick(3, -100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'x');
+        'test: flickup _isValidAxis() with invalid flick (axis)': function () {
+            var retVal = eventData.flickup._isValidAxis(-100, 'x');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
 
-        'test: flickup _isValidFlick() with invalid flick (distance)': function () {
-            var retVal = eventData.flickup._isValidFlick(3, 100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'y');
+        'test: flickup _isValidAxis() with invalid flick (distance)': function () {
+            var retVal = eventData.flickup._isValidAxis(100, 'y');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
@@ -557,29 +567,20 @@ YUI.add('flick-tests', function(Y) {
          * FLICK DOWN *
          * -----------*/
 
-        'test: flickdown _isValidFlick() with valid flick': function () {
-            var retVal = eventData.flickdown._isValidFlick(3, 100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'y');
+        'test: flickdown _isValidAxis() with valid flick': function () {
+            var retVal = eventData.flickdown._isValidAxis(100, 'y');
 
             Assert.isTrue(retVal, 'Flick should be valid');
         },
 
-        'test: flickdown _isValidFlick() with invalid flick (axis)': function () {
-            var retVal = eventData.flickdown._isValidFlick(3, 100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'x');
+        'test: flickdown _isValidAxis() with invalid flick (axis)': function () {
+            var retVal = eventData.flickdown._isValidAxis(100, 'x');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         },
 
-        'test: flickdown _isValidFlick() with invalid flick (distance)': function () {
-            var retVal = eventData.flickdown._isValidFlick(3, -100, {
-                minDistance: 97,
-                minVelocity: 2
-            }, 'y');
+        'test: flickdown _isValidAxis() with invalid flick (distance)': function () {
+            var retVal = eventData.flickdown._isValidAxis(-100, 'y');
 
             Assert.isFalse(retVal, 'Flick should be invalid');
         }
