@@ -41,18 +41,7 @@ This package contains the following directories:
   <li><p><code>build</code>: Built YUI source files. This is what you should load on your web pages. The built files are generated at development time from the contents of the <code>src</code> directory. The build step generates debug files (unminified and with full comments and logging), raw files (unminified, but without debug logging), and minified files (suitable for production deployment and use).</p></li>
 
   <li><p><code>docs</code>: User guides and examples for YUI components.</p></li>
-
-  <li><p><code>src</code> Raw unbuilt source code (JavaScript, CSS, image assets, ActionScript files, etc.) for the library.</p></li>
 </ul>
-
-<p>To build YUI components install <a href="http://yui.github.com/shifter/">Shifter</a> (`npm -g install shifter`)
-and then simply run `shifter` in that components directory.</p>
-
-<p>Shifter also allows you to rebuild the entire YUI src tree:</p>
-```
-cd yui3/src && shifter --walk
-```
-</p>
 
 <div class="yui3-g">
     <div class="yui3-u-1-2">
