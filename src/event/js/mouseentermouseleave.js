@@ -122,3 +122,14 @@ Y.Event.define("mouseleave", Y.merge(config, {
     proxyType: "mouseout",
     relProperty: "toElement"
 }), true);
+
+if (navigator.msPointerEnabled) {
+    Y.Event.define("MSPointerEnter", Y.merge(config, {
+        proxyType: "MSPointerOver"
+    }), true);
+    Y.Event.define("MSPointerLeave", Y.merge(config, {
+        proxyType: "MSPointerOut",
+        relProperty: "toElement"
+    }), true);
+}
+
