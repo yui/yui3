@@ -4,7 +4,8 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* No changes.
+ * Added `MSPointerEnter`/`MSPointerLeave` events to support IE10.  These events
+   behave in exactly the same manner as `mouseenter` and `mouseleave`.
 
 3.13.0
 ------
