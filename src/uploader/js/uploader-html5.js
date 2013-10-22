@@ -276,6 +276,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
             this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
         }, this);
         this._fileInputField.on("change", this._updateFileList, this);
+        this._fileInputField.on("click", function(event) {
+            event.stopPropagation();
+        }, this);
 
         this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
     },
