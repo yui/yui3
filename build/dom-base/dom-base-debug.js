@@ -89,7 +89,8 @@ Y.mix(Y_DOM, {
         var ret = '';
         if (el && attr && el.getAttribute) {
             attr = Y_DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            ret = el.getAttribute(attr, ieAttr);
+            // BUTTON value issue for IE < 8
+            ret = (el.tagName === "BUTTON" && attr === 'value') ? Y_DOM.getValue(el) : el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
                 ret = ''; // per DOM spec
