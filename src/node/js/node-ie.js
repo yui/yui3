@@ -9,16 +9,6 @@ if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
-
-    // IE < 8 fails to getAttribute('value') of BUTTON elements
-    // Instead gets the innerText of the element
-    Y.Node.prototype.getAttribute = function(attr) {
-        if (attr === 'value' && this._node.tagName === 'BUTTON') {
-            return this._node.get('value');
-        } else {
-            return this._node.getAttribute('value');
-        }
-    }
 }
 
 // IE throws an error when calling focus() on an element that's invisible, not
