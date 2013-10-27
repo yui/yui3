@@ -1,5 +1,6 @@
 YUI.add('series-pie-tests', function(Y) {
-    var IE = Y.UA.ie,
+    var DOC = Y.config.doc,
+        IE = Y.UA.ie,
         MockPieSeries = Y.Base.create("mockPieSeries", Y.PieSeries, [], {
             _markersDrawn: false,
 
@@ -60,9 +61,10 @@ YUI.add('series-pie-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
-
+        
         "test: _setMap()" : function() {
             var setMapTestMockGraph = Y.Base.create("setMapTestMockGraph", Y.Base, [], {
                     init: function() {
@@ -138,7 +140,7 @@ YUI.add('series-pie-tests', function(Y) {
             Y.Assert.areEqual(1, mockSeries._image.nodeType, "The _image property should be an element node.");
             Y.Assert.areEqual(1, mockSeries._map.nodeType, "The _image property should be an element node.");
         },
-
+        
         "test: addListeners()" : function() {
             var series = this.series,
                 drawn = false,
@@ -184,22 +186,22 @@ YUI.add('series-pie-tests', function(Y) {
             var series = this.series,
                 mockAxis = new ChangeHandlerMockAxis();
             series.set("categoryAxis", mockAxis);
-            Y.Assert.isFalse(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should not be set.")
-            Y.Assert.isFalse(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should not be set.")
+            Y.Assert.isFalse(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should not be set.");
+            Y.Assert.isFalse(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should not be set.");
             series._categoryAxisChangeHandler.apply(series);
-            Y.Assert.isTrue(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should be set.")
-            Y.Assert.isTrue(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should be set.")
+            Y.Assert.isTrue(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should be set.");
+            Y.Assert.isTrue(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should be set.");
         },
 
         "test: _valueAxisChangeHandler()" : function() {
             var series = this.series,
                 mockAxis = new ChangeHandlerMockAxis();
             series.set("valueAxis", mockAxis);
-            Y.Assert.isFalse(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should not be set.")
-            Y.Assert.isFalse(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should not be set.")
+            Y.Assert.isFalse(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should not be set.");
+            Y.Assert.isFalse(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should not be set.");
             series._valueAxisChangeHandler.apply(series);
-            Y.Assert.isTrue(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should be set.")
-            Y.Assert.isTrue(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should be set.")
+            Y.Assert.isTrue(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should be set.");
+            Y.Assert.isTrue(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should be set.");
         },
     
         "test: _categoryDataChangeHandler()" : function() {
@@ -376,7 +378,7 @@ YUI.add('series-pie-tests', function(Y) {
                     },
                     _reset: function() {
                         this._image = {};
-                        this._markerCacheCreated = false
+                        this._markerCacheCreated = false;
                         this._markerCacheClearded = false;
                     }
 
@@ -476,7 +478,6 @@ YUI.add('series-pie-tests', function(Y) {
                 testStyles1 = {
                     border: {
                         weight: 1,
-                        colors: ["#000"],   
                         colors: ["#dc143c", "#c41e3a", "#000080", "#fa4a1e", "#ee0000"]
                     },
                     fill: {
@@ -682,7 +683,6 @@ YUI.add('series-pie-tests', function(Y) {
                 series = this.series,
                 i,
                 len = 10,
-                markerStyles,
                 getFillStyles = function(fill, index) {
                     return {
                         color: fill.colors[i % fill.colors.length],

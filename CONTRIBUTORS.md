@@ -15,6 +15,7 @@ Committers
 * [@clarle](https://github.com/clarle)
 * [@derek](https://github.com/derek)
 * [@ekashida](https://github.com/ekashida)
+* [@ezequiel](https://github.com/ezequiel)
 * [@jconniff](https://github.com/jconniff)
 * [@jenny](https://github.com/jenny)
 * [@juandopazo](https://github.com/juandopazo)

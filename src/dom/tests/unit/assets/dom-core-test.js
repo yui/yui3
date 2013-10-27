@@ -1214,6 +1214,13 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.getAttribute(null);
             Y.DOM.getAttribute();
             Assert.isTrue(true);
+        },
+
+        'should return "value" attribute of a button': function () {
+           var node = document.getElementById('test-button-value'),
+               expected = 'button value';
+
+           Assert.areEqual(expected, Y.DOM.getAttribute(node, 'value'));
         }
     }));
 

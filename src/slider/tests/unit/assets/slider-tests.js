@@ -605,6 +605,27 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    "setting value to anything non-numeric shouldn't work": function() {
+        var slider = new Y.Slider();
+
+        slider.set('value', "wat");
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', NaN);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', null);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', undefined);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', []);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.destroy();
+    },
+
     "setting the value outside the min or max should constrain it": function () {
         var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
 

@@ -1,7 +1,10 @@
 YUI.add('series-planar-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: SeriesPlanar"),
         ASSERT = Y.Assert,
-        ObjectAssert = Y.ObjectAssert;
+        ObjectAssert = Y.ObjectAssert,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
             
             
     //-------------------------------------------------------------------------
@@ -24,9 +27,6 @@ YUI.add('series-planar-tests', function(Y) {
          */
         setUp : function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
-            
             var chart,
                 overlay,
                 win = Y.config.win,
@@ -52,7 +52,7 @@ YUI.add('series-planar-tests', function(Y) {
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
         
         //---------------------------------------------------------------------
@@ -121,8 +121,8 @@ YUI.add('series-planar-tests', function(Y) {
                     pageX = (xy[0] + edgeOffset) + ((distance * (i + 1)) - distance);
                     pageY = xy[1] + graphHeight/2;
                 }
-                clientX = pageX - Y.one('document').get('scrollLeft');
-                clientY = pageY - Y.one('document').get('scrollTop');
+                clientX = pageX - Y.DOM.docScrollX();
+                clientY = pageY - Y.DOM.docScrollY();
                 if(this.eventType == "touchend")
                 {
                     //simulate does not work for touch events
@@ -215,32 +215,32 @@ YUI.add('series-planar-tests', function(Y) {
         interactionType: "planar",
         dataProvider: [
                 {
-                    "Time":new Date(2011,9,1,19,00,00,000),
+                    "Time":new Date(2011,9,1,19,0,0,0),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,9,1,20,00,00,000),
+                    "Time":new Date(2011,9,1,20,0,0,0),
                     "miscellaneous":5
                 },
                 {
-                    "Time":new Date(2011,9,01,21,00,00,000),
+                    "Time":new Date(2011,9,01,21,0,0,0),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,9,01,22,00,00,000),
+                    "Time":new Date(2011,9,01,22,0,0,0),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,9,01,23,00,00,000),
+                    "Time":new Date(2011,9,01,23,0,0,0),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,9,02,00,00,00,000),
+                    "Time":new Date(2011,9,02,0,0,0,0),
                     "miscellaneous":0
                 }
         ],
         type: "column",
-        render: "#mychart",
+        render: "#testdiv",
         categoryType: "time",
         axes: {
             values:{
@@ -284,18 +284,17 @@ YUI.add('series-planar-tests', function(Y) {
         {category: 10, miscellaneous: 3100}
     ],
     DataProvider,
-    suite  = new Y.Test.Suite("Charts: Series Planar"),
     zeroValueColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "column",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithZeros,
         seriesKeys: SeriesKeys
     }),
     zeroValueBarMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "bar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithZeros,
         seriesKeys: SeriesKeys
     }),
@@ -303,7 +302,7 @@ YUI.add('series-planar-tests', function(Y) {
         interactionType: "planar",
         type: "column",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithZeros,
         seriesKeys: SeriesKeys
     }),
@@ -311,21 +310,21 @@ YUI.add('series-planar-tests', function(Y) {
         interactionType: "planar",
         type: "bar",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithZeros,
         seriesKeys: SeriesKeys
     }),
     nullValueColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "column",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithNull,
         seriesKeys: SeriesKeys
     }),
     nullValueBarMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "bar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithNull,
         seriesKeys: SeriesKeys
     }),
@@ -333,7 +332,7 @@ YUI.add('series-planar-tests', function(Y) {
         interactionType: "planar",
         type: "column",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithNull,
         seriesKeys: SeriesKeys
     }),
@@ -341,58 +340,58 @@ YUI.add('series-planar-tests', function(Y) {
         interactionType: "planar",
         type: "bar",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithNull,
         seriesKeys: SeriesKeys
     }),
     zeroValueComboMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithZeros,
         seriesKeys: SeriesKeys
     }),
     nullValueComboMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithNull,
         seriesKeys: SeriesKeys
     }),
     missingSeriesAndSeriesStartingWithZero = new Y.ChartPlanarEventTestCase(MissingSeriesAndSeriesStartingWithZeroConfig),
     missingValueComboMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithMissingKeyEntries
     }),
     missingValueColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "column",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithMissingKeyEntries
     }),
     missingValueBarMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "bar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithMissingKeyEntries
     }),
     missingValueStackedColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "column",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithMissingKeyEntries
     }),
     missingValueStackedBarMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "bar",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProviderWithMissingKeyEntries
     }),
     categoryWithNumericValuesChart = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         dataProvider: numericCategoryValuesDataProvider,
-        render: "#mychart"
+        render: "#testdiv"
     });
    
     suite.add(zeroValueColumnMouseOverTests);

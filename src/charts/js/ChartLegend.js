@@ -373,8 +373,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      */
     _getLegendItem: function(node, shapeClass, fill, border, labelStyles, w, h, text)
     {
-        var containerNode = Y.one(DOCUMENT.createElement("div")),
-            textField = Y.one(DOCUMENT.createElement("span")),
+        var containerNode = Y.Node.create("<div>"),
+            textField = Y.Node.create("<span>"),
             shape,
             dimension,
             padding,
@@ -384,9 +384,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         containerNode.setStyle(POSITION, "absolute");
         textField.setStyle(POSITION, "absolute");
         textField.setStyles(labelStyles);
-        textField.appendChild(DOCUMENT.createTextNode(text));
+        textField.set("text", text);
         containerNode.appendChild(textField);
-        node.appendChild(containerNode);
+        node.append(containerNode);
         dimension = textField.get("offsetHeight");
         padding = dimension - h;
         left = w + padding + 2;
