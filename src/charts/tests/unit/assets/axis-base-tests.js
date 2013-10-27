@@ -1,9 +1,13 @@
 YUI.add('axis-base-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: AxisBase"),
-
+        DOC = Y.config.doc,
     AxisBaseTests = new Y.Test.Case({
         name: "AxisBase Tests",
-            
+        
+        tearDown: function() {
+            Y.Event.purgeElement(DOC, false);    
+        },
+
         dataValues: [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

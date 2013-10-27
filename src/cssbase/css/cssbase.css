@@ -44,7 +44,7 @@ ul {
 	/*giving UL's LIs generated disc markers*/
 	list-style: disc outside;
 }
-dl dd {
+dd {
 	/*providing spacing for definition terms*/
 	margin-left:1em;
 }
@@ -69,5 +69,6 @@ p,fieldset,table,pre {
 	margin-bottom:1em;
 }
 /* setting a consistent width, 160px; 
-   control of type=file still not possible */
+   control of type=file still not possible
+   *width is for ie7 (no ie6 fallback) */
 input[type=text],input[type=password],textarea{width:12.25em;*width:11.9em;}

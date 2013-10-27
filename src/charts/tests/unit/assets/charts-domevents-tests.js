@@ -2,7 +2,6 @@ YUI.add('charts-domevents-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: DomEvents"),
         UA = Y.UA,
         DOC = Y.config.doc,
-        BODY = Y.one(DOC.body),
         win = Y.config.win,
         isTouch = ((win && ("ontouchstart" in win)) && !(UA.chrome && UA.chrome < 6)),
         domTest,
@@ -13,7 +12,10 @@ YUI.add('charts-domevents-tests', function(Y) {
             {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
-        suite  = new Y.Test.Suite("Charts: Dom Events");
+        testbutton = Y.DOM.create('<button id="testbutton">Test Button</button>'),
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>');
+    DOC.body.appendChild(parentDiv);
+    DOC.body.appendChild(testbutton);
             
     domTest = new Y.Test.Case({
         //---------------------------------------------------------------------
@@ -31,15 +33,11 @@ YUI.add('charts-domevents-tests', function(Y) {
          */
         setUp : function() {
             this.eventType = isTouch ? "touchend" : "click";
-            this.testBed = Y.one(Y.one("body").append('<div id="testbed"></div>'));
-            this.testbutton = Y.Node.create('<button id="testbutton">Test Button</button>')
-            this.testBed.append(this.testbutton);
-            this.testBed.append(Y.Node.create('<div style="position:absolute;top:15px;left:0px;width:500px;height:400px" id="mychart"></div>'));
             
             //create the chart 
             this.chart = new Y.Chart({
                 dataProvider: dataProvider,
-                render: "#mychart"    
+                render: "#testdiv"    
             });
 
             this.contentBox = this.chart.get("contentBox");
@@ -61,27 +59,26 @@ YUI.add('charts-domevents-tests', function(Y) {
         tearDown : function() {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            this.testbutton.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
        
         /**
          * Tests to ensures that clicks and/or touches outside the chart are not halted.
          */
         testDefault : function() {
-            var xy = this.testbutton.getXY();
+            var xy = Y.DOM.getXY(testbutton);
             if(isTouch) {
-                Y.Event.simulate(this.testbutton.getDOMNode(), this.eventType, {
+                Y.Event.simulate(testbutton, this.eventType, {
                     changedTouches: [{
                        pageX:xy[0] + 2,
                        pageY:xy[1] + 2
                     }]   
                 });
             } else {
-                Y.Event.simulate(this.testbutton.getDOMNode(), this.eventType);
+                Y.Event.simulate(testbutton, this.eventType);
             }
             Y.Assert.isNotNull(this.result, "The event did not fire.");
-            Y.Assert.areEqual(this.testbutton, this.result.target);
+            Y.Assert.areEqual(testbutton, this.result.target.getDOMNode());
            
             if(isTouch) {
                 this.result = null;

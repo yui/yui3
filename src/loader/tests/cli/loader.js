@@ -1225,6 +1225,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-highlight")) > -1, "Module (datatable-highlight) not found in sorted array");
         },
+     "Testing datatable-keynav": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-keynav"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-keynav")) > -1, "Module (datatable-keynav) not found in sorted array");
+        },
      "Testing datatable-message": function(data) {
             var loader = new Y.Loader({
                 require: ["datatable-message"],

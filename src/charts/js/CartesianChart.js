@@ -16,7 +16,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         var bb = this.get("boundingBox"),
             cb = this.get("contentBox"),
             tt = this.get("tooltip"),
-            overlay,
             overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         bb.setStyle("position", "absolute");
@@ -30,15 +29,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         }
         if(this.get("interactionType") === "planar")
         {
-            overlay = DOCUMENT.createElement("div");
-            this.get("contentBox").appendChild(overlay);
-            this._overlay = Y.one(overlay);
+            this._overlay = Y.Node.create("<div></div>");
             this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
             this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
+            cb.append(this._overlay);
         }
         this._setAriaElements(bb, cb);
         this._redraw();
