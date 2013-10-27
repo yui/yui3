@@ -118,6 +118,14 @@
                 "lang": ["en", "fr"],
                 "skinnable": true
             },
+            "datatable-select": {
+                "requires": [
+                    "datatable-base",
+                    "event-hover"
+                ],
+                "skinnable": true
+            },
+
             "datatable-paginator-templates": {
                 "requires": [
                     "template"

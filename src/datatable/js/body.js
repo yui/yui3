@@ -122,7 +122,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @default '<td {headers} class="{className}">{content}</td>'
     @since 3.5.0
     **/
-    CELL_TEMPLATE: '<td {headers} class="{className}">{content}</td>',
+    CELL_TEMPLATE: '<td {headers} class="{className}" data-col="{columnName}">{content}</td>',
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation.
@@ -1029,12 +1029,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                         'headers="' + col._headers.join(' ') + '"' : '';
 
             tokenValues = {
-                content  : '{' + token + '}',
-                headers  : headers,
-                className: this.getClassName('col', token) + ' ' +
-                           (col.className || '') + ' ' +
-                           this.getClassName('cell') +
-                           ' {' + token + '-className}'
+                content   : '{' + token + '}',
+                headers   : headers,
+                columnName: col.key,
+                className : this.getClassName('col', token) + ' ' +
+                            (col.className || '') + ' ' +
+                            this.getClassName('cell') +
+                            ' {' + token + '-className}'
             };
             if (!formatter && col.formatter) {
                 tokenValues.content = col.formatter.replace(valueRegExp, tokenValues.content);

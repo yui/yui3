@@ -76,6 +76,11 @@
                 "foot.js"
             ]
         },
+        "datatable-select": {
+            "jsfiles": [
+                "select.js"
+            ]
+        },
         "datatable-keynav": {
             "jsfiles": [
                 "keynav.js"

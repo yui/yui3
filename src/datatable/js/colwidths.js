@@ -123,7 +123,7 @@ Y.mix(ColumnWidths.prototype, {
     @default '<col/>'
     @since 3.5.0
     **/
-    COL_TEMPLATE: '<col/>',
+    COL_TEMPLATE: '<col class="{prefix}-col-{col}"/>',
 
     /**
     The HTML template used to create the table's `<colgroup>`.
@@ -281,8 +281,10 @@ Y.mix(ColumnWidths.prototype, {
         }
 
         for (i = 0, len = columns.length; i < len; ++i) {
-
-            colgroup.append(template);
+            colgroup.append(Y.Lang.sub(template, {
+                prefix: this._cssPrefix,
+                col: columns[i].key
+            }));
 
             this._setColumnWidth(i, columns[i].width);
         }
