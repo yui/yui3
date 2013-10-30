@@ -472,8 +472,11 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         for (i = 0; i < len; i++) {
             col = this.getColumn(colKeys[i]);
-            cell = row.one('.' + this.getClassName('col', col._id || col.key));
-            this.refreshCell(cell, model);
+
+            if (col !== null) {
+                cell = row.one('.' + this.getClassName('col', col._id || col.key));
+                this.refreshCell(cell, model);
+            }
         }
 
         return this;
