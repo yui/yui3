@@ -582,7 +582,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         }
 
         if (this.host) {
-            return this.host._columnMap[name];
+            return this.host._columnMap[name] || null;
         }
         var displayCols = this.get('columns'),
             col = null;
