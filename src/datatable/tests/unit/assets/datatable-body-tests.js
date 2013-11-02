@@ -662,6 +662,11 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('5', this.view.tbodyNode.all('td').item(1).get('text'));
     },
 
+    "should be able to add data to model which may not exist as a column": function () {
+        this.view.get('modelList').item(0).set('x', 1337);
+        Y.Assert.areSame(1337, this.view.get('modelList').item(0).get("x"));
+    },
+
     "removing Models from the modelList should update UI": function () {
         var modelList = this.view.get('modelList'),
             model;
