@@ -5885,7 +5885,7 @@ var INSTANCE = Y,
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
+ *                        categories are "info", "warn", "error", "debug".
  *                        Custom categories can be used as well. (opt).
  * @param  {String}  src  The source of the the message (opt).
  * @param  {boolean} silent If true, the log event won't fire.
@@ -5961,7 +5961,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
+ *                        categories are "info", "warn", "error", "debug".
  *                        Custom categories can be used as well. (opt).
  * @param  {String}  src  The source of the the message (opt).
  * @param  {boolean} silent If true, the log event won't fire.
@@ -6064,7 +6064,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2013.10.17-22-20',
+        GALLERY_VERSION = 'gallery-2013.10.30-22-13',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
