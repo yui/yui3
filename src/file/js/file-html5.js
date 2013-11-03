@@ -138,6 +138,7 @@
                    }
                    else {
                         this.fire("uploaderror", {originEvent: event,
+                                                  data: xhr.responseText,
                                                   status: xhr.status,
                                                   statusText: xhr.statusText,
                                                   source: "http"});
@@ -154,6 +155,8 @@
                    *  <dl>
                    *      <dt>originEvent</dt>
                    *          <dd>The original event fired by the XMLHttpRequest instance.</dd>
+                   *      <dt>data</dt>
+                   *          <dd>The data returned by the server.</dd>
                    *      <dt>status</dt>
                    *          <dd>The status code reported by the XMLHttpRequest. If it's an HTTP error,
                                   then this corresponds to the HTTP status code received by the uploader.</dd>
@@ -166,6 +169,7 @@
                    *  </dl>
                    */
                    this.fire("uploaderror", {originEvent: event,
+                                                  data: xhr.responseText,
                                                   status: xhr.status,
                                                   statusText: xhr.statusText,
                                                   source: "io"});
