@@ -124,10 +124,22 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
             markers = this.get("markers");
         if(this.get("rendered"))
         {
-            this._stylesChangeHandle.detach();
-            this._widthChangeHandle.detach();
-            this._heightChangeHandle.detach();
-            this._visibleChangeHandle.detach();
+            if(this._stylesChangeHandle)
+            {
+                this._stylesChangeHandle.detach();
+            }
+            if(this._widthChangeHandle)
+            {
+                this._widthChangeHandle.detach();
+            }
+            if(this._heightChangeHandle)
+            {
+                this._heightChangeHandle.detach();
+            }
+            if(this._visibleChangeHandle)
+            {
+                this._visibleChangeHandle.detach();
+            }
         }
         while(markers && markers.length > 0)
         {

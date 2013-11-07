@@ -1,5 +1,6 @@
 YUI.add('series-column-tests', function(Y) {
-    var suite = new Y.Test.Suite("Charts: ColumnSeries");
+    var DOC = Y.config.doc,
+        suite = new Y.Test.Suite("Charts: ColumnSeries");
     Y.ColumnSeriesTest = function() {
         Y.ColumnSeriesTest.superclass.constructor.apply(this, arguments);
     };
@@ -9,7 +10,8 @@ YUI.add('series-column-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
         
         _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset, bottomOrigin)
@@ -34,7 +36,6 @@ YUI.add('series-column-tests', function(Y) {
             var series = this.series,
                 testData,
                 actualData,
-                key,
                 offset = 8;
                 xcoord1 = 50,
                 xcoord2 = 100,
@@ -42,6 +43,7 @@ YUI.add('series-column-tests', function(Y) {
                 ycoord2 = 150,
                 calculatedSize = "height",
                 assertMarkerDimensionsAreEqual  = function() {
+                    var key;
                     for(key in testData) {
                         if(testData.hasOwnProperty(key)) {
                             Y.Assert.isTrue(actualData.hasOwnProperty(key), "The _getMarkerDimensions method should have a value for " + key + ".");
@@ -110,14 +112,12 @@ YUI.add('series-column-tests', function(Y) {
                     })
                 ],
                 markerStyles,
-                series,
                 mockSeries,
                 seriesIterator,
                 markerIterator,
                 len = mockSeriesCollection.length,
                 markerNum = 10,
                 marker,
-                markerStyles,
                 testFill,
                 markerXs,
                 markerX,

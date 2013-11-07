@@ -1,7 +1,7 @@
 YUI.add('axis-time-tests', function(Y) {
     Y.TimeAxisTest = function() {
         Y.TimeAxisTest.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(Y.TimeAxisTest, Y.ChartTestTemplate, {
         setUp: function() {
             var position = this.position,
@@ -19,7 +19,8 @@ YUI.add('axis-time-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         _getDataFromLabelValues: function(startPoint, len, edgeOffset, layoutLength, direction, min, max, labelValues)
@@ -186,6 +187,7 @@ YUI.add('axis-time-tests', function(Y) {
     });
     
     var suite = new Y.Test.Suite("Charts: TimeAxis"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

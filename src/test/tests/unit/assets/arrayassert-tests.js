@@ -293,6 +293,79 @@ YUI.add('arrayassert-tests', function(Y) {
         }
     }));
 
+    //-------------------------------------------------------------------------
+    // Test Case for isUnique
+    //-------------------------------------------------------------------------
+
+    suite.add(new Y.Test.Case({
+
+        name: "isUnique Assert Tests",
+
+        _should: {
+            error: {
+                testNonArray: true,
+                testNonFunctionComparator: true
+            },
+            fail: {
+                testDuplicateNumbersArray: true,
+                testDuplicateNumbersArray: true,
+                testDuplicateReferencesArray: true,
+                testWithComparator: true
+            }
+        },
+
+        testEmptyArray: function () {
+            ArrayAssert.isUnique([]);
+        },
+
+        testSingleNumbersArray: function () {
+            ArrayAssert.isUnique([1, 2, 3]);
+        },
+
+        testDuplicateNumbersArray: function () {
+            ArrayAssert.isUnique([1, 1, 2]);
+        },
+
+        testSingleStringsArray: function () {
+            ArrayAssert.isUnique(['a', 'b', 'c']);
+        },
+
+        testDuplicateNumbersArray: function () {
+            ArrayAssert.isUnique(['a', 'a', 'b']);
+        },
+
+        testSingleReferencesArray: function () {
+            function F() {}
+            ArrayAssert.isUnique([new F(), new F(), new F()]);
+        },
+
+        testDuplicateReferencesArray: function () {
+            function F() {}
+            ArrayAssert.isUnique([F, F, F]);
+        },
+
+        testNonArray: function () {
+            ArrayAssert.isUnique(999);
+        },
+
+        testNonFunctionComparator: function () {
+            var comparator = 999;
+            ArrayAssert.isUnique([1, 2, 3], comparator);
+        },
+
+        testComparatorIsUsed: function () {
+            var used = false;
+            function compare() { used = true; return false; }
+            ArrayAssert.isUnique([1, 2, 3], compare);
+            Assert.isTrue(used);
+        },
+
+        testWithComparator: function () {
+            function F(id) { this.id = id; }
+            function compare(a, b) { return a.id === b.id; }
+            ArrayAssert.isUnique([new F(1), new F(1), new F(2)], compare);
+        }
+    }));
 
     Y.Test.Runner.add(suite);
 

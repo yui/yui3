@@ -1,5 +1,9 @@
 YUI.add('verticalarea-globalstyles-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: VerticalAreaGlobalStyles"),
+        GlobalStylesTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {
@@ -20,8 +24,6 @@ YUI.add('verticalarea-globalstyles-tests', function(Y) {
 
     Y.extend(GlobalStylesTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:800px;height:600px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
        
@@ -36,9 +38,7 @@ YUI.add('verticalarea-globalstyles-tests', function(Y) {
                 axesStyles = styles.axes,
                 seriesStyles = styles.series,
                 graphStyles = styles.graph,
-                i,
-                testStyles,
-                styles;
+                i;
             Y.Assert.areEqual(axesTestStyles.values.label.rotation, axesStyles.values.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + "."); 
             Y.Assert.areEqual(axesTestStyles.date.label.rotation, axesStyles.date.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
             Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
@@ -67,7 +67,6 @@ YUI.add('verticalarea-globalstyles-tests', function(Y) {
                 categoryAxisStyles = chart.getAxisByKey("date").get("styles"),
                 graphStyles = chart.get("graph").get("styles"),
                 series,
-                testStyles,
                 styles,
                 i;
             Y.Assert.areEqual(axesTestStyles.values.label.rotation, valueAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + ".");
@@ -90,7 +89,7 @@ YUI.add('verticalarea-globalstyles-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
 
@@ -170,7 +169,7 @@ YUI.add('verticalarea-globalstyles-tests', function(Y) {
         var cfg = {
             type: chartType,
             dataProvider: basicDataValues,
-            render: "#mychart",
+            render: "#testdiv",
             horizontalGridlines: true,
             verticalGridlines: true,
             styles: {
