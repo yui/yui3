@@ -4452,7 +4452,7 @@ var INSTANCE = Y,
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
+ *                        categories are "info", "warn", "error", "debug".
  *                        Custom categories can be used as well. (opt).
  * @param  {String}  src  The source of the the message (opt).
  * @param  {boolean} silent If true, the log event won't fire.
@@ -4528,7 +4528,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
+ *                        categories are "info", "warn", "error", "debug".
  *                        Custom categories can be used as well. (opt).
  * @param  {String}  src  The source of the the message (opt).
  * @param  {boolean} silent If true, the log event won't fire.
