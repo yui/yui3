@@ -3,7 +3,7 @@
  * @module yql
  */
 /**
- * Utility Class used under the hood my the YQL class
+ * Utility Class used under the hood by the YQL class
  * @class YQLRequest
  * @constructor
  * @param {String} sql The SQL statement to execute
