@@ -5,7 +5,7 @@ onto an in-memory cache, that can be mixed into a Model or ModelList subclass.
 
 @module app
 @submodule model-sync-local
-@since @VERSION@
+@since 3.13.0
 **/
 
 /**
