@@ -4,7 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* Correctly adds the width to the table view based on the source of the width
+  change. [Issue #1280] [Pull Request #1303]
 
 3.13.0
 ------
