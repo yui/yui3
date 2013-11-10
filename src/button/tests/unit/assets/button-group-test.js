@@ -175,10 +175,14 @@ YUI.add('button-group-test', function (Y) {
             Assert.areSame('button', Y.one('#group .yui3-button-selected').get('tagName').toLowerCase());
         },
 
-        'ButtonGroup.disable() should disable children': function () {
+        'ButtonGroup.disable()/enable() should disable/enable children': function () {
             this.ButtonGroup.disable();
             Assert.isTrue(this.ButtonGroup.getButtons().item(0).get('disabled'), '<button> should have been disabled');
             Assert.isTrue(this.ButtonGroup.getButtons().item(1).get('disabled'), '<input> should have been disabled');
+
+            this.ButtonGroup.enable();
+            Assert.isFalse(this.ButtonGroup.getButtons().item(0).get('disabled'), '<button> should have been enabled');
+            Assert.isFalse(this.ButtonGroup.getButtons().item(1).get('disabled'), '<input> should have been enabled');
         }
     }));
 
