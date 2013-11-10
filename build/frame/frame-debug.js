@@ -473,7 +473,7 @@ YUI.add('frame', function (Y, NAME) {
             var str = '';
             if (!this._ready) {
                 Y.each(urls, function(v) {
-                    if (v !== '') {
+                    if (v) {
                         str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
                     }
                 });
