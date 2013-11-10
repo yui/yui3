@@ -221,6 +221,7 @@ WidgetAutohide.prototype = {
          * Default function called when hideOn Attribute is changed. Remove existing listeners and create new listeners.
          *
          * @method _afterHideOnChange
+         * @protected
          */
         _afterHideOnChange : function(e) {
             this._detachUIHandlesAutohide();
