@@ -27,7 +27,7 @@ class name, or a specified 'root' that is provided.
 @class ModelSync.Local
 @extensionfor Model
 @extensionfor ModelList
-@since @VERSION@
+@since 3.13.0
 **/
 function LocalSync() {}
 
@@ -40,7 +40,7 @@ Model or ModelList constructor.
 @default ['root']
 @static
 @protected
-@since @VERSION@
+@since 3.13.0
 **/
 LocalSync._NON_ATTRS_CFG = ['root'];
 
@@ -96,7 +96,7 @@ LocalSync.prototype = {
     @property root
     @type String
     @default ""
-    @since @VERSION@
+    @since 3.13.0
     **/
     root: '',
 
@@ -106,7 +106,7 @@ LocalSync.prototype = {
     @property storage
     @type Storage
     @default null
-    @since @VERSION@
+    @since 3.13.0
     **/
     storage: null,
 
@@ -238,7 +238,7 @@ LocalSync.prototype = {
     @method _index
     @return {Object[]} Array of objects found for that root key
     @protected
-    @since @VERSION@
+    @since 3.13.0
     **/
     _index: function () {
         return LocalSync._data[this.root];
@@ -250,7 +250,7 @@ LocalSync.prototype = {
     @method _show
     @return {Object} Object found for that root key and model ID
     @protected
-    @since @VERSION@
+    @since 3.13.0
     **/
     _show: function () {
         return LocalSync._idMap[this.root][this.get('id')] || null;
@@ -262,7 +262,7 @@ LocalSync.prototype = {
     @method _show
     @return {Object} The new object created.
     @protected
-    @since @VERSION@
+    @since 3.13.0
     **/
     _create: function () {
         var hash  = this.toJSON(),
@@ -283,7 +283,7 @@ LocalSync.prototype = {
     @method _update
     @return {Object} The updated object.
     @protected
-    @since @VERSION@
+    @since 3.13.0
     **/
     _update: function () {
         var hash = Y.merge(this.toJSON());
@@ -300,7 +300,7 @@ LocalSync.prototype = {
     @method _destroy
     @return {Object} The deleted object.
     @protected
-    @since @VERSION@
+    @since 3.13.0
     **/
     _destroy: function () {
         delete LocalSync._idMap[this.get('id')];
@@ -314,7 +314,7 @@ LocalSync.prototype = {
     
     @method _save
     @protected
-    @since @VERSION@
+    @since 3.13.0
     **/
     _save: function () {
         if (LocalSync._hasLocalStorage) {
