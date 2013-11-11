@@ -14,7 +14,7 @@ YUI.add('timers-tests', function (Y) {
         },
         'enforce asynchronicity': function () {
             var test = this,
-                reference + [];
+                reference = [];
 
             reference.push('a');
             Y.soon(function () {
