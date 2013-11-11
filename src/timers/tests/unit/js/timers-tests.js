@@ -1,10 +1,10 @@
-YUI.add('module-tests', function (Y) {
+YUI.add('timers-tests', function (Y) {
     'use strict';
 
-    var suite = new Y.Test.Suite('soon');
+    var suite = new Y.Test.Suite('timers');
 
     suite.add(new Y.Test.Case({
-        name: 'Automated Tests',
+        name: 'Y.soon Tests',
         'test:001-apiExists': function () {
             Y.Assert.isFunction(Y.soon, 'Y.soon should be a function.');
             Y.Assert.isFunction(Y.soon._asynchronizer, 'Y.soon._asynchronizer should be a function.');
