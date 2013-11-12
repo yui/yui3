@@ -64,7 +64,7 @@
             data = YUI._getLoadHook(data, url);
         }
         mod._compile('module.exports = function (YUI) {' +
-            'return (function () {'+ data + '\n;return YUI;}).apply(global, []);' +
+            'return (function () {'+ data + '\n;return YUI;}).apply(global);' +
         '};', url);
 
         /*global YUI:true */
