@@ -16,6 +16,30 @@ suite.add(new Y.Test.Case({
 
     name: "Paginator",
 
+    'test string page numbers': function () {
+        var dt = new Y.DataTable({
+            caption: 'test string page numbers',
+            columns: ['id', 'name', 'price', 'qty'],
+            data: data
+        });
+
+        dt.render();
+
+        dt.set('page', 1);
+        Y.Assert.areSame(1, dt.get('page'));
+
+        dt.set('page', '1');        
+        Y.Assert.areSame(1, dt.get('page'));
+
+        dt.nextPage();
+        Y.Assert.areSame(2, dt.get('page'));
+
+        dt.nextPage();
+        Y.Assert.areSame(3, dt.get('page'));
+
+        dt.destroy();
+    },
+
     "test rowsPerPage === null shows all rows": function () {
         var dt = new Y.DataTable({
             caption: 'test rowsPerPage === null shows all rows',
