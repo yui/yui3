@@ -777,11 +777,11 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         if(stroke && stroke.weight)
         {
             wt = stroke.weight;
+            w = (x + w + wt) - (x - wt);
+            h = (y + h + wt) - (y - wt);
+            x -= wt;
+            y -= wt;
         }
-        w = (x + w + wt) - (x - wt);
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
 		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 
