@@ -777,10 +777,10 @@ Y.mix(Controller.prototype, {
                 model[e.type + 'Page']();
                 break;
             case 'page':
-                model.set('page', e.val);
+                model.set('page', parseInt(e.val, 10));
                 break;
             case 'perPage':
-                model.set('itemsPerPage', e.val);
+                model.set('itemsPerPage', parseInt(e.val, 10));
                 model.set('page', 1);
                 break;
         }
