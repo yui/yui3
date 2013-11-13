@@ -66,7 +66,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 marker = this._markers[i],
                 markers,
                 seriesCollection = this.get("seriesTypeCollection"),
-                seriesLen = seriesCollection.length,
+                seriesLen = seriesCollection ? seriesCollection.length : 0,
                 seriesStyles,
                 seriesSize = 0,
                 offset = 0,
