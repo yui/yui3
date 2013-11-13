@@ -31,7 +31,12 @@ PaginatorCore.ATTRS = {
      @default 1
      **/
     page: {
-        value: 1
+        value: 1,
+        setter: function (value) {
+            // Convert value into a number.
+            value = +value;
+            return isFinite(value) ? 0 : value;
+        }
     },
 
     /**
