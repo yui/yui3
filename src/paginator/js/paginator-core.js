@@ -32,10 +32,7 @@ PaginatorCore.ATTRS = {
      **/
     page: {
         value: 1,
-        setter: function (value) {
-            // Convert value into a number.
-            return +value;
-        }
+        setter: '_setPage'
     },
 
     /**
@@ -140,6 +137,11 @@ Y.mix(PaginatorCore.prototype, {
         var itemsPerPage = this.get('itemsPerPage');
 
         return (itemsPerPage < 1) ? 1 : Math.ceil(this.get('totalItems') / itemsPerPage);
+    },
+
+    _setPage: function (value) {
+        // Convert value into a number.
+        return +value;
     }
 });
 
