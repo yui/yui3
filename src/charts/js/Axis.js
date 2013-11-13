@@ -413,6 +413,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 labelValues,
                 point,
                 points,
+                firstPoint,
+                lastPoint,
+                firstLabel,
+                lastLabel,
                 staticCoord,
                 dynamicCoord,
                 edgeOffset,
@@ -471,16 +475,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             //Don't create the last label or tick.
             if(this.get("hideFirstMajorUnit"))
             {
-                points.shift();
-                labelValues.shift();
+                firstPoint = points.shift();
+                firstLabel = labelValues.shift();
                 len = len - 1;
             }
 
             //Don't create the last label or tick.
             if(this.get("hideLastMajorUnit"))
             {
-                points.pop();
-                labelValues.pop();
+                lastPoint = points.pop();
+                lastLabel = labelValues.pop();
                 len = len - 1;
             }
 
@@ -510,7 +514,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                     }
                 }
                 this._createLabelCache();
-                this._tickPoints = points;
                 this._maxLabelSize = 0;
                 this._totalTitleSize = 0;
                 this._titleSize = 0;
@@ -547,8 +550,25 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 len = this._labels.length;
                 for(i = 0; i < len; ++i)
                 {
-                    layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                    layout.positionLabel.apply(this, [this.get("labels")[i], points[i], styles, i]);
                 }
+                if(firstPoint)
+                {
+                    points.unshift(firstPoint);
+                }
+                if(lastPoint)
+                {
+                    points.push(lastPoint);
+                }
+                if(firstLabel)
+                {
+                    labelValues.unshift(firstLabel);
+                }
+                if(lastLabel)
+                {
+                    labelValues.push(lastLabel);
+                }
+                this._tickPoints = points;
             }
         }
         this._drawing = false;
