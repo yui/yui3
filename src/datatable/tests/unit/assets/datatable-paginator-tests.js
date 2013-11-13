@@ -20,7 +20,8 @@ suite.add(new Y.Test.Case({
         var dt = new Y.DataTable({
             caption: 'test string page numbers',
             columns: ['id', 'name', 'price', 'qty'],
-            data: data
+            data: data,
+            rowsPerPage: 1
         });
 
         dt.render();
