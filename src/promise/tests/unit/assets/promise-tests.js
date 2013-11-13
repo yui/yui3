@@ -195,7 +195,7 @@ YUI.add('promise-tests', function (Y) {
         // This test is run only in strict mode
         '|this| inside a callback must be undefined in strict mode': function () {
             'use strict';
-            
+
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
@@ -224,6 +224,12 @@ YUI.add('promise-tests', function (Y) {
 
     suite.add(new Y.Test.Case({
         name: 'Promise detection with Promise.isPromise',
+
+        _should: {
+            ignore: {
+                'detect object with getters that throw': !Object.create
+            }
+        },
 
         'detecting YUI promises': function () {
             Assert.isTrue(isPromise(new Promise(function () {})), 'a YUI promise should be identified as a promise');
@@ -255,6 +261,18 @@ YUI.add('promise-tests', function (Y) {
             Assert.isFalse(isPromise({
                 then: 5
             }), 'almost promises should not be identified as promises');
+        },
+
+        'detect object with getters that throw': function () {
+            var nonPromise = Object.create(null, {
+                then: {
+                    get: function () {
+                        throw new Error('isPromise did not catch an exception thrown by the getter of the `then` property');
+                    }
+                }
+            });
+
+            Assert.isFalse(isPromise(nonPromise), 'an object with a `then` property that throws should not be identified as a promise');
         }
     }));
 

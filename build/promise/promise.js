@@ -103,6 +103,7 @@ Y.mix(Promise.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
         return this._resolver.getStatus();
@@ -121,10 +122,16 @@ method.
 @static
 **/
 Promise.isPromise = function (obj) {
-    // We test promises by form to be able to identify other implementations
-    // as promises. This is important for cross compatibility and in particular
-    // Y.when which should take any kind of promise
-    return !!obj && typeof obj.then === 'function';
+    var then;
+    // We test promises by structure to be able to identify other
+    // implementations' promises. This is important for cross compatibility and
+    // In particular Y.when which should recognize any kind of promise
+    // Use try...catch when retrieving obj.then. Return false if it throws
+    // See Promises/A+ 1.1
+    try {
+        then = obj.then;
+    } catch (_) {}
+    return typeof then === 'function';
 };
 
 Y.Promise = Promise;
@@ -174,6 +181,15 @@ function Resolver(promise) {
     @private
     **/
     this._status = 'pending';
+
+    /**
+    This value that this promise represents.
+
+    @property _result
+    @type Any
+    @private
+    **/
+    this._result = null;
 }
 
 Y.mix(Resolver.prototype, {
@@ -189,9 +205,10 @@ Y.mix(Resolver.prototype, {
     fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
+            this._status = 'fulfilled';
         }
 
-        if (this._status !== 'rejected') {
+        if (this._status === 'fulfilled') {
             this._notify(this._callbacks, this._result);
 
             // Reset the callback list so that future calls to fulfill()
@@ -205,8 +222,6 @@ Y.mix(Resolver.prototype, {
             // there is no point in keeping the list. Remove it to help
             // garbage collection
             this._errbacks = null;
-
-            this._status = 'fulfilled';
         }
     },
 
@@ -222,16 +237,15 @@ Y.mix(Resolver.prototype, {
     reject: function (reason) {
         if (this._status === 'pending') {
             this._result = reason;
+            this._status = 'rejected';
         }
 
-        if (this._status !== 'fulfilled') {
+        if (this._status === 'rejected') {
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
             this._callbacks = null;
             this._errbacks = [];
-
-            this._status = 'rejected';
         }
     },
 
@@ -268,16 +282,20 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList = this._callbacks,
+            errbackList  = this._errbacks;
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        if (callbackList) {
+            callbackList.push(typeof callback === 'function' ?
+                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+        }
+        if (errbackList) {
+            errbackList.push(typeof errback === 'function' ?
+                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
@@ -343,6 +361,7 @@ Y.mix(Resolver.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
         return this._status;

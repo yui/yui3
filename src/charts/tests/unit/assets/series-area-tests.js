@@ -1,5 +1,6 @@
 YUI.add('series-area-tests', function(Y) {
-    var MockAreaSeries = Y.Base.create("mockAreaSeries", Y.AreaSeries, [], {
+    var DOC = Y.config.doc,
+        MockAreaSeries = Y.Base.create("mockAreaSeries", Y.AreaSeries, [], {
             _getClosingPoints: function() {
                 return [];
             },
@@ -20,7 +21,8 @@ YUI.add('series-area-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {

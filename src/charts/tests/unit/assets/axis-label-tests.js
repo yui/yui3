@@ -1,6 +1,9 @@
 YUI.add('axis-label-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: AxisLabel"),
-   
+        AxisTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -19,15 +22,13 @@ YUI.add('axis-label-tests', function(Y) {
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
     
@@ -47,7 +48,7 @@ YUI.add('axis-label-tests', function(Y) {
                 Y.Assert.areEqual(specifiedRotation, categoryAxisLabelRotation, "The value axis' label rotation should equal specified " + specifiedRotation + "."); 
                 Y.Assert.areEqual(specifiedRotation, valueAxisLabelRotation, "The category axis' label rotation should equal specified " + specifiedRotation + "."); 
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     });
 

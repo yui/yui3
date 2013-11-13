@@ -302,7 +302,10 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _setNewValue: function ( value ) {
-            return round( this._nearestValue( value ) );
+            if ( Y.Lang.isNumber( value ) ) {
+                return round( this._nearestValue( value ) );
+            }
+            return Y.Attribute.INVALID_VALUE;
         },
 
         /**
