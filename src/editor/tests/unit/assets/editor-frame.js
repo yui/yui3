@@ -29,7 +29,8 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.isObject(Y.EditorBase, 'EditorBase was not loaded');
         },
         test_frame: function() {
-            var iframeReady = false;
+            var iframeReady = false,
+                iframeLinkedCSS;
 
             iframe = new Y.Plugin.Frame({
                 container: '#editor',
@@ -43,6 +44,14 @@ YUI.add('editor-tests', function(Y) {
                 iframeReady = true;
             });
             iframe.render();
+
+            // Check to make sure CSS `href` value is not undefined.
+            // Should make sure this is true regardless of whether `linkedcss`
+            // is an array or a string value. Resolves GH #1364.
+            iframeLinkedCSS = iframe.get('linkedcss');
+
+            Y.ArrayAssert.doesNotContain(undefined, iframeLinkedCSS);
+            Y.ArrayAssert.doesNotContain('undefined', iframeLinkedCSS); 
 
             this.wait(function() {
                 Y.Assert.isTrue(iframeReady, 'IFRAME ready event did not fire');

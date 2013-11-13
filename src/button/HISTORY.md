@@ -4,7 +4,10 @@ Button Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed `disabledChange` listener to correctly disable or enable 
+  buttons. ([#1374][]: @drjayvee)
+
+[#1374]: https://github.com/yui/yui3/pull/1374
 
 3.13.0
 ------

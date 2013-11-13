@@ -4,7 +4,10 @@ Rich Text Editor Change History
 @VERSION@
 ------
 
-* No changes.
+* Fix Y.Frame issue where the linked CSS in the frame was trying to call
+  `/undefined`. ([#1367][]: @ipeychev)
+
+[#1367]: https://github.com/yui/yui3/issues/1367
 
 3.13.0
 ------
