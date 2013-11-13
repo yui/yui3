@@ -521,7 +521,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                     point = points[i];
                     if(point)
                     {
-                        label = this.getLabel(point, labelStyles);
+                        label = this.getLabel(labelStyles);
                         this._labels.push(label);
                         this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [labelValues[i], labelFormat]));
                         labelWidth = Math.round(label.offsetWidth);
@@ -697,12 +697,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * Creates or updates an axis label.
      *
      * @method getLabel
-     * @param {Object} pt x and y coordinates for the label
      * @param {Object} styles styles applied to label
      * @return HTMLElement
      * @private
      */
-    getLabel: function(pt, styles)
+    getLabel: function(styles)
     {
         var i,
             label,
@@ -988,7 +987,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             label,
             props = this._getTextRotationProps(labelStyles);
             props.transformOrigin = layout._getTransformOrigin(props.rot);
-        label = this.getLabel({x: 0, y: 0}, labelStyles);
+        label = this.getLabel(labelStyles);
         this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
