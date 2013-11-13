@@ -34,8 +34,7 @@ PaginatorCore.ATTRS = {
         value: 1,
         setter: function (value) {
             // Convert value into a number.
-            value = +value;
-            return isFinite(value) ? 0 : value;
+            return +value;
         }
     },
 
