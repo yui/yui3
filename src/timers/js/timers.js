@@ -66,7 +66,7 @@ var YGLOBAL = Y.config.global,
 // Check for a native or already polyfilled implementation of setImmediate.
 if ('setImmediate' in YGLOBAL) {
     soon._asynchronizer = function (callbackFunction) {
-        setImmediate(callbackFunction);
+        YGLOBAL.setImmediate(callbackFunction);
     };
     soon._impl = 'setImmediate';
 }
