@@ -61,13 +61,26 @@ YUI.add('series-range-tests', function(Y) {
                 resultHighCoords,
                 resultLowCoords,
                 resultCloseCoords,
+                calculateMarkerWidth = function(width, count, spacing) {
+                    var val = 0,
+                        spacing = 3;
+                    while(val < 3 && spacing > -1)
+                    {
+                        spacing = spacing - 1;
+                        val = Math.round(width/count - spacing);
+                        if(val % 2 === 0) {
+                            val = val - 1;
+                        }
+                    }
+                    return Math.max(1, val);
+                },
                 drawMarkersArgs;
             mockSeries.set("xcoords", xcoords);
             mockSeries.set("ycoords", ycoords);
             mockSeries.set("width", width);
             styles = mockSeries.get("styles");
             dataWidth = width - (styles.padding.left + styles.padding.right);
-            markerWidth = dataWidth/len;
+            markerWidth = calculateMarkerWidth(dataWidth, len, 3);
             halfwidth = markerWidth/2;
             series.drawSeries.apply(mockSeries);
             drawMarkersArgs = mockSeries._drawMarkersArgs;
