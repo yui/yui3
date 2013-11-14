@@ -29,7 +29,7 @@ Histogram.prototype = {
         {
             return;
         }
-        var style = Y.clone(this.get("styles").marker),
+        var style = this._copyObject(this.get("styles").marker),
             graphic = this.get("graphic"),
             setSize,
             calculatedSize,
