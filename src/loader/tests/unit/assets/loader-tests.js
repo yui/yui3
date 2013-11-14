@@ -482,7 +482,7 @@ YUI.add('loader-tests', function(Y) {
 
             YUI({
                 filter: 'debug',
-                gallery: 'gallery-2010.08.04-19-46',
+                gallery: 'gallery-2010.08.04-19-46'
             }).use('base', 'gallery-port', function(Y) {
                 Assert.isFunction(Y.Base, 'Y.Base did not load');
                 Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
@@ -491,7 +491,7 @@ YUI.add('loader-tests', function(Y) {
 
             YUI({
                 filter: 'debug',
-                gallery: 'gallery-2010.08.04-19-46',
+                gallery: 'gallery-2010.08.04-19-46'
             }).use('gallery-treeview', function(Y) {
                 test.resume(function() {
                     Assert.isFunction(Y.apm.TreeView, 'Treeview gallery module did not load.');
