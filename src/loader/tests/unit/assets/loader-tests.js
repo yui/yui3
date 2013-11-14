@@ -525,6 +525,8 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isTrue((counter > 2), 'Did not load enough files..');
                     Assert.areSame(proContext, Y, 'onProgress context does not match');
                     Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
+                    Assert.isObject(Y.DOM, 'YUI3 DOM did not load.');
+                    Assert.isFunction(Y.Editor, 'YUI3 Editor did not load.');
                     Assert.isFunction(Y.bitly, 'gallery-bitly did not load.');
                     Y.LOADED = true;
                 });
