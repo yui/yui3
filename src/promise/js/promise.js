@@ -24,6 +24,9 @@ asynchronous or synchronous operations. E.g.
 @since 3.9.0
 **/
 
+var Lang  = Y.Lang,
+    slice = [].slice;
+
 /**
 A promise represents a value that may not yet be available. Promises allow
 you to chain asynchronous operations, write synchronous looking code and
@@ -95,6 +98,18 @@ Y.mix(Promise.prototype, {
         return this._resolver.then(callback, errback);
     },
 
+    /*
+
+
+    @method catch
+    @param [Function] errback Callback to be called in case this promise is
+                        rejected
+    @return {Promise} A new promise 
+    */
+    'catch': function (errback) {
+        return this.then(undefined, errback);
+    },
+
     /**
     Returns the current status of the operation. Possible results are
     "pending", "fulfilled", and "rejected".
@@ -131,6 +146,99 @@ Promise.isPromise = function (obj) {
         then = obj.then;
     } catch (_) {}
     return typeof then === 'function';
+};
+
+/*
+
+
+@method cast
+@param {Any} Any object that may or may not be a promise
+@return {Promise}
+@static
+*/
+Promise.cast = function (value) {
+    return Promise.isPromise(value) && value.constructor === this ? value :
+        new this(function (resolve) {
+            resolve(value);
+        });
+};
+
+/*
+
+
+@method all
+@param {Any[]} values An array of any kind of values, promises or not. If a value is not
+@return [Promise] A promise for an array of all the fulfillment values
+@static
+*/
+Promise.all = function (values) {
+    var Promise = this;
+    return new Promise(function (resolve, reject) {
+        if (!Lang.isArray(values)) {
+            reject(new TypeError('Promise.all expects an array of values or promises'));
+        }
+
+        var remaining = values.length,
+            i         = 0,
+            length    = values.length,
+            results   = [];
+
+        function oneDone(index) {
+            return function (value) {
+                results[index] = value;
+
+                remaining--;
+
+                if (!remaining) {
+                    resolve(results);
+                }
+            };
+        }
+
+        if (length < 1) {
+            return resolve(results);
+        }
+
+        for (; i < length; i++) {
+            Promise.cast(values[i]).then(oneDone(i), reject);
+        }
+    });
+};
+
+Promise.reject = function (reason) {
+    return new this(function (resolve, reject) {
+        reject(reason);
+    });
+};
+
+Promise.resolve = function (value) {
+    return new this(function (resolve) {
+        resolve(value);
+    });
+};
+
+/*
+
+
+@method race
+@param {Any[]} values An array of values or promises
+@return {Promise}
+@static
+*/
+Promise.race = function (values) {
+    var Promise = this;
+    return new Promise(function (resolve, reject) {
+        if (!Lang.isArray(values)) {
+            reject(new TypeError('Promise.race expects an array of values or promises'));
+        }
+        
+        // just go through the list and resolve and reject at the first change
+        // This abuses the fact that calling resolve/reject multiple times
+        // doesn't change the state of the returned promise
+        for (var i = 0, count = values.length; i < count; i++) {
+            Promise.cast(values[i]).then(resolve, reject);
+        }
+    });
 };
 
 Y.Promise = Promise;

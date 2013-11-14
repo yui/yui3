@@ -5,6 +5,30 @@ YUI.add('promise-tests', function (Y) {
         Promise = Y.Promise,
         isPromise = Promise.isPromise;
 
+    /**
+    Takes a promise and a callback. Calls the callback with a boolean paramter
+    indicating if the promise is fulfilled and the value as the next parameter
+    **/
+    function isFulfilled(promise, next) {
+        promise.then(function (x) {
+            next(true, x);
+        }, function (e) {
+            next(false, e);
+        });
+    }
+
+    /**
+    Takes a promise and a callback. Calls the callback with a boolean paramter
+    indicating if the promise is rejected and the reason as the next parameter
+    **/
+    function isRejected(promise, next) {
+        promise.then(function (x) {
+            next(false, x);
+        }, function (e) {
+            next(true, e);
+        });
+    }
+
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
         name: 'Promise tests'
@@ -273,6 +297,155 @@ YUI.add('promise-tests', function (Y) {
             });
 
             Assert.isFalse(isPromise(nonPromise), 'an object with a `then` property that throws should not be identified as a promise');
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Promise factories tests',
+
+        'Promise constructor has the correct methods': function () {
+            Assert.isFunction(Promise.reject, 'Promise.reject should be a function');
+            Assert.isFunction(Promise.resolve, 'Promise.resolve should be a function');
+        },
+
+        'Promise.reject() returns an rejected promise': function () {
+            var test = this,
+                value = new Error('foo'),
+                promise = Promise.reject(value);
+
+            Assert.isTrue(isPromise(promise), 'Promise.reject() should return a promise');
+
+            isRejected(promise, function next(rejected, result) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'promise should be rejected, not fulfilled');
+                    Assert.areSame(value, result, 'Promise.reject() should respect the passed value');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.reject() should wrap fulfilled promises': function () {
+            var test = this,
+                value = new Promise(function (resolve) {
+                    resolve('foo');
+                }),
+                promise = Promise.reject(value);
+
+            isRejected(promise, function (rejected, result) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'promise should be rejected, not fulfilled');
+                    Assert.areSame(value, result, 'Promise.reject() should wrap fulfilled promises');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.reject() should wrap rejected promises': function () {
+            var test = this,
+                value = new Promise(function (resolve, reject) {
+                    reject('foo');
+                }),
+                promise = Promise.reject(value);
+
+            isRejected(promise, function (rejected, result) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'promise should be rejected, not fulfilled');
+                    Assert.areSame(value, result, 'Promise.reject() should wrap rejected promises');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.reject() should preserve the constructor when using inheritance': function () {
+            function Subpromise() {
+                Subpromise.superclass.constructor.apply(this, arguments);
+            }
+            Y.extend(Subpromise, Promise);
+
+            Subpromise.reject = Promise.reject;
+
+            var promise = Subpromise.reject('foo');
+            var test = this;
+
+            isRejected(promise, function (rejected, reason) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'subpromise should be rejected');
+                    Assert.areSame('foo', reason, 'subpromise should have the correct rejection reason');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.resolve() is fulfilled when passed a regular value': function () {
+            var test = this,
+                value = {},
+                promise = Promise.resolve(value);
+
+            isFulfilled(promise, function (fulfilled, result) {
+                test.resume(function () {
+                    Assert.isTrue(fulfilled, 'resolved promise should be fulfilled');
+                    Assert.areSame(value, result, 'resolved promise should respect the value passed to it');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.resolve() adopts the state of an fulfilled promise': function () {
+            var test = this,
+                value = {},
+                fulfilled = Promise.resolve(value),
+                promise = Promise.resolve(fulfilled);
+
+            isFulfilled(promise, function (fulfilled, result) {
+                test.resume(function () {
+                    Assert.isTrue(fulfilled, 'resolved promise should be fulfilled');
+                    Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.resolve() adopts the state of a rejected promise': function () {
+            var test = this,
+                value = {},
+                fulfilled = Promise.reject(value),
+                promise = Promise.resolve(fulfilled);
+
+            isRejected(promise, function (rejected, result) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'resolved promise should be rejected');
+                    Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.resolve() should preserve the constructor when using inheritance': function () {
+            function Subpromise() {
+                Subpromise.superclass.constructor.apply(this, arguments);
+            }
+            Y.extend(Subpromise, Promise);
+
+            Subpromise.resolve = Promise.resolve;
+
+            var promise = Subpromise.resolve('foo');
+            var test = this;
+
+            isFulfilled(promise, function (fulfilled, value) {
+                test.resume(function () {
+                    Assert.isTrue(fulfilled, 'subpromise should be fulfilled');
+                    Assert.areSame('foo', value, 'subpromise should have the correct fulfilled value');
+                });
+            });
+
+            test.wait();
         }
     }));
 

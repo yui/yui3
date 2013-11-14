@@ -1,5 +1,3 @@
-var slice = [].slice;
-
 /**
 Returns a new promise that will be resolved when all operations have completed.
 Takes both any numer of values as arguments. If an argument is a not a promise,
