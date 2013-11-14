@@ -158,7 +158,10 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
     {
         var upcandle = this.get("upcandle"),
             downcandle = this.get("downcandle"),
+            candle,
             wick = this.get("wick"),
+            wickStyles = styles.wick,
+            wickWidth = wickStyles.width,
             cx,
             opencoord,
             highcoord,
@@ -168,31 +171,43 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
             right,
             top,
             bottom,
+            height,
             leftPadding = styles.padding.left,
-            up;
+            up,
+            i,
+            isNumber = Y.Lang.isNumber;
         upcandle.set(styles.upcandle);
         downcandle.set(styles.downcandle);
-        wick.set(styles.wick);
+        wick.set({
+            fill: wickStyles.fill,
+            stroke: wickStyles.stroke,
+            shapeRendering: wickStyles.shapeRendering
+        });
         upcandle.clear();
         downcandle.clear();
         wick.clear();
         for(i = 0; i < len; i = i + 1)
         {
-            cx = xcoords[i] + leftPadding;
+            cx = Math.round(xcoords[i] + leftPadding);
             left = cx - halfwidth;
             right = cx + halfwidth;
-            opencoord = opencoords[i];
-            highcoord = highcoords[i];
-            lowcoord = lowcoords[i];
-            closecoord = closecoords[i];
+            opencoord = Math.round(opencoords[i]);
+            highcoord = Math.round(highcoords[i]);
+            lowcoord = Math.round(lowcoords[i]);
+            closecoord = Math.round(closecoords[i]);
             up = opencoord > closecoord;
             top = up ? closecoord : opencoord;
             bottom = up ? opencoord : closecoord;
             height = bottom - top;
             candle = up ? upcandle : downcandle;
-            candle.drawRect(left, top, width, height);
-            wick.moveTo(cx, highcoord);
-            wick.lineTo(cx, lowcoord);
+            if(candle && isNumber(left) && isNumber(top) && isNumber(width) && isNumber(height))
+            {
+                candle.drawRect(left, top, width, height);
+            }
+            if(isNumber(cx) && isNumber(highcoord) && isNumber(lowcoord))
+            {
+                wick.drawRect(cx - wickWidth/2, highcoord, wickWidth, lowcoord - highcoord);
+            }
         }
         upcandle.end();
         downcandle.end();
@@ -251,6 +266,7 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
     {
         var styles = {
             upcandle: {
+                shapeRendering: "crispEdges",
                 fill: {
                     color: "#00aa00",
                     alpha: 1
@@ -262,6 +278,7 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
                 }
             },
             downcandle: {
+                shapeRendering: "crispEdges",
                 fill: {
                     color: "#aa0000",
                     alpha: 1
@@ -273,12 +290,19 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
                 }
             },
             wick: {
+                shapeRendering: "crispEdges",
+                width: 1,
+                fill: {
+                    color: "#000000",
+                    alpha: 1
+                },
                 stroke: {
                     color: "#000000",
                     alpha: 1,
-                    weight: 1
+                    weight: 0
                 }
-            }
+            },
+            spacing: 3
         };
         return this._mergeStyles(styles, CandlestickSeries.superclass._getDefaultStyles());
     }

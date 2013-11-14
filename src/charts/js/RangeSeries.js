@@ -58,6 +58,31 @@ RangeSeries.ATTRS = {
 
 Y.extend(RangeSeries, Y.CartesianSeries, {
     /**
+     * Returns the width for each marker base on the width of the series
+     * and the length of the dataProvider.
+     *
+     * @method calculateMarkerWidth
+     * @param {Number} width The width, in pixels of the series.
+     * @param {Number} count The length of the datProvider.
+     * @return Number
+     * @private
+     */
+    _calculateMarkerWidth: function(width, count, spacing)
+    {
+        var val = 0,
+            spacing = 3;
+        while(val < 3 && spacing > -1)
+        {
+            spacing = spacing - 1;
+            val = Math.round(width/count - spacing);
+            if(val % 2 === 0) {
+                val = val - 1;
+            }
+        }
+        return Math.max(1, val);
+    },
+
+    /**
      * Draws the series.
      *
      * @method drawSeries
@@ -76,7 +101,7 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
             highcoords = ycoords[keys.high],
             lowcoords = ycoords[keys.low],
             closecoords = ycoords[keys.close],
-            width = dataWidth/len,
+            width = this._calculateMarkerWidth(dataWidth, len, styles.spacing),
             halfwidth = width/2;
         this._drawMarkers(xcoords, opencoords, highcoords, lowcoords, closecoords, len, width, halfwidth, styles);
     }
