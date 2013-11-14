@@ -62,8 +62,7 @@ YUI.add('series-range-tests', function(Y) {
                 resultLowCoords,
                 resultCloseCoords,
                 calculateMarkerWidth = function(width, count, spacing) {
-                    var val = 0,
-                        spacing = 3;
+                    var val = 0;
                     while(val < 3 && spacing > -1)
                     {
                         spacing = spacing - 1;
