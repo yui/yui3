@@ -354,6 +354,7 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _exported: {},
                 _missed: [],
                 _yidx: 0,
                 _uidx: 0,
@@ -623,7 +624,8 @@ with any configuration info required for the module.
                 name: name,
                 fn: fn,
                 version: version,
-                details: details
+                details: details,
+                imports: [].concat((details && details.requires) || [])
             },
             //Instance hash so we don't apply it to the same instance twice
             applied = {},
@@ -670,8 +672,10 @@ with any configuration info required for the module.
             cache = YUI.Env._renderedMods,
             loader = Y.Env._loader,
             done = Y.Env._attached,
+            exported = Y.Env._exported,
             len = r.length, loader, def, go,
-            c = [];
+            c = [],
+            modArgs;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
         //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
@@ -779,11 +783,18 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
+                            modArgs = [Y, name];
+                            if (mod.details && mod.details.es6) {
+                                for (j = 0; j < mod.imports.length; j++) {
+                                    // passing __exports__ onto the module function
+                                    modArgs.push(exported[mod.imports[j]] || Y);
+                                }
+                            }
                             if (Y.config.throwFail) {
-                                mod.fn(Y, name);
+                                exported[name] = mod.fn.apply(mod, modArgs);
                             } else {
                                 try {
-                                    mod.fn(Y, name);
+                                    exported[name] = mod.fn.apply(mod, modArgs);
                                 } catch (e) {
                                     Y.error('Attach error: ' + name, e, name);
                                 return false;
