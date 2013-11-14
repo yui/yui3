@@ -221,8 +221,7 @@ Y.extend(OHLCSeries, Y.RangeSeries, {
                     alpha: 1,
                     weight: 1
                 }
-            },
-            spacing: 3
+            }
         };
         return this._mergeStyles(styles, OHLCSeries.superclass._getDefaultStyles());
     }

@@ -69,8 +69,7 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
      */
     _calculateMarkerWidth: function(width, count, spacing)
     {
-        var val = 0,
-            spacing = 3;
+        var val = 0;
         while(val < 3 && spacing > -1)
         {
             spacing = spacing - 1;
@@ -104,6 +103,22 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
             width = this._calculateMarkerWidth(dataWidth, len, styles.spacing),
             halfwidth = width/2;
         this._drawMarkers(xcoords, opencoords, highcoords, lowcoords, closecoords, len, width, halfwidth, styles);
+    },
+
+    /**
+     * Gets the default value for the `styles` attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
+     * @private
+     */
+    _getDefaultStyles: function()
+    {
+        var styles = {
+            spacing: 3
+        };
+        return this._mergeStyles(styles, RangeSeries.superclass._getDefaultStyles());
     }
 });
 

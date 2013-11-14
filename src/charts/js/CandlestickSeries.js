@@ -301,8 +301,7 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
                     alpha: 1,
                     weight: 0
                 }
-            },
-            spacing: 3
+            }
         };
         return this._mergeStyles(styles, CandlestickSeries.superclass._getDefaultStyles());
     }
