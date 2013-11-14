@@ -784,9 +784,9 @@ with any configuration info required for the module.
 
                     if (mod.fn) {
                             modArgs = [Y, name];
-                            if (mod.details && mod.details.es6) {
+                            if (mod.details && mod.details.es) {
                                 for (j = 0; j < mod.imports.length; j++) {
-                                    // passing __exports__ onto the module function
+                                    // passing `exports` onto the module function
                                     modArgs.push(exported[mod.imports[j]] || Y);
                                 }
                             }
