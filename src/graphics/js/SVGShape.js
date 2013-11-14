@@ -774,12 +774,9 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			x = type === "path" ? 0 : this._x,
 			y = type === "path" ? 0 : this._y,
             wt = 0;
-        if(type !== "path")
+        if(stroke && stroke.weight)
         {
-            if(stroke && stroke.weight)
-            {
-                wt = stroke.weight;
-            }
+            wt = stroke.weight;
             w = (x + w + wt) - (x - wt);
             h = (y + h + wt) - (y - wt);
             x -= wt;
