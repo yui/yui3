@@ -67,7 +67,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 markers,
                 seriesStyles,
                 seriesCollection = this.get("seriesTypeCollection"),
-                seriesLen = seriesCollection.length,
+                seriesLen = seriesCollection ? seriesCollection.length : 0,
                 seriesSize = 0,
                 offset = 0,
                 renderer,
