@@ -117,7 +117,7 @@ Histogram.prototype = {
             yMarkerPlaneBottom = yMarkerPlaneTop + seriesSize;
             xMarkerPlane.push({start: xMarkerPlaneLeft, end: xMarkerPlaneRight});
             yMarkerPlane.push({start: yMarkerPlaneTop, end: yMarkerPlaneBottom});
-            if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
+            if(!groupMarkers && (isNaN(xcoords[i]) || isNaN(ycoords[i])))
             {
                 this._markers.push(null);
                 continue;
