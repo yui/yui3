@@ -4,7 +4,10 @@ AutoComplete Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed: List doesn't close when it loses focus after scrolling.
+  ([#981][]: @rgrove)
+
+[#981]: https://github.com/yui/yui3/issues/981
 
 3.13.0
 ------
