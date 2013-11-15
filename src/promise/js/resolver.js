@@ -113,6 +113,42 @@ Y.mix(Resolver.prototype, {
         }
     },
 
+    /*
+    Resolves a promise to a value or another promise. In case the value is a
+    promise, the resulting value of the first promise will be the "flattened"
+    result of calling `then()` on the other promise.
+
+    This is the default algorithm used when using the function passed as the 
+    first argument to the promise initialization function. This means that 
+    the following code returns a promise for the value 'hello world':
+
+        var promise1 = new Y.Promise(function (resolve) {
+            resolve('hello world');
+        });
+        var promise2 = new Y.Promise(function (resolve) {
+            resolve(promise1);
+        }); 
+        promise2.then(function (value) {
+            assert(value === 'hello world'); // true
+        });
+
+    @method resolve
+    @param [Any] value A regular JS value or a promise
+    */
+    resolve: function (value) {
+        var self = this;
+
+        if (Promise.isPromise(value)) {
+            value.then(function (value) {
+                self.resolve(value);
+            }, function (reason) {
+                self.reject(reason);
+            });
+        } else {
+            this.fulfill(value);
+        }
+    },
+
     /**
     Schedule execution of a callback to either or both of "resolve" and
     "reject" resolutions for the Resolver.  The callbacks
