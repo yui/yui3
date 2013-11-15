@@ -45,7 +45,7 @@ var TestName = 'YUI: Fetch';
 
 YUI({
     allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },
     filter: YUI_config.gfilter,
     modules: {
         'seed-tests': {
@@ -70,10 +70,12 @@ YUI({
         },
         'namespace-test': {
             fullpath: './assets/namespace-test.js'
+        },
+        'es-modules-test': {
+            fullpath: './assets/es-modules-test.js'
         }
-        
     }
-}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'test-console', 'test', function(Y) {
+}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'es-modules-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
     Y.Test.Runner.run();
