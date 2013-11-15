@@ -1,10 +1,6 @@
 YUI.add('es-modules-test', function (Y) {
 
 var Assert = Y.Assert,
-    Lang   = Y.Lang,
-
-    doc = Y.config.doc,
-
     suite = new Y.Test.Suite('YUI: ES Modules Compat Test');
 
 YUI.add('mod1-legacy', function (Y, NAME) {
