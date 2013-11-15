@@ -29,6 +29,22 @@ YUI.add('promise-tests', function (Y) {
         });
     }
 
+    function wait(ms) {
+        return new Promise(function (fulfill) {
+            setTimeout(function () {
+                fulfill(ms);
+            }, ms);
+        });
+    }
+
+    function rejectedAfter(ms) {
+        return new Promise(function (fulfill, reject) {
+            setTimeout(function () {
+                reject(ms);
+            }, ms);
+        });
+    }
+
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
         name: 'Promise tests'
@@ -247,6 +263,62 @@ YUI.add('promise-tests', function (Y) {
     }));
 
     suite.add(new Y.Test.Case({
+        name: 'control flow with catch()',
+
+        'promises have a catch() method': function () {
+            var promise = new Promise(function () {});
+
+            Assert.isFunction(promise['catch'], 'promises should have a `catch` method');
+        },
+
+        'catch(fn) does nothing to resolved promises': function () {
+            var value = {foo:'bar'},
+                resolved = new Promise(function (resolve) {
+                    resolve(value);
+                }),
+                next,
+                test = this;
+
+            next = resolved['catch'](function (err) {
+                return err;
+            });
+
+            Assert.isObject(next, 'catch() should return an object');
+            Assert.isTrue(Promise.isPromise(next), 'catch() should return a promise');
+
+            isFulfilled(next, function (fulfilled, val) {
+                test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should still be fulfilled');
+                    Assert.areSame(value, val, 'promise fulfilled value should remain the same')
+                });
+            });
+
+            test.wait();
+        },
+
+        'catch(fn) is equivalent to then(undefined, fn)': function () {
+            var reason = new Error('some error'),
+                rejected = new Promise(function (resolve, reject) {
+                    reject(reason);
+                }),
+                next, test = this;
+
+            next = rejected['catch'](function (err) {
+                return err;
+            });
+
+            isFulfilled(next, function (fulfilled, value) {
+                test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should now be fulfilled');
+                    Assert.areSame(reason, value, 'returning an error in catch() should cause the next promise to be fulfilled');
+                });
+            });
+
+            test.wait();
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
         name: 'Promise detection with Promise.isPromise',
 
         _should: {
@@ -448,6 +520,153 @@ YUI.add('promise-tests', function (Y) {
             test.wait();
         }
     }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Promise.all() tests',
+
+        'Promise.all() should return a promise': function () {
+            var somePromise = new Promise(function () {});
+
+            Assert.isInstanceOf(Promise, Promise.all([5]), 'when passed a value, Promise.all() should return a promise');
+            Assert.isInstanceOf(Promise, Promise.all([new Promise(function () {})]), 'when passed a promise, Promise.all() should return a promise');
+            Assert.isInstanceOf(Promise, Promise.all([]), 'with an empty list Promise.all() should still return a promise');
+            Assert.areNotSame(somePromise, Promise.all([somePromise]), 'when passed a promise, Promise.all() should return a new promise');
+        },
+
+        'a non array argument should turn into a rejected promise': function () {
+            var test = this;
+
+            isRejected(Promise.all('foo'), function (rejected, error) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'wrong argument for all() should return a rejected promise');
+                    Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
+                });
+            });
+
+            test.wait();
+        },
+
+        'order of promises should be preserved': function () {
+            var test = this;
+
+            Promise.all([wait(20), wait(10), wait(15)]).then(function (result) {
+                test.resume(function () {
+                    ArrayAssert.itemsAreSame([20, 10, 15], result, 'order of returned values should be the same as the parameter list');
+                });
+            });
+
+            test.wait();
+        },
+
+        'values should be wrapped in a promise': function () {
+            var test = this,
+                obj = {
+                    hello: 'world'
+                };
+
+            Promise.all(['foo', 5, obj]).then(function (result) {
+                test.resume(function () {
+                    ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.all() should be wrapped in promises, not ignored');
+                });
+            });
+
+            test.wait();
+        },
+
+        'correct handling of function parameters': function () {
+            var test = this;
+
+            function testFn() {}
+
+            Promise.all([testFn]).then(function (values) {
+                test.resume(function () {
+                    Assert.isFunction(values[0], 'promise value should be a function');
+                    Assert.areSame(testFn, values[0], 'promise value should be the passed function');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.all() should fail as fast as possible': function () {
+            var test = this;
+
+            Promise.all([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]).then(null, function (reason) {
+                test.resume(function () {
+                    Assert.areEqual(10, reason, 'reason should be the one from the first promise to be rejected');
+                });
+            });
+
+            test.wait();
+        }
+
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Promise.race() tests',
+
+        'a non array argument should turn into a rejected promise': function () {
+            var test = this;
+
+            isRejected(Promise.race('foo'), function (rejected, error) {
+                test.resume(function () {
+                    Assert.isTrue(rejected, 'wrong argument for all() should return a rejected promise');
+                    Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.race() should fulfill when passed a fulfilled promise': function () {
+            var test = this;
+
+            Promise.race([wait(10)]).then(function (result) {
+                test.resume(function () {
+                    Assert.areEqual(10, result, 'Promise.race() should fulfill when passed a fulfilled promise');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.race() should reject when passed a rejected promise': function () {
+            var test = this;
+
+            Promise.race([rejectedAfter(10)]).then(null, function (result) {
+                test.resume(function () {
+                    Assert.areEqual(10, result, 'Promise.race() should reject when passed a rejected promise');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.race() should fulfill to the value of the first promise to be fulfilled': function () {
+            var test = this;
+
+            Promise.race([wait(10), wait(100)]).then(function (result) {
+                test.resume(function () {
+                    Assert.areEqual(10, result, 'Promise.race() should fulfill to the value of the first promise to be fulfilled');
+                });
+            });
+
+            test.wait();
+        },
+
+        'Promise.race() should reject with the reason of the first promise to be rejected': function () {
+            var test = this;
+
+            Promise.race([rejectedAfter(10), rejectedAfter(100)]).then(null, function (result) {
+                test.resume(function () {
+                    Assert.areEqual(10, result, 'Promise.race() should reject with the reason of the first promise to be rejected');
+                });
+            });
+
+            test.wait();
+        }
+    }));
+
 
     Y.Test.Runner.add(suite);
 
