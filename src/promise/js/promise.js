@@ -164,7 +164,37 @@ Promise.cast = function (value) {
 };
 
 /*
+A shorthand for creating a rejected promise.
 
+@method reject
+@param {Any} reason Reason for the rejection of this promise. Usually an Error
+    Object
+@return {Promise} A rejected promise
+@static
+*/
+Promise.reject = function (reason) {
+    return new this(function (resolve, reject) {
+        reject(reason);
+    });
+};
+
+/*
+A shorthand for creating a resolved promise.
+
+@method resolve
+@param {Any} value The value or promise that resolves the returned promise
+@return {Promise} A resolved promise
+@static
+*/
+Promise.resolve = function (value) {
+    return new this(function (resolve) {
+        resolve(value);
+    });
+};
+
+/*
+Returns a promise that is resolved or rejected when all values are resolved or
+any is rejected.
 
 @method all
 @param {Any[]} values An array of any kind of values, promises or not. If a value is not
@@ -205,20 +235,9 @@ Promise.all = function (values) {
     });
 };
 
-Promise.reject = function (reason) {
-    return new this(function (resolve, reject) {
-        reject(reason);
-    });
-};
-
-Promise.resolve = function (value) {
-    return new this(function (resolve) {
-        resolve(value);
-    });
-};
-
 /*
-
+Returns a promise that is resolved or rejected when any of values is either
+resolved or rejected.
 
 @method race
 @param {Any[]} values An array of values or promises
