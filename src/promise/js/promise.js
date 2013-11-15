@@ -2,7 +2,7 @@
 Wraps the execution of asynchronous operations, providing a promise object that
 can be used to subscribe to the various ways the operation may terminate.
 
-When the operation completes successfully, call the Resolver's `fulfill()`
+When the operation completes successfully, call the Resolver's `resolve()`
 method, passing any relevant response data for subscribers.  If the operation
 encounters an error or is unsuccessful in some way, call `reject()`, again
 passing any relevant data for subscribers.
@@ -38,11 +38,11 @@ reason can be any JavaScript value. It's encouraged that rejection reasons be
 error objects
 
 <pre><code>
-var fulfilled = new Y.Promise(function (fulfill) {
-    fulfill('I am a fulfilled promise');
+var fulfilled = new Y.Promise(function (resolve) {
+    resolve('I am a fulfilled promise');
 });
 
-var rejected = new Y.Promise(function (fulfill, reject) {
+var rejected = new Y.Promise(function (resolve, reject) {
     reject(new Error('I am a rejected promise'));
 });
 </code></pre>
@@ -50,7 +50,7 @@ var rejected = new Y.Promise(function (fulfill, reject) {
 @class Promise
 @constructor
 @param {Function} fn A function where to insert the logic that resolves this
-        promise. Receives `fulfill` and `reject` functions as parameters.
+        promise. Receives `resolve` and `reject` functions as parameters.
         This function is called synchronously.
 **/
 function Promise(fn) {
@@ -70,7 +70,7 @@ function Promise(fn) {
     this._resolver = resolver;
 
     fn.call(this, function (value) {
-        resolver.fulfill(value);
+        resolver.resolve(value);
     }, function (reason) {
         resolver.reject(reason);
     });
@@ -194,7 +194,9 @@ Promise.resolve = function (value) {
 
 /*
 Returns a promise that is resolved or rejected when all values are resolved or
-any is rejected.
+any is rejected. This is useful for waiting for the resolution of multiple
+promises, such as reading multiple files in Node.js or making multiple XHR
+requests in the browser.
 
 @method all
 @param {Any[]} values An array of any kind of values, promises or not. If a value is not
@@ -237,7 +239,8 @@ Promise.all = function (values) {
 
 /*
 Returns a promise that is resolved or rejected when any of values is either
-resolved or rejected.
+resolved or rejected. Can be used for providing early feedback in the UI
+while other operations are still pending.
 
 @method race
 @param {Any[]} values An array of values or promises
