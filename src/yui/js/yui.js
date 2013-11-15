@@ -624,8 +624,7 @@ with any configuration info required for the module.
                 name: name,
                 fn: fn,
                 version: version,
-                details: details,
-                imports: [].concat((details && details.requires) || [])
+                details: details
             },
             //Instance hash so we don't apply it to the same instance twice
             applied = {},
@@ -675,7 +674,10 @@ with any configuration info required for the module.
             exported = Y.Env._exported,
             len = r.length, loader, def, go,
             c = [],
-            modArgs;
+            modArgs,
+            esCompat,
+            __exports__,
+            __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
         //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
@@ -752,6 +754,7 @@ with any configuration info required for the module.
 
                     details = mod.details;
                     req = details.requires;
+                    esCompat = details.es;
                     use = details.use;
                     after = details.after;
                     //Force Intl load if there is a language (Loader logic) @todo fix this shit
@@ -783,22 +786,29 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                            modArgs = [Y, name];
-                            if (mod.details && mod.details.es) {
-                                for (j = 0; j < mod.imports.length; j++) {
-                                    // passing `exports` onto the module function
-                                    modArgs.push(exported[mod.imports[j]] || Y);
-                                }
+                        modArgs = [Y, name];
+                        if (esCompat) {
+                            __imports__ = {};
+                            __exports__ = {};
+                            // passing `exports` and `imports` onto the module function
+                            modArgs.push(__imports__, __exports__);
+                            for (j = 0; j < req.length; j++) {
+                                __imports__[req[j]] = exported[req[j]] || Y;
                             }
-                            if (Y.config.throwFail) {
-                                exported[name] = mod.fn.apply(mod, modArgs);
-                            } else {
-                                try {
-                                    exported[name] = mod.fn.apply(mod, modArgs);
-                                } catch (e) {
-                                    Y.error('Attach error: ' + name, e, name);
+                        }
+                        if (Y.config.throwFail) {
+                            __exports__ = mod.fn.apply(mod, modArgs);
+                        } else {
+                            try {
+                                __exports__ = mod.fn.apply(mod, modArgs);
+                            } catch (e) {
+                                Y.error('Attach error: ' + name, e, name);
                                 return false;
                             }
+                        }
+                        if (esCompat && __exports__) {
+                            // store the `exports` in case others `es` modules requires it
+                            exported[name] = __exports__;
                         }
                     }
 
