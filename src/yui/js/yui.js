@@ -674,10 +674,8 @@ with any configuration info required for the module.
             exported = Y.Env._exported,
             len = r.length, loader, def, go,
             c = [],
-            modArgs,
-            esCompat,
-            __exports__,
-            __imports__;
+            modArgs, esCompat, reqlen,
+            __exports__, __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
         //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
@@ -764,7 +762,8 @@ with any configuration info required for the module.
                     }
 
                     if (req) {
-                        for (j = 0; j < req.length; j++) {
+                        reqlen = req.length;
+                        for (j = 0; j < reqlen; j++) {
                             if (!done[req[j]]) {
                                 if (!Y._attach(req)) {
                                     return false;
@@ -792,8 +791,11 @@ with any configuration info required for the module.
                             __exports__ = {};
                             // passing `exports` and `imports` onto the module function
                             modArgs.push(__imports__, __exports__);
-                            for (j = 0; j < req.length; j++) {
-                                __imports__[req[j]] = exported[req[j]] || Y;
+                            if (req) {
+                                reqlen = req.length;
+                                for (j = 0; j < reqlen; j++) {
+                                    __imports__[req[j]] = exported.hasOwnProperty(req[j]) ? exported[req[j]] : Y;
+                                }
                             }
                         }
                         if (Y.config.throwFail) {
@@ -806,7 +808,7 @@ with any configuration info required for the module.
                                 return false;
                             }
                         }
-                        if (esCompat && __exports__) {
+                        if (esCompat) {
                             // store the `exports` in case others `es` modules requires it
                             exported[name] = __exports__;
                         }
