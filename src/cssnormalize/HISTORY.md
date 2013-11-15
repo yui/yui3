@@ -4,7 +4,11 @@ CSS Normalize Change History
 @VERSION@
 ------
 
-* No changes.
+* Normalize is now imported into YUI from Pure via Grunt. ([#1240][])
+
+
+[#1240]: https://github.com/yui/yui3/issues/1240
+
 
 3.12.0
 ------

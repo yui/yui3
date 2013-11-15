@@ -1,10 +1,10 @@
-<div class="intro" class="component">                					
+<div class="intro" class="component">
 	<p>"Normalize.css is a small CSS file that provides better cross-browser consistency in the default styling of HTML elements. It’s a modern, HTML5-ready, alternative to the traditional CSS reset."</p>
 
-	<p>This component is a direct port of Normalize v1.1.0 from the <a href="http://necolas.github.com/normalize.css/">Normalize.css</a> open source project.</p>
+	<p>This component is from <a href="http://purecss.io/base/">Pure Base</a>, which is a direct port of Normalize v1.x from the <a href="http://necolas.github.com/normalize.css/">Normalize.css</a> open source project.</p>
 
 	<p>This guide explains the use-cases behind Normalize, how it varies from CSSReset and CSSBase, and how to use it as a foundation for your new projects. For more information, check out <a href="http://nicolasgallagher.com/about-normalize-css/">this great guide</a> by Nicolas Gallagher.</p>
-			
+
 </div><!-- /promo -->
 
 <h2 id="start">Getting Started</h2>
@@ -21,15 +21,15 @@
 
 
 <h3 id="context">Global vs. Contextual</h3>
-	
+
 <p>
 	CSS Files such as Normalize.css contain styles that apply globally to all native HTML elements. Sometimes, pulling them into your existing projects can break layout. For these cases, consider using the contextual <code>cssnormalize-context.css</code>. This version selects HTML elements only when they descend from the <code>.yui3-normalized</code> classname.
 </p>
-	
+
 <p>
 	Here is how to include the contextual version of CSS Base:
-</p> 
-				
+</p>
+
 ```
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssnormalize-context/cssnormalize-context-min.css">
 ```
@@ -37,7 +37,7 @@
 <h3 id="using-contextual">Using Contextual Normalize.css</h3>
 
 	<p>The following code snippet show how you might apply Normalize.css to one of two columns:</p>
-										
+
 ```
 <div>
 	<div id="left-column" class="yui3-normalized"><h1>Lorem Ipsum</h1></div>
