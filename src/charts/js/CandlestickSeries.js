@@ -158,6 +158,7 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
     {
         var upcandle = this.get("upcandle"),
             downcandle = this.get("downcandle"),
+            candle,
             wick = this.get("wick"),
             cx,
             opencoord,
@@ -168,8 +169,10 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
             right,
             top,
             bottom,
+            height,
             leftPadding = styles.padding.left,
-            up;
+            up,
+            i;
         upcandle.set(styles.upcandle);
         downcandle.set(styles.downcandle);
         wick.set(styles.wick);
