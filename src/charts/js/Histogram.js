@@ -39,7 +39,7 @@ Histogram.prototype = {
             len = xcoords.length,
             top = ycoords[0],
             seriesTypeCollection = this.get("seriesTypeCollection"),
-            seriesLen = seriesTypeCollection.length || 0,
+            seriesLen = seriesTypeCollection ? seriesTypeCollection.length : 0,
             seriesSize = 0,
             totalSize = 0,
             offset = 0,
@@ -88,25 +88,32 @@ Histogram.prototype = {
         setSize = style[setSizeKey];
         calculatedSize = style[calculatedSizeKey];
         this._createMarkerCache();
-        for(; i < seriesLen; ++i)
+        if(seriesTypeCollection && seriesLen > 1)
         {
-            renderer = seriesTypeCollection[i];
-            seriesSize += renderer.get("styles").marker[setSizeKey];
-            if(order > i)
+            for(; i < seriesLen; ++i)
             {
-                offset = seriesSize;
+                renderer = seriesTypeCollection[i];
+                seriesSize += renderer.get("styles").marker[setSizeKey];
+                if(order > i)
+                {
+                    offset = seriesSize;
+                }
+            }
+            totalSize = len * seriesSize;
+            this._maxSize = graphic.get(setSizeKey);
+            if(totalSize > this._maxSize)
+            {
+                ratio = graphic.get(setSizeKey)/totalSize;
+                seriesSize *= ratio;
+                offset *= ratio;
+                setSize *= ratio;
+                setSize = Math.max(setSize, 1);
+                this._maxSize = setSize;
             }
         }
-        totalSize = len * seriesSize;
-        this._maxSize = graphic.get(setSizeKey);
-        if(totalSize > this._maxSize)
+        else
         {
-            ratio = graphic.get(setSizeKey)/totalSize;
-            seriesSize *= ratio;
-            offset *= ratio;
-            setSize *= ratio;
-            setSize = Math.max(setSize, 1);
-            this._maxSize = setSize;
+            seriesSize = style[setSizeKey];
         }
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
