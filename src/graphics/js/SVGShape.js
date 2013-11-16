@@ -264,6 +264,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         {
             Y.DOM.setStyle(node, "visibility", "hidden");
         }
+        Y.DOM.setAttribute(this.node, "shape-rendering", this.get("shapeRendering"));
 	},
 
 
@@ -1062,6 +1063,41 @@ SVGShape.ATTRS = {
 			return val;
 		}
 	},
+
+    /**
+     * Only implemented in SVG implementation.
+     * Applies the SVG shape-rendering attribute to the shape.
+     *  <dl>
+     *      <dt>auto</dt>
+     *      <dd>Indicates that the user agent shall make appropriate tradeoffs to balance speed,
+     *      crisp edges and geometric precision, but with geometric precision given more importance than speed and crisp edges.</dd>
+     *      <dt>optimizeSpeed</dt>
+     *      <dd>Indicates that the user agent shall emphasize rendering speed over geometric precision and crisp edges.
+     *      This option will sometimes cause the user agent to turn off shape anti-aliasing.</dd>
+     *      <dt>crispEdges</dt>
+     *      <dd>Indicates that the user agent shall attempt to emphasize the contrast between clean edges of artwork over rendering
+     *      speed and geometric precision. To achieve crisp edges, the user agent might turn off anti-aliasing for all lines and curves
+     *      or possibly just for straight lines which are close to vertical or horizontal. Also, the user agent might adjust line
+     *      positions and line widths to align edges with device pixels.</dd>
+     *      <dt>geometricPrecision</dt>
+     *      <dd>Indicates that the user agent shall emphasize geometric precision over speed and crisp edges.</dd>
+     *  </dl>
+     *
+     *  @config shapeRendering
+     *  @type String
+     */
+    shapeRendering: {
+        value: "auto",
+
+        setter: function(val) {
+            if(this.node)
+            {
+                Y.DOM.setAttribute(this.node, "shape-rendering", val);
+            }
+            return val;
+        }
+    },
+
 
 	/**
 	 * Contains information about the fill of the shape.
