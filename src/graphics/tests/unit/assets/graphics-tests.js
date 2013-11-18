@@ -78,14 +78,41 @@ graphicTests = new Y.Test.Case({
 
     rotate: 110,
 
+    startX: 5,
+
+    startY: 5,
+
     setUp: function () {
-        this.graphic = new Y.Graphic({render: "#testdiv"});
+        this.graphic = new Y.Graphic({
+           render: "#testdiv",
+           x: this.startX,
+           y: this.startY
+        });
     },
 
     tearDown: function () {
         this.graphic.destroy(); 
         //remove the focus event from the document as its not related to graphics.
         Y.Event.purgeElement(DOC, false);
+    },
+
+    "test set(x)set(y)" : function()
+    {
+        var graphic = this.graphic,
+            x = 45,
+            y = 60,
+            startTop = this.startX + "px",
+            startLeft = this.startX + "px",
+            top = y + "px",
+            left = x + "px",
+            node = graphic.get("node");
+        
+        Y.Assert.areEqual(startLeft, Y.DOM.getStyle(node, "left"), "The left style should be " + startLeft + ".");
+        Y.Assert.areEqual(startTop, Y.DOM.getStyle(node, "top"), "The top style should be " + startTop + ".");
+        graphic.set("x", x);
+        Y.Assert.areEqual(left, Y.DOM.getStyle(node, "left"), "The left style should be " + left + ".");
+        graphic.set("y", y);
+        Y.Assert.areEqual(top, Y.DOM.getStyle(node, "top"), "The top style should be " + top + ".");
     },
     
     "test addShape(circle)": function()

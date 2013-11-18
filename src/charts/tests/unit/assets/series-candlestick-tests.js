@@ -127,7 +127,7 @@ YUI.add('series-candlestick-tests', function(Y) {
                         } else {
                             downcandlepath = downcandlepath + " M" + left + " " + top + " L" + width + " " + top + " " + width + " " + height + " " + left + " " + height + " " + left + " " + top;
                         }
-                        wickpath = wickpath + " M" + cx + " " + highcoord + " L" + cx + " " + lowcoord;
+                        wickpath = wickpath + " M" + (cx - styles.wick.width/2) + " " + highcoord + " L" + styles.wick.width + " " + highcoord + " " + styles.wick.width + " " + (lowcoord - highcoord) + " " + (cx - styles.wick.width/2) + " " + (lowcoord - highcoord) + " " + (cx - styles.wick.width/2) + " " + highcoord;
                     }
                 },
                 series = this.series,

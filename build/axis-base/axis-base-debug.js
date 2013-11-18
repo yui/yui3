@@ -113,6 +113,36 @@ Renderer.prototype = {
     },
 
     /**
+     * Copies an object literal.
+     *
+     * @method _copyObject
+     * @param {Object} obj Object literal to be copied.
+     * @return Object
+     * @private
+     */
+    _copyObject: function(obj) {
+        var newObj = {},
+            key,
+            val;
+        for(key in obj)
+        {
+            if(obj.hasOwnProperty(key))
+            {
+                val = obj[key];
+                if(typeof val === "object" && !Y_Lang.isArray(val))
+                {
+                    newObj[key] = this._copyObject(val);
+                }
+                else
+                {
+                    newObj[key] = val;
+                }
+            }
+        }
+        return newObj;
+    },
+
+    /**
      * Gets the default value for the `styles` attribute.
      *
      * @method _getDefaultStyles

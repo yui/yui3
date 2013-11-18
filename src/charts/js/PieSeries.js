@@ -491,7 +491,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
     {
         var graphic = this.get("graphic"),
             marker,
-            cfg = Y.clone(styles);
+            cfg = this._copyObject(styles);
         marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
         return marker;
