@@ -578,13 +578,13 @@ Y.Promise.race([
 <h4>`Y.Parallel`</h4>
 
 <p>
-    `Y.Parallel` is similar to `Y.batch` in that it provides a mechanism to
-    execute a callback when several independent asynchronous operations have
+    `Y.Parallel` is similar to `Y.Promise.all` in that it provides a mechanism
+    to execute a callback when several independent asynchronous operations have
     completed. However, it doesn't handle errors or guarantee asynchronous
     callback execution. It is also transactional, but the batch of operations
-    is bound to a specific callback, where `Y.batch()` returns a promise that
-    represents the aggregated values of those operations. The promise can be
-    used by multiple consumers if necessary.
+    is bound to a specific callback, where `Y.Promise.all()` returns a promise
+    that represents the aggregated values of those operations. The promise can
+    be used by multiple consumers if necessary.
 </p>
 
 <h3 id="plans">What are the plans for Promises in the library?</h3>
