@@ -214,6 +214,7 @@ Promise.all = function (values) {
     return new Promise(function (resolve, reject) {
         if (!Lang.isArray(values)) {
             reject(new TypeError('Promise.all expects an array of values or promises'));
+            return;
         }
 
         var remaining = values.length,
@@ -258,6 +259,7 @@ Promise.race = function (values) {
     return new Promise(function (resolve, reject) {
         if (!Lang.isArray(values)) {
             reject(new TypeError('Promise.race expects an array of values or promises'));
+            return;
         }
         
         // just go through the list and resolve and reject at the first change
