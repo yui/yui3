@@ -481,28 +481,28 @@ MyDatabase.prototype.save = function (key, data) {
 <p>
     Promise chaining works great to serialize synchronous and asynchronous
     operations, but often several asynchronous operations can be performed
-    simultaneously. This is where `Y.batch()` comes in.
+    simultaneously. This is where `Y.Promise.all()` comes in.
 </p>
 
 <p>
-    `Y.batch()` takes any number of promises as arguments, and returns a new
-    promise that will resolve when all the batched promises have resolved. The
+    `Y.Promise.all()` takes an array of promises and returns a new promise that
+    will resolve when all the promises in the array have resolved. The
     resolved value will be an array of values from the individual promises, in
-    the order they were passed to `Y.batch()`.
+    the order they were passed to `Y.Promise.all()`.
 </p>
 
 <p>
-    If any one of the batched promises should be rejected, the batch promise
-    is immediately rejected with that reason, so failures can be dealt with
+    If any one of the promises is be rejected, the returned promise is
+    immediately rejected with that reason, so failures can be dealt with
     sooner rather than later.
 </p>
 
 ```
-Y.batch(
+Y.Promise.all([
         getUserAccountInfo(userId),
         getUserPosts(userId, { page: 1, postsPerPage: 5 }),
         getUserRank(userId)
-    )
+    ])
     .then(function (data) {
         var account = data[0],
             posts   = data[1],
@@ -512,18 +512,32 @@ Y.batch(
     }, handleError);
 ```
 
-<!--h3>Custom Promises</h3>
+<h3>Racing promises</h3>
 
 <p>
-    `Y.Promise is built to support creating custom subclasses that support
-    more descriptive names. Subclass methods can access the resolution
-    mechanism for the promise via `this._resolver`.
+    Sometimes it-s necessary to provide early feedback when doing several
+    transactions at the same time. It may be to send visual feedback to the user
+    in the browser or to chose the fastest service to respond in Node.js. 
+    Promises provide this capability in `Y.Promise.race()`.
 </p>
 
+<p>
+    `Y.Promise.race()` takes an array of promises and resolves to the first
+    promise that is fulfilled or rejected. Contrary to `Y.Promise.all()` which
+    waits for all promises to be resolved and fulfills to an array of all the
+    corresponding values, `Y.Promise.race()` fulfills to a single value, that of
+    the first promise in the list to resolve.
+<p>
 
 ```
+Y.Promise.race([
+        querySlowRemoteService(query),
+        getDataFromFastLocalCache(dataId)
+    ])
+    .then(function (raceWinner) {
+        ...
+    });
 ```
--->
 
 <h2>FAQ</h2>
 
