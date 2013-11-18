@@ -149,7 +149,13 @@ Promise.isPromise = function (obj) {
 };
 
 /*
+Ensures that a certain value is a promise. If it is not a promise, it wraps it
+in one.
 
+This method can be copied or inherited in subclasses. In that case it  will
+check that the value passed to it is an instance of the correct class.
+This means that `PromiseSubclass.cast()` will always return instances of 
+`PromiseSublcass`.
 
 @method cast
 @param {Any} Any object that may or may not be a promise
