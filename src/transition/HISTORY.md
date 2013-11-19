@@ -4,7 +4,9 @@ Transition Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed issue where `toggleView` did not correctly work when passed only an effect name. ([#1258][] @ezequiel)
+
+[#1258]: https://github.com/yui/yui3/issues/1258
 
 3.13.0
 ------
