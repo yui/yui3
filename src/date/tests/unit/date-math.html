@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 YUI({
-    coverage: ["datatype-date-math"],
+    coverage: ["date"],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'date-math-tests': {
@@ -20,7 +20,7 @@ YUI({
         }
     }
 }).use('test-console', "date-math-tests", function(Y) {
-
+    
         (new Y.Test.Console()).render('#log');
 
         Y.Test.Runner.run();

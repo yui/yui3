@@ -2,13 +2,6 @@
     <fieldset>
         <label for="demo_input">String to parse:</label>
         <input type="text" id="demo_input" value="Jan 7, 2003">
-        <label for="format">Format:</label>
-        <select id="format">
-            <option value="" selected>- none - </option>
-            <option value="%F">%F (YYYY-MM-DD)</option>
-            <option value="%d/%B/%Y">%d/%B/%Y (DD/month/YYYY)</option>
-            <option value="%a, %B %d, %Y">%a, %B %d, %Y (wday, month DD, YYYY)</option>
-        </select>
         <input type="button" id="demo_btn" value="Parse date">
         <div id="demo_output" class="output">&nbsp;</div>
     </fieldset>
@@ -18,37 +11,16 @@
 
 <script>
 YUI().use("node", "datatype-date", function (Y) {
-
-    var format = null,
-        demo_output = Y.one("#demo_output"),
-        demo_input = Y.one("#demo_input"),
-        convert = function () {
-            var input = demo_input.get("value"),
-                output = Y.Date.parse(input, format);
-
-            if(output === null) {
-                output = "null"
-            }
-
-            demo_output.setHTML(output.toString());
-        };
-    Y.one("#format").set("value","");
-    demo_input.set("value", "Jan 7, 2003");
-
-    Y.on("change", function (e) {
-
-        format = e.target.get("value") || null;
-
-        demo_input.set("value", Y.Date.format(new Date(), {format: format}));
-
-        convert();
-
-    }, "#format");
-
-    Y.on("click", function (e){
-
-        convert();
-
+    Y.on("click", function(e){
+        
+        var input = Y.one("#demo_input").get("value"),
+            output = Y.Date.parse(input);
+                
+        if(output === null) {
+            output = "null"
+        }
+        
+        Y.one("#demo_output").setHTML(output.toString());
     }, "#demo_btn");
 });
 </script>
