@@ -1,5 +1,60 @@
 YUI.add('date-fr-tests', function(Y) {
 
+    var hasFaultyDateToString = function () {
+        /**
+         * NOTE: Certain tests are ignored on browsers where `(new Date()).toString()`
+         * has a format that's incorrectly suited for the provided format string.
+         *
+         * The reason why these tests need to use `(new Date()).toString()` is due to the
+         * fact that this code tests timezone parsing in `Y.Date.parse`, and we need to
+         * make sure that this code will pass regardless of what timezone we run these
+         * tests in.
+         *
+         * In all other browsers, `(new Date()).toString()` outputs the following:
+         * 
+         * Sun Oct 27 2013 11:24:18 PDT-8000
+         * a   b   d  Y    H  M  S  z
+         *
+         * This is the target format that we want to test, which is correct. Since we need it
+         * to work across timezones, we can't hard code this string, and we need to provide
+         * a specific Date in UTC time, requiring the use of `Date.UTC()`.
+         * 
+         * However, in IE, `(new Date()).toString()` outputs the following:
+         *
+         * Sun Oct 27 11:24:18 PDT 2013
+         * a   b   d  Y  H  M  S  z
+         *
+         * Because the format of the string is incorrect, the test will fail,
+         * which is the correct behavior.
+         *
+         * Therefore, we have two options:
+         * 
+         * 1. Make sure this test works across every browser, but only in one timezone.
+         * 2. Make sure this test works on most browsers, but in every timezone.
+         *
+         * As a result, we decided to make the test work in most browsers, but be ignored in
+         * IE, so that developers across the world can still develop on YUI successfully.
+         *
+         *
+         * Although this test would fail in IE, this does not change the correctness of the 
+         * code - a string in the correct format of '%a %b %d %Y %T GMT%z' will be parsed 
+         * correctly regardless.   
+         */
+
+        var date     = new Date("27 Mar 2013 17:56:13 GMT+0000").toString(),
+            dateData = date.split(" "),
+            len      = dateData.length;
+
+        /**
+         * Check to see if the last result in the date string is not a number.
+         * (It should be a timezone string instead.)
+         *
+         * If it is a number, then the Date.toString() method is faulty and the 
+         * timezone tests should be ignored.
+         */
+         return !isNaN(+dateData[len - 1]);
+    }();
+
     //Helper function to normalize timezone dependent hours.
     var getHours = function(date, pad, ampm) {
         pad = (pad === false) ? false : true;
@@ -251,7 +306,13 @@ YUI.add('date-fr-tests', function(Y) {
     });
 
     var testParserWithFormat = new Y.Test.Case({
-        testParsing: function () {
+        _should: {
+            ignore: {
+                testParsingTimezones: hasFaultyDateToString
+            }
+        },
+
+        testParsingLocal: function () {
 
             var values = [
                 ["01/02/2003","%d/%m/%Y", "1 Feb 2003"],
@@ -266,8 +327,6 @@ YUI.add('date-fr-tests', function(Y) {
                 ["01 - March - 2003","%d-%B-%Y","1 Mar 2003"],
                 ["Sat, March 01, 2003", "%a, %B %d, %Y","1 Mar 2003"],
                 ["Saturday, March 01, 2003", "%A, %B %d, %Y","1 Mar 2003"],
-                [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T GMT%z", "27 Mar 2013 17:56:13 GMT+0000"],
-                [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T %z", "27 Mar 2013 17:56:13 GMT+0000"],
                 ["2012-11-10 10:11:12 -0100", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
                 ["2012-11-10 10:11:12 -01:00", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
                 ["2012-11-10 10:11:12 Z", "%F %T %z", "10 Nov 2012 10:11:12 +0000"],
@@ -333,6 +392,16 @@ YUI.add('date-fr-tests', function(Y) {
                     v.join(' , ')
                 );
             }
+        },
+        testParsingTimezones: function () {
+            ASSERT.areSame(new Date("27 Mar 2013 17:56:13 GMT+0000").toString(), 
+                           Y.Date.parse(new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),
+                           "%a %b %d %Y %T GMT%z").toString());
+
+            ASSERT.areSame(new Date("27 Mar 2013 17:56:13 GMT+0000").toString(), 
+                           Y.Date.parse(new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),
+                           "%a %b %d %Y %T %z").toString());
+
         },
         testParsingFR:function () {
             var values = [
