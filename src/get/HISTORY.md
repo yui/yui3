@@ -1,7 +1,7 @@
 Get Utility Change History
 ==========================
 
-@VERSION@
+3.14.0
 ------
 
 * Preserve `global` as `this` when executing a yui module in nodejs ([#1360][])

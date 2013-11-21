@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.14.0
 ------
 
 * Fix an undeclared variable ([#1307][])

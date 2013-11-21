@@ -1,7 +1,7 @@
 Uploader Utility (New) Change History
 =====================================
 
-@VERSION@
+3.14.0
 ------
 
 * Addition of XHR's `responseText` to `uploaderror`'s event payload. ([#1356][]: @semafor)
