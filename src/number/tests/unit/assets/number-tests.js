@@ -19,6 +19,8 @@ YUI.add('number-tests', function(Y) {
             testEmpty: function() {
                 var number = Y.Number.parse("");
                 ASSERT.isNull(number, "Expected null.");
+
+                ASSERT.isNull(Y.Number.parse('     '), 'Expected null for a string made only of spaces.');
             },
 
             testStrings: function() {
@@ -42,6 +44,15 @@ YUI.add('number-tests', function(Y) {
                 number = Y.Number.parse(-1);
                 ASSERT.areSame(-1, number, "Incorrect number -1.");
             },
+
+            testNumberStringCombos: function () {
+                ASSERT.isNull(Y.Number.parse('1a'), 'Expected null.');
+
+                ASSERT.isNull(Y.Number.parse('  1 1 '), 'Expected null.');
+
+                ASSERT.areSame(1, Y.Number.parse('   1   '), 'Incorrect number 1.');
+            },
+
             testWithConfig: function () {
                 var i, v, values = [
                     ["1234.5", {}, 1234.5],
