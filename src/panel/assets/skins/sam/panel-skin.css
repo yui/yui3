@@ -30,6 +30,10 @@
     TODO: Add support for IE and W3C gradients
     */
 }
+.yui3-skin-sam .yui3-panel-title {
+    margin: 0;
+    font-size: inherit;
+}
 .yui3-skin-sam .yui3-panel .yui3-widget-hd .yui3-widget-buttons {
     padding: 8px;
 }

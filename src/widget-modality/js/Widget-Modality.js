@@ -19,6 +19,7 @@ var WIDGET       = 'widget',
     MaskHide     = "maskHide",
     ClickOutside = "clickoutside",
     FocusOutside = "focusoutside",
+    ARIA_HIDDEN  = 'aria-hidden',
 
     supportsPosFixed = (function(){
 
@@ -177,6 +178,15 @@ var WIDGET       = 'widget',
      */
     WidgetModal.STACK = [];
 
+    /**
+     * Reference to the actively focused node before the widget is displayed,
+     * for cases where multiple modal widgets are in use.
+     *
+     * @property DEFAULT_ACTIVE_NODE
+     * @value null
+     */
+    WidgetModal.DEFAULT_ACTIVE_NODE = null;
+
 
     WidgetModal.prototype = {
 
@@ -194,6 +204,8 @@ var WIDGET       = 'widget',
         // *** Instance Members *** //
 
         _uiHandlesModal: null,
+
+        _activeNode: null,
 
 
         /**
@@ -289,6 +301,22 @@ var WIDGET       = 'widget',
         _blur : function () {
 
             this.blur();
+
+            if (this._activeNode) {
+              this._restoreActiveNode(this._activeNode);
+            }
+        },
+
+        /**
+         * Restores focus to a previously focused element before the widget is displayed
+         * @method _restorActiveNode
+         * @param {Node} node The node to return focus to.
+         */
+        _restoreActiveNode: function (node) {
+
+            if (node.get('nodeName').toLowerCase() !== 'body') {
+              node.focus();
+            }
         },
 
         /**
@@ -314,13 +342,20 @@ var WIDGET       = 'widget',
             var stack    = WidgetModal.STACK,
                 maskNode = this.get('maskNode'),
                 isModal  = this.get('modal'),
+                bodyNode = Y.one('body'),
                 topModal, index;
 
             if (visible) {
+                this._activeNode = Y.one('doc').get('activeElement');
+
+                if (!stack.length) {
+                    WidgetModal.DEFAULT_ACTIVE_NODE = this._activeNode;
+                }
 
                 Y.Array.each(stack, function(modal){
                     modal._detachUIHandlesModal();
                     modal._blur();
+                    modal.get(BOUNDING_BOX).set(ARIA_HIDDEN, true);
                 });
 
                 // push on top of stack
@@ -328,10 +363,12 @@ var WIDGET       = 'widget',
 
                 this._repositionMask(this);
                 this._uiSetHostZIndexModal(this.get(Z_INDEX));
+                this.get(BOUNDING_BOX).set(ARIA_HIDDEN, false);
 
                 if (isModal) {
                     maskNode.show();
                     Y.later(1, this, '_attachUIHandlesModal');
+                    bodyNode.set(ARIA_HIDDEN, true);
                     this._focus();
                 }
 
@@ -346,6 +383,7 @@ var WIDGET       = 'widget',
 
                 this._detachUIHandlesModal();
                 this._blur();
+                this.get(BOUNDING_BOX).set(ARIA_HIDDEN, true);
 
                 if (stack.length) {
                     topModal = stack[0];
@@ -357,17 +395,27 @@ var WIDGET       = 'widget',
                         //topModal._attachUIHandlesModal();
                         Y.later(1, topModal, '_attachUIHandlesModal');
                         topModal._focus();
+                        topModal.get(BOUNDING_BOX).set(ARIA_HIDDEN, false);
                     }
 
                 } else {
 
                     if (maskNode.getStyle('display') === 'block') {
                         maskNode.hide();
+
+                        if (isModal) {
+                            bodyNode.set(ARIA_HIDDEN, false);
+                        }
+
+                        if (WidgetModal.DEFAULT_ACTIVE_NODE) {
+                            this._restoreActiveNode(WidgetModal.DEFAULT_ACTIVE_NODE);
+                        }
                     }
 
                 }
 
             }
+
         },
 
         /**
@@ -565,6 +613,21 @@ var WIDGET       = 'widget',
             if (this.get(VISIBLE)) {
                 this._attachUIHandlesModal();
             }
+        },
+
+        /**
+         * Toggles the aria-hidden attribute on the body and the panel
+         *
+         * @method _syncAria
+         * @param {Boolean} visible Whether panel is visible or not
+         */
+        _syncAria: function (visible) {
+
+            if (this.get('modal')) {
+              Y.one('body').set(ARIA_HIDDEN, visible);
+            }
+
+            this.get(BOUNDING_BOX).set(ARIA_HIDDEN, !visible);
         }
     };
 
