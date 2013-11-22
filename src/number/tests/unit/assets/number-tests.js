@@ -45,6 +45,11 @@ YUI.add('number-tests', function(Y) {
                 ASSERT.areSame(-1, number, "Incorrect number -1.");
             },
 
+            testBooleans: function () {
+                ASSERT.isNull(Y.Number.parse(true), 'Expected null for `true`.');
+                ASSERT.isNull(Y.Number.parse(false), 'Expected null for `false`.');
+            },
+
             testNumberStringCombos: function () {
                 ASSERT.isNull(Y.Number.parse('1a'), 'Expected null.');
 
