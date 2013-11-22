@@ -128,6 +128,7 @@ Y.mix(Resolver.prototype, {
                 resolves unsuccessfully
     @return {Promise} The promise of a new Resolver wrapping the resolution
                 of either "resolve" or "reject" callback
+    @deprecated
     **/
     then: function (callback, errback) {
         // When the current promise is fulfilled or rejected, either the
