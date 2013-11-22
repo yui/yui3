@@ -78,9 +78,15 @@ Y.mix(Y.namespace("Number"), {
             data = parser(data);
         }
 
-        if (data !== null && data !== "") {
-            data = parseFloat(data);
-
+        if (typeof data === 'string') {
+            if (Y.Lang.trim(data) === '') {
+                data = null;
+            } else {
+                data = +data;
+            }
+        }
+        
+        if (typeof data === 'number') {
             // catch NaN and ±Infinity
             if (!isFinite(data)) {
                 data = null;
