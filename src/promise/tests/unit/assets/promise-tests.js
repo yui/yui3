@@ -435,12 +435,12 @@ YUI.add('promise-tests', function (Y) {
             function Subpromise() {
                 Subpromise.superclass.constructor.apply(this, arguments);
             }
-            Y.extend(Subpromise, Promise);
-
-            Subpromise.reject = Promise.reject;
+            Y.extend(Subpromise, Promise, null, {reject: Promise.reject});
 
             var promise = Subpromise.reject('foo');
             var test = this;
+
+            Assert.isInstanceOf(Subpromise, promise, 'rejected promise should be an instance of the subclass');
 
             isRejected(promise, function (rejected, reason) {
                 test.resume(function () {
@@ -503,12 +503,12 @@ YUI.add('promise-tests', function (Y) {
             function Subpromise() {
                 Subpromise.superclass.constructor.apply(this, arguments);
             }
-            Y.extend(Subpromise, Promise);
-
-            Subpromise.resolve = Promise.resolve;
+            Y.extend(Subpromise, Promise, null, {resolve: Promise.resolve});
 
             var promise = Subpromise.resolve('foo');
             var test = this;
+
+            Assert.isInstanceOf(Subpromise, promise, 'resolved promise should be an instance of the subclass');
 
             isFulfilled(promise, function (fulfilled, value) {
                 test.resume(function () {
