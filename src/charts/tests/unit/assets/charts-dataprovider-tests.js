@@ -6,7 +6,7 @@ YUI.add('charts-dataprovider-tests', function(Y) {
     {
         ChartDataProviderTestCase.superclass.constructor.call(this);
         this.attrCfg = cfg;
-        this.attrCfg.render = "#mychart";
+        this.attrCfg.render = "#testdiv";
         this.name = type + " DataProvider Tests";
     }
         
@@ -17,8 +17,6 @@ YUI.add('charts-dataprovider-tests', function(Y) {
         
         setUp : function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
             this.contentBox = this.chart.get("contentBox");
         },
@@ -26,7 +24,7 @@ YUI.add('charts-dataprovider-tests', function(Y) {
         tearDown : function() 
         {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         testKeys: ["revenue", "expenses", "miscellaneous"],
@@ -222,7 +220,10 @@ YUI.add('charts-dataprovider-tests', function(Y) {
             }
         ],
         dataProvider: allPositiveDataProvider
-    }, "Null Values");
+    }, "Null Values"),
+    parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+    DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
     
     suite.add(getDataProviderTest(allPositiveDataProvider, "All Positive"));
     suite.add(getDataProviderTest(allNegativeDataProvider, "All Negative"));

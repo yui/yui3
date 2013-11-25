@@ -393,6 +393,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             maxDate = this.get('maximumDate'),
             dates = [],
             i, l,
+            paneDate,
             paneNum;
 
         if (!minDate && !maxDate) {

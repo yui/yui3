@@ -1,6 +1,5 @@
 YUI.add('combo-legend-styles-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: ComboLegendStyles"),
-        testBed = Y.Node.create('<div style="position:absolute;top:0px;left:0px;width:800px;height:600px" id="mychart"></div>'),
         comboStylesTest,
         comboGlobalStylesTest,
         dataProvider = [
@@ -33,8 +32,10 @@ YUI.add('combo-legend-styles-tests', function(Y) {
                     }
                 }
             }
-        };
-    Y.one('body').append(testBed);
+        },
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
     function ChartsLegendStylesTest(cfg)
     {
         ChartsLegendStylesTest.superclass.constructor.apply(this);
@@ -48,6 +49,7 @@ YUI.add('combo-legend-styles-tests', function(Y) {
         
         tearDown: function() {
             this.chart.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         testStyles: function() {
@@ -59,7 +61,7 @@ YUI.add('combo-legend-styles-tests', function(Y) {
                 color,
                 i,
                 shape,
-                styles
+                styles,
                 len = items.length;
             for(i = 0; i < len; i = i + 1) {
                 item = items[i];
@@ -92,7 +94,7 @@ YUI.add('combo-legend-styles-tests', function(Y) {
             position: "right"
         },
         type: "combo",
-        render: "#mychart"
+        render: "#testdiv"
     });
     
     comboGlobalStylesTest = new ChartsLegendStylesTest({
@@ -104,11 +106,10 @@ YUI.add('combo-legend-styles-tests', function(Y) {
             position: "right"
         },
         type: "combo",
-        render: "#mychart"
+        render: "#testdiv"
     });
     
     suite.add(comboStylesTest);
     suite.add(comboGlobalStylesTest);
     Y.Test.Runner.add(suite);
-    testBed.destroy(true);
 }, '@VERSION@' ,{requires:['charts-legend', 'test']});

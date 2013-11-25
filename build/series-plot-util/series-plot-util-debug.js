@@ -53,7 +53,7 @@ Plots.prototype = {
 			return;
 		}
         var isNumber = Y_Lang.isNumber,
-            style = Y.clone(this.get("styles").marker),
+            style = this._copyObject(this.get("styles").marker),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -261,7 +261,7 @@ Plots.prototype = {
     {
         var graphic = this.get("graphic"),
             marker,
-            cfg = Y.clone(styles);
+            cfg = this._copyObject(styles);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
@@ -405,7 +405,7 @@ Plots.prototype = {
         {
             var w,
                 h,
-                styles = Y.clone(this.get("styles").marker),
+                styles = this._copyObject(this.get("styles").marker),
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),

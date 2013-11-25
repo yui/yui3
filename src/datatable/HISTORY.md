@@ -1,10 +1,10 @@
 DataTable Change History
 ========================
-
-@VERSION@
+3.14.0
 ------
 
-* No changes.
+* Added datatable-keynav module, providing keyboard navigation within the
+  datatable. [Pull Request #596]
 
 3.13.0
 ------

@@ -1,5 +1,6 @@
 YUI.add('series-histogram-tests', function(Y) {
-    var MockSeries = function() {
+    var DOC = Y.config.doc,
+        MockSeries = function() {
             MockSeries.superclass.constructor.apply(this, arguments);
         },
         suite = new Y.Test.Suite("Charts: Histogram");
@@ -25,6 +26,7 @@ YUI.add('series-histogram-tests', function(Y) {
 
         tearDown: function() {
             this.series = null;
+            Y.Event.purgeElement(DOC, false);
         },
        
         getDrawSeriesData: function(
@@ -199,7 +201,7 @@ YUI.add('series-histogram-tests', function(Y) {
                 markerCacheCreated: markerCacheCreated,
                 xMarkerPlane: xMarkerPlane,
                 yMarkerPlane: yMarkerPlane
-            }
+            };
         },
 
         "test: _drawSeries()" : function() {

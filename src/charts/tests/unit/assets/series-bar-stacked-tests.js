@@ -1,12 +1,14 @@
 YUI.add('series-bar-stacked-tests', function(Y) {
-    var suite = new Y.Test.Suite("Charts: StackedBarSeries"),
+    var DOC = Y.config.doc,
+        suite = new Y.Test.Suite("Charts: StackedBarSeries"),
         seriesTest = new Y.Test.Case({
         setUp: function() {
             this.series = new Y.StackedBarSeries();
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: get('type')" : function() {
@@ -66,14 +68,12 @@ YUI.add('series-bar-stacked-tests', function(Y) {
                     })
                 ],
                 markerStyles,
-                series,
                 mockSeries,
                 seriesIterator,
                 markerIterator,
                 len = mockSeriesCollection.length,
                 markerNum = 10,
                 marker,
-                markerStyles,
                 testFill,
                 markerYs,
                 markerY,

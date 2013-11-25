@@ -231,6 +231,7 @@ LeftAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("leftTickOffset"),
             totalTitleSize = this._totalTitleSize,
             leftOffset = pt.x + totalTitleSize - tickOffset,
@@ -244,21 +245,22 @@ LeftAxisLayout.prototype = {
         if(rot === 0)
         {
             leftOffset -= labelWidth;
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
+            topOffset = topOffset + labelWidth/2 - (labelWidth * offset);
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
+            topOffset = topOffset - labelHeight + labelWidth/2 - (labelWidth * offset);
         }
         else
         {
             leftOffset -= labelWidth + (labelHeight * absRot/360);
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;

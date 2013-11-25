@@ -3223,8 +3223,8 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         parentNode.appendChild(node);
         node.style.display = "block";
         node.style.position = "absolute";
-        node.style.left = "0px";
-        node.style.top = "0px";
+        node.style.left = this.get("x") + "px";
+        node.style.top = this.get("y") + "px";
         this.set("width", w);
         this.set("height", h);
         this.parentNode = parentNode;

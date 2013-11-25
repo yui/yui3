@@ -1,5 +1,6 @@
 YUI.add('series-stacked-tests', function(Y) {
-    var MockStackingUtil = Y.Base.create("mockStackingUtil", Y.StackingUtil, [], {
+    var DOC = Y.config.doc,
+        MockStackingUtil = Y.Base.create("mockStackingUtil", Y.StackingUtil, [], {
         }),
         suite = new Y.Test.Suite("Charts: StackingUtil");
     Y.StackingUtilTest = function() {
@@ -12,6 +13,7 @@ YUI.add('series-stacked-tests', function(Y) {
 
         tearDown: function() {
             this.stackingUtil = null;
+            Y.Event.purgeElement(DOC, false);
         },
         
         "test: _stackCoordinates()" : function() {

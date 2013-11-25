@@ -1,7 +1,7 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.14.0
 ------
 
 * Fix Y.Frame issue where the linked CSS in the frame was trying to call

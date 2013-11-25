@@ -890,6 +890,11 @@
         ],
         "skinnable": true
     },
+    "datatable-keynav": {
+        "requires": [
+            "datatable-base"
+        ]
+    },
     "datatable-message": {
         "lang": [
             "en",
@@ -1068,7 +1073,11 @@
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",

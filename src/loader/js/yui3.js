@@ -922,6 +922,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "datatable-keynav": {
+        "requires": [
+            "datatable-base"
+        ]
+    },
     "datatable-message": {
         "lang": [
             "en",
@@ -1100,7 +1105,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",
@@ -2962,4 +2971,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'aea0fec95319b36338e5bc7a06017fc6';
+YUI.Env[Y.version].md5 = '2ec8e93b30f0fc6809e2fbdba577e214';

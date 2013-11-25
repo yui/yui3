@@ -1069,6 +1069,13 @@ table.datasource.load({
         </td>
         <td>no</td>
     </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-keynav.html">`datatable-keynav`</a></td>
+        <td>
+            Provides keyboard navigation within the DataTable.
+        </td>
+        <td>no</td>
+    </tr>
 </tbody>
 </table>
 
@@ -1857,6 +1864,79 @@ YUI().use('datatable', 'datatable-paginator', function (Y){
     dt.render('#dt-pg-ex');
 });
 </script>
+
+<h3 id="keynav">Keyboard Navigation</h3>
+
+<p>
+    The `datatable-keynav` optional module provides navigation within the DataTable using
+    the keyboard. It is based on the WAI-ARIA suggested keyboard interaction for
+    the <a href="http://www.w3.org/WAI/PF/aria-practices/#grid">Grid Widget</a>,
+    though it does not assign aria roles, states or other accessibility features
+    to the table.
+</p>
+
+<p>
+    Two attributes control the behaviour of the module.  The `keyActions` property
+    contains a mapping of keys to actions to be performed.  It is initially loaded
+    with a copy of the set of actions stored in the static `Y.DataTable.KeyNav.ARIA_ACTIONS`
+    table but can easily be modified or completely replaced.
+</p>
+<p>
+    As a key, each entry in the table uses a key code or any of the predefined strings in the
+    static <a href="{{apiDocs}}/classes/DataTable.html#property_KEY_NAMES">
+    `Y.DataTable.KeyNav.KEY_NAMES`</a> table, optionally preceeded by the
+    `alt`, `ctrl`, `meta` or `shift` modifier keys, each followed by a hyphen.
+    Multiple modifier keys can be specified, but they always have to be given
+    in alphabetical order, for example: `'ctrl-shift-up': `.
+    When a key has an alias in `KEY_NAMES` the alias must be used and not the numerical keycode.
+</p>
+<p>
+    Each entry in the `keyActions` table contains either a function or a string.
+    The function will be executed when the key combination used as the key for the entry
+    is detected.  It will receive the Event Facade of the `keydown` event as its
+    only argument.   If the argument is a string it will try to resolve it to
+    a method within that DataTable instance by that name and execute it, ie.: `this[name].call(this, e)`.
+</p>
+<p>
+    If the entry is a string and cannot be resolved into a method, it will assume
+    it is the name of an event to fire.  The event listener will be provided with
+    references to the focused cell (a Node instance), the row (the `tr` Node)
+    and column where it is contained.  If the cell is a data cell it will also
+    contain a reference to the record while for header rows it will be null.
+    The listener will also receive the original EventFacade of the `keydown`
+    event as its second argument.
+</p>
+```
+var dt = new Y.DataTable({...});
+
+// Add an event in response to pressing shift-space
+dt.keyActions['shift-space'] = 'shiftSpaceEvent';
+
+// You can now subscribe to that event
+dt.on('shiftSpaceEvent', function (ev, keyEv) {
+    // The first event facade will contain the following properties:
+    console.log(ev.cell, ev.row, ev.column, ev.record);
+
+    // The second event facade is the original for keydown:
+    console.log(keyEv.keyCode, keyEv.shiftKey);
+
+    // The listener may call the keydown event facade methods:
+    keyEv.preventDefault();
+});
+```
+<p>
+    The `keyIntoHeaders` attribute determines whether navigating into the header
+    cells is possible.  If set, the default, the first header cell will initially
+    receive the focus and navigation in between the header and data sections of
+    the table is possible.  If false, the first data cell will be initially
+    focused and navigation into the header section is not possible.
+</p>
+<p>
+    The `focusedCell` attribute holds a reference to the cell that has the focus
+    or that would have the focus if the DataTable gets tabbed into.
+    Setting `focusedCell` will bring the focus into that cell.
+</p>
+
 
 <h2 id="events">DataTable Events</h2>
 
