@@ -118,8 +118,8 @@ Y.mix(Resolver.prototype, {
     promise, the resulting value of the first promise will be the "flattened"
     result of calling `then()` on the other promise.
 
-    This is the default algorithm used when using the function passed as the 
-    first argument to the promise initialization function. This means that 
+    This is the default algorithm used when using the function passed as the
+    first argument to the promise initialization function. This means that
     the following code returns a promise for the value 'hello world':
 
         var promise1 = new Y.Promise(function (resolve) {
@@ -127,7 +127,7 @@ Y.mix(Resolver.prototype, {
         });
         var promise2 = new Y.Promise(function (resolve) {
             resolve(promise1);
-        }); 
+        });
         promise2.then(function (value) {
             assert(value === 'hello world'); // true
         });

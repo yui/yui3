@@ -159,7 +159,7 @@ in one.
 
 This method can be copied or inherited in subclasses. In that case it will
 check that the value passed to it is an instance of the correct class.
-This means that `PromiseSubclass.cast()` will always return instances of 
+This means that `PromiseSubclass.cast()` will always return instances of
 `PromiseSublcass`.
 
 @method cast
@@ -169,7 +169,9 @@ This means that `PromiseSubclass.cast()` will always return instances of
 */
 Promise.cast = function (value) {
     return Promise.isPromise(value) && value.constructor === this ? value :
+        /*jshint newcap: false */
         new this(function (resolve) {
+        /*jshint newcap: true */
             resolve(value);
         });
 };
@@ -184,7 +186,9 @@ A shorthand for creating a rejected promise.
 @static
 */
 Promise.reject = function (reason) {
+    /*jshint newcap: false */
     return new this(function (resolve, reject) {
+    /*jshint newcap: true */
         reject(reason);
     });
 };
@@ -198,7 +202,9 @@ A shorthand for creating a resolved promise.
 @static
 */
 Promise.resolve = function (value) {
+    /*jshint newcap: false */
     return new this(function (resolve) {
+    /*jshint newcap: true */
         resolve(value);
     });
 };
