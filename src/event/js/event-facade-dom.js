@@ -157,9 +157,8 @@ Y.extend(DOMEventFacade, Object, {
 
     preventDefault: function(returnValue) {
         var e = this._event;
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
+        e.preventDefault();
+        if (e.type === 'beforeunload') {
             e.returnValue = returnValue || false;
         }
         this._wrapper.prevented = 1;
