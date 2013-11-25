@@ -114,9 +114,13 @@ Y.mix(Resolver.prototype, {
     },
 
     /*
-    Resolves a promise to a value or another promise. In case the value is a
-    promise, the resulting value of the first promise will be the "flattened"
-    result of calling `then()` on the other promise.
+    Given a certain value A passed as a parameter, this method resolves the
+    promise to the value A.
+
+    If A is a promise, `resolve` will cause the resolver to adopt the state of A
+    and once A is resolved, it will resolve the resolver's promise as well.
+    This behavior "flattens" A by calling `then` recursively and essentially
+    disallows promises-for-promises.
 
     This is the default algorithm used when using the function passed as the
     first argument to the promise initialization function. This means that
