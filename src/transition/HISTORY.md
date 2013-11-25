@@ -1,7 +1,7 @@
 Transition Change History
 =========================
 
-@VERSION@
+3.14.0
 ------
 
 * Fixed issue where `toggleView` did not correctly work when passed only an effect name. ([#1258][] @ezequiel)

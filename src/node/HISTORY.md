@@ -1,7 +1,7 @@
 Node Change History
 ===================
 
-@VERSION@
+3.14.0
 ------
 
 * Addition of `paste`, `copy`, and `cut` to Node's event white list. ([#1350][]: @JetFault)

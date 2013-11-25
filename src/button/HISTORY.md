@@ -1,7 +1,7 @@
 Button Change History
 ====================
 
-@VERSION@
+3.14.0
 ------
 
 * Fixed `disabledChange` listener to correctly disable or enable 

@@ -1,7 +1,7 @@
 Charts Change History
 =====================
 
-@VERSION@
+3.14.0
 ------
 
 * #1402 Remove Y.Clone.

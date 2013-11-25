@@ -1,7 +1,7 @@
 Graphics Change History
 =======================
 
-@VERSION@
+3.14.0
 ------
 
 * #1398 Address issue in which canvas implementation does not position itself properly within a container.

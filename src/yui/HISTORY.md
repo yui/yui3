@@ -1,7 +1,7 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.14.0
 ------
 
 * Added support to the YUI module system to work with modules written as

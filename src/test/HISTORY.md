@@ -1,7 +1,7 @@
 YUI Test Change History
 =======================
 
-@VERSION@
+3.14.0
 ------
 
 * Added Y.ArrayAssert.isUnique()
