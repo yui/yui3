@@ -6,7 +6,7 @@ YUI.add('promise-tests', function (Y) {
         isPromise = Promise.isPromise;
 
     /**
-    Takes a promise and a callback. Calls the callback with a boolean paramter
+    Takes a promise and a callback. Calls the callback with a boolean parameter
     indicating if the promise is fulfilled and the value as the next parameter
     **/
     function isFulfilled(promise, next) {
@@ -18,7 +18,7 @@ YUI.add('promise-tests', function (Y) {
     }
 
     /**
-    Takes a promise and a callback. Calls the callback with a boolean paramter
+    Takes a promise and a callback. Calls the callback with a boolean parameter
     indicating if the promise is rejected and the reason as the next parameter
     **/
     function isRejected(promise, next) {
