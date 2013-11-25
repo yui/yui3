@@ -424,7 +424,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "base-observable": {
         "requires": [
-            "attribute-observable"
+            "attribute-observable",
+            "base-core"
         ]
     },
     "base-pluginhost": {
@@ -2963,7 +2964,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '3cf02e5f307a6e9470df4ea0dc7eb41e';
+YUI.Env[Y.version].md5 = 'aea0fec95319b36338e5bc7a06017fc6';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
