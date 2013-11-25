@@ -99,12 +99,17 @@ Y.mix(Promise.prototype, {
     },
 
     /*
+    A shorthand for `promise.then(undefined, callback)`.
 
+    Returns a new promise and the error callback gets the same treatment as in
+    `then`: errors get caught and turned into rejections, and the return value
+    of the callback becomes the fulfilled value of the returned promise.
 
     @method catch
     @param [Function] errback Callback to be called in case this promise is
                         rejected
-    @return {Promise} A new promise 
+    @return {Promise} A new promise modified by the behavior of the error
+                        callback
     */
     'catch': function (errback) {
         return this.then(undefined, errback);
