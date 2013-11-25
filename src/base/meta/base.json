@@ -9,7 +9,8 @@
             },
             "base-observable": {
                 "requires": [
-                    "attribute-observable"
+                    "attribute-observable",
+                    "base-core"
                 ]
             },
             "base-base": {
