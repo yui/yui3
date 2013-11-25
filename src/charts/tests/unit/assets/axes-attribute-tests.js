@@ -1,10 +1,13 @@
 YUI.add('axes-attribute-tests', function(Y) {
+        var parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
     function AxisTestTemplate(cfg, globalCfg)
     {
         var i;
         AxisTestTemplate.superclass.constructor.apply(this);
         this.attrCfg = cfg;
-        this.attrCfg.render = "#mychart";
+        this.attrCfg.render = "#testdiv";
         for(i in globalCfg)
         {
             if(globalCfg.hasOwnProperty(i))
@@ -16,20 +19,18 @@ YUI.add('axes-attribute-tests', function(Y) {
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function()
         {
-            this.renderTestBed();;
+            this.renderTestBed();
         },
 
         renderTestBed: function()
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var mychart = new Y.Chart(this.attrCfg); 
             this.chart = mychart;
         },
         
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
 
@@ -428,7 +429,7 @@ YUI.add('axes-attribute-tests', function(Y) {
     
     AxisWithLabelAndTitleFunction = new AxisTestTemplate({
         categoryKey: "date",
-        render: "#mychart",
+        render: "#testdiv",
         axes: {
             category: {
                 type: "category",
@@ -491,7 +492,7 @@ YUI.add('axes-attribute-tests', function(Y) {
     TimeAxisWithLabelAndTitleFunction = new AxisTestTemplate({
         categoryKey: "date",
         categoryType: "time",
-        render: "#mychart",
+        render: "#testdiv",
         axes: {
             category: {
                 type: "time",
@@ -553,7 +554,7 @@ YUI.add('axes-attribute-tests', function(Y) {
     
     AxisWithLabelAndTitleInnerHTMLFunctionFail = new AxisTestTemplate({
         categoryKey: "date",
-        render: "#mychart",
+        render: "#testdiv",
         axes: {
             category: {
                 type: "category",
@@ -616,7 +617,7 @@ YUI.add('axes-attribute-tests', function(Y) {
     TimeAxisWithLabelAndTitleInnerHTMLFunctionFail = new AxisTestTemplate({
         categoryKey: "date",
         categoryType: "time",
-        render: "#mychart",
+        render: "#testdiv",
         axes: {
             category: {
                 type: "time",
@@ -678,7 +679,7 @@ YUI.add('axes-attribute-tests', function(Y) {
     
     AxisWithLabelAndTitleInnerHTMLFunctionWithAppendMethods = new AxisTestTemplate({
         categoryKey: "date",
-        render: "#mychart",
+        render: "#testdiv",
         axes: {
             category: {
                 type: "category",
@@ -745,7 +746,7 @@ YUI.add('axes-attribute-tests', function(Y) {
     TimeAxisWithLabelAndTitleInnerHTMLFunctionWithAppendMethods = new AxisTestTemplate({
         categoryKey: "date",
         categoryType: "time",
-        render: "#mychart",
+        render: "#testdiv",
         axes: {
             category: {
                 type: "time",

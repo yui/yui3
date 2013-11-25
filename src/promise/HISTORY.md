@@ -1,10 +1,10 @@
 Promise Change History
 ======================
 
-@VERSION@
+3.14.0
 ------
 
-* No changes.
+* Marked `getStatus` as deprecated.
 
 3.13.0
 ------

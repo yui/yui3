@@ -1,7 +1,7 @@
 YUI.add('axis-category-tests', function(Y) {
     Y.CategoryAxisTest = function() {
         Y.CategoryAxisTest.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(Y.CategoryAxisTest, Y.ChartTestTemplate, {
         setUp: function() {
             var position = this.position,
@@ -19,7 +19,8 @@ YUI.add('axis-category-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, multiplier, direction, data)
@@ -140,7 +141,7 @@ YUI.add('axis-category-tests', function(Y) {
                 len,
                 label,
                 date,
-                mydiv = Y.Node.create('<div style="width: 400px; height: 400px;">'),
+                mydiv = Y.Node.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
                 position = this.position,
                 direction = position === "left" || position === "right" ? "vertical" : "horizontal";
 
@@ -179,7 +180,6 @@ YUI.add('axis-category-tests', function(Y) {
                 testLabelValues,
                 axisPoint,
                 testPoint,
-                data = axis.get("data"),
                 assertFn = function() {
                     var min = axis.get("minimum"),
                         max = axis.get("maximum"),
@@ -248,6 +248,7 @@ YUI.add('axis-category-tests', function(Y) {
     });
 
     var suite = new Y.Test.Suite("Charts: CategoryAxis"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

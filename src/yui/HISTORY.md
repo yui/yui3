@@ -1,10 +1,29 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.14.0
 ------
 
-* No changes.
+* Added support to the YUI module system to work with modules written as
+  ECMAScript Modules which are transpiled to YUI modules. ([#1407][])
+
+  Modules are being added to ES6, but need to be transpiled into code that can
+  run in today's JavaScript environments. This changes makes it possible for YUI
+  modules to work as ES6 Module transpile target.
+
+  An `es` flag on a YUI module's `details` signals to the YUI module system and
+  Loader that the module was transpiled from a ES6 module; this allows YUI to
+  conform to the module body's expectations around imports and exports.
+
+  When the `es` flag is set to a truthy value, the module body function will
+  receive two additional arguments: `imports` and `exports`, giving it the
+  signature: `function (Y, NAME, __imports__, __exports__) {...}`. Also, the
+  module body's `return` value becomes significant and is used and stored as the
+  module's `exports`.
+
+
+[#1407]: https://github.com/yui/yui3/issues/1407
+
 
 3.13.0
 ------

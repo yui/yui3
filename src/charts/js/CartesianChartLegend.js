@@ -4,8 +4,7 @@
  * @module charts
  * @submodule charts-legend
  */
-var DOCUMENT = Y.config.doc,
-TOP = "top",
+var TOP = "top",
 RIGHT = "right",
 BOTTOM = "bottom",
 LEFT = "left",

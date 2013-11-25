@@ -1171,8 +1171,7 @@ ChartBase.ATTRS = {
         {
             if(this._description)
             {
-                this._description.setContent("");
-                this._description.appendChild(DOCUMENT.createTextNode(val));
+                this._description.set("text", val);
             }
             return val;
         }
@@ -1622,7 +1621,7 @@ ChartBase.prototype = {
         cb.setAttribute("aria-describedby", id);
         description.set("id", id);
         description.set("tabIndex", -1);
-        description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
+        description.set("text", this.get("ariaDescription"));
         liveRegion.set("id", "live-region");
         liveRegion.set("aria-live", "polite");
         liveRegion.set("aria-atomic", "true");
@@ -1690,8 +1689,7 @@ ChartBase.prototype = {
             {
                 e.halt();
                 msg = this._getAriaMessage(numKey);
-                this._liveRegion.setContent("");
-                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
+                this._liveRegion.set("text", msg);
             }
         }, this), this.get("contentBox"));
         if(interactionType === "marker")
@@ -2090,7 +2088,15 @@ ChartBase.prototype = {
         if(Y_Lang.isObject(val))
         {
             styles = val.styles;
-            node = Y.one(val.node) || tt.node;
+            if(val.node && tt.node)
+            {
+                tt.node.destroy(true);
+                node = Y.one(val.node);
+            }
+            else
+            {
+                node = tt.node;
+            }
             if(styles)
             {
                 for(i in styles)
@@ -2318,7 +2324,7 @@ ChartBase.prototype = {
      */
     _setText: function(textField, val)
     {
-        textField.setContent("");
+        textField.empty();
         if(Y_Lang.isNumber(val))
         {
             val = val + "";
@@ -2410,7 +2416,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         var bb = this.get("boundingBox"),
             cb = this.get("contentBox"),
             tt = this.get("tooltip"),
-            overlay,
             overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         bb.setStyle("position", "absolute");
@@ -2424,15 +2429,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         }
         if(this.get("interactionType") === "planar")
         {
-            overlay = DOCUMENT.createElement("div");
-            this.get("contentBox").appendChild(overlay);
-            this._overlay = Y.one(overlay);
+            this._overlay = Y.Node.create("<div></div>");
             this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
             this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
+            cb.append(this._overlay);
         }
         this._setAriaElements(bb, cb);
         this._redraw();
@@ -5005,6 +5009,55 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         }
         msg += (itemIndex + 1) + " of " + len + ". ";
         return msg;
+    },
+
+    /**
+     * Destructor implementation for the PieChart class.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var series,
+            axis,
+            tooltip = this.get("tooltip"),
+            tooltipNode = tooltip.node,
+            graph = this.get("graph"),
+            axesCollection = this._axesCollection,
+            seriesCollection = this.get("seriesCollection");
+        while(seriesCollection.length > 0)
+        {
+            series = seriesCollection.shift();
+            series.destroy(true);
+        }
+        while(axesCollection.length > 0)
+        {
+            axis = axesCollection.shift();
+            if(axis instanceof Y.Axis)
+            {
+                axis.destroy(true);
+            }
+        }
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
+        if(graph)
+        {
+            graph.destroy(true);
+        }
+        if(tooltipNode)
+        {
+            tooltipNode.empty();
+            tooltipNode.remove(true);
+        }
     }
 }, {
     ATTRS: {
@@ -5021,8 +5074,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             {
                 if(this._description)
                 {
-                    this._description.setContent("");
-                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                    this._description.set("text", val);
                 }
                 return val;
             }

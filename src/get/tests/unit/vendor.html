@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI Get Vendor Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script src="../assets/vendor-signed.js" charset="utf-8"></script>
+<script src="./assets/vendor-test.js" charset="utf-8"></script>
+
+<script>
+var YUI_config = {
+    gconfig: true,
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+};
+
+var Y = YUI({
+    allowRollup: false,
+    filter: YUI_config.gfilter
+}).use('get-vendor-test', 'test-console', function(Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.add(Y.GetTests.vendor);
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

@@ -1,4 +1,5 @@
 YUI.add('series-candlestick-tests', function(Y) {
+    var DOC = Y.config.doc;
     function CandlestickMockShape() {
         this._path = "";
         this._command = "";
@@ -82,6 +83,7 @@ YUI.add('series-candlestick-tests', function(Y) {
 
         tearDown: function() {
             this.series = null;
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: get('type')" : function() {
@@ -125,7 +127,7 @@ YUI.add('series-candlestick-tests', function(Y) {
                         } else {
                             downcandlepath = downcandlepath + " M" + left + " " + top + " L" + width + " " + top + " " + width + " " + height + " " + left + " " + height + " " + left + " " + top;
                         }
-                        wickpath = wickpath + " M" + cx + " " + highcoord + " L" + cx + " " + lowcoord;
+                        wickpath = wickpath + " M" + (cx - styles.wick.width/2) + " " + highcoord + " L" + styles.wick.width + " " + highcoord + " " + styles.wick.width + " " + (lowcoord - highcoord) + " " + (cx - styles.wick.width/2) + " " + (lowcoord - highcoord) + " " + (cx - styles.wick.width/2) + " " + highcoord;
                     }
                 },
                 series = this.series,
@@ -141,8 +143,7 @@ YUI.add('series-candlestick-tests', function(Y) {
                 padding,
                 markerWidth,
                 halfwidth,
-                styles,
-            styles = mockSeries.get("styles");
+                styles = mockSeries.get("styles");
             dataWidth = width - (styles.padding.left + styles.padding.right);
             markerWidth = dataWidth/len;
             halfwidth = markerWidth/2;
@@ -169,9 +170,9 @@ YUI.add('series-candlestick-tests', function(Y) {
 
         "test: set(graphic)" : function() {
             var series = this.series,
-                mydiv = document.createElement('div'),
+                mydiv = Y.DOM.create('<div id="testdiv">'),
                 graphic;
-            Y.one('body').append(mydiv);    
+            DOC.body.appendChild(mydiv);    
             graphic = new Y.Graphic({
                 render: mydiv
             });
@@ -186,6 +187,7 @@ YUI.add('series-candlestick-tests', function(Y) {
             Y.Assert.isInstanceOf(Y.Path, series.get("upcandle"));
             Y.Assert.isInstanceOf(Y.Path, series.get("downcandle"));
             Y.Assert.isInstanceOf(Y.Path, series.get("wick"));
+            graphic.destroy();
         },
 
         "test: destructor()" : function() {

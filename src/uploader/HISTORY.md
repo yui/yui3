@@ -1,10 +1,12 @@
 Uploader Utility (New) Change History
 =====================================
 
-@VERSION@
+3.14.0
 ------
 
-* No changes.
+* Addition of XHR's `responseText` to `uploaderror`'s event payload. ([#1356][]: @semafor)
+
+[#1356]: https://github.com/yui/yui3/issues/1356
 
 3.13.0
 ------

@@ -9,14 +9,17 @@ YUI.add('charts-ariapie-tests', function(Y) {
         ],
         defaultPieAriaDescription = "Use the left and right keys to navigate through items.",
         width = 400,
-        height = 300;
+        height = 300,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     function AriaTests(cfg, testConfig)
     {
         AriaTests.superclass.constructor.apply(this);
         this.attrConfig = cfg;
         this.name = testConfig.type + " Aria Tests";
-        this.defaultAriaDescription = testConfig.defaultAriaDescription;;
+        this.defaultAriaDescription = testConfig.defaultAriaDescription;
     }
     Y.extend(AriaTests, Y.Test.Case, {
         defaultAriaLabel: "Chart Application",
@@ -24,15 +27,13 @@ YUI.add('charts-ariapie-tests', function(Y) {
         changedAriaLabel: "This is a new ariaLabel value.",
 
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var mychart = new Y.Chart(this.attrConfig);
             this.chart = mychart;
         },
         
         tearDown: function() {
-            this.chart.destroy();
-            Y.one("#testbed").destroy(true);
+            this.chart.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
         
         "test:getAriaLabel()": function()
@@ -63,7 +64,7 @@ YUI.add('charts-ariapie-tests', function(Y) {
     
     var pieTests = new Y.AriaTests({
         dataProvider: pieDataValues,
-        render: "#mychart",
+        render: "#testdiv",
         type: "pie",
         width: width,
         height: height

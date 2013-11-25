@@ -1,12 +1,13 @@
 YUI.add('graph-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: Graph"),
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     GraphTests = new Y.Test.Case({
         name: "Graph Tests",
         
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var myDataValues = [ 
                 {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
                 {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
@@ -15,13 +16,13 @@ YUI.add('graph-tests', function(Y) {
                 {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
             ];
             var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
-            mychart.render("#mychart");
+            mychart.render("#testdiv");
             this.chart = mychart;
         },
         
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test:graph._getSeries(line)": function()

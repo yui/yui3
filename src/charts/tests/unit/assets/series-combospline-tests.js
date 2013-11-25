@@ -1,5 +1,6 @@
 YUI.add('series-combospline-tests', function(Y) {
-    var MockComboSplineSeries = Y.Base.create("mockComboSplineSeries", Y.Base, [], {
+    var DOC = Y.config.doc,
+        MockComboSplineSeries = Y.Base.create("mockComboSplineSeries", Y.Base, [], {
             _splineDrawn: false,
             
             _areaSplineDrawn: false,
@@ -43,7 +44,8 @@ YUI.add('series-combospline-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {
