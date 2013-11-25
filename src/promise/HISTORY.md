@@ -5,6 +5,9 @@ Promise Change History
 ------
 
 * Marked `getStatus` as deprecated.
+* Added new methods following the new emerging ES6 standard for promises.
+  This includes `promise.catch`, `Promise.all`, `Promise.race`, `Promise.cast`,
+  `Promise.resolve` and `Promise.reject`.
 
 3.13.0
 ------
