@@ -93,7 +93,7 @@ dataSource.after("response", function() {
 <p>Here's the code to run the whole example:</p>
 
 ```
-YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+YUI().use("datasource-io", "datasource-xmlschema", "datatable-datasource", function(Y) {
     var dataSource = new Y.DataSource.IO({
         source: "ylocal_proxy.php?"
     });
