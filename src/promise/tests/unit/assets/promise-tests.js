@@ -547,10 +547,12 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'order of promises should be preserved': function () {
-            var test = this;
+            var test = this,
+                promise = Promise.all([wait(20), wait(10), wait(15)]);
 
-            Promise.all([wait(20), wait(10), wait(15)]).then(function (result) {
+            isFulfilled(promise, function (fulfilled, result) {
                 test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
                     ArrayAssert.itemsAreSame([20, 10, 15], result, 'order of returned values should be the same as the parameter list');
                 });
             });
@@ -562,10 +564,12 @@ YUI.add('promise-tests', function (Y) {
             var test = this,
                 obj = {
                     hello: 'world'
-                };
+                },
+                promise = Promise.all(['foo', 5, obj]);
 
-            Promise.all(['foo', 5, obj]).then(function (result) {
+            isFulfilled(promise, function (fulfilled, result) {
                 test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
                     ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.all() should be wrapped in promises, not ignored');
                 });
             });
@@ -574,12 +578,15 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'correct handling of function parameters': function () {
-            var test = this;
+            var test = this, promise;
 
             function testFn() {}
 
-            Promise.all([testFn]).then(function (values) {
+            promise = Promise.all([testFn]);
+
+            isFulfilled(promise, function (fulfilled, values) {
                 test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
                     Assert.isFunction(values[0], 'promise value should be a function');
                     Assert.areSame(testFn, values[0], 'promise value should be the passed function');
                 });
@@ -589,10 +596,13 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'Promise.all() should fail as fast as possible': function () {
-            var test = this;
+            var test = this, promise;
 
-            Promise.all([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]).then(null, function (reason) {
+            promise = Promise.all([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]);
+
+            isRejected(promise, function (rejected, reason) {
                 test.resume(function () {
+                    Assert.isTrue(rejected, 'promise should be rejected');
                     Assert.areEqual(10, reason, 'reason should be the one from the first promise to be rejected');
                 });
             });
@@ -619,10 +629,12 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'Promise.race() should fulfill when passed a fulfilled promise': function () {
-            var test = this;
+            var test = this,
+                promise = Promise.race([wait(10)]);
 
-            Promise.race([wait(10)]).then(function (result) {
+            isFulfilled(promise, function (fulfilled, result) {
                 test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
                     Assert.areEqual(10, result, 'Promise.race() should fulfill when passed a fulfilled promise');
                 });
             });
@@ -631,10 +643,12 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'Promise.race() should reject when passed a rejected promise': function () {
-            var test = this;
+            var test = this,
+                promise = Promise.race([rejectedAfter(10)]);
 
-            Promise.race([rejectedAfter(10)]).then(null, function (result) {
+            isRejected(promise, function (rejected, result) {
                 test.resume(function () {
+                    Assert.isTrue(rejected, 'promise should be rejected');
                     Assert.areEqual(10, result, 'Promise.race() should reject when passed a rejected promise');
                 });
             });
@@ -643,10 +657,12 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'Promise.race() should fulfill to the value of the first promise to be fulfilled': function () {
-            var test = this;
+            var test = this,
+                promise = Promise.race([wait(10), wait(100)]);
 
-            Promise.race([wait(10), wait(100)]).then(function (result) {
+            isFulfilled(promise, function (fulfilled, result) {
                 test.resume(function () {
+                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
                     Assert.areEqual(10, result, 'Promise.race() should fulfill to the value of the first promise to be fulfilled');
                 });
             });
@@ -655,10 +671,12 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'Promise.race() should reject with the reason of the first promise to be rejected': function () {
-            var test = this;
+            var test = this,
+                promise = Promise.race([rejectedAfter(10), rejectedAfter(100)]);
 
-            Promise.race([rejectedAfter(10), rejectedAfter(100)]).then(null, function (result) {
+            isRejected(promise, function (rejected, result) {
                 test.resume(function () {
+                    Assert.isTrue(rejected, 'promise should be rejected');
                     Assert.areEqual(10, result, 'Promise.race() should reject with the reason of the first promise to be rejected');
                 });
             });
@@ -674,7 +692,7 @@ YUI.add('promise-tests', function (Y) {
             var promise = Promise.resolve(),
                 wrapped = Promise.cast(promise);
 
-            Assert.sTrue(Promise.isPromise(promise), 'Promise.cast should always return a promise');
+            Assert.isTrue(Promise.isPromise(promise), 'Promise.cast should always return a promise');
             Assert.areSame(promise, wrapped, 'Promise.cast should not modify a promise');
         },
 
