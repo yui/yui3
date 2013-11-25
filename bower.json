@@ -1,6 +1,6 @@
 {
   "name": "yui",
-  "version": "3.14.0",
+  "version": "3.14.1-pre",
   "devDependencies": {
     "pure": "0.3.0"
   }
