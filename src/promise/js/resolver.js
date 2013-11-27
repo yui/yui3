@@ -31,6 +31,7 @@ function Resolver(promise) {
 
     @property promise
     @type Promise
+    @deprecated
     **/
     this.promise = promise;
 
