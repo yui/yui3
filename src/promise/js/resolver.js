@@ -170,46 +170,57 @@ Y.mix(Resolver.prototype, {
                 of either "resolve" or "reject" callback
     **/
     then: function (callback, errback) {
+        var self = this;
         // When the current promise is fulfilled or rejected, either the
         // callback or errback will be executed via the function pushed onto
         // this._callbacks or this._errbacks.  However, to allow then()
         // chaining, the execution of either function needs to be represented
         // by a Resolver (the same Resolver can represent both flow paths), and
         // its promise returned.
-        var promise = this.promise,
-            thenFulfill, thenReject,
+        return new this.promise.constructor(function (resolve, reject) {
+            self.addCallbacks(
+                typeof callback === 'function' ?
+                    Promise._wrap(resolve, reject, callback) : resolve,
+                typeof errback === 'function' ?
+                    Promise._wrap(resolve, reject, errback) : reject
+            );
+        });
+    },
 
-            // using promise constructor allows for customized promises to be
-            // returned instead of plain ones
-            then = new promise.constructor(function (fulfill, reject) {
-                thenFulfill = fulfill;
-                thenReject = reject;
-            }),
+    /**
+    Schedule execution of a callback to either or both of "resolve" and
+    "reject" resolutions of this resolver. If the resolver is not pending,
+    the correct callback gets called automatically.
 
-            callbackList = this._callbacks,
-            errbackList  = this._errbacks;
+    @method addCallbacks
+    @param {Function} [callback] function to execute if the Resolver
+                resolves successfully
+    @param {Function} [errback] function to execute if the Resolver
+                resolves unsuccessfully
+    **/
+    addCallbacks: function (callback, errback) {
+        var callbackList = this._callbacks,
+            errbackList  = this._errbacks,
+            status       = this._status,
+            result       = this._result;
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
         if (callbackList) {
-            callbackList.push(typeof callback === 'function' ?
-                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+            callbackList.push(callback);
         }
         if (errbackList) {
-            errbackList.push(typeof errback === 'function' ?
-                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+            errbackList.push(errback);
         }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
-        if (this._status === 'fulfilled') {
-            this.fulfill(this._result);
-        } else if (this._status === 'rejected') {
-            this.reject(this._result);
+        if (status === 'fulfilled') {
+            this.fulfill(result);
+        } else if (status === 'rejected') {
+            this.reject(result);
         }
-
-        return then;
     },
 
     /**
