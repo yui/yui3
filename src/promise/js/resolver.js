@@ -113,6 +113,46 @@ Y.mix(Resolver.prototype, {
         }
     },
 
+    /*
+    Given a certain value A passed as a parameter, this method resolves the
+    promise to the value A.
+
+    If A is a promise, `resolve` will cause the resolver to adopt the state of A
+    and once A is resolved, it will resolve the resolver's promise as well.
+    This behavior "flattens" A by calling `then` recursively and essentially
+    disallows promises-for-promises.
+
+    This is the default algorithm used when using the function passed as the
+    first argument to the promise initialization function. This means that
+    the following code returns a promise for the value 'hello world':
+
+        var promise1 = new Y.Promise(function (resolve) {
+            resolve('hello world');
+        });
+        var promise2 = new Y.Promise(function (resolve) {
+            resolve(promise1);
+        });
+        promise2.then(function (value) {
+            assert(value === 'hello world'); // true
+        });
+
+    @method resolve
+    @param [Any] value A regular JS value or a promise
+    */
+    resolve: function (value) {
+        var self = this;
+
+        if (Promise.isPromise(value)) {
+            value.then(function (value) {
+                self.resolve(value);
+            }, function (reason) {
+                self.reject(reason);
+            });
+        } else {
+            this.fulfill(value);
+        }
+    },
+
     /**
     Schedule execution of a callback to either or both of "resolve" and
     "reject" resolutions for the Resolver.  The callbacks
