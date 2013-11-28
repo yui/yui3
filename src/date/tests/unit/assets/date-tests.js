@@ -2,8 +2,29 @@ YUI.add('date-tests', function(Y) {
 
     //Helper function to normalize timezone dependent hours.
     var getGMTOffset = function (date) {
-        var str = date.toString();
-        return str.match(/GMT([-\d]*)/)[1];
+        var str = date.toString(),
+            reg = new RegExp(/GMT([-\d]*)/),
+            ret = str.match(reg);
+
+        return (ret && ret[1]) || (function() {
+            var d = new Date(str),
+                z = d.getTimezoneOffset(),
+                H = Math.floor(Math.abs(z) / 60),
+                M = z % 60;
+
+            H = H.toString();
+            M = M.toString();
+
+            while(H.length < 2) {
+                H = '0' + H;
+            }
+
+            while (M.length < 2) {
+                M = '0' + M;
+            }
+
+            return (z > 0 ? '-' : '+') + H + M;
+        }());
     };
 
     var getHours = function(date, pad, ampm) {
@@ -352,8 +373,6 @@ YUI.add('date-tests', function(Y) {
                 ["01 - March - 2003","%d-%B-%Y","1 Mar 2003"],
                 ["Sat, March 01, 2003", "%a, %B %d, %Y","1 Mar 2003"],
                 ["Saturday, March 01, 2003", "%A, %B %d, %Y","1 Mar 2003"],
-                [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T GMT%z", "27 Mar 2013 17:56:13 GMT+0000"],
-                [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T %z", "27 Mar 2013 17:56:13 GMT+0000"],
                 ["2012-11-10 10:11:12 -0100", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
                 ["2012-11-10 10:11:12 -01:00", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
                 ["2012-11-10 10:11:12 Z", "%F %T %z", "10 Nov 2012 10:11:12 +0000"],
@@ -410,9 +429,11 @@ YUI.add('date-tests', function(Y) {
                 ["1 03(2020)", "%d %m(%Y)","1 mar 2020" ],
                 ["1 03 2012 (CEST)", "%d %m %Y (%Z)", "1 mar 2012 00:00:00 +0200"],
                 ["1 03 2012 (PDT)", "%d %m %Y (%Z)", "1 mar 2012 00:00:00 -0700"]
-            ];
-            for (var i = 0; i < values.length; i++) {
-                var v = values[i];
+            ], i, len, v;
+
+            for (i = 0, len = values.length; i < len; i++) {
+                v = values[i];
+
                 ASSERT.areSame(
                     (new Date(v[2])).toString(),
                     (Y.Date.parse(v[0], v[1]) || new Date(0,0,0,0,0,0,0)).toString(),
@@ -420,6 +441,31 @@ YUI.add('date-tests', function(Y) {
                 );
             }
         },
+        testParsingFallback: function () {
+
+            var values = [
+                [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T GMT%z", "27 Mar 2013 17:56:13 GMT+0000","%a %b %d %T %Z %Y"],
+                [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T %z", "27 Mar 2013 17:56:13 GMT+0000","%a %b %d %T %Z %Y"]
+            ], i, len, v, parsed;
+
+            for (i = 0, len = values.length; i < len; i++) {
+                v = values[i];
+
+                parsed = Y.Date.parse(v[0], v[1]);
+
+                if (!parsed) {
+                    parsed = Y.Date.parse(v[0], v[3]);
+                }
+
+                ASSERT.areSame(
+                    new Date(v[2]).toString(),
+                    parsed.toString(),
+                    v.join(' , ')
+                );
+
+            }
+        },
+
         testCuttOffYear: function () {
             ASSERT.areSame(new Date(2000,0,1).toString(), Y.Date.parse("00-1-1", "%F").toString(),1);
             ASSERT.areSame(new Date(1940,0,1).toString(), Y.Date.parse("40-1-1", "%F").toString(),2);
