@@ -1,0 +1,170 @@
+<!DOCTYPEhtml>
+<html>
+<head>
+<title>Datatable Filter Tests</title>
+<link rel="stylesheet" type="text/css" href="../../../build/cssgrids/cssgrids-min.css">
+<link rel="stylesheet" type="text/css" href="../../../build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="../../../build/cssbase/base-min.css">
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+<style>
+    html {
+        font-family: sans-serif;
+        font-size: smaller;
+    }
+
+    #panel {
+        background: #efefef;
+        border: 1px solid #ddd;
+        position: absolute;
+        left: 260px;
+        top: 10px;
+        padding: 10px;
+    }
+    #panel dl {
+        margin: 0 0 1em;
+    }
+    #panel label {
+        display: block;
+        margin: 1em 0;
+    }
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+<div id="table"></div>
+
+<div id="panel">
+<dl>
+    <dt>Key</dt><dd><input id="key"></dd>
+    <dt>Min</dt><dd><input id="min"></dd>
+    <dt>Max</dt><dd><input id="max"></dd>
+</dl>
+<label><input type="checkbox" id="useFn"> Use formatter function?</label>
+
+<button id="btn_filter">Filter</button>
+<button id="btn_clear">Clear</button>
+</div>
+
+
+<script type="text/javascript">
+
+function _YLog (/*msg, type, src*/) {
+    var args = Array.prototype.slice.call(arguments),
+        msg = args.shift(),
+        type = args.shift(),
+        src = args.shift(),
+        infoStyle = 'background: hsla(250, 10%, 90%, 0.3); color:hsla(230, 100%, 50%, 0.3); font-size: 12pt;';
+
+    if (src) {
+        msg = src + ': ' + msg;
+    }
+
+    switch (type) {
+        case 'info':
+            console.log.apply(console, ['%c' + msg, infoStyle].concat(args));
+            break;
+        default:
+            console.log.apply(console, [msg].concat(args));
+    }
+}
+
+
+YUI({
+    filter: 'raw',
+    combine: false,
+    allowRollup: false,
+    useBrowserConsole: true
+}).use("console", "test", "dump", "datatable","datatable-filter", "datatype-number", function(Y) {
+
+    var data = [];
+
+    while (data.length < 100) {
+        data.push({
+            id: data.length + 1,
+            name: ['a','b', 'c','d','e','f','g'][data.length % 7].toUpperCase() + ':' + data.length,
+            price: Math.round((Math.random() + Math.random()) * 500) / 500,
+            qty: Math.ceil(data.length * Math.random() + Math.random())
+        });
+    }
+
+
+    var table = new Y.DataTable({
+        columns: [ 'id', 'name', {
+            key: 'price',
+            formatter: function (o) {
+                return Y.Number.format(o.data.price, {
+                    prefix: "$",
+                    thousandsSeparator: ",",
+                    decimalSeparator: ".",
+                    decimalPlaces: 2
+                })
+            }
+        }, 'qty', {
+            key: 'fn',
+            formatter: function(o) {
+                return Y.Number.format(o.data.price * o.data.qty, {
+                    prefix: "$",
+                    thousandsSeparator: ",",
+                    decimalSeparator: ".",
+                    decimalPlaces: 2
+                });
+            }
+        } ],
+        data: data,
+        render: '#table'
+    });
+
+    console.log(table.get('data').size());
+
+    table.filter('qty', 10, 15);
+
+
+    console.log(table.get('data').size());
+
+
+
+    Y.one('#btn_clear').on('click', function (e) {
+        table.clearFilters();
+    });
+
+    Y.one('#btn_filter').on('click', function (e) {
+        var key = Y.one('#key').get('value'),
+            min = Y.one('#min').get('value'),
+            max = Y.one('#max').get('value'),
+            useFn = !!Y.one('#useFn').get('checked');
+
+        if (+min == min) {
+            min = +min;
+        } else {
+            if (min.indexOf(',')) {
+                min = min.split(',');
+                Y.Array.each(min, function (val, key) {
+                    if (val == +val) {
+                        min[key] = +val;
+                    }
+                });
+            }
+        }
+
+        if (max) {
+            if (+max == max) {
+                max = +max;
+            }
+        } else {
+            max = null;
+        }
+
+        console.log(key);
+        if (max) {
+            table.filter(key, min, max, useFn);
+        } else {
+            table.filter(key, min, undefined, useFn);
+        }
+    });
+
+});
+
+</script>
+</body>
+</html>

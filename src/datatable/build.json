@@ -85,6 +85,11 @@
             "jsfiles": [
                 "highlight.js"
             ]
+        },
+        "datatable-filter": {
+            "jsfiles": [
+                "filter.js"
+            ]
         }
     }
 }
