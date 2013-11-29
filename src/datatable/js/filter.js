@@ -170,6 +170,29 @@ Y.mix(Filter.prototype, {
     },
 
     /**
+     Removes the filter at the provided positoin or the first of the filters
+     in the array. If any filters are removed, the remainging filters are reran
+     @since @SINCE@
+     @method removeFilter
+     @param {Number} [pos] Position of the filter to remove
+     @return {ModelList, null} ModelList of filtered items
+     */
+    removeFilter: function (pos) {
+        // removes the filter at the provided position or the first filter
+        var removed = this._filters.splice(parseInt(pos || 0, 10), 1);
+
+        if (removed.length) {
+            // filter using fresh data
+            this._filteredData = null;
+
+            // returns filtered ModelList
+            return this.applyFilters();
+        }
+
+        return null;
+    },
+
+    /**
      Applies the first filter or, if provided, the filter at the specified
      location. This will fire the `dataChange` event as well as return a
      ModelList of filtered data.
