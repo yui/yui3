@@ -133,7 +133,7 @@ Y.mix(Filter.prototype, {
      */
     filter: function (/*colKey, match, matchMax, useFormatter*/) {
         if (arguments.length === 0) {
-            return this.applyFilter();
+            return this.applyFilters();
 
         } else {
             this.clearFilters(true);
@@ -184,12 +184,9 @@ Y.mix(Filter.prototype, {
         if (removed.length) {
             // filter using fresh data
             this._filteredData = null;
-
-            // returns filtered ModelList
-            return this.applyFilters();
         }
 
-        return null;
+        return removed;
     },
 
     /**
@@ -223,6 +220,8 @@ Y.mix(Filter.prototype, {
      @return {ModelList} ModelList containing filtered records
      */
     applyFilters: function () {
+        this._filteredData = null;
+
         var filtered = this.get('data'),
             filters = this._filters,
             i, len;
@@ -295,7 +294,7 @@ Y.mix(Filter.prototype, {
                 }
             }
 
-            if (typeof matchMax !== 'undefined') {
+            if (typeof matchMax !== 'undefined' && matchMax !== null) {
                 // if max is defined assume it should match a range
                 return val >= match && val <= matchMax;
             } else if (matchType === '[object Array]') {
