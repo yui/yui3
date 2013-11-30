@@ -37,6 +37,19 @@
     .notice h2 {
         margin-top: .6em;
     }
+
+
+    .dt-filter {
+        position: relative;
+    }
+    #filter-ctrls {
+        position: absolute;
+        left: 200px;
+        top: 0;
+        border: 1px solid #999;
+        padding: 10px;
+        background: #efefef;
+    }
 </style>
 
 <div class="intro component">
@@ -1076,6 +1089,13 @@ table.datasource.load({
         </td>
         <td>no</td>
     </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-filter.html">`datatable-filter`</a></td>
+        <td>
+            Adds the ability to filter results in the DataTable without modifying the original data set.
+        </td>
+        <td>no</td>
+    </tr>
 </tbody>
 </table>
 
@@ -1936,6 +1956,168 @@ dt.on('shiftSpaceEvent', function (ev, keyEv) {
     or that would have the focus if the DataTable gets tabbed into.
     Setting `focusedCell` will bring the focus into that cell.
 </p>
+
+<h3 id="keynav">Filtering Results</h3>
+<p>
+    Use datatable-filter by including it in your `use()` statement. It's ready
+    to be used as soon as you include it with no configurations. Since filter
+    safely modifies your data, filters can be removed at any time to restore
+    the original data.
+</p>
+
+<h4>Filter Methods</h4>
+<p>Filter has a lot of methods to help you filter your data. You can add
+multiple filters at any time, apply them as you want, run them in any order
+and remove them all at once.</p>
+<table>
+<thead>
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`addFilter`</td>
+        <td>Adds a filter to the _filters Array. If colKey is a function, this function is added to the _filters array without any calculations. Otherwise the parameters are passed through to the _addFilter method and a filter function is created and added to the _filters Array.</td>
+    </tr>
+    <tr>
+        <td>`applyFilter`</td>
+        <td>Applies the first filter or, if provided, the filter at the specified location. This will fire the dataChange event as well as return a ModelList of filtered data.</td>
+    </tr>
+    <tr>
+        <td>`applyFilters`</td>
+        <td>Applies all the filters in the order they were added. This will fire the dataChange event as well as return a ModelList of filtered data.</td>
+    </tr>
+    <tr>
+        <td>`clearFilters`</td>
+        <td>Removes all the _filters and destroys the _filtereData ModelList. After these internal properties are destroyed, this will fire the dataChange event to notify applications there was a change in the data. You can supply true as the first parameter to prevent the dataChange from firing.</td>
+    </tr>
+    <tr>
+        <td>`filter`</td>
+        <td><p>
+            If no parameters are provided, will pass through to applyFilter and run the first filter, if it exists.
+        </p><p>
+            If any parameter is provided the following process will occur. - all the filters will be removed with clearFilters - a new filter will be created and added to the _filters Array with addFilter - the filter will be applied with applyFilter
+        </p><p>
+            As such, all parameters, if provided, should match the requirement of addFilter. If a custom filter is being added, you need only provide that function as colKey.
+        </p></td>
+    </tr>
+    <tr>
+        <td>`removeFilter`</td>
+        <td>Removes the filter at the provided positoin or the first of the filters in the array. If any filters are removed, the remainging filters are reran.</td>
+    </tr>
+</tbody>
+</table>
+
+<h4>Filter Attributes</h4>
+If you ever want to get the filtered data, you can access it through the
+`filteredData` attribute.
+<table>
+<thead>
+    <tr>
+        <th>Attribute</th>
+        <th>Data Type</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`filteredData`</td>
+        <td>ModelList</td>
+        <td>A ModelList of filtered data. If no filters are applied, this attribute is `null`.</td>
+        <td>`null`</td>
+    </tr>
+</tbody>
+</table>
+
+
+<h4>Filter In Action!</h4>
+<p>
+    Lots of methods with little to no configuration. Let's see the magic in action.
+</p>
+<b>HTML</b>
+```
+    <div id="filter-dt"></div>
+    <div id="filter-ctrls">
+        <strong>Filter Controls</strong><br>
+        <button id="filter-clear">Clear Filters</button>
+        <button id="filter-name">Names containing "n"</button>
+        <button id="filter-qty">Qty between 0 and 20</button>
+    </div>
+```
+<b>Script</b>
+```
+    var dt = new Y.DataTable({
+            columns: ['name', 'qty'],
+            data: [
+                { name: 'Apple',  qty: 16 },
+                { name: 'Banana', qty: 10 },
+                { name: 'Carrot', qty: 34 },
+                { name: 'Date',   qty: 92 },
+                { name: 'Grape',  qty: 14 },
+                { name: 'Orange', qty: 74 },
+                { name: 'Rasin',  qty: 39 }
+            ]
+        });
+
+    dt.render('#filter-dt');
+
+    Y.one('#filter-clear').on('click', function (e) {
+        dt.clearFilters();
+    });
+
+    Y.one('#filter-name').on('click', function (e) {
+        dt.filter('name', /n/);
+    });
+
+    Y.one('#filter-qty').on('click', function (e) {
+        dt.filter('qty', 0, 20);
+    });
+
+```
+<div class="yui3-skin-sam dt-filter">
+    <div id="filter-dt"></div>
+    <br>
+    <div id="filter-ctrls">
+        <strong>Filter Controls</strong><br>
+        <button id="filter-clear">Clear Filters</button><br>
+        <button id="filter-name">Names containing "n"</button><br>
+        <button id="filter-qty">Qty between 0 and 20</button>
+    </div>
+</div>
+
+<script>
+YUI().use('datatable', 'datatable-filter', function (Y){
+    var dt = new Y.DataTable({
+            columns: ['name', 'qty'],
+            data: [
+                { name: 'Apple',  qty: 16 },
+                { name: 'Banana', qty: 10 },
+                { name: 'Carrot', qty: 34 },
+                { name: 'Date',   qty: 92 },
+                { name: 'Grape',  qty: 14 },
+                { name: 'Orange', qty: 74 },
+                { name: 'Rasin',  qty: 39 }
+            ]
+        });
+
+    dt.render('#filter-dt');
+
+    Y.one('#filter-clear').on('click', function (e) {
+        dt.clearFilters();
+    });
+
+    Y.one('#filter-name').on('click', function (e) {
+        dt.filter('name', /n/);
+    });
+
+    Y.one('#filter-qty').on('click', function (e) {
+        dt.filter('qty', 0, 20);
+    });
+});
+</script>
 
 
 <h2 id="events">DataTable Events</h2>
