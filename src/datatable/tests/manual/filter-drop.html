@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html class="yui3-skin-sam">
+<head>
+    <meta charset='utf-8' />
+    <title>DataTable Filter Popup</title>
+    <link rel="stylesheet" type="text/css" href="../../../build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" type="text/css" href="../../../build/cssreset/reset-min.css">
+    <link rel="stylesheet" type="text/css" href="../../../build/cssbase/base-min.css">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <style>
+    .yui3-popup-filter {
+        min-width: 200px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        background: #fff;
+        border: 1px solid #efefef;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-shadow: 1px 2px 2px rgba(0,0,0,0.3);
+    }
+    .yui3-hidden {
+        display: none;
+    }
+
+    .yui3-popup-filter .title {
+        background: #eee;
+        border: 1px solid #efefef;
+        border-bottom: none;
+        position: absolute;
+        left: -1px;
+        top: 0;
+        margin: 0;
+        padding: 4px 10px 0;
+        font-size: 16px;
+        font-weight: normal;
+        box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .yui3-skin-sam .yui3-widget .yui3-panel-content {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    .yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-hd {
+        padding: 0 10px;
+        margin: -1px 0 0 ;
+        background: white;
+        color: #333;
+        border: 1px solid #999;
+        border-bottom-width: 0;
+        position: relative;
+        z-index: 1;
+        font-family: arial,sans-serif;
+    }
+
+    .yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-bd {
+        position: absolute;
+        background: white;
+        margin: -1px 0 0 ;
+        border: 1px solid #999;
+        overflow: hidden;
+        min-width: 200px;
+        font-family: arial,sans-serif;
+    }
+
+    .yui3-panel-content .yui3-widget-bd dd {
+        margin: 0;
+    }
+
+    .yui3-panel  ul {
+        margin: 0;
+        padding: 0;
+    }
+
+
+
+    .pure-form li {
+        list-style: none;
+    }
+    .pure-link {
+        padding: 0;
+        background: none;
+        color: #3B8BBA;
+        text-decoration: none;
+    }
+    .pure-link:hover {
+        background: none;
+    }
+    .buttons {
+        margin-top: 16px;
+    }
+
+
+
+
+    .sort dt {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .sort dd {
+        display: inline-block;
+        vertical-align: top;
+        padding-left: 8px;
+    }
+
+
+
+    .filter dt {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .filter dd {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .filter dd li {
+        padding-left: 10px;
+    }
+
+    .filter-search {
+        white-space: nowrap;
+    }
+    .filter-search input {
+        width: 99%;
+    }
+    .pure-form .filter-search input,
+    .pure-form .filter-search button {
+        display: inline-block;
+        vertical-align: baseline;
+    }
+
+    .pure-form .filter-list {
+        border: 1px solid #efefef;
+        margin: 8px 0;
+        max-height: 200px;
+        overflow: auto;
+        padding-left: 0;
+    }
+    .filter-list li {
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+    .filter-list label {
+        padding: 10px 10px;
+        display: block;
+        margin: 0;
+    }
+    .filter-list input {
+        display: none;
+    }
+    .filter-list .fa {
+        color: #ddd;
+        margin-right: 3px;
+    }
+    .filter-list label:hover {
+        background-color: #efefef;
+    }
+    .filter-list .selected {
+        background-color: #76c1ec;
+    }
+    .filter-list .selected:hover {
+        background-color: #a2d5f3;
+    }
+    .filter-list .selected .fa {
+        color: #333;
+    }
+    .buttons {
+        margin-top: 16px;
+    }
+
+    .filter .hidden {
+        display: none;
+    }
+
+    dd ul {
+        margin: 0;
+        padding: 0;
+    }
+    </style>
+
+    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+</head>
+<body>
+    <div id="pop"></div>
+    <div id="dt"></div>
+
+    <script>
+        YUI.add('popup-filter', function (Y, NAME) {
+            var HIDDEN = 'yui3-hidden',
+
+                PopupFilter = Y.Base.create('popup-filter', Y.Base, [Y.AutoCompleteBase], {
+                    initializer: function () {
+                          this._bindUIACBase();
+                          this._syncUIACBase();
+                    }
+                }),
+
+                PopupTemplate = '<h3 class="title">{{{title}}}</h3>\
+                    <form action="#" class="colFilter pure-form">\
+                        {{^hideSort}}\
+                        <div class="sort">\
+                            <dl>\
+                                <dt>Sort:</dt>\
+                                <dd>\
+                                    <ul>\
+                                        <li><button name="sortAZ" class="pure-button pure-link">{{ sortAZ }}</button></li>\
+                                        <li><button name="sortZA" class="pure-button pure-link">{{ sortZA }}</button></li>\
+                                    </ul>\
+                                </dd>\
+                            </dl>\
+                        </div>\
+                        {{/hideSort}}\
+                        {{^hideFilter}}\
+                        <div class="filter">\
+                            <dl>\
+                                <dt>Filter:</dt>\
+                                <dd>\
+                                    <ul>\
+                                        <li><button name="selectAll" class="pure-button pure-link">{{ selectAll }}</button></li>\
+                                        <li><button name="clearAll" class="pure-button pure-link">{{ clearAll }}</button></li>\
+                                        <li><button name="toggleSelection" class="pure-button pure-link">{{ toggleSelection }}</button></li>\
+                                    </ul>\
+                                </dd>\
+                            </dl>\
+                            \
+                            <div class="filter-search">\
+                                <input type="text" name="fiterQ">\
+                            </div>\
+                            \
+                            <ul class="filter-list">{{#data}}\
+                                <li data-text="{{ value }}">\
+                                <label{{#selected}} class="selected"{{/selected}}>\
+                                    <i class="fa fa-check"><input type="checkbox"{{#selected}} checked{{/selected}}></i>\
+                                    {{ value }}\
+                                </label>\
+                                </li>\
+                            {{/data}}</ul>\
+                            \
+                            <div class="buttons">\
+                                <button name="update" class="pure-button pure-button-primary">Update</button>\
+                                <button name="close" class="pure-button">Close</button>\
+                            </div>\
+                        </div>\
+                        {{/hideFilter}}\
+                    </form>',
+
+                PopupModel = Y.Base.create('popup-model', Y.Model, [], {
+                    _setTitle: function (val) {
+                        var allowed = ['b','i','strong','em','sup','sub'],
+                            tags = val.match(/<(?:.|\n)*?>/gm),
+                            i,
+                            len,
+                            tag;
+
+                        if (tags) {
+                            for (i = 0, len = tags.length; i < len; i++) {
+                                tag = tags[i].match(/<\/?([a-z]*)/)[1];
+
+                                if (Y.Array.indexOf(allowed, tag) < 0) {
+                                    val = val.replace(tags[i], '');
+                                }
+                            }
+                        }
+
+                        return val;
+                    }
+                }, {
+                    ATTRS: {
+                        title: {
+                            setter: '_setTitle'
+                        }
+                    }
+                }),
+
+                PopupView = Y.Base.create('popup-view', Y.View, [], {
+                    containerTemplate: '<div class="yui3-' + NAME + '"/>',
+
+                    initializer: function () {
+                        var cb = this.get('container');
+
+                        cb.delegate('click', Y.bind(this._titleClick, this), '.title');
+                        cb.delegate('click', Y.bind(this._btnClick, this), 'button');
+                        cb.delegate('change', Y.bind(this._inputChange, this), 'input');
+                        this.get('model').after('*:change', Y.bind(this.render, this));
+                    },
+
+                    render: function () {
+                        var cb = this.get('container'),
+                            temp = this.template,
+                            model = this.get('model').toJSON();
+
+                        cb.setHTML(temp(model));
+
+                        this.fire('render');
+
+                        return this;
+                    },
+
+                    _titleClick: function(e) {
+                        e.preventDefault();
+                        this.fire('titleClick', { evt: e });
+                    },
+
+                    _btnClick: function (e) {
+                        e.preventDefault();
+                        this.fire('btnClick', { evt: e });
+                    },
+
+                    _inputChange: function (e) {
+                        var chk = e.currentTarget;
+
+                        chk.ancestor('label').toggleClass('selected', chk.get('checked'));
+                    }
+
+                });
+
+                Popup = Y.Base.create('popup', Y.Base, [], {
+
+                    initializer: function (config) {
+                        var view = new PopupView(Y.mix(config, this.getAttrs()));
+                        view.after('render', Y.bind(this._afterViewRender, this));
+
+                        view.after('btnClick', Y.bind('_btnClick', this));
+                        view.after('titleClick', Y.bind('hide', this));
+
+                        this._view = view;
+
+                        this.on('targetChange', this._targetChange, this);
+                        this._removeTargetSort();
+                    },
+
+                    render: function (node) {
+                        var view = this._view;
+
+                        view.render();
+
+                        node = Y.Node(node || 'body');
+
+                        node.prepend(view.get('container'));
+
+                        this._createFilter();
+                    },
+
+                    hide: function () {
+
+                        var cb = this._view.get('container');
+
+                        cb.addClass(HIDDEN);
+
+                        cb.setStyle('top', null);
+                        cb.setStyle('left', null);
+                    },
+
+                    show: function () {
+
+                        var cb = this._view.get('container'),
+                            headerNode = this.get('headerNode'),
+                            thRegion = headerNode.get('region'),
+                            title = cb.one('.title'),
+                            left = thRegion.left;
+
+
+
+                        if (!headerNode.previous()) {
+                            left -= 1;
+                        }
+
+                        cb.setStyles({
+                            width: thRegion.width,
+                            left: left + 'px',
+                            top: thRegion.top + thRegion.height + 'px'
+                        });
+
+                        title.setStyles({
+                            top: -(thRegion.height + 2) + 'px',
+                            width: thRegion.width - 20 + 'px',
+                            height: thRegion.height - 3 + 'px'
+                        });
+
+                        cb.removeClass(HIDDEN);
+                    },
+
+                    updateModel: function () {
+                        var col = this.get('target').getColumn(this.get('key'));
+
+                        console.log(this.get('model'));
+
+                        this.get('model').setAttrs({
+                            title: this.get('headerNode').getHTML(),
+                            data: this._getData(),
+                            hideSort: !col.sortable
+                        });
+                    },
+
+                    _setTemplate: function (val) {
+                        if (typeof val === 'string') {
+                            val = new Y.Template.Handlebars.compile(val);
+                        }
+
+                        return val;
+                    },
+
+                    _targetChange: function (e) {
+                        if (e.prevVal) {
+                            (Y.bind(this._bindSortUI, e.prevVal)());
+                        }
+
+                        this._removeTargetSort(e.newVal);
+                    },
+
+                    _removeTargetSort: function () {
+                        this.get('target')._eventHandles.sortUITrigger.detach();
+                    },
+
+                    _afterViewRender: function() {
+                        this._createFilter();
+                    },
+
+                    _createFilter: function () {
+                        var cb = this._view.get('container'),
+                            filter = new PopupFilter({
+                                inputNode: cb.one('.filter-search input'),
+                                queryDelay: 0,
+                                minQueryLength: 0,
+                                resultFilters: 'phraseMatch',
+                                source: (function () {
+                                    var results = [];
+
+                                    cb.all('.filter-list li').each(function (node) {
+                                        results.push({
+                                            node: node,
+                                            tags: node.getData('text')
+                                        });
+                                    });
+
+                                    return results;
+                                }),
+                                resultTextLocator: 'tags'
+                            });
+
+                        filter.on('results', this._filterResults, this);
+                    },
+
+                    _filterResults: function (e) {
+                        this._view.get('container').all('.filter-list li').addClass(HIDDEN);
+                        Y.Array.each(e.results, function (result) {
+                            result.raw.node.removeClass(HIDDEN);
+                        });
+                    },
+
+                    _btnClick: function (e) {
+                        var cb = this._view.get('container'),
+                            list = cb.one('.filter-list'),
+                            liSelector = 'li:not(.' + HIDDEN + ') input',
+                            name = e.evt.currentTarget.get('name'),
+                            table = this.get('target'),
+                            key = this.get('key'),
+                            obj = {};
+
+                        switch (name) {
+                            case 'sortAZ':
+                                obj[key] = 'asc';
+                                table.sort(obj);
+                                this.hide();
+                                return;
+                            case 'sortZA':
+                                obj[key] = 'desc';
+                                table.sort(obj);
+                                this.hide();
+                                return;
+                            case 'selectAll':
+                                list.all(liSelector).each(Y.bind(function (chk) {
+                                    this._toggleCheckbox(chk, true);
+                                }, this));
+                                break;
+                            case 'clearAll':
+                                list.all(liSelector).each(Y.bind(function (chk) {
+                                    this._toggleCheckbox(chk, false);
+                                }, this));
+                                break;
+                            case 'toggleSelection':
+                                list.all(liSelector).each(Y.bind(function (chk) {
+                                    this._toggleCheckbox(chk);
+                                }, this));
+                                break;
+                            case 'update':
+                                var options = [];
+
+                                list.all(liSelector).each(function (chk) {
+                                    var val;
+
+                                    if (chk.get('checked')) {
+                                        val = chk.ancestor('li').getData('text');
+
+                                        if (val == +val) { val = +val; }
+
+                                        options.push(val);
+                                    }
+                                });
+
+                                if (options.length) {
+                                    table.filter(key, options);
+                                } else {
+                                    table.clearFilters();
+                                }
+
+                                this.hide();
+
+                                break;
+                            case 'close':
+                                this.hide();
+                                break;
+                        }
+
+                    },
+
+                    _toggleCheckbox: function (chk, state) {
+                        var chkd = (typeof state !== 'undefined') ? state : !chk.get('checked');
+                        chk.set('checked', chkd);
+                        chk.ancestor('label').toggleClass('selected', chkd);
+                    },
+
+                    _getModel: function () {
+                        return this._view && this._view.get('model');
+                    },
+
+                    _getData: function () {
+                        var data = {},
+                            columnKey = this.get('key'),
+                            target = this.get('target'),
+                            oData = target.get('unmodifiedData'),
+                            fData = target.get('filteredData'),
+                            filtered = !!fData,
+                            keys;
+
+                        oData.each(function (record) {
+                            var val = record.get(columnKey);
+
+                            data[val] = {
+                                value: val,
+                                selected: filtered ? false: true
+                            };
+                        });
+
+                        if (fData) {
+                            fData.each(function (record) {
+                                var val = record.get(columnKey);
+
+                                data[val] = {
+                                    value: val,
+                                    selected: true
+                                };
+                            });
+                        }
+
+                        keys = Y.Object.keys(data);
+
+                        keys.sort();
+
+                        Y.Array.each(keys, function (val, index) {
+                            keys[index] = data[val];
+                        });
+
+                        return keys;
+                    }
+
+                }, {
+                    ATTRS: {
+                        model: {
+                            getter: '_getModel'
+                        },
+
+                        template: {
+                            value: PopupTemplate,
+                            setter: '_setTemplate'
+                        },
+
+                        data: {
+                            value: []
+                        },
+
+                        target: {},
+
+                        headerNode: {}
+                    }
+                });
+
+            Y.Popup = Popup;
+            Y.Popup.View = PopupView;
+            Y.Popup.Model = PopupModel;
+            Y.Popup.Filter = PopupFilter;
+
+        }, '0.1', {
+            requires: [ 'base-build', 'view', 'handlebars', 'autocomplete-base', 'autocomplete-filters', 'model', 'node-screen' ]
+        });
+
+        YUI({filter: 'raw', combine: false}).use('popup-filter', 'datatable', 'datatable-filter', function (Y) {
+            var dt = new Y.DataTable({
+                    caption: 'Planet Facts (<a href="http://nssdc.gsfc.nasa.gov/planetary/factsheet/">http://nssdc.gsfc.nasa.gov/planetary/factsheet/</a>)',
+                    columns: [
+                        { key: 'name',     label: 'Planet' },
+                        { key: 'diameter', label: 'Diameter (km)', sortable: true},
+                        { key: 'moons',    label: 'Number of Moons' },
+                        { key: 'distance', label: "Distance from Sun (10<sup>6</sup> km)" }
+                    ],
+                    data: [
+                        { name: 'Mercury', diameter: 4879,   moons: 0,  distance: 57.9 },
+                        { name: 'Venus',   diameter: 12104,  moons: 0,  distance: 108.2 },
+                        { name: 'Earth',   diameter: 12756,  moons: 1,  distance: 149.6 },
+                        { name: 'Mars',    diameter: 6792,   moons: 2,  distance: 227.9 },
+                        { name: 'Jupiter', diameter: 142984, moons: 67, distance: 778.6 },
+                        { name: 'Saturn',  diameter: 120536, moons: 62, distance: 1433.5 },
+                        { name: 'Uranus',  diameter: 51118,  moons: 27, distance: 2872.5 },
+                        { name: 'Neptune', diameter: 49528,  moons: 14, distance: 4495.1 },
+                        { name: 'Pluto',   diameter: 2390,   moons: 5,  distance: 5870.0 }
+                    ],
+                    render: '#dt'
+                }),
+
+                model = new Y.Popup.Model({
+                    sortAZ: 'from A - Z',
+                    sortZA: 'from Z - A',
+                    selectAll: 'Select All',
+                    clearAll: 'Clear All',
+                    toggleSelection: 'Toggle Selection',
+                    data: []
+                }),
+
+                pop = new Y.Popup({
+                    model: model,
+                    target: dt
+                });
+
+
+            pop.hide();
+            pop.render();
+
+
+            dt.get('boundingBox').delegate('click', function (e) {
+                if (window.getSelection) {
+                    window.getSelection().removeAllRanges();
+                } else if (document.selection) {
+                    document.selection.empty();
+                }
+
+                e.preventDefault();
+
+                var node = e.currentTarget,
+                    columnKey = node.getData('yui3-col-id');
+
+                pop.setAttrs({
+                    key: columnKey,
+                    headerNode: node
+                });
+
+                pop.updateModel();
+
+                pop.show();
+
+            }, 'th');
+
+        });
+    </script>
+</body>
+</html>
