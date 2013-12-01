@@ -62,9 +62,6 @@
             ]
         },
         "event-base": {
-            "prependfiles": [
-                "js/event-ready-base.js"
-            ],
             "jsfiles": [
                 "event-ready.js",
                 "event-facade-dom.js",

@@ -222,8 +222,6 @@
                 this.basicuploader._uploadEventHandler(e);
             },
 
-            // Causes a dialog popup in Firefox, disabling for now
-            /*
             testOpenFileSelect : function () {
                var cfg = {
                   tabIndex: "0",
@@ -241,13 +239,12 @@
                     ev.preventDefault();
                     ev.stopPropagation();
                     return false;
-                }
+                };
 
                 this.basicuploader._fileInputField.on("click", function (ev) {ev.preventDefault(); ev.stopPropagation(); return false;});
 
                 this.basicuploader.openFileSelectDialog();
             },
-            */
 
             testUploadCalls: function () {
                var cfg = {

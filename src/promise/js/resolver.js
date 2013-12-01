@@ -44,6 +44,15 @@ function Resolver(promise) {
     @private
     **/
     this._status = 'pending';
+
+    /**
+    This value that this promise represents.
+
+    @property _result
+    @type Any
+    @private
+    **/
+    this._result = null;
 }
 
 Y.mix(Resolver.prototype, {
@@ -59,9 +68,10 @@ Y.mix(Resolver.prototype, {
     fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
+            this._status = 'fulfilled';
         }
 
-        if (this._status !== 'rejected') {
+        if (this._status === 'fulfilled') {
             this._notify(this._callbacks, this._result);
 
             // Reset the callback list so that future calls to fulfill()
@@ -75,8 +85,6 @@ Y.mix(Resolver.prototype, {
             // there is no point in keeping the list. Remove it to help
             // garbage collection
             this._errbacks = null;
-
-            this._status = 'fulfilled';
         }
     },
 
@@ -92,16 +100,56 @@ Y.mix(Resolver.prototype, {
     reject: function (reason) {
         if (this._status === 'pending') {
             this._result = reason;
+            this._status = 'rejected';
         }
 
-        if (this._status !== 'fulfilled') {
+        if (this._status === 'rejected') {
+            if (!this._errbacks.length) { Y.log('This promise was rejected but no error handlers were registered to it', 'info', NAME); }
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
             this._callbacks = null;
             this._errbacks = [];
+        }
+    },
 
-            this._status = 'rejected';
+    /*
+    Given a certain value A passed as a parameter, this method resolves the
+    promise to the value A.
+
+    If A is a promise, `resolve` will cause the resolver to adopt the state of A
+    and once A is resolved, it will resolve the resolver's promise as well.
+    This behavior "flattens" A by calling `then` recursively and essentially
+    disallows promises-for-promises.
+
+    This is the default algorithm used when using the function passed as the
+    first argument to the promise initialization function. This means that
+    the following code returns a promise for the value 'hello world':
+
+        var promise1 = new Y.Promise(function (resolve) {
+            resolve('hello world');
+        });
+        var promise2 = new Y.Promise(function (resolve) {
+            resolve(promise1);
+        });
+        promise2.then(function (value) {
+            assert(value === 'hello world'); // true
+        });
+
+    @method resolve
+    @param [Any] value A regular JS value or a promise
+    */
+    resolve: function (value) {
+        var self = this;
+
+        if (Promise.isPromise(value)) {
+            value.then(function (value) {
+                self.resolve(value);
+            }, function (reason) {
+                self.reject(reason);
+            });
+        } else {
+            this.fulfill(value);
         }
     },
 
@@ -138,16 +186,20 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList = this._callbacks,
+            errbackList  = this._errbacks;
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        if (callbackList) {
+            callbackList.push(typeof callback === 'function' ?
+                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+        }
+        if (errbackList) {
+            errbackList.push(typeof errback === 'function' ?
+                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
@@ -213,8 +265,10 @@ Y.mix(Resolver.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
+        Y.log('resolver.getStatus() will be removed in the future', 'warn', NAME);
         return this._status;
     },
 

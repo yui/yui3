@@ -6,7 +6,7 @@ YUI.add('axis-numeric', function (Y, NAME) {
  * @module charts
  * @submodule axis-numeric
  */
-Y_Lang = Y.Lang;
+var Y_Lang = Y.Lang;
 /**
  * NumericAxis draws a numeric axis.
  *

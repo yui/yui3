@@ -6,6 +6,14 @@ Rich Text Editor Change History
 
 * No changes.
 
+3.14.0
+------
+
+* Fix Y.Frame issue where the linked CSS in the frame was trying to call
+  `/undefined`. ([#1367][]: @ipeychev)
+
+[#1367]: https://github.com/yui/yui3/issues/1367
+
 3.13.0
 ------
 * Add in `getEditorOffset` to calculate distance from current selection to the

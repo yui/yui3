@@ -422,7 +422,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "base-observable": {
         "requires": [
-            "attribute-observable"
+            "attribute-observable",
+            "base-core"
         ]
     },
     "base-pluginhost": {
@@ -920,6 +921,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "event-hover"
         ],
         "skinnable": true
+    },
+    "datatable-keynav": {
+        "requires": [
+            "datatable-base"
+        ]
     },
     "datatable-message": {
         "lang": [
@@ -2965,4 +2971,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '0bbfe58fcbf2c4ab90bf1e34ab849d74';
+YUI.Env[Y.version].md5 = '2ec8e93b30f0fc6809e2fbdba577e214';

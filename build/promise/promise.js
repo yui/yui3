@@ -4,7 +4,7 @@ YUI.add('promise', function (Y, NAME) {
 Wraps the execution of asynchronous operations, providing a promise object that
 can be used to subscribe to the various ways the operation may terminate.
 
-When the operation completes successfully, call the Resolver's `fulfill()`
+When the operation completes successfully, call the Resolver's `resolve()`
 method, passing any relevant response data for subscribers.  If the operation
 encounters an error or is unsuccessful in some way, call `reject()`, again
 passing any relevant data for subscribers.
@@ -26,6 +26,9 @@ asynchronous or synchronous operations. E.g.
 @since 3.9.0
 **/
 
+var Lang  = Y.Lang,
+    slice = [].slice;
+
 /**
 A promise represents a value that may not yet be available. Promises allow
 you to chain asynchronous operations, write synchronous looking code and
@@ -37,11 +40,11 @@ reason can be any JavaScript value. It's encouraged that rejection reasons be
 error objects
 
 <pre><code>
-var fulfilled = new Y.Promise(function (fulfill) {
-    fulfill('I am a fulfilled promise');
+var fulfilled = new Y.Promise(function (resolve) {
+    resolve('I am a fulfilled promise');
 });
 
-var rejected = new Y.Promise(function (fulfill, reject) {
+var rejected = new Y.Promise(function (resolve, reject) {
     reject(new Error('I am a rejected promise'));
 });
 </code></pre>
@@ -49,7 +52,7 @@ var rejected = new Y.Promise(function (fulfill, reject) {
 @class Promise
 @constructor
 @param {Function} fn A function where to insert the logic that resolves this
-        promise. Receives `fulfill` and `reject` functions as parameters.
+        promise. Receives `resolve` and `reject` functions as parameters.
         This function is called synchronously.
 **/
 function Promise(fn) {
@@ -69,7 +72,7 @@ function Promise(fn) {
     this._resolver = resolver;
 
     fn.call(this, function (value) {
-        resolver.fulfill(value);
+        resolver.resolve(value);
     }, function (reason) {
         resolver.reject(reason);
     });
@@ -97,12 +100,30 @@ Y.mix(Promise.prototype, {
         return this._resolver.then(callback, errback);
     },
 
+    /*
+    A shorthand for `promise.then(undefined, callback)`.
+
+    Returns a new promise and the error callback gets the same treatment as in
+    `then`: errors get caught and turned into rejections, and the return value
+    of the callback becomes the fulfilled value of the returned promise.
+
+    @method catch
+    @param [Function] errback Callback to be called in case this promise is
+                        rejected
+    @return {Promise} A new promise modified by the behavior of the error
+                        callback
+    */
+    'catch': function (errback) {
+        return this.then(undefined, errback);
+    },
+
     /**
     Returns the current status of the operation. Possible results are
     "pending", "fulfilled", and "rejected".
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
         return this._resolver.getStatus();
@@ -121,10 +142,145 @@ method.
 @static
 **/
 Promise.isPromise = function (obj) {
-    // We test promises by form to be able to identify other implementations
-    // as promises. This is important for cross compatibility and in particular
-    // Y.when which should take any kind of promise
-    return !!obj && typeof obj.then === 'function';
+    var then;
+    // We test promises by structure to be able to identify other
+    // implementations' promises. This is important for cross compatibility and
+    // In particular Y.when which should recognize any kind of promise
+    // Use try...catch when retrieving obj.then. Return false if it throws
+    // See Promises/A+ 1.1
+    try {
+        then = obj.then;
+    } catch (_) {}
+    return typeof then === 'function';
+};
+
+/*
+Ensures that a certain value is a promise. If it is not a promise, it wraps it
+in one.
+
+This method can be copied or inherited in subclasses. In that case it will
+check that the value passed to it is an instance of the correct class.
+This means that `PromiseSubclass.cast()` will always return instances of
+`PromiseSublcass`.
+
+@method cast
+@param {Any} Any object that may or may not be a promise
+@return {Promise}
+@static
+*/
+Promise.cast = function (value) {
+    return Promise.isPromise(value) && value.constructor === this ? value :
+        /*jshint newcap: false */
+        new this(function (resolve) {
+        /*jshint newcap: true */
+            resolve(value);
+        });
+};
+
+/*
+A shorthand for creating a rejected promise.
+
+@method reject
+@param {Any} reason Reason for the rejection of this promise. Usually an Error
+    Object
+@return {Promise} A rejected promise
+@static
+*/
+Promise.reject = function (reason) {
+    /*jshint newcap: false */
+    return new this(function (resolve, reject) {
+    /*jshint newcap: true */
+        reject(reason);
+    });
+};
+
+/*
+A shorthand for creating a resolved promise.
+
+@method resolve
+@param {Any} value The value or promise that resolves the returned promise
+@return {Promise} A resolved promise
+@static
+*/
+Promise.resolve = function (value) {
+    /*jshint newcap: false */
+    return new this(function (resolve) {
+    /*jshint newcap: true */
+        resolve(value);
+    });
+};
+
+/*
+Returns a promise that is resolved or rejected when all values are resolved or
+any is rejected. This is useful for waiting for the resolution of multiple
+promises, such as reading multiple files in Node.js or making multiple XHR
+requests in the browser.
+
+@method all
+@param {Any[]} values An array of any kind of values, promises or not. If a value is not
+@return [Promise] A promise for an array of all the fulfillment values
+@static
+*/
+Promise.all = function (values) {
+    var Promise = this;
+    return new Promise(function (resolve, reject) {
+        if (!Lang.isArray(values)) {
+            reject(new TypeError('Promise.all expects an array of values or promises'));
+            return;
+        }
+
+        var remaining = values.length,
+            i         = 0,
+            length    = values.length,
+            results   = [];
+
+        function oneDone(index) {
+            return function (value) {
+                results[index] = value;
+
+                remaining--;
+
+                if (!remaining) {
+                    resolve(results);
+                }
+            };
+        }
+
+        if (length < 1) {
+            return resolve(results);
+        }
+
+        for (; i < length; i++) {
+            Promise.cast(values[i]).then(oneDone(i), reject);
+        }
+    });
+};
+
+/*
+Returns a promise that is resolved or rejected when any of values is either
+resolved or rejected. Can be used for providing early feedback in the UI
+while other operations are still pending.
+
+@method race
+@param {Any[]} values An array of values or promises
+@return {Promise}
+@static
+*/
+Promise.race = function (values) {
+    var Promise = this;
+    return new Promise(function (resolve, reject) {
+        if (!Lang.isArray(values)) {
+            reject(new TypeError('Promise.race expects an array of values or promises'));
+            return;
+        }
+        
+        // just go through the list and resolve and reject at the first change
+        // This abuses the fact that calling resolve/reject multiple times
+        // doesn't change the state of the returned promise
+        for (var i = 0, count = values.length; i < count; i++) {
+            Promise.cast(values[i]).then(resolve, reject);
+        }
+    });
 };
 
 Y.Promise = Promise;
@@ -174,6 +330,15 @@ function Resolver(promise) {
     @private
     **/
     this._status = 'pending';
+
+    /**
+    This value that this promise represents.
+
+    @property _result
+    @type Any
+    @private
+    **/
+    this._result = null;
 }
 
 Y.mix(Resolver.prototype, {
@@ -189,9 +354,10 @@ Y.mix(Resolver.prototype, {
     fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
+            this._status = 'fulfilled';
         }
 
-        if (this._status !== 'rejected') {
+        if (this._status === 'fulfilled') {
             this._notify(this._callbacks, this._result);
 
             // Reset the callback list so that future calls to fulfill()
@@ -205,8 +371,6 @@ Y.mix(Resolver.prototype, {
             // there is no point in keeping the list. Remove it to help
             // garbage collection
             this._errbacks = null;
-
-            this._status = 'fulfilled';
         }
     },
 
@@ -222,16 +386,55 @@ Y.mix(Resolver.prototype, {
     reject: function (reason) {
         if (this._status === 'pending') {
             this._result = reason;
+            this._status = 'rejected';
         }
 
-        if (this._status !== 'fulfilled') {
+        if (this._status === 'rejected') {
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
             this._callbacks = null;
             this._errbacks = [];
+        }
+    },
 
-            this._status = 'rejected';
+    /*
+    Given a certain value A passed as a parameter, this method resolves the
+    promise to the value A.
+
+    If A is a promise, `resolve` will cause the resolver to adopt the state of A
+    and once A is resolved, it will resolve the resolver's promise as well.
+    This behavior "flattens" A by calling `then` recursively and essentially
+    disallows promises-for-promises.
+
+    This is the default algorithm used when using the function passed as the
+    first argument to the promise initialization function. This means that
+    the following code returns a promise for the value 'hello world':
+
+        var promise1 = new Y.Promise(function (resolve) {
+            resolve('hello world');
+        });
+        var promise2 = new Y.Promise(function (resolve) {
+            resolve(promise1);
+        });
+        promise2.then(function (value) {
+            assert(value === 'hello world'); // true
+        });
+
+    @method resolve
+    @param [Any] value A regular JS value or a promise
+    */
+    resolve: function (value) {
+        var self = this;
+
+        if (Promise.isPromise(value)) {
+            value.then(function (value) {
+                self.resolve(value);
+            }, function (reason) {
+                self.reject(reason);
+            });
+        } else {
+            this.fulfill(value);
         }
     },
 
@@ -268,16 +471,20 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList = this._callbacks,
+            errbackList  = this._errbacks;
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        if (callbackList) {
+            callbackList.push(typeof callback === 'function' ?
+                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+        }
+        if (errbackList) {
+            errbackList.push(typeof errback === 'function' ?
+                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
@@ -343,6 +550,7 @@ Y.mix(Resolver.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
         return this._status;
@@ -397,20 +605,10 @@ are provided, the original promise is returned.
 @return {Promise}
 **/
 Y.when = function (promise, callback, errback) {
-    var value;
-
-    if (!Y.Promise.isPromise(promise)) {
-        value = promise;
-
-        promise = new Y.Promise(function (fulfill) {
-            fulfill(value);
-        });
-    }
+    promise = Promise.cast(promise);
 
     return (callback || errback) ? promise.then(callback, errback) : promise;
 };
-var slice = [].slice;
-
 /**
 Returns a new promise that will be resolved when all operations have completed.
 Takes both any numer of values as arguments. If an argument is a not a promise,
@@ -423,35 +621,7 @@ it will be wrapped in a new promise, same as in `Y.when()`.
                     resolved
 **/
 Y.batch = function () {
-    var funcs     = slice.call(arguments),
-        remaining = funcs.length,
-        i         = 0,
-        length    = funcs.length,
-        results   = [];
-
-    return new Y.Promise(function (fulfill, reject) {
-        var allDone = this;
-
-        function oneDone(index) {
-            return function (value) {
-                results[index] = value;
-
-                remaining--;
-
-                if (!remaining && allDone.getStatus() !== 'rejected') {
-                    fulfill(results);
-                }
-            };
-        }
-
-        if (length < 1) {
-            return fulfill(results);
-        }
-
-        for (; i < length; i++) {
-            Y.when(funcs[i], oneDone(i), reject);
-        }
-    });
+    return Promise.all(slice.call(arguments));
 };
 
 

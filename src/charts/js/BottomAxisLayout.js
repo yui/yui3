@@ -215,6 +215,7 @@ BottomAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("bottomTickOffset"),
             labelStyles = styles.label,
             margin = 0,
@@ -229,18 +230,29 @@ BottomAxisLayout.prototype = {
         {
             margin = labelStyles.margin.top;
         }
-        if(rot > 0)
+        if(rot === 90)
         {
+            topOffset -= labelHeight/2 * rot/90;
+            leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
+        }
+        else if(rot === -90)
+        {
+            topOffset -= labelHeight/2 * absRot/90;
+            leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
+        }
+        else if(rot > 0)
+        {
+            leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
             topOffset -= labelHeight/2 * rot/90;
         }
         else if(rot < 0)
         {
-            leftOffset -= labelWidth;
+            leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
             topOffset -= labelHeight/2 * absRot/90;
         }
         else
         {
-            leftOffset -= labelWidth * 0.5;
+            leftOffset -= labelWidth * offset;
         }
         topOffset += margin;
         topOffset += tickOffset;

@@ -390,7 +390,8 @@
     },
     "base-observable": {
         "requires": [
-            "attribute-observable"
+            "attribute-observable",
+            "base-core"
         ]
     },
     "base-pluginhost": {
@@ -888,6 +889,11 @@
             "event-hover"
         ],
         "skinnable": true
+    },
+    "datatable-keynav": {
+        "requires": [
+            "datatable-base"
+        ]
     },
     "datatable-message": {
         "lang": [

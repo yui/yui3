@@ -2268,6 +2268,33 @@ YUITest.ArrayAssert = {
 
         //if it makes it here, it wasn't found at all
         YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array."));
+    },
+
+    /**
+     * Asserts that given array doesn't contain duplicate items.
+     * @param {Array} array The array to check.
+     * @param {Function} [comparator=null] A custom function to use to test the equality of two values.
+     *      This function is similar to the one given to {{#crossLink "Array/unique:method"}}Y.Array.unique{{/crossLink}}.
+     * @param {String} [message] The message to display if the assertion fails.
+     * @method isUnique
+     * @static
+     */
+    isUnique: function (array, comparator, message) {
+
+        YUITest.Assert._increment();
+
+        if (!Y.Lang.isArray(array)){
+            throw new TypeError("ArrayAssert.isUnique(): First argument must be an array");
+        }
+
+        if (Y.Lang.isValue(comparator) && !Y.Lang.isFunction(comparator)){
+            throw new TypeError("ArrayAssert.isUnique(): Second argument must be a function");
+        }
+
+        if (Y.Array.unique(array, comparator).length < array.length){
+            message = YUITest.Assert._formatMessage(message, "Array contains duplicate(s)");
+            YUITest.Assert.fail(message);
+        }
     }
 
 };

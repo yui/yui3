@@ -6,6 +6,15 @@ CSS Grids Change History
 
 * No changes.
 
+3.14.0
+------
+
+* Grids is now imported into YUI from Pure via Grunt. ([#1240][])
+
+
+[#1240]: https://github.com/yui/yui3/issues/1240
+
+
 3.13.0
 ------
 

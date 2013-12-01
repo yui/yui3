@@ -33,7 +33,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             return;
         }
         var isNumber = Y_Lang.isNumber,
-            style = Y.clone(this.get("styles").marker),
+            style = this._copyObject(this.get("styles").marker),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -217,7 +217,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 borderColor;
             styles = this.get("styles").marker;
             offset = styles.width * 0.5;
-            markerStyles = state === "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
+            markerStyles = state === "off" || !styles[state] ? this._copyObject(styles) : this._copyObject(styles[state]);
             markerStyles.height = marker.get("height");
             markerStyles.x = (xcoords[i] - offset);
             markerStyles.y = marker.get("y");

@@ -6,6 +6,13 @@ Node Change History
 
 * No changes.
 
+3.14.0
+------
+
+* Addition of `paste`, `copy`, and `cut` to Node's event white list. ([#1350][]: @JetFault)
+
+[#1350]: https://github.com/yui/yui3/issues/1350
+
 3.13.0
 ------
 

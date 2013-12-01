@@ -6,6 +6,13 @@ Calendar Change History
 
 * No changes.
 
+3.14.0
+------
+
+* Fix an undeclared variable ([#1307][])
+
+[#1307]: https://github.com/yui/yui3/issues/1307
+
 3.13.0
 ------
 

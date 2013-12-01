@@ -62,7 +62,9 @@ YUI.add('get', function (Y, NAME) {
         if (typeof YUI._getLoadHook === 'function') {
             data = YUI._getLoadHook(data, url);
         }
-        mod._compile('module.exports = function (YUI) {' + data + '\n;return YUI;};', url);
+        mod._compile('module.exports = function (YUI) {' +
+            'return (function () {'+ data + '\n;return YUI;}).apply(global);' +
+        '};', url);
 
         /*global YUI:true */
         YUI = mod.exports(YUI);

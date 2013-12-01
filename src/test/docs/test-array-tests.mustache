@@ -276,6 +276,53 @@ Y.example.test.ArrayTestCase = new Y.Test.Case({
   to 7 to account for the new value. After that, <code>Y.ArrayAssert.indexOf()</code> is used to determine if the value has been placed in the
   correct location. The final assertions tests that the entire array is expected by using <code>Y.ArrayAssert.itemsAreEqual()</code>.</p>
 
+<h3>Testing for unique values</h3>
+
+<p>Sometimes you have to make sure that your array doesn't contain any duplicate items.</p>
+
+<p>If you array consists entirely of strings or numbers then <code>Y.ArrayAssert.isUnique()</code> is pretty straightforward:</p>
+
+```
+    "[1, 2, 3] should be unique": function () {
+        Y.ArrayAssert.isUnique([1, 2, 3]);
+    }
+
+    "['a', 'b', 'c'] should be unique": function () {
+        Y.ArrayAssert.isUnique(['a', 'b', 'c']);
+    }
+
+    "fail: [1, 1, 2] is not unique": function () {
+        Y.ArrayAssert.isUnique([1, 1, 2]);
+    }
+
+    "fail: ['a', 'a', 'b'] is not unique": function () {
+        Y.ArrayAssert.isUnique(['a', 'a', 'b']);
+    }
+
+```
+
+<p>However if you have more complex values like objects you might need to provide your own comparison function that the test will use to test equality:</p>
+
+```
+    /*
+     * When comparing objects a comparison function is almost mandatory.
+     *
+     * Example:
+     * var a = {}, b = {};
+     * if (a === b) {
+     *     //never true
+     * }
+     *
+     * Therefore if this test didn't provide a comparison function then the test would have passed.
+     */
+    "fail: [{id: 1}, {id: 1}] is not unique": function () {
+        Y.ArrayAssert.isUnique([{id: 1}, {id: 1}], function (a, b) {
+            return a.id === b.id;
+        });
+    }
+
+```
+
 <h3>Running the tests</h3>
 
 <p>With all of the tests defined, the last step is to run them:</p>
