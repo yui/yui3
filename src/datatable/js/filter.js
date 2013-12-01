@@ -52,6 +52,20 @@ dt.filter(function(row){
 function Filter() {}
 
 Filter.ATTRS = {
+
+    /**
+     Returns the original, unmodified data. This is the same as get('data') if
+     there are no filters applied.
+     @since @SINCE@
+     @attribute unmodifiedData
+     @type {ModelList}
+     @readonly
+     */
+    unmodifiedData: {
+        getter: '_getUnmodifiedData',
+        readOnly: true
+    },
+
     /**
      A ModelList of filtered data. If no filters are applied, this attribute is `null`.
      @since @SINCE@
@@ -319,8 +333,18 @@ Y.mix(Filter.prototype, {
      @return {ModelList} ModelList containing filtered records or unchanged data
      */
     _alternativeDataGetter: function () {
-        return this.get('filteredData') ||
-            /* original, unfiltered data */ this._getStateVal('data');
+        return this.get('filteredData') || this.get('unmodifiedData');
+    },
+
+    /**
+     Getter for ATTRS.unmodifiedData. Returns the original, unmodified data.
+     @since @SINCE@
+     @protected
+     @method _getUnmodifiedData
+     @return {ModelList} ModelList containing original, unmodified records
+     */
+    _getUnmodifiedData: function () {
+        return this._getStateVal('data');
     },
 
     /**
