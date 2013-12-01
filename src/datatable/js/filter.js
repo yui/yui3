@@ -89,6 +89,7 @@ Y.mix(Filter.prototype, {
      @method initializer
      */
     initializer: function () {
+        this._filters = [];
         this._state.data.data.getter = '_alternativeDataGetter';
     },
 

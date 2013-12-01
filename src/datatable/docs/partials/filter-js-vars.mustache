@@ -1,0 +1,23 @@
+        var dt = new Y.DataTable({
+                caption: 'Planet Facts (<a href="http://nssdc.gsfc.nasa.gov/planetary/factsheet/">http://nssdc.gsfc.nasa.gov/planetary/factsheet/</a>)',
+                columns: [
+                    { key: 'name',     label: 'Planet' },
+                    { key: 'diameter', label: 'Diameter (km)' },
+                    { key: 'moons',    label: 'Number of Moons' },
+                    { key: 'distance', label: "Distance from Sun (10<sup>6</sup> km)" }
+                ],
+                data: [
+                    { name: 'Mercury', diameter: 4879,   moons: 0,  distance: 57.9 },
+                    { name: 'Venus',   diameter: 12104,  moons: 0,  distance: 108.2 },
+                    { name: 'Earth',   diameter: 12756,  moons: 1,  distance: 149.6 },
+                    { name: 'Mars',    diameter: 6792,   moons: 2,  distance: 227.9 },
+                    { name: 'Jupiter', diameter: 142984, moons: 67, distance: 778.6 },
+                    { name: 'Saturn',  diameter: 120536, moons: 62, distance: 1433.5 },
+                    { name: 'Uranus',  diameter: 51118,  moons: 27, distance: 2872.5 },
+                    { name: 'Neptune', diameter: 49528,  moons: 14, distance: 4495.1 },
+                    { name: 'Pluto',   diameter: 2390,   moons: 5,  distance: 5870.0 }
+                ],
+                render: '#dt'
+            }),
+            filtersUl = Y.one('.filters ul'),
+            filterNode = filtersUl.getHTML();

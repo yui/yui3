@@ -1,0 +1,121 @@
+<div class="intro">
+    <p>
+        {{description}}
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+{{>filter-css}}
+{{>filter-html}}
+<script>
+{{>filter-js-before}}
+    {{>filter-js-vars}}
+    {{>filter-js-add}}
+    {{>filter-js-remove}}
+    {{>filter-js-filter}}
+    {{>filter-js-clear}}
+{{>filter-js-after}}
+</script>
+</div>
+
+
+
+<h2>Getting started</h2>
+<p>Although DataTable Filter comes with a very large set of methods, it does
+not include a UI. This gives the developer the ability to create the filter UI
+any way they see fit. Because of this we need create a fair amount of mark up.</p>
+<p>Our markup will contain a list of filters that will be applied in order
+when the "Filter" button is pressed.</p>
+```
+{{>filter-html}}
+```
+<p>To give our filter panel some aesthetic appeal, lets add some styles.</p>
+```
+{{>filter-css}}
+```
+<p>Looks like we are off to a good start! And thanks to sam skin, our filter
+panel looks like it belongs.</p>
+
+
+
+<h2>Implementation</h2>
+<h4>Variables</h4>
+<p>We need to set up some variables at first. Our DataTable will be populated
+with some data from <a href="http://nssdc.gsfc.nasa.gov/planetary/factsheet/">NASA.gov</a>
+(<a href="http://nssdc.gsfc.nasa.gov/planetary/factsheet/">http://nssdc.gsfc.nasa.gov/planetary/factsheet/</a>).</p>
+<p>After creating and rendering our DataTable, we get a reference to the list
+and copy the HTML for adding in new filter rows.</p>
+```
+{{>filter-js-vars}}
+```
+
+<h4>Button: Add</h4>
+<p>Clicking on the add button should create a new row to use as a filter.</p>
+```
+{{>filter-js-add}}
+```
+<p><em>Notice:</em> We create a new function to be used instead of trapping it as the
+click callback. We do this because we will need to use this function when we
+remove the only filter with the remove button.</p>
+
+<h4>Button: Remove</h4>
+<p>When we remove the filter from the UI, we also want to remove the filter
+from the DataTable. To do this, we find the index of the filter's LI node in
+the list and remove that same index from the DataTable's filters. Finally, we
+remove the filter from the list.</p>
+<p>Remeber the `addFilterNode` method we created above? If we have removed the
+last filter from the list, we call that method to add one back in.</p>
+```
+{{>filter-js-remove}}
+```
+
+<h4>Button: Filter</h4>
+<p>Now that the filters can be added and removed as needed, we need to apply
+the filters to the DataTable. First thing we need to do is remove any filters
+already applied to the DataTable; this ensures we start off with fresh data.</p>
+<p>Next we process each filter in the list. We normalize the value a little
+bit. If it's empty we skip it and go to the next one. If it's is a number, we
+set it as a number to compare.</p>
+<p>After that, we set up a switch to create the correct filter function. We
+let DataTable's `addFilter` method create a function for our "Contains"
+comparison. The other comparisons will create their own functions to be added
+in.</p>
+<p>Finally, after the list has been completely processed, we apply the filters
+we created.</p>
+```
+{{>filter-js-filter}}
+```
+
+<h4>Button: Clear</h4>
+<p>The last thing we need is to be able to clear all the filters easily.
+`clearFilters()` does this for us automatically. After we clear the filters,
+we update the UI.</p>
+```
+{{>filter-js-clear}}
+```
+
+
+
+<h2>All the code!</h2>
+<p>That was a lot of fun! Let's see all the code at one time to really get a
+good look at it.</p>
+```
+{{>filter-css}}
+
+{{>filter-html}}
+
+<script>
+{{>filter-js-before}}
+        //-- VARIABLES --
+{{>filter-js-vars}}
+        //-- ADD --
+{{>filter-js-add}}
+        //-- REMOVE --
+{{>filter-js-remove}}
+        //-- FILTER --
+{{>filter-js-filter}}
+        //-- CLEAR --
+{{>filter-js-clear}}
+{{>filter-js-after}}
+</script>
+```

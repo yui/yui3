@@ -1,0 +1,13 @@
+        Y.one('.filters').delegate('click', function (e) {
+            var li = e.currentTarget.ancestor('li'),
+                lis = filtersUl.all('li');
+
+            dt.removeFilter(lis.indexOf(li));
+
+            li.remove();
+
+            if (lis.size() <= 1) {
+                addFilterNode();
+            }
+        }, 'button.remove');
+

@@ -1,0 +1,27 @@
+    <div id="dt"></div>
+    <div class="filters">
+        <h4>Filters</h4>
+        <ul>
+            <li>
+                <select class="key" name="key">
+                    <option value="name">Planet</option>
+                    <option value="diameter">Diameter</option>
+                    <option value="moons">Number of Moons</options>
+                    <option value="disatance">Distance from Sun</option>
+                </select>
+                <select class="comp" name="comp">
+                    <option value="cont" selected>Contains</option>
+                    <option value="lt">Less Than</option>
+                    <option value="lte">Less Than or Equal To</option>
+                    <option value="eq">Equals</option>
+                    <option value="gte">Greater Than or Equal To</option>
+                    <option value="gt">Greater Than</option>
+                </select>
+                <input type="text" name="val" class="val">
+                <button class="remove">-</button>
+            </li>
+        </ul>
+        <button class="add">+</button>
+        <button class="filter">Filter</button>
+        <button class="clear">Remove Filters</button>
+    </div>
