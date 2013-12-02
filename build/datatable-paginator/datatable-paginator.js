@@ -351,7 +351,9 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         e.preventDefault();
 
         input = e.target.one('input');
-        this.fire(EVENT_UI, { type: 'page', val: input.get('value') });
+
+        // Note: Convert input's value into a number.
+        this.fire(EVENT_UI, { type: 'page', val: +input.get('value') });
     },
 
     /**
