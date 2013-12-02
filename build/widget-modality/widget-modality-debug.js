@@ -433,7 +433,7 @@ var WIDGET       = 'widget',
                 }
 
                 else {
-                    Y.Log('focusOn ATTR Error: The event with name "'+o.ev+'" could not be attached.');
+                    Y.log('focusOn ATTR Error: The event with name "'+o.ev+'" could not be attached.');
                 }
 
             }
