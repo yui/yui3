@@ -1082,13 +1082,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 } else if (formatter in Formatters) {
                     col._formatterFn = Formatters[formatter].call(this.host || this, col);
                 } else if (typeof formatter === 'string') {
-                    col._formatterFn = function (o) {
-                        if (typeof o.value === 'undefined' || o.value === null) {
-                            return null;
-                        } else {
-                            return fromTemplate(formatter, o);
-                        }
-                    };
+                    col._formatterFn = (function (formatter, o) {
+                        return function (o) {
+                            var val = fromTemplate(fromTemplate(formatter, o), o.data);
+
+                            if (val === formatter) {
+                                return null;
+                            } else {
+                                return val;
+                            }
+                        };
+                    }(formatter));
                 }
             }
         }
