@@ -212,53 +212,6 @@ Y.mix(Resolver.prototype, {
     },
 
     /**
-    Wraps the callback in Y.soon to guarantee its asynchronous execution. It
-    also catches exceptions to turn them into rejections and links promises
-    returned from the `then` callback.
-
-    @method _wrap
-    @param {Function} thenFulfill Fulfillment function of the resolver that
-                        handles this promise
-    @param {Function} thenReject Rejection function of the resolver that
-                        handles this promise
-    @param {Function} fn Callback to wrap
-    @return {Function}
-    @private
-    **/
-    _wrap: function (thenFulfill, thenReject, fn) {
-        // callbacks and errbacks only get one argument
-        return function (valueOrReason) {
-            var result;
-
-            // Promises model exception handling through callbacks
-            // making both synchronous and asynchronous errors behave
-            // the same way
-            try {
-                // Use the argument coming in to the callback/errback from the
-                // resolution of the parent promise.
-                // The function must be called as a normal function, with no
-                // special value for |this|, as per Promises A+
-                result = fn(valueOrReason);
-            } catch (e) {
-                // calling return only to stop here
-                return thenReject(e);
-            }
-
-            if (Promise.isPromise(result)) {
-                // Returning a promise from a callback makes the current
-                // promise sync up with the returned promise
-                result.then(thenFulfill, thenReject);
-            } else {
-                // Non-promise return values always trigger resolve()
-                // because callback is affirmative, and errback is
-                // recovery.  To continue on the rejection path, errbacks
-                // must return rejected promises or throw.
-                thenFulfill(result);
-            }
-        };
-    },
-
-    /**
     Returns the current status of the Resolver as a string "pending",
     "fulfilled", or "rejected".
 
