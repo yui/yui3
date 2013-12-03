@@ -172,21 +172,7 @@ Y.mix(Resolver.prototype, {
     @deprecated
     **/
     then: function (callback, errback) {
-        var self = this;
-        // When the current promise is fulfilled or rejected, either the
-        // callback or errback will be executed via the function pushed onto
-        // this._callbacks or this._errbacks.  However, to allow then()
-        // chaining, the execution of either function needs to be represented
-        // by a Resolver (the same Resolver can represent both flow paths), and
-        // its promise returned.
-        return new this.promise.constructor(function (resolve, reject) {
-            self.addCallbacks(
-                typeof callback === 'function' ?
-                    Promise._wrap(resolve, reject, callback) : resolve,
-                typeof errback === 'function' ?
-                    Promise._wrap(resolve, reject, errback) : reject
-            );
-        });
+        return this.promise.then(callback, errback);
     },
 
     /**
