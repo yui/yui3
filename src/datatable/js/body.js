@@ -1081,6 +1081,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     col._formatterFn = formatter;
                 } else if (formatter in Formatters) {
                     col._formatterFn = Formatters[formatter].call(this.host || this, col);
+                } else if (typeof formatter === 'string') {
+                    col._formatterFn = function (o) {
+                        return o.value ? fromTemplate(formatter, o) : null;
+                    }
                 }
             }
         }
