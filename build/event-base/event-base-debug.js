@@ -198,7 +198,9 @@ Y.extend(DOMEventFacade, Object, {
     preventDefault: function(returnValue) {
         var e = this._event;
         e.preventDefault();
-        e.returnValue = returnValue || false;
+        if (returnValue) {
+            e.returnValue = returnValue || false;
+        }
         this._wrapper.prevented = 1;
         this.prevented = 1;
     },
