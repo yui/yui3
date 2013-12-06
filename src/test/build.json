@@ -18,6 +18,7 @@
                 "ComparisonFailure.js",
                 "CoverageFormat.js",
                 "DateAssert.js",
+                "StringAssert.js",
                 "Mock.js",
                 "ObjectAssert.js",
                 "Results.js",
