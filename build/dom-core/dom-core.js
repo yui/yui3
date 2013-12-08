@@ -130,8 +130,9 @@ Y_DOM = {
      * @method elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).
-     * @param {Function} fn optional An optional boolean test to apply.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
+     * @param {Function} [fn] An optional boolean test to apply.
+     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
+     * just element nodes will be returned(default)
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, the first element is returned.
      * @return {HTMLElement | null} The matching element or null if none found.

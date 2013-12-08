@@ -80,20 +80,12 @@ Y.mix(Y.namespace("Number"), {
             data = parser(data);
         }
 
-        if (typeof data === 'string') {
-            if (Y.Lang.trim(data) === '') {
-                data = null;
-            } else {
-                data = +data;
-            }
+        if (typeof data === 'string' && Y.Lang.trim(data) !== '') {
+            data = +data;
         }
         
-        if (typeof data === 'number') {
-            // catch NaN and ±Infinity
-            if (!isFinite(data)) {
-                data = null;
-            }
-        } else {
+        // catch NaN and ±Infinity
+        if (typeof data !== 'number' || !isFinite(data)) {
             data = null;
         }
 
