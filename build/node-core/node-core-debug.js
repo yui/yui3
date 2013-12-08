@@ -589,6 +589,8 @@ Y.mix(Y_Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
+     * just element nodes will be returned(default)
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -601,6 +603,8 @@ Y.mix(Y_Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
+     * just element nodes will be returned(default)
      * @return {Node} Node instance or null if not found
      */
     next: function(fn, all) {
