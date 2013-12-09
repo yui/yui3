@@ -35,26 +35,18 @@ suite.add(new Y.Test.Case({
 
 suite.add(new Y.Test.Case({
 
-    name: "StringAssert.isNotEmpty(str[, excl_whitespace])",
+    name: "StringAssert.isNotEmpty(str)",
 
     "should pass if 'str' is not empty": function () {
         Y.StringAssert.isNotEmpty("hello world");
     },
 
-    "should pass if 'str' only contains whitespaces and 'excl_whitespace' is not set": function () {
+    "should pass even if 'str' only contains whitespaces": function () {
         Y.StringAssert.isNotEmpty(" \r\n \t ");
-    },
-
-    "should pass if 'str' only contains whitespaces and 'excl_whitespace' is false": function () {
-        Y.StringAssert.isNotEmpty(" \r\n \t ", false);
     },
 
     "should fail if 'str' is empty": function () {
         Y.StringAssert.isNotEmpty("");
-    },
-
-    "should fail if 'str' only contains whitespaces and 'excl_whitespace' is true": function () {
-        Y.StringAssert.isNotEmpty(" \r\n \t ", true);
     },
 
     "should throw if 'str' is not a string": function () {
@@ -63,8 +55,7 @@ suite.add(new Y.Test.Case({
 
     _should: {
         fail: {
-            "should fail if 'str' is empty": true,
-            "should fail if 'str' only contains whitespaces and 'excl_whitespace' is true": true
+            "should fail if 'str' is empty": true
         },
         error: {
             "should throw if 'str' is not a string": true

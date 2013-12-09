@@ -46,11 +46,6 @@ Y.Test.Runner.add(new Y.Test.Case({
 
 <p>Asserts that a string is <strong>not</strong> empty.</p>
 
-<p>
-    If you need to test for non emptiness, <code>isNotEmpty()</code> will
-    also consider whitespaces as valid characters by default:
-</p>
-
 ```
 Y.Test.Runner.add(new Y.Test.Case({
 
@@ -71,28 +66,6 @@ Y.Test.Runner.add(new Y.Test.Case({
     _should: {
         fail: {
             "should fail if a string is empty": true
-        }
-    }
-}));
-```
-
-<p>
-    Again if whitespace characters are not an issue for you just turn on the
-    <strong>exclude whitespace</strong> flag:
-</p>
-
-```
-Y.Test.Runner.add(new Y.Test.Case({
-
-    name: "StringAssert.isNotEmpty() - no whitespaces",
-
-    "should fail if a string only contains whitespaces": function () {
-        Y.StringAssert.isNotEmpty("  \r\n  ", true /*exclude whitespace*/);
-    },
-
-    _should: {
-        fail: {
-            "should fail if a string only contains whitespaces": true
         }
     }
 }));

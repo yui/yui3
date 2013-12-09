@@ -53,21 +53,6 @@ Y.Test.Runner.add(new Y.Test.Case({
 
 Y.Test.Runner.add(new Y.Test.Case({
 
-    name: "StringAssert.isNotEmpty() - no whitespaces",
-
-    "should fail if a string only contains whitespaces": function () {
-        Y.StringAssert.isNotEmpty("  \r\n  ", true /*exclude whitespace*/);
-    },
-
-    _should: {
-        fail: {
-            "should fail if a string only contains whitespaces": true
-        }
-    }
-}));
-
-Y.Test.Runner.add(new Y.Test.Case({
-
     name: "StringAssert.isTrimmed()",
 
     "should pass if there is no leading or trailing whitespaces": function () {
