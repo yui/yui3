@@ -95,7 +95,25 @@ Y.mix(Promise.prototype, {
                 "reject" callback
     **/
     then: function (callback, errback) {
-        return this._resolver.then(callback, errback);
+        var Constructor = this.constructor,
+            resolver = this._resolver;
+
+        // using this.constructor allows for customized promises to be
+        // returned instead of plain ones
+        return new Constructor(function (resolve, reject) {
+            resolver._addCallbacks(
+                // Check if callbacks are functions. If not, default to
+                // `resolve` and `reject` respectively.
+                // The wrapping of the callbacks is done here and not in
+                // `_addCallbacks` because it is a feature specific to  `then`.
+                // If `done` is added to promises it would call `_addCallbacks`
+                // without defaulting to anything and without wrapping
+                typeof callback === 'function' ?
+                    Promise._wrap(resolve, reject, callback) : resolve,
+                typeof errback === 'function' ?
+                    Promise._wrap(resolve, reject, errback) : reject
+            );
+        });
     },
 
     /*
@@ -128,6 +146,42 @@ Y.mix(Promise.prototype, {
         return this._resolver.getStatus();
     }
 });
+
+/**
+Wraps the callback in another function to catch exceptions and turn them into
+rejections.
+
+@method _wrap
+@param {Function} resolve Resolving function of the resolver that
+                    handles this promise
+@param {Function} reject Rejection function of the resolver that
+                    handles this promise
+@param {Function} fn Callback to wrap
+@return {Function}
+@private
+**/
+Promise._wrap = function (resolve, reject, fn) {
+    // callbacks and errbacks only get one argument
+    return function (valueOrReason) {
+        var result;
+
+        // Promises model exception handling through callbacks
+        // making both synchronous and asynchronous errors behave
+        // the same way
+        try {
+            // Use the argument coming in to the callback/errback from the
+            // resolution of the parent promise.
+            // The function must be called as a normal function, with no
+            // special value for |this|, as per Promises A+
+            result = fn(valueOrReason);
+        } catch (e) {
+            reject(e);
+            return;
+        }
+
+        resolve(result);
+    };
+};
 
 /**
 Checks if an object or value is a promise. This is cross-implementation
