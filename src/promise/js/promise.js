@@ -101,7 +101,13 @@ Y.mix(Promise.prototype, {
         // using this.constructor allows for customized promises to be
         // returned instead of plain ones
         return new Constructor(function (resolve, reject) {
-            resolver.addCallbacks(
+            resolver._addCallbacks(
+                // Check if callbacks are functions. If not, default to
+                // `resolve` and `reject` respectively.
+                // The wrapping of the callbacks is done here and not in
+                // `_addCallbacks` because it is a feature specific to  `then`.
+                // If `done` is added to promises it would call `_addCallbacks`
+                // without defaulting to anything and without wrapping
                 typeof callback === 'function' ?
                     Promise._wrap(resolve, reject, callback) : resolve,
                 typeof errback === 'function' ?

@@ -180,25 +180,23 @@ Y.mix(Resolver.prototype, {
     "reject" resolutions of this resolver. If the resolver is not pending,
     the correct callback gets called automatically.
 
-    @method addCallbacks
+    @method _addCallbacks
     @param {Function} [callback] function to execute if the Resolver
                 resolves successfully
     @param {Function} [errback] function to execute if the Resolver
                 resolves unsuccessfully
+    @private
     **/
-    addCallbacks: function (callback, errback) {
+    _addCallbacks: function (callback, errback) {
         var callbackList = this._callbacks,
             errbackList  = this._errbacks,
             status       = this._status,
             result       = this._result;
 
-        // Because the callback and errback are represented by a Resolver, it
-        // must be fulfilled or rejected to propagate through the then() chain.
-        // The same logic applies to resolve() and reject() for fulfillment.
-        if (callbackList) {
+        if (callbackList && typeof callback === 'function') {
             callbackList.push(callback);
         }
-        if (errbackList) {
+        if (errbackList && typeof errback === 'function') {
             errbackList.push(errback);
         }
 
