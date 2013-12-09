@@ -2,9 +2,8 @@
 /**
  * Provides functions to test JavaScript strings for a variety of cases.
  *
- * @namespace Test
  * @module test
- * @class StringAssert
+ * @class Test.StringAssert
  * @static
  */
 YUITest.StringAssert = {
