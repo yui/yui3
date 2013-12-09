@@ -9,7 +9,7 @@ function f() {}
 
 
 suite.add(new Y.Test.Case({
-    name : "Queue isntantiation",
+    name : "Queue instantiation",
 
     test_instantiation : function () {
         var basic         = new Y.AsyncQueue(),
@@ -297,6 +297,7 @@ suite.add(new Y.Test.Case({
     test_stop : function () {
         var results = "",
             self = this,
+            completeEvt = false,
             q = new Y.AsyncQueue(
                     function () { results += 'S'; },
                     function () { results += 'T'; },
@@ -311,21 +312,31 @@ suite.add(new Y.Test.Case({
                         timeout: 10
                     });
 
+        q.on('complete', function () { completeEvt = true; });
         q.run();
         q.stop();
+
         Y.Assert.areSame('STOP',results);
         Y.Assert.areSame(0,q.size());
+        Y.Assert.areSame(false, q.isRunning());
+        if (!completeEvt) { Y.Assert.fail("'q.stop() should fire the 'complete' event"); }
+
+
+        // try to re-run the queue (should be empty)
+        completeEvt = false;
 
         setTimeout(function () {
             self.resume(function () {
                 Y.Assert.areSame('STOP',results);
                 Y.Assert.areSame(false, q.isRunning());
+                if (!completeEvt) { Y.Assert.fail("'q.run() should fire the 'complete' event"); }
             });
         },100);
 
         q.run();
 
         this.wait();
+
     },
 
     test_stop_inside_the_callback : function () {
@@ -371,6 +382,34 @@ suite.add(new Y.Test.Case({
         q.run();
 
         this.wait();
+    },
+
+    test_stop_after_pause_and_settimeout : function () {
+        var results = "",
+            self = this,
+            completeEvt = false,
+            q = new Y.AsyncQueue(
+                    function () {
+                        this.pause();
+                        setTimeout(function () {
+                            q.stop();
+                        }, 0);
+                    },
+                    function () { Y.Assert.fail("q.stop() should have cleared this callback"); });
+
+        q.defaults = { timeout: 10 }; // async queue
+
+        q.on('complete', function () {
+            self.resume(function () {
+                Y.Assert.areSame(0, q.size());
+                Y.Assert.areSame(false, q.isRunning());
+            });
+        });
+
+        q.run();
+
+        this.wait();
+
     },
 
     test_getCallback : function () {
