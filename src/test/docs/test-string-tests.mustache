@@ -16,8 +16,6 @@
 
 <p>Asserts that a string is empty.</p>
 
-<p>By default <code>isEmpty()</code> will consider whitespaces as valid characters:</p>
-
 ```
 Y.Test.Runner.add(new Y.Test.Case({
 
@@ -40,22 +38,6 @@ Y.Test.Runner.add(new Y.Test.Case({
             "should fail is a string is not empty": true,
             "should fail even if a string only contains whitespaces": true
         }
-    }
-}));
-```
-
-<p>
-    If you turn on the <strong>exclude whitespace</strong> flag,
-    <code>isEmpty()</code> will ignore whitespaces:
-</p>
-
-```
-Y.Test.Runner.add(new Y.Test.Case({
-
-    name: "StringAssert.isEmpty() - no whitespaces",
-
-    "should pass if a string only contains whitespaces": function () {
-        Y.StringAssert.isEmpty("  \r\n  ", true /*exclude whitespace*/);
     }
 }));
 ```

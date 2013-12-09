@@ -30,15 +30,6 @@ Y.Test.Runner.add(new Y.Test.Case({
 
 Y.Test.Runner.add(new Y.Test.Case({
 
-    name: "StringAssert.isEmpty() - no whitespaces",
-
-    "should pass if a string only contains whitespaces": function () {
-        Y.StringAssert.isEmpty("  \r\n  ", true /*exclude whitespace*/);
-    }
-}));
-
-Y.Test.Runner.add(new Y.Test.Case({
-
     name: "StringAssert.isNotEmpty()",
 
     "should pass if a string is not empty": function () {

@@ -11,33 +11,22 @@ YUITest.StringAssert = {
     /**
      * Asserts that a string is empty.
      *
-     * If `excl_whitespace` is set to true the string will be trimmed first, which will
-     * pass the test if the string only contains whitespaces.
-     *
      * @example
      *      Y.StringAssert.isEmpty("");                // pass
-     *      Y.StringAssert.isEmpty(" \r\n \t ", true); // pass
      *      Y.StringAssert.isEmpty("hello world");     // fail
      *      Y.StringAssert.isEmpty(" \r\n \t ");       // fail
      *
      * @param {String} str The string to test.
-     * @param {Boolean} [excl_whitespace=false] If true the string will be trimmed first.
      * @param {String} [message] The message to display if the assertion fails.
      * @method isEmpty
      * @static
      */
-    isEmpty: function (str, excl_whitespace, message) {
+    isEmpty: function (str, message) {
 
         Y.Assert._increment();
 
-        excl_whitespace = (Y.Lang.isBoolean(excl_whitespace) && excl_whitespace);
-
         if (!Y.Lang.isString(str)) {
             throw new TypeError("StringAssert.isEmpty(): str is not a string");
-        }
-
-        if (excl_whitespace) {
-            str = Y.Lang.trim(str);
         }
 
         if (str.length) {
