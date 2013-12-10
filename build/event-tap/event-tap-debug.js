@@ -144,9 +144,9 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     delegate: function (node, subscription, notifier, filter) {
-        subscription[HANDLES.START] = node.delegate(EVT_START, function (e) {
+        subscription[HANDLES.START] = Y.delegate(EVT_START, function (e) {
             this._start(e, node, subscription, notifier, true);
-        }, filter, this);
+        }, node, filter, this);
     },
 
     /**

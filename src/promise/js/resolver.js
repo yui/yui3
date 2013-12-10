@@ -31,6 +31,7 @@ function Resolver(promise) {
 
     @property promise
     @type Promise
+    @deprecated
     **/
     this.promise = promise;
 
@@ -168,95 +169,44 @@ Y.mix(Resolver.prototype, {
                 resolves unsuccessfully
     @return {Promise} The promise of a new Resolver wrapping the resolution
                 of either "resolve" or "reject" callback
+    @deprecated
     **/
     then: function (callback, errback) {
-        // When the current promise is fulfilled or rejected, either the
-        // callback or errback will be executed via the function pushed onto
-        // this._callbacks or this._errbacks.  However, to allow then()
-        // chaining, the execution of either function needs to be represented
-        // by a Resolver (the same Resolver can represent both flow paths), and
-        // its promise returned.
-        var promise = this.promise,
-            thenFulfill, thenReject,
+        return this.promise.then(callback, errback);
+    },
 
-            // using promise constructor allows for customized promises to be
-            // returned instead of plain ones
-            then = new promise.constructor(function (fulfill, reject) {
-                thenFulfill = fulfill;
-                thenReject = reject;
-            }),
+    /**
+    Schedule execution of a callback to either or both of "resolve" and
+    "reject" resolutions of this resolver. If the resolver is not pending,
+    the correct callback gets called automatically.
 
-            callbackList = this._callbacks,
-            errbackList  = this._errbacks;
+    @method _addCallbacks
+    @param {Function} [callback] function to execute if the Resolver
+                resolves successfully
+    @param {Function} [errback] function to execute if the Resolver
+                resolves unsuccessfully
+    @private
+    **/
+    _addCallbacks: function (callback, errback) {
+        var callbackList = this._callbacks,
+            errbackList  = this._errbacks,
+            status       = this._status,
+            result       = this._result;
 
-        // Because the callback and errback are represented by a Resolver, it
-        // must be fulfilled or rejected to propagate through the then() chain.
-        // The same logic applies to resolve() and reject() for fulfillment.
-        if (callbackList) {
-            callbackList.push(typeof callback === 'function' ?
-                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+        if (callbackList && typeof callback === 'function') {
+            callbackList.push(callback);
         }
-        if (errbackList) {
-            errbackList.push(typeof errback === 'function' ?
-                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        if (errbackList && typeof errback === 'function') {
+            errbackList.push(errback);
         }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
-        if (this._status === 'fulfilled') {
-            this.fulfill(this._result);
-        } else if (this._status === 'rejected') {
-            this.reject(this._result);
+        if (status === 'fulfilled') {
+            this.fulfill(result);
+        } else if (status === 'rejected') {
+            this.reject(result);
         }
-
-        return then;
-    },
-
-    /**
-    Wraps the callback in Y.soon to guarantee its asynchronous execution. It
-    also catches exceptions to turn them into rejections and links promises
-    returned from the `then` callback.
-
-    @method _wrap
-    @param {Function} thenFulfill Fulfillment function of the resolver that
-                        handles this promise
-    @param {Function} thenReject Rejection function of the resolver that
-                        handles this promise
-    @param {Function} fn Callback to wrap
-    @return {Function}
-    @private
-    **/
-    _wrap: function (thenFulfill, thenReject, fn) {
-        // callbacks and errbacks only get one argument
-        return function (valueOrReason) {
-            var result;
-
-            // Promises model exception handling through callbacks
-            // making both synchronous and asynchronous errors behave
-            // the same way
-            try {
-                // Use the argument coming in to the callback/errback from the
-                // resolution of the parent promise.
-                // The function must be called as a normal function, with no
-                // special value for |this|, as per Promises A+
-                result = fn(valueOrReason);
-            } catch (e) {
-                // calling return only to stop here
-                return thenReject(e);
-            }
-
-            if (Promise.isPromise(result)) {
-                // Returning a promise from a callback makes the current
-                // promise sync up with the returned promise
-                result.then(thenFulfill, thenReject);
-            } else {
-                // Non-promise return values always trigger resolve()
-                // because callback is affirmative, and errback is
-                // recovery.  To continue on the rejection path, errbacks
-                // must return rejected promises or throw.
-                thenFulfill(result);
-            }
-        };
     },
 
     /**
