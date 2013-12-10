@@ -75,7 +75,7 @@ YUITest.Assert = {
 
     /**
      * Forces an assertion error to occur.
-     * @param {String} message (Optional) The message to display with the failure.
+     * @param {String} [message] The message to display with the failure.
      * @method fail
      * @static
      */
@@ -101,7 +101,7 @@ YUITest.Assert = {
      * so type coercion may occur.
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method areEqual
      * @static
      */
@@ -117,7 +117,7 @@ YUITest.Assert = {
      * so type coercion may occur.
      * @param {Object} unexpected The unexpected value.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method areNotEqual
      * @static
      */
@@ -134,7 +134,7 @@ YUITest.Assert = {
      * so no type coercion may occur.
      * @param {Object} unexpected The unexpected value.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method areNotSame
      * @static
      */
@@ -150,7 +150,7 @@ YUITest.Assert = {
      * so no type coercion may occur.
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method areSame
      * @static
      */
@@ -169,7 +169,7 @@ YUITest.Assert = {
      * Asserts that a value is false. This uses the triple equals sign
      * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isFalse
      * @static
      */
@@ -184,7 +184,7 @@ YUITest.Assert = {
      * Asserts that a value is true. This uses the triple equals sign
      * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isTrue
      * @static
      */
@@ -203,7 +203,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is not a number.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNaN
      * @static
      */
@@ -217,7 +217,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is not the special NaN value.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNotNaN
      * @static
      */
@@ -232,7 +232,7 @@ YUITest.Assert = {
      * Asserts that a value is not null. This uses the triple equals sign
      * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNotNull
      * @static
      */
@@ -247,7 +247,7 @@ YUITest.Assert = {
      * Asserts that a value is not undefined. This uses the triple equals sign
      * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNotUndefined
      * @static
      */
@@ -262,7 +262,7 @@ YUITest.Assert = {
      * Asserts that a value is null. This uses the triple equals sign
      * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNull
      * @static
      */
@@ -277,7 +277,7 @@ YUITest.Assert = {
      * Asserts that a value is undefined. This uses the triple equals sign
      * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isUndefined
      * @static
      */
@@ -295,7 +295,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is an array.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isArray
      * @static
      */
@@ -315,7 +315,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is a Boolean.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isBoolean
      * @static
      */
@@ -329,7 +329,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is a function.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isFunction
      * @static
      */
@@ -346,7 +346,7 @@ YUITest.Assert = {
      * another frame. For best results, don't use in a cross-frame manner.
      * @param {Function} expected The function that the object should be an instance of.
      * @param {Object} actual The object to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isInstanceOf
      * @static
      */
@@ -360,7 +360,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is a number.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNumber
      * @static
      */
@@ -374,7 +374,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is an object.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isObject
      * @static
      */
@@ -388,7 +388,7 @@ YUITest.Assert = {
     /**
      * Asserts that a value is a string.
      * @param {Object} actual The value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isString
      * @static
      */
@@ -403,7 +403,7 @@ YUITest.Assert = {
      * Asserts that a value is of a particular type.
      * @param {String} expectedType The expected type of the variable.
      * @param {Object} actualValue The actual value to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isTypeOf
      * @static
      */
@@ -427,7 +427,7 @@ YUITest.Assert = {
      *      error; if an object, this is an instance of a particular error type
      *      with a specific error message (both must match).
      * @param {Function} method The method to execute that should throw the error.
-     * @param {String} message (Optional) The message to display if the assertion
+     * @param {String} [message] The message to display if the assertion
      *      fails.
      * @method throwsError
      * @static
