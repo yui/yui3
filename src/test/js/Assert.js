@@ -3,9 +3,8 @@
  * The Assert object provides functions to test JavaScript values against
  * known and expected results. Whenever a comparison (assertion) fails,
  * an error is thrown.
- * @namespace Test
  * @module test
- * @class Assert
+ * @class Test.Assert
  * @static
  */
 YUITest.Assert = {
