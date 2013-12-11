@@ -9,7 +9,7 @@ YUI.add('imageloader-tests', function(Y) {
 
         setUp: function() {
             // background-image group
-            this.bgImgUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg';
+            this.bgImgUrl = 'http://yui.yahooapis.com/testassets/museum.jpg';
             this.mainGroup = new Y.ImgLoadGroup({ name: 'imgUrlsTestBgImg' });
             this.mainGroup.addTrigger('#topmain', 'mouseover');
             this.mainGroup.registerImage({ domId: 'topmain', bgUrl: this.bgImgUrl });
@@ -34,7 +34,7 @@ YUI.add('imageloader-tests', function(Y) {
 
         setUp: function() {
             // src-image group
-            this.srcImgUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg';
+            this.srcImgUrl = 'http://yui.yahooapis.com/testassets/morraine.jpg';
             this.srcGroup = new Y.ImgLoadGroup({ name: 'imgUrlsTestSrcImg' });
             this.srcGroup.addTrigger('#srcImgCont', 'click');
             this.srcGroup.registerImage({ domId: 'srcImg', srcUrl: this.srcImgUrl });
@@ -56,9 +56,9 @@ YUI.add('imageloader-tests', function(Y) {
         name: 'Class Name Fetching',
 
         setUp: function() {
-            this.duo1Url = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg';
-            this.duo2Url = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg';
-            this.duo3Url = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg';
+            this.duo1Url = 'http://yui.yahooapis.com/testassets/uluru.jpg';
+            this.duo2Url = 'http://yui.yahooapis.com/testassets/katatjuta.jpg';
+            this.duo3Url = 'http://yui.yahooapis.com/testassets/katatjuta.jpg';
             this.duo1Image = document.getElementById('duo1');
             this.duo2Image = document.getElementById('duo2');
             this.duo3Image = document.getElementById('duo3');
@@ -96,7 +96,7 @@ YUI.add('imageloader-tests', function(Y) {
         name: 'addTrigger test',
 
         setUp: function() {
-            this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg';
+            this.imageUrl = 'http://yui.yahooapis.com/testassets/museum.jpg';
             this.triggerGroup = new Y.ImgLoadGroup({ name: 'addTriggerGroup' });
             this.triggerGroup.addTrigger('#topmain', 'dblclick').addTrigger('#addlTrigger', 'click');
             this.triggerGroup.registerImage({ domId: 'addlTrigger', bgUrl: this.imageUrl });
@@ -119,7 +119,7 @@ YUI.add('imageloader-tests', function(Y) {
         name: 'custom trigger test',
 
         setUp: function() {
-            this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg';
+            this.imageUrl = 'http://yui.yahooapis.com/testassets/uluru.jpg';
             // event attached to Y instance
             this.customEvent = 'imageloader_unit_test:custom_trigger_test';
             this.triggerGroup = new Y.ImgLoadGroup({ name: 'customTriggerGroup' });
@@ -144,7 +144,7 @@ YUI.add('imageloader-tests', function(Y) {
         name: 'local object custom trigger test',
 
         setUp: function() {
-            this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg';
+            this.imageUrl = 'http://yui.yahooapis.com/testassets/uluru.jpg';
             // event attached to custom instance
             this.customEvent2 = 'imageloader_unit_test:custom_trigger_test_2';
             this.customEvent2Obj = new Y.Event.Target();
@@ -170,7 +170,7 @@ YUI.add('imageloader-tests', function(Y) {
         name: 'Image Sizing',
 
         setUp: function() {
-            this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/japan.jpg';
+            this.imageUrl = 'http://yui.yahooapis.com/testassets/japan.jpg';
             this.sizerGroup = new Y.ImgLoadGroup({ name: 'imgSizingGroup' });
             this.sizerGroup.addTrigger('#sizerImg', 'mouseover');
             var sizerILImg = this.sizerGroup.registerImage({ domId: 'sizerImg', srcUrl: this.imageUrl, width: 200, height: 150, setVisible: true });
@@ -201,8 +201,8 @@ YUI.add('imageloader-tests', function(Y) {
         name: "Trigger Removal for Competing Groups' Triggers",
 
         setUp: function() {
-            this.imageAUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg';
-            this.imageZUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg';
+            this.imageAUrl = 'http://yui.yahooapis.com/testassets/morraine.jpg';
+            this.imageZUrl = 'http://yui.yahooapis.com/testassets/uluru.jpg';
             this.groupA = new Y.ImgLoadGroup({ name: 'triggerRemovalGroup(A)' });
             this.groupA.addTrigger('#sharedTrigger1', 'click');
             this.groupA.registerImage({ domId: 'sharedTrigger1', bgUrl: this.imageAUrl });
@@ -241,7 +241,7 @@ YUI.add('imageloader-tests', function(Y) {
             var myFoldDistance = 20;
             Y.one('.fold-bottom-visual-indicator').setStyle('height', myFoldDistance);
 
-            this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/japan.jpg';
+            this.imageUrl = 'http://yui.yahooapis.com/testassets/japan.jpg';
             this.foldGroup = new Y.ImgLoadGroup({ name: 'foldConditionalGroup', foldDistance: myFoldDistance });
             this.foldGroup.registerImage({ domId: 'foldImgTop', srcUrl: this.imageUrl });
             this.foldGroup.registerImage({ domId: 'foldImgMiddle', srcUrl: this.imageUrl });
@@ -293,7 +293,7 @@ YUI.add('imageloader-tests', function(Y) {
 
         setUp: function() {
             this.timeLimit = .5;
-            this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg';
+            this.imageUrl = 'http://yui.yahooapis.com/testassets/museum.jpg';
             this.timeGroup = new Y.ImgLoadGroup({ name: 'timeLimitGroup', timeLimit: this.timeLimit });
             this.timeGroup.registerImage({ domId: 'timeImg', srcUrl: this.imageUrl });
             this.timeGroupImg = document.getElementById('timeImg');
