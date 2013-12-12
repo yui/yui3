@@ -3,47 +3,9 @@ YUI.add('promise-tests', function (Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.Test.ArrayAssert,
         Promise = Y.Promise,
-        isPromise = Promise.isPromise;
-
-    /**
-    Takes a promise and a callback. Calls the callback with a boolean parameter
-    indicating if the promise is fulfilled and the value as the next parameter
-    **/
-    function isFulfilled(promise, next) {
-        promise.then(function (x) {
-            next(true, x);
-        }, function (e) {
-            next(false, e);
-        });
-    }
-
-    /**
-    Takes a promise and a callback. Calls the callback with a boolean parameter
-    indicating if the promise is rejected and the reason as the next parameter
-    **/
-    function isRejected(promise, next) {
-        promise.then(function (x) {
-            next(false, x);
-        }, function (e) {
-            next(true, e);
-        });
-    }
-
-    function wait(ms) {
-        return new Promise(function (fulfill) {
-            setTimeout(function () {
-                fulfill(ms);
-            }, ms);
-        });
-    }
-
-    function rejectedAfter(ms) {
-        return new Promise(function (fulfill, reject) {
-            setTimeout(function () {
-                reject(ms);
-            }, ms);
-        });
-    }
+        isPromise = Promise.isPromise,
+        wait = Y.fulfilledAfter,
+        rejectedAfter = Y.rejectedAfter;
 
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
@@ -55,15 +17,15 @@ YUI.add('promise-tests', function (Y) {
         name: 'Basic promise behavior',
 
         'calling Y.Promise as a function should return an instance of Y.Promise': function () {
-            Assert.isInstanceOf(Y.Promise, Y.Promise(function () {}), 'Y.Promise as a function should return a promise');
+            Assert.isInstanceOf(Promise, Promise(function () {}), 'Y.Promise as a function should return a promise');
         },
 
         'promise.then returns a promise': function () {
-            var promise = new Y.Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill(5);
             });
 
-            Assert.isInstanceOf(Y.Promise, promise.then(), 'promise.then returns a promise');
+            Assert.isInstanceOf(Promise, promise.then(), 'promise.then returns a promise');
         },
 
         'promise state should change only once': function () {
@@ -96,38 +58,30 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'fulfilling more than once should not change the promise value': function () {
-            var test = this;
-
-            Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill(true);
                 fulfill(5);
-            }).then(function (value) {
-                test.resume(function () {
-                    Assert.areSame(true, value, 'value should remain the same');
-                });
             });
 
-            test.wait(100);
+            this.isFulfilled(promise, function (value) {
+                Assert.areSame(true, value, 'value should remain the same');
+            });
         },
 
         'rejecting more than once should not change the rejection reason': function () {
-            var test = this;
-
-            Promise(function (fulfill, reject) {
+            var promise = new Promise(function (fulfill, reject) {
                 reject(new Error('foo'));
                 reject(new Error('bar'));
-            }).then(null, function (reason) {
-                test.resume(function () {
-                    Assert.areEqual('foo', reason.message, 'reason should remain the same');
-                });
             });
 
-            test.wait(100);
+            this.isRejected(promise, function (reason) {
+                Assert.areEqual('foo', reason.message, 'reason should remain the same');
+            });
         },
 
         'correct value for "this" inside the promise init function': function () {
             var promiseA,
-                promiseB = Y.Promise(function () {
+                promiseB = new Promise(function () {
                     promiseA = this;
 
                     Assert.isInstanceOf(Promise, this, '"this" should be a promise');
@@ -141,7 +95,7 @@ YUI.add('promise-tests', function (Y) {
 
             var foo = false;
 
-            Y.Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill();
             }).then(function () {
                 foo = true;
@@ -160,61 +114,54 @@ YUI.add('promise-tests', function (Y) {
 
         _should: {
             ignore: {
-                '|this| inside a callback must be undefined in strict mode': (function () {
+                '`this` inside a callback must be undefined in strict mode': (function () {
                     'use strict';
                     return typeof this !== 'undefined';
                 }()),
-                '|this| inside a callback must be the global object': (function () {
+                '`this` inside a callback must be the global object': (function () {
                     return typeof this === 'undefined';
                 }())
             }
         },
 
         'throwing inside a callback should turn into a rejection': function () {
-            var test = this,
-                error = new Error('Arbitrary error');
+            var error = new Error('Arbitrary error');
 
-            Y.Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill(5);
             }).then(function (value) {
                 throw error;
-            }).then(null, function (reason) {
-                test.resume(function () {
-                    Assert.areSame(error, reason, 'thrown error should become the rejection reason');
-                });
             });
 
-            test.wait(50);
+            this.isRejected(promise, function (reason) {
+                Assert.areSame(error, reason, 'thrown error should become the rejection reason');
+            });
         },
 
         'returning a promise from a callback should link both promises': function () {
-            var test = this;
-
-            Y.Promise(function (fulfill) {
+            var promise = Promise(function (fulfill) {
                 fulfill('placeholder');
             }).then(function () {
-                return Y.Promise(function (fulfill) {
+                return Promise(function (fulfill) {
                     fulfill(5);
-                });
-            }).then(function (value) {
-                test.resume(function () {
-                    Assert.areEqual(5, value, 'new value should be the value from the returned promise');
                 });
             });
 
-            test.wait(100);
+            this.isFulfilled(promise, function (value) {
+                Assert.areEqual(5, value, 'new value should be the value from the returned promise');
+            });
         },
 
         // This test is run only when not in strict mode
-        '|this| inside a callback must be the global object': function () {
+        '`this` inside a callback must be the global object': function () {
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
 
-            fulfilled = new Y.Promise(function (fulfill) {
+            fulfilled = new Promise(function (fulfill) {
                 fulfill('value');
             });
-            rejected = new Y.Promise(function (fulfill, reject) {
+            rejected = new Promise(function (fulfill, reject) {
                 reject('reason');
             });
 
@@ -223,27 +170,27 @@ YUI.add('promise-tests', function (Y) {
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
-                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode `this` in the success callback must be the global object');
+                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode `this` in the failure callback must be the global object');
                     });
                 });
             });
 
-            test.wait(300);
+            test.wait();
         },
 
         // This test is run only in strict mode
-        '|this| inside a callback must be undefined in strict mode': function () {
+        '`this` inside a callback must be undefined in strict mode': function () {
             'use strict';
 
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
 
-            fulfilled = new Y.Promise(function (fulfill) {
+            fulfilled = new Promise(function (fulfill) {
                 fulfill('value');
             });
-            rejected = new Y.Promise(function (fulfill, reject) {
+            rejected = new Promise(function (fulfill, reject) {
                 reject('reason');
             });
 
@@ -252,13 +199,13 @@ YUI.add('promise-tests', function (Y) {
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
-                        Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
+                        Assert.isUndefined(fulfilledThis, 'in strict mode `this` in the success callback must be undefined');
+                        Assert.isUndefined(rejectedThis, 'in strict mode `this` in the failure callback must be undefined');
                     });
                 });
             });
 
-            test.wait(300);
+            test.wait();
         }
     }));
 
@@ -276,8 +223,7 @@ YUI.add('promise-tests', function (Y) {
                 resolved = new Promise(function (resolve) {
                     resolve(value);
                 }),
-                next,
-                test = this;
+                next;
 
             next = resolved['catch'](function (err) {
                 return err;
@@ -286,14 +232,9 @@ YUI.add('promise-tests', function (Y) {
             Assert.isObject(next, 'catch() should return an object');
             Assert.isTrue(Promise.isPromise(next), 'catch() should return a promise');
 
-            isFulfilled(next, function (fulfilled, val) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should still be fulfilled');
-                    Assert.areSame(value, val, 'promise fulfilled value should remain the same')
-                });
+            this.isFulfilled(next, function (val) {
+                Assert.areSame(value, val, 'promise fulfilled value should remain the same')
             });
-
-            test.wait();
         },
 
         'catch(fn) is equivalent to then(undefined, fn)': function () {
@@ -301,20 +242,15 @@ YUI.add('promise-tests', function (Y) {
                 rejected = new Promise(function (resolve, reject) {
                     reject(reason);
                 }),
-                next, test = this;
+                next;
 
             next = rejected['catch'](function (err) {
                 return err;
             });
 
-            isFulfilled(next, function (fulfilled, value) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should now be fulfilled');
-                    Assert.areSame(reason, value, 'returning an error in catch() should cause the next promise to be fulfilled');
-                });
+            this.isFulfilled(next, function (value) {
+                Assert.areSame(reason, value, 'returning an error in catch() should cause the next promise to be fulfilled');
             });
-
-            test.wait();
         }
     }));
 
@@ -387,48 +323,31 @@ YUI.add('promise-tests', function (Y) {
 
             Assert.isTrue(isPromise(promise), 'Promise.reject() should return a promise');
 
-            isRejected(promise, function next(rejected, result) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'promise should be rejected, not fulfilled');
-                    Assert.areSame(value, result, 'Promise.reject() should respect the passed value');
-                });
+            this.isRejected(promise, function next(result) {
+                Assert.areSame(value, result, 'Promise.reject() should respect the passed value');
             });
-
-            test.wait();
         },
 
         'Promise.reject() should wrap fulfilled promises': function () {
-            var test = this,
-                value = new Promise(function (resolve) {
+            var value = new Promise(function (resolve) {
                     resolve('foo');
                 }),
                 promise = Promise.reject(value);
 
-            isRejected(promise, function (rejected, result) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'promise should be rejected, not fulfilled');
-                    Assert.areSame(value, result, 'Promise.reject() should wrap fulfilled promises');
-                });
+            this.isRejected(promise, function (result) {
+                Assert.areSame(value, result, 'Promise.reject() should wrap fulfilled promises');
             });
-
-            test.wait();
         },
 
         'Promise.reject() should wrap rejected promises': function () {
-            var test = this,
-                value = new Promise(function (resolve, reject) {
+            var value = new Promise(function (resolve, reject) {
                     reject('foo');
                 }),
                 promise = Promise.reject(value);
 
-            isRejected(promise, function (rejected, result) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'promise should be rejected, not fulfilled');
-                    Assert.areSame(value, result, 'Promise.reject() should wrap rejected promises');
-                });
+            this.isRejected(promise, function (result) {
+                Assert.areSame(value, result, 'Promise.reject() should wrap rejected promises');
             });
-
-            test.wait();
         },
 
         'Promise.reject() should preserve the constructor when using inheritance': function () {
@@ -438,65 +357,41 @@ YUI.add('promise-tests', function (Y) {
             Y.extend(Subpromise, Promise, null, {reject: Promise.reject});
 
             var promise = Subpromise.reject('foo');
-            var test = this;
 
             Assert.isInstanceOf(Subpromise, promise, 'rejected promise should be an instance of the subclass');
 
-            isRejected(promise, function (rejected, reason) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'subpromise should be rejected');
-                    Assert.areSame('foo', reason, 'subpromise should have the correct rejection reason');
-                });
+            this.isRejected(promise, function (reason) {
+                Assert.areSame('foo', reason, 'subpromise should have the correct rejection reason');
             });
-
-            test.wait();
         },
 
         'Promise.resolve() is fulfilled when passed a regular value': function () {
-            var test = this,
-                value = {},
+            var value = {},
                 promise = Promise.resolve(value);
 
-            isFulfilled(promise, function (fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'resolved promise should be fulfilled');
-                    Assert.areSame(value, result, 'resolved promise should respect the value passed to it');
-                });
+            this.isFulfilled(promise, function (result) {
+                Assert.areSame(value, result, 'resolved promise should respect the value passed to it');
             });
-
-            test.wait();
         },
 
         'Promise.resolve() adopts the state of an fulfilled promise': function () {
-            var test = this,
-                value = {},
+            var value = {},
                 fulfilled = Promise.resolve(value),
                 promise = Promise.resolve(fulfilled);
 
-            isFulfilled(promise, function (fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'resolved promise should be fulfilled');
-                    Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
-                });
+            this.isFulfilled(promise, function (result) {
+                Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
             });
-
-            test.wait();
         },
 
         'Promise.resolve() adopts the state of a rejected promise': function () {
-            var test = this,
-                value = {},
+            var value = {},
                 fulfilled = Promise.reject(value),
                 promise = Promise.resolve(fulfilled);
 
-            isRejected(promise, function (rejected, result) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'resolved promise should be rejected');
-                    Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
-                });
+            this.isRejected(promise, function (result) {
+                Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
             });
-
-            test.wait();
         },
 
         'Promise.resolve() should preserve the constructor when using inheritance': function () {
@@ -506,18 +401,12 @@ YUI.add('promise-tests', function (Y) {
             Y.extend(Subpromise, Promise, null, {resolve: Promise.resolve});
 
             var promise = Subpromise.resolve('foo');
-            var test = this;
 
             Assert.isInstanceOf(Subpromise, promise, 'resolved promise should be an instance of the subclass');
 
-            isFulfilled(promise, function (fulfilled, value) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'subpromise should be fulfilled');
-                    Assert.areSame('foo', value, 'subpromise should have the correct fulfilled value');
-                });
+            this.isFulfilled(promise, function (value) {
+                Assert.areSame('foo', value, 'subpromise should have the correct fulfilled value');
             });
-
-            test.wait();
         }
     }));
 
@@ -534,80 +423,45 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'a non array argument should turn into a rejected promise': function () {
-            var test = this;
-
-            isRejected(Promise.all('foo'), function (rejected, error) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'wrong argument for all() should return a rejected promise');
-                    Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
-                });
+            this.isRejected(Promise.all('foo'), function (error) {
+                Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
             });
-
-            test.wait();
         },
 
         'order of promises should be preserved': function () {
-            var test = this,
-                promise = Promise.all([wait(20), wait(10), wait(15)]);
+            var promise = Promise.all([wait(20), wait(10), wait(15)]);
 
-            isFulfilled(promise, function (fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
-                    ArrayAssert.itemsAreSame([20, 10, 15], result, 'order of returned values should be the same as the parameter list');
-                });
+            this.isFulfilled(promise, function (result) {
+                ArrayAssert.itemsAreSame([20, 10, 15], result, 'order of returned values should be the same as the parameter list');
             });
-
-            test.wait();
         },
 
         'values should be wrapped in a promise': function () {
-            var test = this,
-                obj = {
+            var obj = {
                     hello: 'world'
                 },
                 promise = Promise.all(['foo', 5, obj]);
 
-            isFulfilled(promise, function (fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
-                    ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.all() should be wrapped in promises, not ignored');
-                });
+            this.isFulfilled(promise, function (result) {
+                ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.all() should be wrapped in promises, not ignored');
             });
-
-            test.wait();
         },
 
         'correct handling of function parameters': function () {
-            var test = this, promise;
-
             function testFn() {}
 
-            promise = Promise.all([testFn]);
-
-            isFulfilled(promise, function (fulfilled, values) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
-                    Assert.isFunction(values[0], 'promise value should be a function');
-                    Assert.areSame(testFn, values[0], 'promise value should be the passed function');
-                });
+            this.isFulfilled(Promise.all([testFn]), function (values) {
+                Assert.isFunction(values[0], 'promise value should be a function');
+                Assert.areSame(testFn, values[0], 'promise value should be the passed function');
             });
-
-            test.wait();
         },
 
         'Promise.all() should fail as fast as possible': function () {
-            var test = this, promise;
+            var promise = Promise.all([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]);
 
-            promise = Promise.all([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]);
-
-            isRejected(promise, function (rejected, reason) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'promise should be rejected');
-                    Assert.areEqual(10, reason, 'reason should be the one from the first promise to be rejected');
-                });
+            this.isRejected(promise, function (reason) {
+                Assert.areEqual(10, reason, 'reason should be the one from the first promise to be rejected');
             });
-
-            test.wait();
         }
 
     }));
@@ -616,72 +470,37 @@ YUI.add('promise-tests', function (Y) {
         name: 'Promise.race() tests',
 
         'a non array argument should turn into a rejected promise': function () {
-            var test = this;
-
-            isRejected(Promise.race('foo'), function (rejected, error) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'wrong argument for all() should return a rejected promise');
-                    Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
-                });
+            this.isRejected(Promise.race('foo'), function (error) {
+                Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
             });
-
-            test.wait();
         },
 
         'Promise.race() should fulfill when passed a fulfilled promise': function () {
-            var test = this,
-                promise = Promise.race([wait(10)]);
-
-            isFulfilled(promise, function (fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
-                    Assert.areEqual(10, result, 'Promise.race() should fulfill when passed a fulfilled promise');
-                });
+            this.isFulfilled(Promise.race([wait(10)]), function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should fulfill when passed a fulfilled promise');
             });
-
-            test.wait();
         },
 
         'Promise.race() should reject when passed a rejected promise': function () {
-            var test = this,
-                promise = Promise.race([rejectedAfter(10)]);
-
-            isRejected(promise, function (rejected, result) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'promise should be rejected');
-                    Assert.areEqual(10, result, 'Promise.race() should reject when passed a rejected promise');
-                });
+            this.isRejected(Promise.race([rejectedAfter(10)]), function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should reject when passed a rejected promise');
             });
-
-            test.wait();
         },
 
         'Promise.race() should fulfill to the value of the first promise to be fulfilled': function () {
-            var test = this,
-                promise = Promise.race([wait(10), wait(100)]);
+            var promise = Promise.race([wait(10), wait(100)]);
 
-            isFulfilled(promise, function (fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'promise should be fulfilled');
-                    Assert.areEqual(10, result, 'Promise.race() should fulfill to the value of the first promise to be fulfilled');
-                });
+            this.isFulfilled(promise, function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should fulfill to the value of the first promise to be fulfilled');
             });
-
-            test.wait();
         },
 
         'Promise.race() should reject with the reason of the first promise to be rejected': function () {
-            var test = this,
-                promise = Promise.race([rejectedAfter(10), rejectedAfter(100)]);
+            var promise = Promise.race([rejectedAfter(10), rejectedAfter(100)]);
 
-            isRejected(promise, function (rejected, result) {
-                test.resume(function () {
-                    Assert.isTrue(rejected, 'promise should be rejected');
-                    Assert.areEqual(10, result, 'Promise.race() should reject with the reason of the first promise to be rejected');
-                });
+            this.isRejected(promise, function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should reject with the reason of the first promise to be rejected');
             });
-
-            test.wait();
         }
     }));
 
@@ -722,7 +541,6 @@ YUI.add('promise-tests', function (Y) {
 
 }, '@VERSION@', {
     requires: [
-        'promise',
-        'test'
+        'tests-promise-utils'
     ]
 });
