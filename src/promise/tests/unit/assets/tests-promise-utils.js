@@ -60,4 +60,9 @@ YUI.add('tests-promise-utils', function (Y) {
         });
     };
 
+}, '@VERSION@', {
+    requires: [
+        'promise',
+        'test'
+    ]
 });
