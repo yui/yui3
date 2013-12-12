@@ -204,6 +204,7 @@ YUI.add('sortable', function (Y, NAME) {
         */
         _onDragEnd: function() {
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
+            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '');
             this.delegate.get(CURRENT_NODE).setStyles({
                 top: '',
                 left: ''
