@@ -142,7 +142,7 @@ YUI.add('promise-tests', function (Y) {
             var promise = Promise(function (fulfill) {
                 fulfill('placeholder');
             }).then(function () {
-                return Promise(function (fulfill) {
+                return new Promise(function (fulfill) {
                     fulfill(5);
                 });
             });
