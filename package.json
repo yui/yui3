@@ -23,6 +23,7 @@
         "grunt-lib-contrib": "~0.5.3",
         "grunt-contrib-compress": "0.4.10",
         "grunt-css-selectors": "~0.1.2",
+        "bower": "~1.2.8",
         "archiver": "0.4.10"
     },
     "scripts": {
