@@ -4,7 +4,7 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed the `event.returnValue is deprecated` warning in chrome([#1460][]: @zhiyelee)
 
 3.14.0
 ------
