@@ -4,7 +4,9 @@ DOM Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1469][]: Fix a bug with setStyle() cannot set an opacity to 1. [Ryuichi Okumura]
+
+[#1469]: https://github.com/yui/yui3/issues/1469
 
 3.14.0
 ------
