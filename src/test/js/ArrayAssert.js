@@ -63,7 +63,7 @@ YUITest.ArrayAssert = {
      * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method contains
      * @static
      */
@@ -83,7 +83,7 @@ YUITest.ArrayAssert = {
      * be found.
      * @param {Object[]} needles An array of values that are expected in the array.
      * @param {Array} haystack An array of values to check.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method containsItems
      * @static
      */
@@ -104,7 +104,7 @@ YUITest.ArrayAssert = {
      * a function to determine a match.
      * @param {Function} matcher A function that returns true if the items matches or false if not.
      * @param {Array} haystack An array of values.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method containsMatch
      * @static
      */
@@ -128,7 +128,7 @@ YUITest.ArrayAssert = {
      * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method doesNotContain
      * @static
      */
@@ -148,7 +148,7 @@ YUITest.ArrayAssert = {
      * not be found.
      * @param {Object[]} needles An array of values that are not expected in the array.
      * @param {Array} haystack An array of values to check.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method doesNotContainItems
      * @static
      */
@@ -170,7 +170,7 @@ YUITest.ArrayAssert = {
      * a function to determine a match.
      * @param {Function} matcher A function that returns true if the item matches or false if not.
      * @param {Array} haystack An array of values.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method doesNotContainMatch
      * @static
      */
@@ -195,7 +195,7 @@ YUITest.ArrayAssert = {
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
      * @param {Number} index The index at which the value should exist.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method indexOf
      * @static
      */
@@ -224,7 +224,7 @@ YUITest.ArrayAssert = {
      * need not be the same for this test to pass.
      * @param {Array} expected An array of the expected values.
      * @param {Array} actual Any array of the actual values.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method itemsAreEqual
      * @static
      */
@@ -260,7 +260,7 @@ YUITest.ArrayAssert = {
      * @param {Array} actual Any array of the actual values.
      * @param {Function} comparator A function that returns true if the values are equivalent
      *      or false if not.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method itemsAreEquivalent
      * @static
      */
@@ -290,7 +290,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that an array is empty.
      * @param {Array} actual The array to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isEmpty
      * @static
      */
@@ -304,7 +304,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that an array is not empty.
      * @param {Array} actual The array to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method isNotEmpty
      * @static
      */
@@ -322,7 +322,7 @@ YUITest.ArrayAssert = {
      * need not be the same for this test to pass.
      * @param {Array} expected An array of the expected values.
      * @param {Array} actual Any array of the actual values.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method itemsAreSame
      * @static
      */
@@ -351,7 +351,7 @@ YUITest.ArrayAssert = {
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
      * @param {Number} index The index at which the value should exist.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method lastIndexOf
      * @static
      */
