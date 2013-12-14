@@ -434,6 +434,12 @@ YUITest.Assert = {
 
     /**
      * Asserts that a value is of a particular type.
+     *
+     * Please note that this assertion uses the `typeof` operator.
+     *
+     * @example
+     *      Y.Assert.isTypeOf("object", null); // pass
+     *
      * @param {String} expectedType The expected type of the variable.
      * @param {Object} actualValue The actual value to test.
      * @param {String} [message] The message to display if the assertion fails.
