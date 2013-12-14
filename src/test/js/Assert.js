@@ -204,6 +204,11 @@ YUITest.Assert = {
     /**
      * Asserts that a value is true. This uses the triple equals sign
      * so no type coercion may occur.
+     *
+     * @example
+     *      Y.Assert.isTrue(1);    // fail
+     *      Y.Assert.isTrue(true); // pass
+     *
      * @param {Object} actual The actual value to test.
      * @param {String} [message] The message to display if the assertion fails.
      * @method isTrue
