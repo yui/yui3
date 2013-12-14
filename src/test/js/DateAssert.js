@@ -3,9 +3,8 @@
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
- * @namespace Test
  * @module test
- * @class DateAssert
+ * @class Test.DateAssert
  * @static
  */
 
