@@ -154,6 +154,16 @@ YUITest.Assert = {
     /**
      * Asserts that a value is the same as another. This uses the triple equals sign
      * so no type coercion may occur.
+     *
+     * If you need to test NaNs you should probably use 
+     * {{#crossLink "Test.Assert/isNaN:method"}}Y.Assert.isNaN{{/crossLink}} instead.
+     *
+     * @example
+     *      Y.Assert.areSame(true, '1');  // fail
+     *      Y.Assert.areSame(true, 1);    // fail
+     *      Y.Assert.areSame(true, true); // pass
+     *      Y.Assert.areSame(NaN, NaN);   // fail
+     *
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value to test.
      * @param {String} [message] The message to display if the assertion fails.
