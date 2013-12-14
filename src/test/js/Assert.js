@@ -99,6 +99,12 @@ YUITest.Assert = {
     /**
      * Asserts that a value is equal to another. This uses the double equals sign
      * so type coercion may occur.
+     *
+     * @example
+     *      Y.Assert.areEqual(true, '1'); // pass
+     *      Y.Assert.areEqual(true, 1);   // pass
+     *      Y.Assert.areEqual(1, '1');    // pass
+     *
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value to test.
      * @param {String} [message] The message to display if the assertion fails.
