@@ -320,6 +320,13 @@ YUITest.Assert = {
 
     /**
      * Asserts that a value is an array.
+     *
+     * Array-like values will be rejected.
+     *
+     * @example
+     *      Y.Assert.isArray([1, 2, 3]); // pass
+     *      Y.Assert.isArray(arguments); // fail
+     *
      * @param {Object} actual The value to test.
      * @param {String} [message] The message to display if the assertion fails.
      * @method isArray
