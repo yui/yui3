@@ -124,7 +124,6 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a value is not present in an array. This uses the triple equals
-     * Asserts that a value is not present in an array. This uses the triple equals
      * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
