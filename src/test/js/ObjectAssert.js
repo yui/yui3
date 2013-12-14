@@ -2,9 +2,8 @@
 /**
  * The ObjectAssert object provides functions to test JavaScript objects
  * for a variety of cases.
- * @namespace Test
  * @module test
- * @class ObjectAssert
+ * @class Test.ObjectAssert
  * @static
  */
 YUITest.ObjectAssert = {
