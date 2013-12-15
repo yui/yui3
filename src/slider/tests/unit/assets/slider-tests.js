@@ -684,6 +684,26 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual(50, thumb.getAttribute('aria-valuetext'));
 
         slider.destroy();
+    },
+
+    "step should default to 1": function () {
+        var slider = new Y.Slider();
+        Y.Assert.areSame(1, slider.get('step'));
+    },
+
+    "step should always be a number": function () {
+        var slider = new Y.Slider({ step: "wat" });
+        Y.Assert.isNumber(slider.get('step'));
+    },
+
+    "step cannot be lesser than 1": function () {
+        var slider = new Y.Slider({ step: 0 });
+        Y.Assert.isTrue(slider.get('step')>0);
+    },
+
+    "step cannot be greater than max": function () {
+        var slider = new Y.Slider({ max: 100, step: 101 });
+        Y.Assert.isTrue(slider.get('step')<slider.get('max'));
     }
 }));
 
@@ -876,6 +896,51 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual(61, thumb.getAttribute('aria-valuetext'));
 
         slider.destroy();
+    }
+}));
+
+suite.add(new Y.Test.Case({
+
+    name: "Slider with steps",
+
+    init: function () {
+        Y.one('body').append('<div id="slider_test"></div>');
+    },
+
+    destroy: function () {
+        Y.one('#slider_test').remove();
+    },
+
+    setUp: function () {
+        this.slider = new Y.Slider({ step: 10, value: 50 });
+        this.prevValue = this.slider.getValue();
+        this.minorStep = this.slider.get('minorStep');
+        this.majorStep = this.slider.get('majorStep');
+        this.slider.render('#slider_test');
+    },
+
+    tearDown: function () {
+        this.slider.destroy();
+    },
+
+    "test: a minor increment": function () {
+        this.slider.thumb.key(39); // arrow right
+        Y.Assert.areSame(this.prevValue + this.minorStep, this.slider.getValue());
+    },
+
+    "test: a minor decrement": function () {
+        this.slider.thumb.key(37); // arrow left
+        Y.Assert.areSame(this.prevValue - this.minorStep, this.slider.getValue());
+    },
+
+    "test: major increment": function () {
+        this.slider.thumb.key(33); // page up
+        Y.Assert.areSame(this.prevValue + this.majorStep, this.slider.getValue());
+    },
+
+    "test: major decrement": function () {
+        this.slider.thumb.key(34); // page down
+        Y.Assert.areSame(this.prevValue - this.majorStep, this.slider.getValue());
     }
 }));
 
