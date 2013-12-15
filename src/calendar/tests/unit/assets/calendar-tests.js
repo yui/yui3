@@ -2,10 +2,18 @@ YUI.add('calendar-tests', function(Y) {
 
         // Set up the page
         var ASSERT = Y.Assert,
-            ARRAYASSERT = Y.ArrayAssert;
+            ARRAYASSERT = Y.ArrayAssert,
+            yeti = window && window.$yetify;
 
         var BasicCalendar = new Y.Test.Case({
             name: "Basic Calendar Tests",
+
+            _should: {
+                ignore: {
+                    testFocus: yeti,
+                    testSelectionModes: yeti
+                }
+            },
 
             setUp : function () {
                 var firstcontainer = "<div id='firstcontainer'></div>";
