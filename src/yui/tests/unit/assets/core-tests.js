@@ -95,10 +95,16 @@ YUI.add('core-tests', function(Y) {
                 }
             }).use('skin-test', function(Y, status) {
                 test.resume(function() {
-                    var modules = status.data.sort();
+                    var modules = status.data.sort(),
+                        greenTextStyle = green.getStyle('textDecoration').toLowerCase(),
+                        samTextStyle = sam.getStyle('textDecoration').toLowerCase(),
+
+                        greenSkinTest = greenTextStyle.indexOf('underline') > -1,
+                        samSkinTest = samTextStyle.indexOf('underline') > -1;
+
                     Assert.isTrue(Y.SKIN_TEST, 'Failed to load external module');
-                    Assert.areEqual('underline', green.getStyle('textDecoration').toLowerCase(), 'Green Skin Failed to Load');
-                    Assert.areNotEqual('underline', sam.getStyle('textDecoration').toLowerCase(), 'Sam Skin Loaded');
+                    Assert.isTrue(greenSkinTest, 'Green Skin Failed to Load');
+                    Assert.isFalse(samSkinTest, 'Sam Skin Loaded');
                 });
             });
 
