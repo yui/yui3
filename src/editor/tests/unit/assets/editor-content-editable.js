@@ -24,9 +24,14 @@ YUI.add('editor-tests', function(Y) {
 
     template = {
         name: 'Inline Editor Tests',
-        setUp : function() {},
 
-        tearDown : function() {},
+        setUp : function() {
+            this.editorBaseUse = Y.EditorBase.USE.concat('node-event-simulate',
+                                                        'dd');
+        },
+
+        tearDown : function() {
+        },
 
         'test_load <inline>': function() {
             Y.Assert.isObject(Y.Plugin.ContentEditable, 'ContentEditable was not loaded');
@@ -347,8 +352,6 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'iframe DOM node was not destroyed');
         },
         'test_editor <inline>': function() {
-            Y.EditorBase.USE.push('dd');
-            Y.EditorBase.USE.push('node-event-simulate');
             var iframeReady = false;
 
             editor = new Y.EditorBase({
@@ -358,7 +361,7 @@ YUI.add('editor-tests', function(Y) {
                     {
                         fn: Y.Plugin.ContentEditable,
                         cfg: {
-                            use: Y.EditorBase.USE
+                            use: this.editorBaseUse
                         }
                     }
                 ]
@@ -613,7 +616,7 @@ YUI.add('editor-tests', function(Y) {
                     {
                         fn: Y.Plugin.ContentEditable,
                         cfg: {
-                            use: Y.EditorBase.USE
+                            use: this.editorBaseUse
                         }
                     }
                 ]
@@ -631,52 +634,130 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Second Frame was not destroyed');
             Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'iframe DOM node was not destroyed');
         },
-        'test_para_plugin <inline>': function() {
+
+        makeEditorWithParaPlugin : function (initialContent, onReady) {
+            var _this = this,
+                needResume = false;
+
             editor = new Y.EditorBase({
-                content: 'Hello <b>World</b>!!',
+                content: initialContent,
                 extracss: 'b { color: red; }',
                 plugins: [
                     {
                         fn: Y.Plugin.ContentEditable,
                         cfg: {
-                            use: Y.EditorBase.USE
+                            use: this.editorBaseUse
                         }
                     }
                 ]
             });
-            Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Third EditorBase instance can not be created');
+
+            Y.Assert.isInstanceOf(Y.EditorBase, editor, 'EditorBase instance not created?');
             editor.plug(Y.Plugin.EditorPara);
-            Y.Assert.isInstanceOf(Y.Plugin.EditorPara, editor.editorPara, 'EditorPara was not plugged..');
+            Y.Assert.isInstanceOf(Y.Plugin.EditorPara, editor.editorPara, 'EditorPara was not plugged.');
+
+            if (onReady) {
+                editor.after('ready', function () {
+                    if (needResume) {
+                        _this.resume(onReady);
+                    } else {
+                        onReady();
+                    }
+                });
+            }
+
             editor.render('#editor');
-            editor.set('content', '<br><b>Test This</b>');
-
-            var inst = editor.getInstance();
-
-            var str = '<b>foo</b>';
-            var out = editor.frame.exec._wrapContent(str);
-            Y.Assert.areEqual('<p><b>foo</b></p>', out);
-
-            out = editor.frame.exec._wrapContent(str, true);
-            Y.Assert.areEqual('<b>foo</b><br>', out);
-
-            fireKey(editor, 13);
-            fireKey(editor, 8);
-            editor.editorPara._fixFirstPara();
-            editor.editorPara._afterPaste();
-            editor.editorPara._onNodeChange({
-                changedEvent: {},
-                changedNode: inst.one('b'),
-                changedType: 'enter-up'
-            });
-            editor.editorPara._onNodeChange({
-                changedEvent: {},
-                changedNode: inst.one('br'),
-                changedType: 'enter'
-            });
-            editor.destroy();
-            Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
-
+            needResume = true;
         },
+
+        'test_para_plugin <inline>': function() {
+            var inst, str, out, editorReady;
+
+            function onEditorReady() {
+                editorReady = true;
+
+                editor.set('content', '<br><b>Test This</b>');
+
+                inst = editor.getInstance();
+
+                str = '<b>foo</b>';
+                out = editor.frame.exec._wrapContent(str);
+                Y.Assert.areEqual('<p><b>foo</b></p>', out);
+
+                out = editor.frame.exec._wrapContent(str, true);
+                Y.Assert.areEqual('<b>foo</b><br>', out);
+
+                fireKey(editor, 13);
+                fireKey(editor, 8);
+                editor.editorPara._fixFirstPara();
+                editor.editorPara._afterPaste();
+                editor.editorPara._onNodeChange({
+                    changedEvent: {},
+                    changedNode: inst.one('b'),
+                    changedType: 'enter-up'
+                });
+                editor.editorPara._onNodeChange({
+                    changedEvent: {},
+                    changedNode: inst.one('br'),
+                    changedType: 'enter'
+                });
+
+                editor.detachAll();
+                editor.destroy();
+                Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
+            }
+
+            this.makeEditorWithParaPlugin('<p> content<br></p>', onEditorReady);
+
+            //will fail if onEditorReady not called within 3s
+            if (!editorReady) {
+                this.wait(3000);
+            }
+        },
+
+        'test para plugin gecko fix <inline>' : function () {
+            var editorReady = false;
+
+            function onEditorReady() {
+                var inst = editor.frame.getInstance(),
+                    container = editor.frame.get('container'),
+                    node = container.getDOMNode(),
+                    sel = new inst.EditorSelection(),
+                    text = 'here is the initial text';
+
+                //Simulate gecko state where: P is terminated by BR, then we
+                //backspace into it and the cursor (collapsed selection) is
+                //after the BR.  See:  https://github.com/yui/yui3/issues/1376
+                editor.set('content', '<p>' + text + '</p>');
+                container.one('p').appendChild('<br>');
+                //place cursor 2 nodes after P start (1st is text node, 2nd is BR)
+                node = container.one('p');
+                sel.selectNode(node, true, 2);
+
+                editor.editorPara._fixGeckoOnBackspace(inst);
+
+                //Cursor should now be before the BR
+                sel = new inst.EditorSelection();
+                Y.Assert.isTrue(sel.isCollapsed, 'expected cursor, not range for selection');
+                Y.Assert.areEqual(1, container.all('p').size());
+                node = container.one('p');
+                Y.Assert.areEqual('P', sel.anchorNode.get('tagName'),
+                                  'selection anchorNode wrong');
+                Y.Assert.areEqual('P', sel.focusNode.get('tagName'),
+                                  'selection focusNode wrong');
+                Y.Assert.areEqual(text.length, sel.anchorOffset,
+                                  'selection anchorOffset wrong');
+                editorReady = true;
+            }
+
+            this.makeEditorWithParaPlugin('<p> content</p>', onEditorReady);
+
+            //If editor isn't ready within 3s, fail.
+            if (!editorReady) {
+                this.wait(3000);
+            }
+        },
+
         'test_double_plug_setup <inline>': function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
