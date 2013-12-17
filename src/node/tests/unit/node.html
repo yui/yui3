@@ -1360,19 +1360,24 @@ YUI({
             var node = Y.one('body');
             node.hide();
             Assert.isTrue(node.hasAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('aria-hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
         'should show the node': function() {
             var node = Y.one('body');
             node.setAttribute('hidden', '');
+            node.set('aria-hidden', true);
             node.setStyle('display', 'none');
             node.show(1);
             Assert.isFalse(node.hasAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('aria-hidden'));
             Assert.areEqual('block', node.getStyle('display'));
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1381,6 +1386,7 @@ YUI({
                 called = false;
 
             node.setAttribute('hidden', '');
+            node.set('aria-hidden', true);
             node.setStyle('display', 'none');
 
             node.show(function() {
@@ -1389,6 +1395,7 @@ YUI({
 
             Assert.isTrue(called);
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1396,7 +1403,8 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
+            node.set('aria-hidden', true);
             node.setStyle('display', 'none');
 
             node.show(null, function() {
@@ -1405,6 +1413,7 @@ YUI({
 
             Assert.isTrue(called);
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1418,6 +1427,7 @@ YUI({
 
             Assert.isTrue(called);
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1431,17 +1441,20 @@ YUI({
 
             Assert.isTrue(called);
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
         'should toggle the node view on': function() {
             var node = Y.one('body');
 
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
+            node.set('aria-hidden', true);
             node.setStyle('display', 'none');
             node.toggleView();
 
-            Assert.areEqual('', node.getAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('aria-hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1449,7 +1462,8 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
+            node.set('aria-hidden', true);
             node.setStyle('display', 'none');
 
             node.toggleView('foo', function() {
@@ -1458,6 +1472,7 @@ YUI({
 
             Assert.isTrue(called);
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1467,7 +1482,8 @@ YUI({
 
             node.toggleView(true);
 
-            Assert.areEqual('', node.getAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('aria-hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1480,7 +1496,8 @@ YUI({
             });
 
             Assert.isTrue(called);
-            Assert.areEqual('', node.getAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('aria-hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1490,8 +1507,10 @@ YUI({
             node.toggleView(false);
 
             Assert.isTrue(node.hasAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('aria-hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1505,8 +1524,10 @@ YUI({
 
             Assert.isTrue(called);
             Assert.isTrue(node.hasAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('aria-hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
+            node.removeAttribute('aria-hidden');
             node.setStyle('display', 'block');
         },
 
