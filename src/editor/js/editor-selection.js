@@ -11,7 +11,7 @@
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
-    if (Y.UA.ie) {
+    if (Y.UA.ie < 11) {
         textContent = 'nodeValue';
     }
 
@@ -20,7 +20,7 @@
             comp, moved = 0, n, id, root = Y.EditorSelection.ROOT;
 
 
-        if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9)) {
+        if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9 || Y.UA.ie > 10)) {
             sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
             sel = Y.config.doc.selection.createRange();

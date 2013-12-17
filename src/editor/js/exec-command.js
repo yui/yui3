@@ -478,7 +478,7 @@
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
 
-                    if (Y.UA.ie && !sel.isCollapsed) {
+                    if (Y.UA.ie < 11 && !sel.isCollapsed) {
                         range = sel._selection;
                         html = range.htmlText;
                         div = inst.Node.create(html) || root;
@@ -565,7 +565,7 @@
                             }
                             range.select();
                         }
-                    } else if (Y.UA.ie) {
+                    } else if (Y.UA.ie < 11) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
                             if (par && par.hasAttribute(DIR)) {
@@ -699,7 +699,7 @@
             }
         });
 
-        if (Y.UA.ie) {
+        if (Y.UA.ie < 11) {
             ExecCommand.COMMANDS.bold = function() {
                 fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
             };
