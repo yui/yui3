@@ -1,7 +1,7 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.14.1
 ------
 
 * Resolution of several issues in IE 11. ([#1505][]: @ezequiel)

@@ -1,7 +1,7 @@
 XML Change History
 ==================
 
-@VERSION@
+3.14.1
 ------
 
 * Refactor of `Y.XML.parse`'s feature detecting logic to better work in IE 9, 10, and 11. ([#1440][]: @ezequiel)
