@@ -544,9 +544,9 @@ YUI.add('editor-tests', function(Y) {
         _should: {
             fail: {
                 //'test: EditorSelection': (Y.UA.chrome),
-                test_bidi_plug: Y.UA.ie && (Y.UA.ie === 9 || Y.UA.ie === 10),
+                test_bidi_plug: Y.UA.ie === 9 || Y.UA.ie === 10,
                 test_selection_methods: (Y.UA.ie && Y.UA.ie < 11) || Y.UA.webkit,
-                test_execCommands: Y.UA.ie && (Y.UA.ie === 9 || Y.UA.ie === 10)
+                test_execCommands: Y.UA.ie === 9 || Y.UA.ie === 10
             },
             ignore: {
                 /* gh issue #653 Editor test failures in Android 4
