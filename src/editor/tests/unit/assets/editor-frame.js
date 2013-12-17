@@ -544,9 +544,9 @@ YUI.add('editor-tests', function(Y) {
         _should: {
             fail: {
                 //'test: EditorSelection': (Y.UA.chrome),
-                test_bidi_plug: (Y.UA.ie && Y.UA.ie >= 9),
-                test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
-                test_execCommands: ((Y.UA.ie && Y.UA.ie >= 9) ? true : false)
+                test_bidi_plug: Y.UA.ie > 0 && (Y.UA.ie === 9 || Y.UA.ie === 10),
+                test_selection_methods: (Y.UA.ie > 0 && Y.UA.ie < 11) || Y.UA.webkit > 0,
+                test_execCommands: Y.UA.ie > 0 && (Y.UA.ie === 9 || Y.UA.ie === 10)
             },
             ignore: {
                 /* gh issue #653 Editor test failures in Android 4
@@ -572,8 +572,8 @@ YUI.add('editor-tests', function(Y) {
             },
             error: { //These tests should error
                 //'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
-                test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12 && Y.UA.gecko < 23)) ? true : false),
-                test_execCommands:  ((Y.UA.ie && Y.UA.ie >= 9) ? true : false),
+                test_selection_methods: Y.UA.ie < 11 || Y.UA.webkit > 0 || (Y.UA.gecko > 0 && Y.UA.gecko > 11 && Y.UA.gecko < 23),
+                test_execCommands: Y.UA.ie > 0 && Y.UA.ie >= 9,
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true
