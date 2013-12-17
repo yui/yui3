@@ -573,7 +573,7 @@ YUI.add('editor-tests', function(Y) {
             error: { //These tests should error
                 //'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
                 test_selection_methods: Y.UA.ie < 11 || Y.UA.webkit > 0 || (Y.UA.gecko > 0 && Y.UA.gecko > 11 && Y.UA.gecko < 23),
-                test_execCommands: Y.UA.ie > 0 && Y.UA.ie >= 9,
+                test_execCommands: Y.UA.ie > 0 && (Y.UA.ie === 9 || Y.UA.ie === 10),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true
