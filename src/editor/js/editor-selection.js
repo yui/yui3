@@ -11,7 +11,7 @@
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
-    if (Y.UA.ie) {
+    if (Y.UA.ie < 11) {
         textContent = 'nodeValue';
     }
 
