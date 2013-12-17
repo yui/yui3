@@ -33,6 +33,7 @@ Y.mix(Y_Node.prototype, {
      */
     _show: function() {
         this.removeAttribute('hidden');
+        this.removeAttribute('aria-hidden');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
@@ -108,6 +109,7 @@ Y.mix(Y_Node.prototype, {
      */
     _hide: function() {
         this.setAttribute('hidden', '');
+        this.set('aria-hidden', true);
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
