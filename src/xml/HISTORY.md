@@ -4,7 +4,9 @@ XML Change History
 @VERSION@
 ------
 
-* No changes.
+* Refactor of `Y.XML.parse`'s feature detecting logic to better work in IE 9, 10, and 11. ([#1440][]: @ezequiel)
+
+[#1440]: https://github.com/yui/yui3/issues/1440
 
 3.14.0
 ------
