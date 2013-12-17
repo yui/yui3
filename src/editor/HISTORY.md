@@ -1,6 +1,13 @@
 Rich Text Editor Change History
 ===============================
 
+3.14.1
+------
+
+* Resolution of several issues in IE 11. ([#1505][]: @ezequiel)
+
+[#1505]: https://github.com/yui/yui3/issues/1505
+
 3.14.0
 ------
 

@@ -1,5 +1,5 @@
-YUI 3: The Yahoo! User Interface Library
-========================================
+YUI 3: The Yahoo User Interface Library
+=======================================
 
 [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
 
