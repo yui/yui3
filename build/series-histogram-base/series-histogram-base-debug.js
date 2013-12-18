@@ -90,6 +90,7 @@ Histogram.prototype = {
         setSize = style[setSizeKey];
         calculatedSize = style[calculatedSizeKey];
         this._createMarkerCache();
+        this._maxSize = graphic.get(setSizeKey);
         if(seriesTypeCollection && seriesLen > 1)
         {
             for(; i < seriesLen; ++i)
@@ -102,7 +103,6 @@ Histogram.prototype = {
                 }
             }
             totalSize = len * seriesSize;
-            this._maxSize = graphic.get(setSizeKey);
             if(totalSize > this._maxSize)
             {
                 ratio = graphic.get(setSizeKey)/totalSize;
@@ -116,6 +116,12 @@ Histogram.prototype = {
         else
         {
             seriesSize = style[setSizeKey];
+            totalSize = len * seriesSize;
+            if(totalSize > this._maxSize)
+            {
+                seriesSize = this._maxSize/len;
+                this._maxSize = seriesSize;
+            }
         }
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
