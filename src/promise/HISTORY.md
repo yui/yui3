@@ -1,7 +1,7 @@
 Promise Change History
 ======================
 
-@VERSION@
+3.14.1
 ------
 
 * Deprecated `resolver.then` in favor of `resolver._addCallbacks`.

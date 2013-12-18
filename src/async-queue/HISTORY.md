@@ -1,7 +1,7 @@
 AsyncQueue Change History
 =========================
 
-@VERSION@
+3.14.1
 ------
 
 * Fixed an issue where the 'complete' event is not always fired if the queue
