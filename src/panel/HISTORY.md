@@ -1,6 +1,11 @@
 Panel Change History
 ====================
 
+@VERSION@
+------
+
+* No changes.
+
 3.14.1
 ------
 
