@@ -260,7 +260,7 @@ var L = Y.Lang,
             data = data.replace(gmtUtcRegExp,'');
 
             var more = false, sign = 1, h = 0, m = 0, d1=[],
-                code = data[0];
+                code = data.charAt(0);
             switch (code) {
                 case '+':
                     more = true;
@@ -292,7 +292,7 @@ var L = Y.Lang,
                     return null;
                 }
                 h = d1[0];
-                if (h < 100 && data[0] === ':') {
+                if (h < 100 && data.charAt(0) === ':') {
                     data = data.substr(1);
                     data = DP._parseDigits(data, d1, 0, 2);
                     if (data === null) {
@@ -412,7 +412,7 @@ var L = Y.Lang,
 
         format = DP._expandAggregates(format).replace(spaceRegExp, '');
         for (i = 0; i < format.length; i++) {
-            c = format[i];
+            c = format.charAt(i);
             if (inPerc) {
                 inPerc = false;
                 if (ps[c]) {
