@@ -6,6 +6,12 @@ Charts Change History
 
 * No changes.
 
+3.14.1
+------
+
+* #1475 Address issue in which _maxSize property was not updated for single series histogram causing the column/bar to disappear
+on mouseover.  
+
 3.14.0
 ------
 
