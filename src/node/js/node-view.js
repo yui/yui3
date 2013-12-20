@@ -41,6 +41,15 @@ Y.mix(Y_Node.prototype, {
 
     },
 
+    /**
+    Returns whether the node is hidden by YUI or not. The hidden status is
+    determined by the 'hidden' attribute and the value of the 'display' CSS
+    property.
+
+    @method _isHidden
+    @return {Boolean} `true` if the node is hidden.
+    @private
+    **/
     _isHidden: function() {
         return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
@@ -107,7 +116,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', '');
+        this.setAttribute('hidden', 'hidden');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
