@@ -199,7 +199,7 @@ available.
             YUI.Env.DOMReady = true;
             if (hasWin) {
                 remove(doc, 'DOMContentLoaded', handleReady);
-            }        
+            }
         },
         handleLoad = function() {
             YUI.Env.windowLoaded = true;
@@ -431,7 +431,10 @@ proto = {
 
                             // use CDN default
                             return path;
-                        }
+                        },
+                getGlobal: (function () {
+                            return this;
+                          }())
 
             };
 
@@ -476,7 +479,7 @@ proto = {
             useBrowserConsole: true,
             useNativeES5: true,
             win: win,
-            global: Function('return this')()
+            global: Y.Env.getGlobal
         };
 
         //Register the CSS stamp element
