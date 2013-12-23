@@ -229,6 +229,18 @@ Y.CustomEvent.prototype = {
      */
 
     /**
+     * Flag for the default function to execute only if the
+     * firing event is the current target. This happens only
+     * when using custom event delegation and setting the
+     * flag to `true` mimics the behavior of event delegation
+     * in the DOM.
+     *
+     * @property defaultTargetOnly
+     * @type Boolean
+     * @default false
+     */
+
+    /**
      * The function to execute if a subscriber calls
      * stopPropagation or stopImmediatePropagation
      * @property stoppedFn
