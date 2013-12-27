@@ -34,7 +34,7 @@
         /**
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
-         * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
+         * @param {Any} testObject A TestSuite, TestCase, or the name of a test function.
          * @module test
  * @class TestNode
          * @constructor
@@ -44,7 +44,7 @@
 
             /**
              * The TestSuite, TestCase, or test function represented by this node.
-             * @type Variant
+             * @type {Any}
              * @property testObject
              */
             this.testObject = testObject;
@@ -100,7 +100,7 @@
             /**
              * Appends a new test object (TestSuite, TestCase, or test function name) as a child
              * of this node.
-             * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
+             * @param {Any} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {undefined}
              * @method appendChild
              */

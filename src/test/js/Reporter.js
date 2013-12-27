@@ -58,7 +58,7 @@
         /**
          * Adds a field to the form that submits the results.
          * @param {String} name The name of the field.
-         * @param {Variant} value The value of the field.
+         * @param {Any} value The value of the field.
          * @return {undefined}
          * @method addField
          */

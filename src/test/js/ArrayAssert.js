@@ -18,7 +18,7 @@ YUITest.ArrayAssert = {
      * Simple indexOf() implementation for an array. Defers to native
      * if available.
      * @param {Array} haystack The array to search.
-     * @param {Variant} needle The value to locate.
+     * @param {Any} needle The value to locate.
      * @return {Number} The index of the needle if found or -1 if not.
      * @method _indexOf
      * @private
