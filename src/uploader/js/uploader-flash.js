@@ -62,7 +62,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * it will be ignored.
     *
     * @property queue
-    * @type {Y.Uploader.Queue}
+    * @type {Uploader.Queue}
     */
     queue: null,
 
@@ -634,7 +634,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * Starts the upload of a specific file.
     *
     * @method upload
-    * @param file {Y.FileFlash} Reference to the instance of the file to be uploaded.
+    * @param file {FileFlash} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
     * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.

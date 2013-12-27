@@ -534,7 +534,7 @@ var WIDGET       = 'widget',
          * Resyncs the mask in the viewport for browsers that don't support fixed positioning
          *
          * @method _resyncMask
-         * @param {Y.Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
+         * @param {Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
          * @private
          */
         _resyncMask: function (e) {

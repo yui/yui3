@@ -54,7 +54,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * it will be ignored.
     *
     * @property queue
-    * @type {Y.Uploader.Queue}
+    * @type {Uploader.Queue}
     */
     queue: null,
 
@@ -586,7 +586,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * Starts the upload of a specific file.
     *
     * @method upload
-    * @param file {Y.File} Reference to the instance of the file to be uploaded.
+    * @param file {File} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
     * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.

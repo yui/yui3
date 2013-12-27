@@ -457,8 +457,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      columns to be updated.
 
      @method refreshRow
-     @param {Y.Node} row
-     @param {Y.Model} model Y.Model representation of the row
+     @param {Node} row
+     @param {Model} model Y.Model representation of the row
      @param {String[]} colKeys Array of column keys
 
      @chainable
@@ -488,8 +488,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      Uses the provided column formatter if aviable.
 
      @method refreshCell
-     @param {Y.Node} cell Y.Node pointer to the cell element to be updated
-     @param {Y.Model} [model] Y.Model representation of the row
+     @param {Node} cell Y.Node pointer to the cell element to be updated
+     @param {Model} [model] Y.Model representation of the row
      @param {Object} [col] Column configuration object for the cell
 
      @chainable
@@ -572,7 +572,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      Returns column data from this.get('columns'). If a Y.Node is provided as
      the key, will try to determine the key from the classname
      @method getColumn
-     @param {String|Y.Node} name
+     @param {String|Node} name
      @return {Object} Returns column configuration
      */
     getColumn: function (name) {
@@ -977,7 +977,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     /**
      Locates the row within the tbodyNode and returns the found index, or Null
      if it is not found in the tbodyNode
-     @param {Y.Node} row
+     @param {Node} row
      @return {Number} Index of row in tbodyNode
      */
     _getRowIndex: function (row) {
