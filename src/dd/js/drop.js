@@ -87,7 +87,7 @@
 
     Drop.ATTRS = {
         /**
-        * Y.Node instanace to use as the element to make a Drop Target
+        * Y.Node instance to use as the element to make a Drop Target
         * @attribute node
         * @type Node
         */
