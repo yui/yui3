@@ -497,7 +497,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     Creates the UI in the configured `container`.
 
     @method render
-    @return {TableView}
     @chainable
     **/
     render: function () {

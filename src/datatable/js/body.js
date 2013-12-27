@@ -424,7 +424,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     advisable to always return `false` from your `nodeFormatter`s_.
 
     @method render
-    @return {BodyView} The instance
     @chainable
     @since 3.5.0
     **/

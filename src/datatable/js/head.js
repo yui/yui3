@@ -178,7 +178,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     from the `columns` property.
 
     @method render
-    @return {HeaderView} The instance
     @chainable
     @since 3.5.0
     **/
