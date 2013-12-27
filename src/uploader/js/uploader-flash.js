@@ -716,7 +716,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * with width and height set to 100% of the parent.
     *
     * @property FLASH_CONTAINER
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default '<div id="{swfContainerId}" style="position:absolute; top:0px; left: 0px; margin: 0; padding: 0;
     *           border: 0; width:100%; height:100%"></div>'
@@ -728,7 +728,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default "<button type='button' class='yui3-button' tabindex='-1'>{selectButtonLabel}</button>"
     */

@@ -118,7 +118,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     HTML template used to create table cells.
 
     @property CELL_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<td {headers} class="{className}">{content}</td>'
     @since 3.5.0
     **/
@@ -152,7 +152,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     HTML template used to create table rows.
 
     @property ROW_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<tr id="{rowId}" data-yui3-record="{clientId}" class="{rowClass}">{content}</tr>'
     @since 3.5.0
     **/
@@ -175,7 +175,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     HTML templates used to create the `<tbody>` containing the table rows.
 
     @property TBODY_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<tbody class="{className}">{content}</tbody>'
     @since 3.6.0
     **/
@@ -864,7 +864,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method _createDataHTML
     @param {Object[]} displayCols The column configurations to customize the
                 generated cell content or class names
-    @return {HTML} The markup for all Models in the `modelList`, each applied
+    @return {String} The markup for all Models in the `modelList`, each applied
                 to the `_rowTemplate`
     @protected
     @since 3.5.0
@@ -913,7 +913,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @param {Model} model The Model instance to apply to the row template
     @param {Number} index The index the row will be appearing
     @param {Object[]} displayCols The column configurations
-    @return {HTML} The markup for the provided Model, less any `nodeFormatter`s
+    @return {String} The markup for the provided Model, less any `nodeFormatter`s
     @protected
     @since 3.5.0
     **/
@@ -1178,7 +1178,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     configurations.
 
     @property _rowTemplate
-    @type {HTML}
+    @type {String}
     @default (initially unset)
     @protected
     @since 3.5.0

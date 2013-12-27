@@ -684,7 +684,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default '<button type="button" class="yui3-button" role="button" aria-label="{selectButtonLabel}"
     *           tabindex="{tabIndex}">{selectButtonLabel}</button>'
