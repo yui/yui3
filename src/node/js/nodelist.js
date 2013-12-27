@@ -209,7 +209,7 @@ Y.mix(NodeList.prototype, {
      * Returns the index of the node in the NodeList instance
      * or -1 if the node isn't found.
      * @method indexOf
-     * @param {Node | DOMNode} node the node to search for
+     * @param {Node | HTMLElement} node the node to search for
      * @return {Number} the index of the node value or -1 if not found
      */
     indexOf: function(node) {
