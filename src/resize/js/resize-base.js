@@ -810,7 +810,6 @@ Y.Resize = Y.extend(
              * @preventable _defResizeStartFn
              * @param {Event.Facade} event The resize start event.
              * @bubbles Resize
-             * @type {Event.Custom}
              */
             publish(EV_RESIZE_START, this._defResizeStartFn);
 
@@ -822,7 +821,6 @@ Y.Resize = Y.extend(
              * @preventable _defResizeFn
              * @param {Event.Facade} event The resize event.
              * @bubbles Resize
-             * @type {Event.Custom}
              */
             publish(EV_RESIZE, this._defResizeFn);
 
@@ -833,7 +831,6 @@ Y.Resize = Y.extend(
              * @preventable _defResizeAlignFn
              * @param {Event.Facade} event The resize align event.
              * @bubbles Resize
-             * @type {Event.Custom}
              */
             publish(EV_RESIZE_ALIGN, this._defResizeAlignFn);
 
@@ -845,7 +842,6 @@ Y.Resize = Y.extend(
              * @preventable _defResizeEndFn
              * @param {Event.Facade} event The resize end event.
              * @bubbles Resize
-             * @type {Event.Custom}
              */
             publish(EV_RESIZE_END, this._defResizeEndFn);
 
@@ -857,7 +853,6 @@ Y.Resize = Y.extend(
              * @preventable _defMouseUpFn
              * @param {Event.Facade} event The resize mouseUp event.
              * @bubbles Resize
-             * @type {Event.Custom}
              */
             publish(EV_MOUSE_UP, this._defMouseUpFn);
         },

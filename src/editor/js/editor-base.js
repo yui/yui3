@@ -936,14 +936,12 @@
     *   <dt>fontFamily</dt><dd>The cascaded fontFamily of the changedNode</dd>
     *   <dt>fontSize</dt><dd>The cascaded fontSize of the changedNode</dd>
     * </dl>
-    * @type {Event.Custom}
     */
 
     /**
     * @event ready
     * @description Fired after the frame is ready.
     * @param {Event.Facade} event An Event Facade object.
-    * @type {Event.Custom}
     */
 
 

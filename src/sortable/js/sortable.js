@@ -486,7 +486,6 @@
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event move
@@ -495,7 +494,6 @@
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event insert
@@ -504,7 +502,6 @@
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event swap
@@ -513,7 +510,6 @@
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event moved
@@ -522,6 +518,5 @@
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
 
