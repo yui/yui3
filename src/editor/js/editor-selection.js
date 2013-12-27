@@ -876,7 +876,7 @@
         /**
         * Wrapper for the different range creation methods.
         * @method createRange
-        * @return {RangeObject}
+        * @return {Range}
         */
         createRange: function() {
             if (Y.config.doc.selection) {
