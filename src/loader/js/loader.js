@@ -2695,7 +2695,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
     @method load
-    @param {Callback} cb Executed after all load operations are complete
+    @param {Function} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {
