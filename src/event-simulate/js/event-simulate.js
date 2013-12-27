@@ -892,7 +892,7 @@ function simulateTouchEvent(target, type,
  *      (i.e., "click", "doubletap", "flick").
  * @param {Object} options (Optional) Extra options to copy onto the event object.
  *      For gestures, options are used to refine the gesture behavior.
- * @return {void}
+ * @return {undefined}
  * @for Event
  * @method simulate
  * @static

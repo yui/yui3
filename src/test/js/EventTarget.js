@@ -32,7 +32,7 @@ YUITest.EventTarget.prototype = {
      * Adds a listener for a given event type.
      * @param {String} type The type of event to add a listener for.
      * @param {Function} listener The function to call when the event occurs.
-     * @return {void}
+     * @return {undefined}
      * @method attach
      */
     attach: function(type, listener){
@@ -47,7 +47,7 @@ YUITest.EventTarget.prototype = {
      * Adds a listener for a given event type.
      * @param {String} type The type of event to add a listener for.
      * @param {Function} listener The function to call when the event occurs.
-     * @return {void}
+     * @return {undefined}
      * @method subscribe
      * @deprecated
      */
@@ -59,7 +59,7 @@ YUITest.EventTarget.prototype = {
      * Fires an event based on the passed-in object.
      * @param {Object|String} event An object with at least a 'type' attribute
      *      or a string indicating the event name.
-     * @return {void}
+     * @return {undefined}
      * @method fire
      */
     fire: function(event){
@@ -86,7 +86,7 @@ YUITest.EventTarget.prototype = {
      * Removes a listener for a given event type.
      * @param {String} type The type of event to remove a listener from.
      * @param {Function} listener The function to remove from the event.
-     * @return {void}
+     * @return {undefined}
      * @method detach
      */
     detach: function(type, listener){
@@ -105,7 +105,7 @@ YUITest.EventTarget.prototype = {
      * Removes a listener for a given event type.
      * @param {String} type The type of event to remove a listener from.
      * @param {Function} listener The function to remove from the event.
-     * @return {void}
+     * @return {undefined}
      * @method unsubscribe
      * @deprecated
      */

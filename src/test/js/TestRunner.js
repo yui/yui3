@@ -101,7 +101,7 @@
              * Appends a new test object (TestSuite, TestCase, or test function name) as a child
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
-             * @return {Void}
+             * @return {undefined}
              * @method appendChild
              */
             appendChild : function (testObject){
@@ -316,7 +316,7 @@
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
              * @param {Test.TestCase} testCase The test case to add.
-             * @return {Void}
+             * @return {undefined}
              * @static
              * @private
              * @method _addTestCaseToTestTree
@@ -341,7 +341,7 @@
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
              * @param {Test.TestSuite} testSuite The test suite to add.
-             * @return {Void}
+             * @return {undefined}
              * @static
              * @private
              * @method _addTestSuiteToTestTree
@@ -365,7 +365,7 @@
              * Builds the test tree based on items in the master suite. The tree is a hierarchical
              * representation of the test suites, test cases, and test functions. The resulting tree
              * is stored in _root and the pointer _cur is set to the root initially.
-             * @return {Void}
+             * @return {undefined}
              * @static
              * @private
              * @method _buildTestTree
@@ -394,7 +394,7 @@
              * Handles the completion of a test object's tests. Tallies test results
              * from one level up to the next.
              * @param {TestNode} node The TestNode representing the test object.
-             * @return {Void}
+             * @return {undefined}
              * @method _handleTestObjectComplete
              * @private
              */
@@ -744,7 +744,7 @@
              * to tell TestRunner about the error. This should never be called
              * by anyplace other than the Mock object.
              * @param {Error} error The error object.
-             * @return {Void}
+             * @return {undefined}
              * @method _handleError
              * @private
              * @static
@@ -765,7 +765,7 @@
              * Runs a single test based on the data provided in the node.
              * @method _runTest
              * @param {TestNode} node The TestNode representing the test to run.
-             * @return {Void}
+             * @return {undefined}
              * @static
              * @private
              */
@@ -837,7 +837,7 @@
              * The name assigned to the master suite of the TestRunner. This is the name
              * that is output as the root's name when results are retrieved.
              * @param {String} name The name of the result set.
-             * @return {Void}
+             * @return {undefined}
              * @method setName
              */
             setName: function(name){
@@ -851,7 +851,7 @@
             /**
              * Adds a test suite or test case to the list of test objects to run.
              * @param testObject Either a TestCase or a TestSuite that should be run.
-             * @return {Void}
+             * @return {undefined}
              * @method add
              * @static
              */
@@ -862,7 +862,7 @@
 
             /**
              * Removes all test objects from the runner.
-             * @return {Void}
+             * @return {undefined}
              * @method clear
              * @static
              */
@@ -968,7 +968,7 @@
              * Resumes the TestRunner after wait() was called.
              * @param {Function} segment The function to run as the rest
              *      of the haulted test.
-             * @return {Void}
+             * @return {undefined}
              * @method resume
              * @static
              */
@@ -986,7 +986,7 @@
              *      <code>oldMode</code> indicates the TestRunner should work in the YUI <= 2.8 way
              *      of internally managing test suites. <code>groups</code> is an array
              *      of test groups indicating which tests to run.
-             * @return {Void}
+             * @return {undefined}
              * @method run
              * @static
              */

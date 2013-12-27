@@ -209,7 +209,7 @@
          * <code>Y.config.doc</code> to change the document that the cookie
          * utility uses for everyday purposes.
          * @param {Object} newDoc The object to use as the document.
-         * @return {void}
+         * @return {undefined}
          * @method _setDoc
          * @private
          */

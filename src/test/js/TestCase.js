@@ -73,7 +73,7 @@ YUITest.TestCase.prototype = {
      * Resumes a paused test and runs the given function.
      * @param {Function} segment (Optional) The function to run.
      *      If omitted, the test automatically passes.
-     * @return {Void}
+     * @return {undefined}
      * @method resume
      */
     resume : function (segment) {
@@ -87,7 +87,7 @@ YUITest.TestCase.prototype = {
      *      If omitted, the TestRunner will wait until resume() is called.
      * @param {Number} delay (Optional) The number of milliseconds to wait before running
      *      the function. If omitted, defaults to `DEFAULT_WAIT` ms (10s).
-     * @return {Void}
+     * @return {undefined}
      * @method wait
      */
     wait : function (segment, delay){
@@ -206,7 +206,7 @@ YUITest.TestCase.prototype = {
 
     /**
      * Function to run before each test is executed.
-     * @return {Void}
+     * @return {undefined}
      * @method setUp
      */
     setUp : function () {
@@ -215,7 +215,7 @@ YUITest.TestCase.prototype = {
 
     /**
      * Function to run after each test is executed.
-     * @return {Void}
+     * @return {undefined}
      * @method tearDown
      */
     tearDown: function () {
