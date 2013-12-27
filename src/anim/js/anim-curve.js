@@ -28,9 +28,9 @@ Y.Anim.behaviors.curve = {
  * @for Anim
  * @method getBezier
  * @static
- * @param {Array} points An array containing Bezier points
+ * @param {Number[]} points An array containing Bezier points
  * @param {Number} t A number between 0 and 1 which is the basis for determining current position
- * @return {Array} An array containing int x and y member data
+ * @return {Number[]} An array containing int x and y member data
  */
 Y.Anim.getBezier = function(points, t) {
     var n = points.length,

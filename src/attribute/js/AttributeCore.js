@@ -781,7 +781,7 @@
          * Gets multiple attribute values.
          *
          * @method getAttrs
-         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {String[]|Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
          */
@@ -794,7 +794,7 @@
          *
          * @method _getAttrs
          * @protected
-         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {String[]|Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
          */
