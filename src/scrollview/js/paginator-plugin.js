@@ -37,7 +37,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Designated initializer
      *
      * @method initializer
-     * @param {config} Configuration object for the plugin
+     * @param {Object} Configuration object for the plugin
      */
     initializer: function (config) {
         var paginator = this,

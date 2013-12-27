@@ -161,7 +161,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Designated initializer
      *
      * @method initializer
-     * @param {config} Configuration object for the plugin
+     * @param {Object} Configuration object for the plugin
      */
     initializer: function () {
         var sv = this;
