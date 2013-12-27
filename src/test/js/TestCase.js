@@ -85,7 +85,7 @@ YUITest.TestCase.prototype = {
      * continue executing the given code.
      * @param {Function} segment (Optional) The function to run after the delay.
      *      If omitted, the TestRunner will wait until resume() is called.
-     * @param {int} delay (Optional) The number of milliseconds to wait before running
+     * @param {Number} delay (Optional) The number of milliseconds to wait before running
      *      the function. If omitted, defaults to `DEFAULT_WAIT` ms (10s).
      * @return {Void}
      * @method wait

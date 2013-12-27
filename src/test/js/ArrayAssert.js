@@ -19,7 +19,7 @@ YUITest.ArrayAssert = {
      * if available.
      * @param {Array} haystack The array to search.
      * @param {Variant} needle The value to locate.
-     * @return {int} The index of the needle if found or -1 if not.
+     * @return {Number} The index of the needle if found or -1 if not.
      * @method _indexOf
      * @private
      */
@@ -195,7 +195,7 @@ YUITest.ArrayAssert = {
      * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
-     * @param {int} index The index at which the value should exist.
+     * @param {Number} index The index at which the value should exist.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method indexOf
      * @static
@@ -352,7 +352,7 @@ YUITest.ArrayAssert = {
      * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
-     * @param {int} index The index at which the value should exist.
+     * @param {Number} index The index at which the value should exist.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method lastIndexOf
      * @static

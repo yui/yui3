@@ -113,9 +113,9 @@ Y.mix(bubbleEvents, touchEvents);
  *      is pressed while the event is firing. The default is false.
  * @param {Boolean} metaKey (Optional) Indicates if one of the META keys
  *      is pressed while the event is firing. The default is false.
- * @param {int} keyCode (Optional) The code for the key that is in use.
+ * @param {Number} keyCode (Optional) The code for the key that is in use.
  *      The default is 0.
- * @param {int} charCode (Optional) The Unicode code for the character
+ * @param {Number} charCode (Optional) The Unicode code for the character
  *      associated with the key being used. The default is 0.
  */
 function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
@@ -293,15 +293,15 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
  *      is false.
  * @param {Window} view (Optional) The view containing the target. This is
  *      typically the window object. The default is window.
- * @param {int} detail (Optional) The number of times the mouse button has
+ * @param {Number} detail (Optional) The number of times the mouse button has
  *      been used. The default value is 1.
- * @param {int} screenX (Optional) The x-coordinate on the screen at which
+ * @param {Number} screenX (Optional) The x-coordinate on the screen at which
  *      point the event occured. The default is 0.
- * @param {int} screenY (Optional) The y-coordinate on the screen at which
+ * @param {Number} screenY (Optional) The y-coordinate on the screen at which
  *      point the event occured. The default is 0.
- * @param {int} clientX (Optional) The x-coordinate on the client at which
+ * @param {Number} clientX (Optional) The x-coordinate on the client at which
  *      point the event occured. The default is 0.
- * @param {int} clientY (Optional) The y-coordinate on the client at which
+ * @param {Number} clientY (Optional) The y-coordinate on the client at which
  *      point the event occured. The default is 0.
  * @param {Boolean} ctrlKey (Optional) Indicates if one of the CTRL keys
  *      is pressed while the event is firing. The default is false.
@@ -311,7 +311,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
  *      is pressed while the event is firing. The default is false.
  * @param {Boolean} metaKey (Optional) Indicates if one of the META keys
  *      is pressed while the event is firing. The default is false.
- * @param {int} button (Optional) The button being pressed while the event
+ * @param {Number} button (Optional) The button being pressed while the event
  *      is executing. The value should be 0 for the primary mouse button
  *      (typically the left button), 1 for the terciary mouse button
  *      (typically the middle button), and 2 for the secondary mouse button
@@ -515,7 +515,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
  *      is false.
  * @param {Window} view (Optional) The view containing the target. This is
  *      typically the window object. The default is window.
- * @param {int} detail (Optional) The number of times the mouse button has
+ * @param {Number} detail (Optional) The number of times the mouse button has
  *      been used. The default value is 1.
  */
 function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
@@ -606,15 +606,15 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
  *      is false.
  * @param {Window} view (Optional) The view containing the target. This is
  *      typically the window object. The default is window.
- * @param {int} detail (Optional) Specifies some detail information about
+ * @param {Number} detail (Optional) Specifies some detail information about
  *      the event depending on the type of event.
- * @param {int} screenX (Optional) The x-coordinate on the screen at which
+ * @param {Number} screenX (Optional) The x-coordinate on the screen at which
  *      point the event occured. The default is 0.
- * @param {int} screenY (Optional) The y-coordinate on the screen at which
+ * @param {Number} screenY (Optional) The y-coordinate on the screen at which
  *      point the event occured. The default is 0.
- * @param {int} clientX (Optional) The x-coordinate on the client at which
+ * @param {Number} clientX (Optional) The x-coordinate on the client at which
  *      point the event occured. The default is 0.
- * @param {int} clientY (Optional) The y-coordinate on the client at which
+ * @param {Number} clientY (Optional) The y-coordinate on the client at which
  *      point the event occured. The default is 0.
  * @param {Boolean} ctrlKey (Optional) Indicates if one of the CTRL keys
  *      is pressed while the event is firing. The default is false.
@@ -624,10 +624,10 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
  *      is pressed while the event is firing. The default is false.
  * @param {Boolean} metaKey (Optional) Indicates if one of the META keys
  *      is pressed while the event is firing. The default is false.
- * @param {float} scale (iOS v2+ only) The distance between two fingers
+ * @param {Number} scale (iOS v2+ only) The distance between two fingers
  *      since the start of an event as a multiplier of the initial distance.
  *      The default value is 1.0.
- * @param {float} rotation (iOS v2+ only) The delta rotation since the start
+ * @param {Number} rotation (iOS v2+ only) The delta rotation since the start
  *      of an event, in degrees, where clockwise is positive and
  *      counter-clockwise is negative. The default value is 0.0.
  */
@@ -709,15 +709,15 @@ function simulateGestureEvent(target, type,
  *      is false.
  * @param {Window} view (Optional) The view containing the target. This is
  *      typically the window object. The default is window.
- * @param {int} detail (Optional) Specifies some detail information about
+ * @param {Number} detail (Optional) Specifies some detail information about
  *      the event depending on the type of event.
- * @param {int} screenX (Optional) The x-coordinate on the screen at which
+ * @param {Number} screenX (Optional) The x-coordinate on the screen at which
  *      point the event occured. The default is 0.
- * @param {int} screenY (Optional) The y-coordinate on the screen at which
+ * @param {Number} screenY (Optional) The y-coordinate on the screen at which
  *      point the event occured. The default is 0.
- * @param {int} clientX (Optional) The x-coordinate on the client at which
+ * @param {Number} clientX (Optional) The x-coordinate on the client at which
  *      point the event occured. The default is 0.
- * @param {int} clientY (Optional) The y-coordinate on the client at which
+ * @param {Number} clientY (Optional) The y-coordinate on the client at which
  *      point the event occured. The default is 0.
  * @param {Boolean} ctrlKey (Optional) Indicates if one of the CTRL keys
  *      is pressed while the event is firing. The default is false.
@@ -733,10 +733,10 @@ function simulateGestureEvent(target, type,
  *      representing all touches associated with this target.
  * @param {TouchList} changedTouches A collection of Touch objects
  *      representing all touches that changed in this event.
- * @param {float} scale (iOS v2+ only) The distance between two fingers
+ * @param {Number} scale (iOS v2+ only) The distance between two fingers
  *      since the start of an event as a multiplier of the initial distance.
  *      The default value is 1.0.
- * @param {float} rotation (iOS v2+ only) The delta rotation since the start
+ * @param {Number} rotation (iOS v2+ only) The delta rotation since the start
  *      of an event, in degrees, where clockwise is positive and
  *      counter-clockwise is negative. The default value is 0.0.
  */
