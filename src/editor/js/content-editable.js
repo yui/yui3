@@ -91,7 +91,7 @@
         * In case of ContentEditable element these will be equal to pageX and pageY of the container.
         * @private
         * @method _onDomEvent
-        * @param {Event.Facade} e
+        * @param {EventFacade} e
         */
         _onDomEvent: function(e) {
             var xy;
@@ -118,7 +118,7 @@
         * Simple pass thru handler for the paste event so we can do content cleanup
         * @private
         * @method _DOMPaste
-        * @param {Event.Facade} e
+        * @param {EventFacade} e
         */
         _DOMPaste: function(e) {
             var inst = this.getInstance(),

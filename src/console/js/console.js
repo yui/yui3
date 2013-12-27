@@ -308,7 +308,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * behavior defined in _defEntryFn.
          *
          * @event entry
-         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         * @param event {EventFacade} An Event Facade object with the following attribute specific properties added:
          *  <dl>
          *      <dt>message</dt>
          *          <dd>The message data normalized into an object literal (see _normalizeMessage)</dd>
@@ -321,7 +321,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * Triggers the reset behavior via the default logic in _defResetFn.
          *
          * @event reset
-         * @param event {Event.Facade} Event Facade object
+         * @param event {EventFacade} Event Facade object
          * @preventable _defResetFn
          */
         this.publish(RESET, { defaultFn: this._defResetFn });

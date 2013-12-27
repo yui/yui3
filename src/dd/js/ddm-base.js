@@ -228,7 +228,7 @@
         * Internal listener for the mousemove on Document. Checks if the shim is in place to only call _move once per mouse move
         * @private
         * @method _docMove
-        * @param {Event.Facade} ev The Dom mousemove Event
+        * @param {EventFacade} ev The Dom mousemove Event
         */
         _docMove: function(ev) {
             if (!this._shimming) {
@@ -239,7 +239,7 @@
         * Internal listener for the mousemove DOM event to pass to the Drag's move method.
         * @private
         * @method _move
-        * @param {Event.Facade} ev The Dom mousemove Event
+        * @param {EventFacade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {
