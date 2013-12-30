@@ -79,7 +79,7 @@
         * Handler for dragMode attribute setter.
         * @private
         * @method _setDragMode
-        * @param String/Number The Number value or the String for the DragMode to default all future drag instances to.
+        * @param {String|Number} mode The Number value or the String for the DragMode to default all future drag instances to.
         * @return Number The Mode to be set
         */
         _setDragMode: function(mode) {
