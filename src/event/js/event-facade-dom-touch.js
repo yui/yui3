@@ -148,7 +148,7 @@ if ((win && ("ontouchstart" in win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
     GESTURE_MAP.cancel = ["touchcancel", "mousecancel"];
 }
 
-else if (win && 'onpointerdown' in win) {
+else if (win && win.PointerEvent) {
     GESTURE_MAP.start = "pointerdown";
     GESTURE_MAP.end = "pointerup";
     GESTURE_MAP.move = "pointermove";

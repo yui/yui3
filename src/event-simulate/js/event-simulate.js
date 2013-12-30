@@ -27,7 +27,7 @@ var L   = Y.Lang,
         contextmenu:1
     },
 
-    pointerEvents = (win && 'onpointerdown' in win) ? {
+    pointerEvents = (win && win.PointerEvent) ? {
         pointerover:  1,
         pointerout:   1,
         pointerdown:  1,
