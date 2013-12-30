@@ -207,7 +207,6 @@
         /**
         * Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @method stopDrag
-        * @return {Self}
         * @chainable
         */
         stopDrag: function() {
