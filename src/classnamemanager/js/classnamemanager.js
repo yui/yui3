@@ -58,7 +58,7 @@ Y.ClassNameManager = function () {
 		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
 		 *
 		 * @method getClassName
-		 * @param {String}+ classnameSection one or more classname sections to be joined
+		 * @param {String} classnameSection one or more classname sections to be joined
 		 * @param {Boolean} skipPrefix If set to true, the classname will not be prefixed with the default Y.config.classNameDelimiter value.
 		 */
 		getClassName: Y.cached(function () {
