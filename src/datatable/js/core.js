@@ -1087,7 +1087,7 @@ its content.
 
 
 @property cellTemplate
-@type HTML template
+@type String
  */
 /**
 String or function used to translate the raw record data for each cell in a
