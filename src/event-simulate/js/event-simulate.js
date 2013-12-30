@@ -8,6 +8,7 @@
 
 //shortcuts
 var L   = Y.Lang,
+    win = Y.config.win,
     isFunction  = L.isFunction,
     isString    = L.isString,
     isBoolean   = L.isBoolean,
@@ -26,7 +27,13 @@ var L   = Y.Lang,
         contextmenu:1
     },
 
-    msPointerEvents = {
+    pointerEvents = (win && 'onpointerdown' in win) ? {
+        pointerover:  1,
+        pointerout:   1,
+        pointerdown:  1,
+        pointerup:    1,
+        pointermove:  1
+    } : {
         MSPointerOver:  1,
         MSPointerOut:   1,
         MSPointerDown:  1,
@@ -339,7 +346,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     if (isString(type)){
 
         //make sure it's a supported mouse event or an msPointerEvent.
-        if (!mouseEvents[type.toLowerCase()] && !msPointerEvents[type]){
+        if (!mouseEvents[type.toLowerCase()] && !pointerEvents[type]){
             Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
     }
@@ -901,7 +908,7 @@ Y.Event.simulate = function(target, type, options){
 
     options = options || {};
 
-    if (mouseEvents[type] || msPointerEvents[type]){
+    if (mouseEvents[type] || pointerEvents[type]){
         simulateMouseEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.detail, options.screenX,
             options.screenY, options.clientX, options.clientY, options.ctrlKey,
