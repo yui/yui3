@@ -262,7 +262,6 @@ YUITest.ArrayAssert = {
      * @param {Function} comparator A function that returns true if the values are equivalent
      *      or false if not.
      * @param {String} message (Optional) The message to display if the assertion fails.
-     * @return {undefined}
      * @method itemsAreEquivalent
      * @static
      */

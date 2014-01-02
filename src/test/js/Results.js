@@ -64,7 +64,6 @@ YUITest.Results = function(name){
  * Includes results from another results object into this one.
  * @param {Test.Results} result The results object to include.
  * @method include
- * @return {undefined}
  */
 YUITest.Results.prototype.include = function(results){
     this.passed += results.passed;

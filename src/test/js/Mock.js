@@ -58,7 +58,6 @@ YUITest.Mock = function(template){
  *      An optional 'error' key defines an error type to be thrown in all cases.
  *      The "callCount" key provides an optional number of times the method is
  *      expected to be called (the default is 1).
- * @return {undefined}
  * @method expect
  * @static
  */
@@ -138,7 +137,6 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
  * Verifies that all expectations of a mock object have been met and
  * throws an assertion error if not.
  * @param {Object} mock The object to verify..
- * @return {undefined}
  * @method verify
  * @static
  */

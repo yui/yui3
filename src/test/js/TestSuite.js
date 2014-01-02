@@ -52,7 +52,6 @@ YUITest.TestSuite.prototype = {
     /**
      * Adds a test suite or test case to the test suite.
      * @param {Test.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
-     * @return {undefined}
      * @method add
      */
     add : function (testObject) {
@@ -68,7 +67,6 @@ YUITest.TestSuite.prototype = {
 
     /**
      * Function to run before each test is executed.
-     * @return {undefined}
      * @method setUp
      */
     setUp : function () {
@@ -76,7 +74,6 @@ YUITest.TestSuite.prototype = {
 
     /**
      * Function to run after each test is executed.
-     * @return {undefined}
      * @method tearDown
      */
     tearDown: function () {
