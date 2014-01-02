@@ -4,7 +4,7 @@ Timers
 @VERSION@
 ------
 
-* No changes.
+* Speed up Y.soon using MessageChannel as an asynchronous scheduler.
 
 3.14.1
 ------

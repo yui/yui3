@@ -66,7 +66,7 @@ var YGLOBAL = Y.config.global,
 // Check for a native or already polyfilled implementation of setImmediate.
 if ('setImmediate' in YGLOBAL) {
     soon._asynchronizer = function (callbackFunction) {
-        setImmediate(callbackFunction);
+        YGLOBAL.setImmediate(callbackFunction);
     };
     soon._impl = 'setImmediate';
 }
@@ -75,6 +75,62 @@ if ('setImmediate' in YGLOBAL) {
 else if (('process' in YGLOBAL) && ('nextTick' in process)) {
     soon._asynchronizer = process.nextTick;
     soon._impl = 'nextTick';
+}
+
+// MessageChannel is an unobtrusive asynchronous communication layer that can
+// be used to communicate between frames. It can also be used to communicate
+// safely between untrusted objects without them having to be on differente
+// frames. This is chosen over the regular postMessage because it works in a
+// similar way but it does not fire global message events
+else if ('MessageChannel' in YGLOBAL) {
+    (function () {
+        var queue = [],
+            channel = new MessageChannel(),
+            // At least Safari 6 is having trouble firing message events the
+            // first time after the page loads. This was found by asap.js.
+            // See https://github.com/kriskowal/asap/blob/master/asap.js#L89-L90
+            dispatch = function () {
+                setTimeout(function () {
+                    dispatch = function () {
+                        channel.port2.postMessage(0);
+                    };
+                    flush();
+                }, 0);
+            };
+
+        function makeThrow(e) {
+            return function () {
+                throw e;
+            };
+        }
+
+        // Since this implementation is based on events of a certain object
+        // a queue is a way to avoid creating one new event emitter per
+        // callback. This function flushes the queue and makes sure the way
+        // errors work in microtasks or ticks is maintained
+        function flush() {
+            var _queue = queue, i = 0, length = _queue.length;
+            queue = [];
+            for (; i < length; i++) {
+                // use try...catch to emulate the native behavior of a microtask
+                // not interrupting the next one when throwing an error
+                try {
+                    _queue[i]();
+                } catch (e) {
+                    setTimeout(makeThrow(e), 0);
+                }
+            }
+        }
+
+        channel.port1.onmessage = flush;
+
+        soon._asynchronizer = function (callbackFunction) {
+            if (queue.push(callbackFunction) === 1) {
+                dispatch();
+            }
+        };
+        soon._impl = 'MessageChannel';
+    }());
 }
 
 // The most widely supported asynchronizer is setTimeout so we use that as

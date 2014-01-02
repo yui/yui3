@@ -19,9 +19,13 @@ YUI.add('timers-tests', function (Y) {
             reference.push('a');
             Y.soon(function () {
                 reference.push('c');
-                test.resume(function () {
-                    ArrayAssert.itemsAreSame(['a', 'b', 'c'], reference, 'Y.soon should not execute synchronously');
+                Y.soon(function () {
+                    reference.push('e');
+                    test.resume(function () {
+                        ArrayAssert.itemsAreSame(['a', 'b', 'c', 'd', 'e'], reference, 'Y.soon should not execute synchronously');
+                    });
                 });
+                reference.push('d');
             });
             reference.push('b');
 
