@@ -364,7 +364,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {String | Class} shapeClass The type of shape
      * @param {Object} fill Properties for the shape's fill
      * @param {Object} border Properties for the shape's border
-     * @param {String} text String to be rendered as the legend's text
+     * @param {String} labelStyles String to be rendered as the legend's text
      * @param {Number} width Total width of the legend item
      * @param {Number} height Total height of the legend item
      * @param {String} text Text for the legendItem

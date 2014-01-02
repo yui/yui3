@@ -483,7 +483,7 @@
     /**
     * The id of the outer cursor wrapper
     * @static
-    * @property DEFAULT_TAG
+    * @property CURID
     */
     Y.EditorSelection.CURID = 'yui-cursor';
 

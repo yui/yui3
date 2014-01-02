@@ -736,7 +736,7 @@ Y.mix(Scrollable.prototype, {
     case.  All other values are invalid.
 
     @method _setScrollable
-    @param {String|Boolea} val Incoming value for the `scrollable` attribute
+    @param {String|Boolean} val Incoming value for the `scrollable` attribute
     @return {String}
     @protected
     @since 3.5.0

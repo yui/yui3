@@ -98,7 +98,7 @@ Event = function() {
      * Custom event wrappers for DOM events.  Key is
      * 'event:' + Element uid stamp + event type
      * @property _wrappers
-     * @type Y.Event.Custom
+     * @type CustomEvent
      * @static
      * @private
      */
@@ -897,7 +897,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @param {HTMLElement} el      the element to bind the handler to
          * @param {string}      type   the type of event handler
          * @param {function}    fn      the callback to invoke
-         * @param {boolen}      capture capture or bubble phase
+         * @param {Boolean}      capture capture or bubble phase
          * @static
          * @private
          */
@@ -910,7 +910,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @param {HTMLElement} el      the element to bind the handler to
          * @param {string}      type   the type of event handler
          * @param {function}    fn      the callback to invoke
-         * @param {boolen}      capture capture or bubble phase
+         * @param {Boolean}      capture capture or bubble phase
          * @static
          * @private
          */

@@ -962,7 +962,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method _isOutOfBounds
      * @param x {Number} [optional] The X position to check
      * @param y {Number} [optional] The Y position to check
-     * @return {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
+     * @return {Boolean} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
     _isOutOfBounds: function (x, y) {

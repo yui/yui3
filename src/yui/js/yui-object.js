@@ -23,7 +23,7 @@ var Lang   = Y.Lang,
  * pass through `Object.create()`'s second argument (properties) in order to
  * ensure compatibility with older browsers.
  *
- * @method ()
+ * @method Object
  * @param {Object} obj Prototype object.
  * @return {Object} New object using _obj_ as its prototype.
  * @static

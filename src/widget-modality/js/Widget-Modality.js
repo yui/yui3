@@ -375,7 +375,7 @@ var WIDGET       = 'widget',
          *
          * @method _uiSetHostZIndexModal
          * @protected
-         * @param {Number} Z-Index of the widget
+         * @param {Number} zIndex Z-Index of the widget
          */
         _uiSetHostZIndexModal : function (zIndex) {
 

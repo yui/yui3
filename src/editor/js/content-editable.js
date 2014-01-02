@@ -333,10 +333,10 @@
         },
 
         /**
-        * Set's the linked CSS on the instance.
+        * Sets the linked CSS on the instance.
         * @private
         * @method _setLinkedCSS
-        * @param {css} String The linkedcss value
+        * @param {String} css The linkedcss value
         * @return {String}
         */
         _setLinkedCSS: function(css) {
@@ -352,10 +352,10 @@
         },
 
         /**
-        * Set's the dir (language direction) attribute on the container.
+        * Sets the dir (language direction) attribute on the container.
         * @private
         * @method _setDir
-        * @param {value} String The language direction
+        * @param {String} value The language direction
         * @return {String}
         */
         _setDir: function(value) {
@@ -377,7 +377,7 @@
         * Set's the extra CSS on the instance.
         * @private
         * @method _setExtraCSS
-        * @param {css} String The CSS style to be set as extra css
+        * @param {String} css The CSS style to be set as extra css
         * @return {String}
         */
         _setExtraCSS: function(css) {
@@ -403,10 +403,10 @@
         },
 
         /**
-        * Set's the language value on the instance.
+        * Sets the language value on the instance.
         * @private
         * @method _setLang
-        * @param {value} String The language to be set
+        * @param {String} value The language to be set
         * @return {String}
         */
         _setLang: function(value) {

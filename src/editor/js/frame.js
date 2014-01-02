@@ -483,7 +483,7 @@
         /**
         * @private
         * @method _setLinkedCSS
-        * @description Set's the linked CSS on the instance..
+        * @description Sets the linked CSS on the instance..
         */
         _setLinkedCSS: function(css) {
             if (this._ready) {
