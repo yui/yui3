@@ -5,6 +5,8 @@ new Y.DataTable({
     columns: [ Y.DataTable.Expand.key, 'isbn', 'title', 'author'],
 
     data: [
+        { isbn: '', title: '', author: '', qty: '', price: '' },
+        { isbn: '', title: '', author: '', qty: '', price: '', __expanded: true },
         { isbn: '', title: '', author: '', qty: '', price: '' }
     ],
 
