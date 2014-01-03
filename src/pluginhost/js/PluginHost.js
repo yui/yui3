@@ -153,7 +153,7 @@
          * instance through the "plugins" configuration property.
          *
          * @method _initPlugins
-         * @param {Config} config The configuration object with property name/value pairs.
+         * @param {Object} config The configuration object with property name/value pairs.
          * @private
          */
 

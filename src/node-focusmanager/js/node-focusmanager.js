@@ -938,10 +938,9 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	* @method focus
 	* @description Focuses the active descendant and sets the
 	* <code>focused</code> attribute to true.
-	* @param index {Number} Optional. Number representing the index of the
-	* descendant to be set as the active descendant.
-	* @param index {Node} Optional. Node instance representing the
-	* descendant to be set as the active descendant.
+	* @param index {Number|Node} Optional. Number representing the index of the
+	* descendant to be set as the active descendant or Node instance
+	* representing the descendant to be set as the active descendant.
 	*/
 	focus: function (index) {
 

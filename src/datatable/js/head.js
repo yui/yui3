@@ -85,7 +85,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     customize how header cell markup is created.
 
     @property CELL_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}{title}>{content}</th>'
     @since 3.5.0
     **/
@@ -110,7 +110,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     customize the row markup.
 
     @property ROW_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<tr>{content}</tr>'
     @since 3.5.0
     **/
@@ -134,7 +134,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     HTML templates used to create the `<thead>` containing the table headers.
 
     @property THEAD_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<thead class="{className}">{content}</thead>'
     @since 3.6.0
     **/
@@ -178,7 +178,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     from the `columns` property.
 
     @method render
-    @return {HeaderView} The instance
     @chainable
     @since 3.5.0
     **/

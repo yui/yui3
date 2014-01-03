@@ -124,7 +124,7 @@ Y.mix(Scrollable.prototype, {
     the table is horizontally scrolling.
 
     @property _CAPTION_TABLE_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<table class="{className}" role="presentation"></table>'
     @protected
     @since 3.5.0
@@ -136,7 +136,7 @@ Y.mix(Scrollable.prototype, {
     synchronize fixed header column widths.
 
     @property _SCROLL_LINER_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<div class="{className}"></div>'
     @protected
     @since 3.5.0
@@ -147,7 +147,7 @@ Y.mix(Scrollable.prototype, {
     Template for the virtual scrollbar needed in "y" and "xy" scrolling setups.
 
     @property _SCROLLBAR_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<div class="{className}"><div></div></div>'
     @protected
     @since 3.5.0
@@ -159,7 +159,7 @@ Y.mix(Scrollable.prototype, {
     horizontally scrolling.
 
     @property _X_SCROLLER_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<div class="{className}"></div>'
     @protected
     @since 3.5.0
@@ -171,7 +171,7 @@ Y.mix(Scrollable.prototype, {
     vertically scrolling tables.
 
     @property _Y_SCROLL_HEADER_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>'
     @protected
     @since 3.5.0
@@ -183,7 +183,7 @@ Y.mix(Scrollable.prototype, {
     vertically scrolling.
 
     @property _Y_SCROLLER_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<div class="{className}"><div class="{scrollerClassName}"></div></div>'
     @protected
     @since 3.5.0
@@ -736,7 +736,7 @@ Y.mix(Scrollable.prototype, {
     case.  All other values are invalid.
 
     @method _setScrollable
-    @param {String|Boolea} val Incoming value for the `scrollable` attribute
+    @param {String|Boolean} val Incoming value for the `scrollable` attribute
     @return {String}
     @protected
     @since 3.5.0

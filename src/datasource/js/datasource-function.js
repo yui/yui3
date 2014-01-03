@@ -63,7 +63,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
      * event with the function results (synchronously).
      *
      * @method _defRequestFn
-     * @param e {Event.Facade} Event Facade with the following properties:
+     * @param e {EventFacade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>

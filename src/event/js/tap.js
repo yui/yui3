@@ -98,7 +98,7 @@ Y.Event.define(EVT_TAP, {
         });
 
     @method on
-    @param {Y.Node} node
+    @param {Node} node
     @param {Array} subscription
     @param {Boolean} notifier
     @public
@@ -112,7 +112,7 @@ Y.Event.define(EVT_TAP, {
     Detaches all event subscriptions set up by the event-tap module
 
     @method detach
-    @param {Y.Node} node
+    @param {Node} node
     @param {Array} subscription
     @param {Boolean} notifier
     @public
@@ -134,7 +134,7 @@ Y.Event.define(EVT_TAP, {
         }, 'li a');
 
     @method delegate
-    @param {Y.Node} node
+    @param {Node} node
     @param {Array} subscription
     @param {Boolean} notifier
     @param {String | Function} filter
@@ -152,7 +152,7 @@ Y.Event.define(EVT_TAP, {
     Only used if you use node.delegate(...) instead of node.on(...);
 
     @method detachDelegate
-    @param {Y.Node} node
+    @param {Node} node
     @param {Array} subscription
     @param {Boolean} notifier
     @public
@@ -167,7 +167,7 @@ Y.Event.define(EVT_TAP, {
 
     @method _start
     @param {DOMEventFacade} event
-    @param {Y.Node} node
+    @param {Node} node
     @param {Array} subscription
     @param {Boolean} notifier
     @param {Boolean} delegate
@@ -246,7 +246,7 @@ Y.Event.define(EVT_TAP, {
 
     @method _end
     @param {DOMEventFacade} event
-    @param {Y.Node} node
+    @param {Node} node
     @param {Array} subscription
     @param {Boolean} notifier
     @param {Boolean} delegate

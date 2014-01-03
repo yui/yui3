@@ -371,7 +371,7 @@ Y.extend(Widget, Y.Base, {
      * </code>
      *
      * @method getClassName
-     * @param {String}+ One or more classname bits to be joined and prefixed
+     * @param {String} [classnames*] One or more classname bits to be joined and prefixed
      */
     getClassName: function () {
         return _getClassName.apply(ClassNameManager, [this._cssPrefix].concat(Y.Array(arguments), true));
@@ -754,7 +754,7 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _setBB
      * @private
-     * @param Node/String
+     * @param {Node|String} node
      * @return Node
      */
     _setBB: function(node) {
@@ -815,7 +815,7 @@ Y.extend(Widget, Y.Base, {
      * @param {String} id The node's id attribute
      * @param {Node|String} node The node reference
      * @param {String} template HTML string template for the node
-     * @param {boolean} true if this is the boundingBox, false if it's the contentBox
+     * @param {boolean} isBounding true if this is the boundingBox, false if it's the contentBox
      * @return {Node} The node
      */
     _setBox : function(id, node, template, isBounding) {

@@ -187,7 +187,6 @@
         * Add this Drop instance to a group, this should be used for on-the-fly group additions.
         * @method addToGroup
         * @param {String} g The group to add this Drop Instance to.
-        * @return {Self}
         * @chainable
         */
         addToGroup: function(g) {
@@ -198,7 +197,6 @@
         * Remove this Drop instance from a group, this should be used for on-the-fly group removals.
         * @method removeFromGroup
         * @param {String} g The group to remove this Drop Instance from.
-        * @return {Self}
         * @chainable
         */
         removeFromGroup: function(g) {
