@@ -87,9 +87,9 @@ Y.SWFDetect = {
      * than or equal to the one specified. If it is, this method returns true; it is false otherwise.
      * @method isFlashVersionAtLeast
      * @return {Boolean} Whether the Flash player version is greater than or equal to the one specified.
-     * @param flashMajor {int} The Major version of the Flash player to compare against.
-     * @param flashMinor {int} The Minor version of the Flash player to compare against.
-     * @param flashRev {int} The Revision version of the Flash player to compare against.
+     * @param flashMajor {Number} The Major version of the Flash player to compare against.
+     * @param flashMinor {Number} The Minor version of the Flash player to compare against.
+     * @param flashRev {Number} The Revision version of the Flash player to compare against.
      */
     isFlashVersionAtLeast : function (flashMajor, flashMinor, flashRev) {
         var uaMajor    = makeInt(uA.flashMajor),
