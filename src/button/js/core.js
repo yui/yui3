@@ -143,7 +143,7 @@ ButtonCore.prototype = {
     /**
      * @method _getLabelHTML
      * @description Getter for a button's `labelHTML` ATTR
-     * @return {HTML} The HTML label of the button
+     * @return {String} The HTML label of the button
      * @private
      */
     _getLabelHTML: function () {
@@ -156,10 +156,10 @@ ButtonCore.prototype = {
     /**
      * @method _setLabel
      * @description Setter for a button's `label` ATTR
-     * @param value (String) The value to set for `label`
-     * @param name (String) The name of this ATTR (`label`)
-     * @param opts (Object) Additional options
-     *    @param opts.src (String) A string identifying the callee.
+     * @param value {String} The value to set for `label`
+     * @param name {String} The name of this ATTR (`label`)
+     * @param opts {Object} Additional options
+     *    @param opts.src {String} A string identifying the callee.
      *        `internal` will not sync this value with the `labelHTML` ATTR
      * @return {String} The text label for the given node
      * @private
@@ -177,12 +177,12 @@ ButtonCore.prototype = {
     /**
      * @method _setLabelHTML
      * @description Setter for a button's `labelHTML` ATTR
-     * @param value (HTML) The value to set for `labelHTML`
-     * @param name (String) The name of this ATTR (`labelHTML`)
-     * @param opts (Object) Additional options
-     *    @param opts.src (String) A string identifying the callee.
+     * @param value {String} The value to set for `labelHTML`
+     * @param name {String} The name of this ATTR (`labelHTML`)
+     * @param opts {Object} Additional options
+     *    @param opts.src {String} A string identifying the callee.
      *        `internal` will not sync this value with the `label` ATTR
-     * @return {HTML} The HTML label for the given node
+     * @return {String} The HTML label for the given node
      * @private
      */
     _setLabelHTML: function (value, name, opts) {
@@ -366,7 +366,7 @@ ButtonCore._getTextLabelFromNode = function (node) {
  *
  * @method _getHTMLFromNode
  * @param node {Node} The parent node
- * @return {HTML} The HTML label for a given node
+ * @return {String} The HTML label for a given node
  * @private
  * @static
  */

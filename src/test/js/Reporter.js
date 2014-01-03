@@ -58,8 +58,7 @@
         /**
          * Adds a field to the form that submits the results.
          * @param {String} name The name of the field.
-         * @param {Variant} value The value of the field.
-         * @return {Void}
+         * @param {Any} value The value of the field.
          * @method addField
          */
         addField : function (name, value){
@@ -68,7 +67,6 @@
 
         /**
          * Removes all previous defined fields.
-         * @return {Void}
          * @method clearFields
          */
         clearFields : function(){
@@ -78,7 +76,6 @@
         /**
          * Cleans up the memory associated with the TestReporter, removing DOM elements
          * that were created.
-         * @return {Void}
          * @method destroy
          */
         destroy : function() {
@@ -96,7 +93,6 @@
         /**
          * Sends the report to the server.
          * @param {Object} results The results object created by TestRunner.
-         * @return {Void}
          * @method report
          */
         report : function(results){

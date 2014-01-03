@@ -12,7 +12,7 @@ Y.mix(Y.namespace("XML"), {
      *
      * @method parse
      * @param data {String} Data to convert.
-     * @return {XMLDoc} XML Document.
+     * @return {XMLDocument} XML Document.
      */
     parse: function(data) {
         var xmlDoc = null, win;

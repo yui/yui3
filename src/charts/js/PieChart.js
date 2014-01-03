@@ -307,7 +307,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      *  </dl>
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
-     * @return {HTML}
+     * @return {HTMLElement}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)

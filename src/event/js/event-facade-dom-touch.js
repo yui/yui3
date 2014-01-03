@@ -25,7 +25,7 @@ var SCALE = "scale",
  * @private
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
- * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+ * @param wrapper {CustomEvent} the custom event wrapper for this DOM event
  */
 Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
