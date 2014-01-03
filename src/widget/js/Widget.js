@@ -371,7 +371,7 @@ Y.extend(Widget, Y.Base, {
      * </code>
      *
      * @method getClassName
-     * @param {String[]} [classnames*] One or more classname bits to be joined and prefixed
+     * @param {String} [classnames*] One or more classname bits to be joined and prefixed
      */
     getClassName: function () {
         return _getClassName.apply(ClassNameManager, [this._cssPrefix].concat(Y.Array(arguments), true));

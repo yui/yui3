@@ -156,7 +156,7 @@ Y_Node.getDOMNode = function(node) {
  * @method scrubVal
  * @static
  *
- * @param {any} node The Node instance or an HTMLElement
+ * @param {HTMLElement|HTMLElement[]|Node} node The Node instance or an HTMLElement
  * @return {Node | NodeList | Any} Depends on what is returned from the DOM node.
  */
 Y_Node.scrubVal = function(val, node) {
@@ -764,7 +764,7 @@ Y.mix(Y_Node.prototype, {
      * Invokes a method on the Node instance
      * @method invoke
      * @param {String} method The name of the method to invoke
-     * @param {any[]} [args*] Arguments to invoke the method with.
+     * @param {any} [args*] Arguments to invoke the method with.
      * @return {any} Whatever the underly method returns.
      * DOM Nodes and Collections return values
      * are converted to Node/NodeList instances.

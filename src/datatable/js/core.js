@@ -999,7 +999,7 @@ It defaults to the value of the [key](#property_key) property or the text
     { key: 'MfgvaPrtNum', label: 'Part Number' }
 
 @property label
-@@type {String}
+@type {String}
  */
 /**
 Used to create stacked headers.
