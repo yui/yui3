@@ -134,6 +134,12 @@
                     "event-hover"
                 ],
                 "skinnable": true
+            },
+            "datatable-expand": {
+                "requires": [
+                    "datatable-base"
+                ],
+                "skinnable": true
             }
         }
     }

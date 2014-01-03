@@ -85,6 +85,11 @@
             "jsfiles": [
                 "highlight.js"
             ]
+        },
+        "datatable-expand": {
+            "jsfiles": [
+                "expand.js"
+            ]
         }
     }
 }
