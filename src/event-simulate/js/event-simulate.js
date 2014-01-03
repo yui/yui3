@@ -96,27 +96,25 @@ Y.mix(bubbleEvents, touchEvents);
  * @param {HTMLElement} target The target of the given event.
  * @param {String} type The type of event to fire. This can be any one of
  *      the following: keyup, keydown, and keypress.
- * @param {Boolean} bubbles (Optional) Indicates if the event can be
+ * @param {Boolean} [bubbles=true] Indicates if the event can be
  *      bubbled up. DOM Level 3 specifies that all key events bubble by
- *      default. The default is true.
- * @param {Boolean} cancelable (Optional) Indicates if the event can be
+ *      default.
+ * @param {Boolean} [cancelable=true] Indicates if the event can be
  *      canceled using preventDefault(). DOM Level 3 specifies that all
- *      key events can be cancelled. The default
- *      is true.
- * @param {Window} view (Optional) The view containing the target. This is
- *      typically the window object. The default is window.
- * @param {Boolean} ctrlKey (Optional) Indicates if one of the CTRL keys
- *      is pressed while the event is firing. The default is false.
- * @param {Boolean} altKey (Optional) Indicates if one of the ALT keys
- *      is pressed while the event is firing. The default is false.
- * @param {Boolean} shiftKey (Optional) Indicates if one of the SHIFT keys
- *      is pressed while the event is firing. The default is false.
- * @param {Boolean} metaKey (Optional) Indicates if one of the META keys
- *      is pressed while the event is firing. The default is false.
- * @param {Number} keyCode (Optional) The code for the key that is in use.
- *      The default is 0.
- * @param {Number} charCode (Optional) The Unicode code for the character
- *      associated with the key being used. The default is 0.
+ *      key events can be cancelled.
+ * @param {Window} [view=window] The view containing the target. This is
+ *      typically the window object.
+ * @param {Boolean} [ctrlKey=false] Indicates if one of the CTRL keys
+ *      is pressed while the event is firing.
+ * @param {Boolean} [altKey=false] Indicates if one of the ALT keys
+ *      is pressed while the event is firing.
+ * @param {Boolean} [shiftKey=false] Indicates if one of the SHIFT keys
+ *      is pressed while the event is firing.
+ * @param {Boolean} [metaKey=false] Indicates if one of the META keys
+ *      is pressed while the event is firing.
+ * @param {Number} [keyCode=0] The code for the key that is in use.
+ * @param {Number} [charCode=0] The Unicode code for the character
+ *      associated with the key being used.
  */
 function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
                              bubbles /*:Boolean*/,  cancelable /*:Boolean*/,
