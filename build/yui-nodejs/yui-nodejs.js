@@ -3807,7 +3807,7 @@ YUI.add('get', function (Y, NAME) {
     * @private
     * @param {String} data The JS to execute
     * @param {String} url The path to the file that was parsed
-    * @param {Callback} cb The callback to execute when this is completed
+    * @param {Function} cb The callback to execute when this is completed
     * @param {Error} cb.err=null Error object
     * @param {String} cb.url The URL that was just parsed
     */
@@ -3841,7 +3841,7 @@ YUI.add('get', function (Y, NAME) {
     * @method _include
     * @private
     * @param {String} url The URL/File path to fetch the content from
-    * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
+    * @param {Function} cb The callback to fire once the content has been executed via `_exec`
     */
     Y.Get._include = function (url, cb) {
         var cfg,
@@ -4737,7 +4737,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2013.12.20-18-06',
+        GALLERY_VERSION = 'gallery-2014.01.03-22-50',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
@@ -7271,7 +7271,7 @@ Y.Loader.prototype = {
      * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
-     * @param {String} [base=self.base] The base url to use
+     * @param {String} [base] The base url to use. Defaults to self.base
      * @return {string} the full url.
      * @private
      */
@@ -7282,7 +7282,8 @@ Y.Loader.prototype = {
     * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
     * @method resolve
     * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
-    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @param {Array} [s] An override for the loader.sorted array. Defaults to
+    * `loader.sorted`.
     * @return {Object} Object hash (js and css) of two arrays of file lists
     * @example This method can be used as an off-line dep calculator
     *
@@ -7493,7 +7494,7 @@ Y.Loader.prototype = {
 
 
     @method load
-    @param {Callback} cb Executed after all load operations are complete
+    @param {Function} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {
