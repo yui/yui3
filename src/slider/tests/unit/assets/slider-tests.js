@@ -593,6 +593,24 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    "tick should default to 0": function () {
+        var slider = new Y.Slider();
+        Y.Assert.areSame(0, slider.get('tick'));
+        slider.destroy();
+    },
+
+    "tick should reject a non-number value": function () {
+        var slider = new Y.Slider({ tick: '12' });
+        Y.Assert.areSame(0, slider.get('tick'));
+        slider.destroy();
+    },
+
+    "tick should reject a value that doesn't evenly divide length": function () {
+        var slider = new Y.Slider({ length: '100px', tick: 7 });
+        Y.Assert.areSame(0, slider.get('tick'));
+        slider.destroy();
+    },
+
     "test value": function () {
         var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
 

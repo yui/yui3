@@ -292,6 +292,22 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
+         * Validates new values assigned to `tick` attribute.
+         *
+         * A valid value must be a number and must evenly divide the length of
+         * the slider.
+         *
+         * @method _validateNewTick
+         * @param value { any } Value assigned to `tick` attribute.
+         * @return { Boolean } True for a valid tick value. False otherwise.
+         * @protected
+         */
+        _validateNewTick: function ( value ) {
+            var length = parseInt(this.get( 'length' ), 10);
+            return Y.Lang.isNumber( value ) && length % value === 0;
+        },
+
+        /**
          * Restricts new values assigned to <code>value</code> attribute to be
          * between the configured <code>min</code> and <code>max</code>.
          * Rounds to nearest integer value.
@@ -373,6 +389,20 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         max: {
             value    : 100,
             validator: '_validateNewMax'
+        },
+
+        /**
+         * If defined (i.e. greater than zero) it constrains the value of the slider
+         * to always be a multiple of _tick_. This effectively defines a whitelisted
+         * set of values.
+         *
+         * @attribute tick
+         * @type { Number }
+         * @default 0
+         */
+        tick: {
+            value    : 0,
+            validator: '_validateNewTick'
         },
 
         /**
