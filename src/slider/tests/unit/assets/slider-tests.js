@@ -776,6 +776,62 @@ suite.add( new Y.Test.Case({
 }));
 
 suite.add( new Y.Test.Case({
+
+    name: "Keyboard - with tick",
+
+    tick: 10,
+
+    value: 50,
+
+    init: function () {
+        Y.one('body').append('<div id="slider_tick"></div>');
+    },
+
+    destroy: function () {
+        Y.one('#slider_tick').remove();
+    },
+
+    setUp: function () {
+        this.slider = new Y.Slider({ tick: this.tick, length: '100px', value: this.value });
+        this.slider.render('#slider_tick');
+    },
+
+    tearDown: function () {
+        this.slider.destroy(true);
+    },
+
+    "page up increments by tick": function () {
+        this.slider.thumb.key(33);
+        Y.Assert.areSame(this.value + this.tick, this.slider.getValue());
+    },
+
+    "arrow up increments by tick": function () {
+        this.slider.thumb.key(38);
+        Y.Assert.areSame(this.value + this.tick, this.slider.getValue());
+    },
+
+    "arrow right increments by tick": function () {
+        this.slider.thumb.key(39);
+        Y.Assert.areSame(this.value + this.tick, this.slider.getValue());
+    },
+
+    "page down decrements by tick": function () {
+        this.slider.thumb.key(34);
+        Y.Assert.areSame(this.value - this.tick, this.slider.getValue());
+    },
+
+    "arrow down decrements by tick": function () {
+        this.slider.thumb.key(40);
+        Y.Assert.areSame(this.value - this.tick, this.slider.getValue());
+    },
+
+    "arrow left decrements by tick": function () {
+        this.slider.thumb.key(37);
+        Y.Assert.areSame(this.value - this.tick, this.slider.getValue());
+    }
+}));
+
+suite.add( new Y.Test.Case({
     name: "Keyboard",
 
     setUp: function () {

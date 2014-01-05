@@ -309,6 +309,30 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
+         * Getter for the `minorStep` attribute.
+         *
+         * @method _getMinorStep
+         * @param value { Number } The value of the attribute before it is massaged/normalized.
+         * @return { Number } The value of the `tick` attribute if it is defined, otherwise returns the `minorStep` value.
+         * @protected
+         */
+        _getMinorStep: function ( value ) {
+            return this.get( TICK ) || value;
+        },
+
+        /**
+         * Getter for the `majorStep` attribute.
+         *
+         * @method _getMajorStep
+         * @param value { Number } The value of the attribute before it is massaged/normalized.
+         * @return { Number } The value of the `tick` attribute if it is defined, otherwise returns the `majorStep` value.
+         * @protected
+         */
+        _getMajorStep: function ( value ) {
+            return this.get( TICK ) || value;
+        },
+
+        /**
          * Restricts new values assigned to <code>value</code> attribute to be
          * between the configured <code>min</code> and <code>max</code>.
          * Rounds to nearest integer value.
@@ -430,7 +454,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 1
          */
         minorStep : {
-            value: 1
+            value : 1,
+            getter: '_getMinorStep'
         },
 
         /**
@@ -442,7 +467,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 10
          */
         majorStep : {
-            value: 10
+            value : 10,
+            getter: '_getMajorStep'
         },
 
         /**
