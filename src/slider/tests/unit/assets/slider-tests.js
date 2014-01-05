@@ -777,6 +777,87 @@ suite.add( new Y.Test.Case({
 
 suite.add( new Y.Test.Case({
 
+    name: "Mouse - with tick",
+
+    tick: 10,
+
+    /**
+     * Simulate a click on the rail.
+     * @param distance { Number } Distance relative to the start of the rail
+     */
+    clickOnRail: function (distance) {
+        var region = this.slider.rail.get('region');
+        this.slider._onRailMouseDown({
+            clientX: region.left + distance,
+            clientY: region.top + Math.floor(region.height / 2),
+            pageX: region.left + distance,
+            pageY: region.top + Math.floor(region.height / 2),
+            halt: function () {}
+        });
+    },
+
+    setUp: function () {
+        Y.one('body').append('<div id="mouse_tick"></div>');
+        this.slider = new Y.Slider({ tick: this.tick, length: '100px' });
+        this.slider.render('#mouse_tick');
+    },
+
+    tearDown: function () {
+        this.slider.destroy();
+        Y.one('#mouse_tick').remove();
+    },
+
+    "clicking on the rail should set the value to a multiple of tick": function () {
+
+        // we should still be close to the start of the rail
+
+        this.clickOnRail(7);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(14);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(21);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(28);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(35);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        // we should be half-way
+
+        this.clickOnRail(42);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(49);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(56);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        // we should get closer to the end of the rail
+
+        this.clickOnRail(63);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(70);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(77);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+    },
+
+    _should: {
+        ignore: {
+            "clicking on the rail should set the value to a multiple of tick": Y.UA.phantomjs || Y.UA.touchEnabled
+        }
+    }
+}));
+
+suite.add( new Y.Test.Case({
+
     name: "Keyboard - with tick",
 
     tick: 10,
