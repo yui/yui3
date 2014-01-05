@@ -660,6 +660,18 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    "setting the value outside of the tick 'whitelist' should constrain it": function () {
+        var slider = new Y.Slider({ tick: 7, length: '70px' });
+
+        slider.setValue(15);
+        Y.Assert.areSame(14, slider.getValue(), 'Expected 15 to be constrained to 14');
+
+        slider.setValue(20);
+        Y.Assert.areSame(21, slider.getValue(), 'Expected 20 to be constrained to 21');
+
+        slider.destroy();
+    },
+
     "setting the min or max should update the value if necessary": function () {
         var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
 

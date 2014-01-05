@@ -10,6 +10,7 @@
 // Constants for compression or performance
 var MIN       = 'min',
     MAX       = 'max',
+    TICK      = 'tick',
     VALUE     = 'value',
 //     MINORSTEP = 'minorStep',
 //     MAJORSTEP = 'majorStep',
@@ -327,8 +328,12 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         /**
          * Returns the nearest valid value to the value input.  If the provided
          * value is outside the min - max range, accounting for min > max
-         * scenarios, the nearest of either min or max is returned.  Otherwise,
-         * the provided value is returned.
+         * scenarios, the nearest of either min or max is returned.
+         *
+         * If `tick` is defined and value is not a multiple of tick, the nearest
+         * multiple value is returned.
+         *
+         * Otherwise the provided value is returned.
          *
          * @method _nearestValue
          * @param value { mixed } Value to test against current min - max range
@@ -336,8 +341,9 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _nearestValue: function ( value ) {
-            var min = this.get( MIN ),
-                max = this.get( MAX ),
+            var min  = this.get( MIN ),
+                max  = this.get( MAX ),
+                tick = this.get( TICK ),
                 tmp;
 
             // Account for reverse value range (min > max)
@@ -345,11 +351,21 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             min = ( max > min ) ? min : max;
             max = tmp;
 
-            return ( value < min ) ?
-                    min :
-                    ( value > max ) ?
-                        max :
-                        value;
+            value = ( value < min )
+                ? min
+                : ( value > max )
+                    ? max
+                    : value;
+
+            // if tick is defined and value is not a multiple of tick
+            // we find the nearest multiple value.
+            if ( tick && ( value % tick ) ) {
+                // e.g. tick is 7 and value is 15; wrong!
+                // round(15/7) = 2; 2*7=14; best candidate!
+                value = tick * round( value / tick );
+            }
+
+            return value;
         }
 
     },
