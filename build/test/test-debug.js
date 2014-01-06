@@ -3029,8 +3029,10 @@ YUITest.DateAssert = {
  * @constructor
  * @param {Object} template (Optional) An object whose methods
  *      should be stubbed out on the mock object.
+ * @param {String} [methodName] (Optional) A method name to
+ *      stub only that given method on the mock object.
  */
-YUITest.Mock = function(template){
+YUITest.Mock = function(template, methodName){
 
     //use blank object is nothing is passed in
     template = template || {};
@@ -3051,7 +3053,10 @@ YUITest.Mock = function(template){
     //create stubs for all methods
     for (name in template){
         if (template.hasOwnProperty(name)){
-            if (typeof template[name] == "function"){
+            if (typeof template[name] == "function" && ((!!methodName && name === methodName) || !methodName)) {
+                // Keep ref to old properties
+                mock[name+"__original_ref"] = mock[name];
+                // Expect it to not have been called by default
                 mock[name] = function(name){
                     return function(){
                         YUITest.Assert.fail("Method " + name + "() was called but was not expected to be.");
@@ -3098,12 +3103,18 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             args = expectation.args || [],
             result = expectation.returns,
             callCount = (typeof expectation.callCount == "number") ? expectation.callCount : 1,
+            callThrough = expectation.callThrough || false,
             error = expectation.error,
-            run = expectation.run || function(){},
+            run,
             runResult,
             i;
 
-        //save expectations
+        if (callThrough) {
+            run = mock[name+"__original_ref"];
+        } else {
+            run = expectation.run || function(){};
+        }
+          //save expectations
         mock.__expectations[name] = expectation;
         expectation.callCount = callCount;
         expectation.actualCallCount = 0;
@@ -3117,15 +3128,18 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
 
         //if the method is expected to be called
         if (callCount > 0){
-            mock[name] = function(){
+            mock[name] = function(call_through_args){
                 try {
                     expectation.actualCallCount++;
-                    YUITest.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
-                    for (var i=0, len=args.length; i < len; i++){
-                        args[i].verify(arguments[i]);
+                    if (!callThrough) {
+                        YUITest.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
+                        for (var i=0, len=args.length; i < len; i++){
+                            args[i].verify(arguments[i]);
+                        }
+                        runResult = run.apply(this, arguments);
+                    } else {
+                        runResult = run.call(this, call_through_args);
                     }
-
-                    runResult = run.apply(this, arguments);
 
                     if (error){
                         throw error;
