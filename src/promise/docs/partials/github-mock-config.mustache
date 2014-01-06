@@ -6,7 +6,7 @@ YUI.GlobalConfig = {
             requires: [],
             condition: {
                 trigger: 'jsonp',
-                when: 'after',
+                when: 'instead',
                 test: function () {
                     return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
                 }
