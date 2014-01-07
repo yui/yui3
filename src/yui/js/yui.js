@@ -425,7 +425,6 @@ proto = {
 
                             // use CDN default
                             return path;
-                        }
                         },
                 ////////////////////////////////////////////////////////////////
                 //                      BEGIN WF2 CHANGE                      //
