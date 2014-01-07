@@ -426,6 +426,19 @@ proto = {
                             // use CDN default
                             return path;
                         }
+                        },
+                ////////////////////////////////////////////////////////////////
+                //                      BEGIN WF2 CHANGE                      //
+                // Justification: To support CSP directive of `unsafe-eval`   //
+                // see line 487                                               //
+                ////////////////////////////////////////////////////////////////
+                getGlobal: (function () {
+                                return this;
+                            }())
+
+                ////////////////////////////////////////////////////////////////
+                //                      END WF2 CHANGE                        //
+                ////////////////////////////////////////////////////////////////
 
             };
 
@@ -470,7 +483,16 @@ proto = {
             useBrowserConsole: true,
             useNativeES5: true,
             win: win,
-            global: Function('return this')()
+            ////////////////////////////////////////////////////////////////
+            //                      BEGIN WF2 CHANGE                      //
+            // Justification: Below code violates CSP `unsafe-eval`       //
+            // directive, which would block execution of YUI              //
+            ////////////////////////////////////////////////////////////////
+            // global: Function('return this')()
+            global: Y.Env.getGlobal
+            ////////////////////////////////////////////////////////////////
+            //                      END WF2 CHANGE                        //
+            ////////////////////////////////////////////////////////////////
         };
 
         //Register the CSS stamp element
