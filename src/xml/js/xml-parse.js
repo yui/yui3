@@ -18,12 +18,12 @@ Y.mix(Y.namespace("XML"), {
         var xmlDoc = null, win;
         if (typeof data === "string") {
             win = Y.config.win;
-            if (win.DOMParser !== undefined) {
-                xmlDoc = new DOMParser().parseFromString(data, "text/xml");            
-            } else if (win.ActiveXObject !== undefined) {
+            if (win.ActiveXObject !== undefined) {
                 xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
                 xmlDoc.async = false;
                 xmlDoc.loadXML(data);            
+            } else if (win.DOMParser !== undefined) {
+                xmlDoc = new DOMParser().parseFromString(data, "text/xml");            
             } else if (win.Windows !== undefined) {
                 xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
                 xmlDoc.loadXml(data);            
