@@ -17,6 +17,7 @@ Y.Mock = Y.Test.Mock;
 Y.ObjectAssert = Y.Test.ObjectAssert;
 Y.ArrayAssert = Y.Test.ArrayAssert;
 Y.DateAssert = Y.Test.DateAssert;
+Y.StringAssert = Y.Test.StringAssert;
 Y.Test.ResultsFormat = Y.Test.TestFormat;
 
 var itemsAreEqual = Y.Test.ArrayAssert.itemsAreEqual;

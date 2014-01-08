@@ -30,6 +30,10 @@ YUI({
             fullpath: './assets/arrayassert-tests.js',
             requires: [ 'test']
         },
+        'stringassert-tests': {
+            fullpath: './assets/stringassert-tests.js',
+            requires: [ 'test']
+        },
         'bugs-tests': {
             fullpath: './assets/bugs-tests.js',
             requires: [ 'test']
@@ -39,7 +43,7 @@ YUI({
             requires: [ 'test']
         }
     }
-}).use('format-tests', 'mock-tests', 'objectassert-tests', 'arrayassert-tests', 'bugs-tests', 'general-tests', 'test-console', 'test', function(Y) {
+}).use('format-tests', 'mock-tests', 'objectassert-tests', 'arrayassert-tests', 'stringassert-tests', 'bugs-tests', 'general-tests', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
     
     Y.Test.Runner.setName('YUITest');

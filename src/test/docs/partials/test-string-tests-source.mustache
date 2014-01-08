@@ -1,0 +1,247 @@
+<div id="testLogger"></div>
+
+<script>
+
+YUI().use('test-console', 'test', function (Y) {
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.isEmpty()",
+
+    "should pass if a string is empty": function () {
+        Y.StringAssert.isEmpty("");
+    },
+
+    "should fail is a string is not empty": function () {
+        Y.StringAssert.isEmpty("there is no spoon");
+    },
+
+    "should fail even if a string only contains whitespaces": function () {
+        Y.StringAssert.isEmpty("  \r\n  ");
+    },
+
+    _should: {
+        fail: {
+            "should fail is a string is not empty": true,
+            "should fail even if a string only contains whitespaces": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.isNotEmpty()",
+
+    "should pass if a string is not empty": function () {
+        Y.StringAssert.isNotEmpty("there is no spoon");
+    },
+
+    "should pass even if a string only contains whitespaces": function () {
+        Y.StringAssert.isNotEmpty("  \r\n  ");
+    },
+
+    "should fail if a string is empty": function () {
+        Y.StringAssert.isNotEmpty("");
+    },
+
+    _should: {
+        fail: {
+            "should fail if a string is empty": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.isTrimmed()",
+
+    "should pass if there is no leading or trailing whitespaces": function () {
+        Y.StringAssert.isTrimmed("there is no spoon");
+    },
+
+    "should fail if there are leading whitespaces": function () {
+        Y.StringAssert.isTrimmed("\r\nthere is no spoon");
+    },
+
+    "should fail if there are trailing whitespaces": function () {
+        Y.StringAssert.isTrimmed("there is no spoon\r\n");
+    },
+
+    "should fail if there are both leading and trailing whitespaces": function () {
+        Y.StringAssert.isTrimmed("\r\nthere is no spoon\r\n");
+    },
+
+    _should: {
+        fail: {
+            "should fail if there are leading whitespaces": true,
+            "should fail if there are trailing whitespaces": true,
+            "should fail if there are both leading and trailing whitespaces": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.contains()",
+
+    "should pass if 'efg' is found in 'abcdefgh'": function () {
+        Y.StringAssert.contains("efg", "abcdefgh");
+    },
+
+    "should fail if 'zzz' is not found in 'abcdefgh'": function () {
+        Y.StringAssert.contains("zzz", "abcdefgh");
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'zzz' is not found in 'abcdefgh'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.doesNotContain()",
+
+    "should pass if 'zzz' is not found in 'abcdefgh'": function () {
+        Y.StringAssert.doesNotContain("zzz", "abcdefgh");
+    },
+
+    "should fail if 'efg' is found in 'abcdefgh'": function () {
+        Y.StringAssert.doesNotContain("efg", "abcdefgh");
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'efg' is found in 'abcdefgh'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.matches()",
+
+    "should pass if '123' matches '/^[0-9]+$/'": function () {
+        Y.StringAssert.matches(/^[0-9]+$/, "123");
+    },
+
+    "should fail if 'abc' does not match '/^[0-9]+$/'": function () {
+        Y.StringAssert.matches(/^[0-9]+$/, "abc");
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'abc' does not match '/^[0-9]+$/'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.doesNotMatch()",
+
+    "should pass if 'abc' does not match '/^[0-9]+$/'": function () {
+        Y.StringAssert.doesNotMatch(/^[0-9]+$/, "abc");
+    },
+
+    "should fail if '123' does match '/^[0-9]+$/'": function () {
+        Y.StringAssert.doesNotMatch(/^[0-9]+$/, "123");
+    },
+
+    _should: {
+        fail: {
+            "should fail if '123' does match '/^[0-9]+$/'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.startsWith()",
+
+    "should pass if 'foobar' starts with 'foo'": function () {
+        Y.StringAssert.startsWith("foo", "foobar");
+    },
+
+    "should fail if 'foobar' does not start with 'zzz'": function () {
+        Y.StringAssert.startsWith("zzz", "foobar");
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'foobar' does not start with 'zzz'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.doesNotStartWith()",
+
+    "should pass if 'foobar' does not start with 'zzz'": function () {
+        Y.StringAssert.doesNotStartWith("zzz", "foobar");
+    },
+
+    "should fail if 'foobar' does start with 'foo'": function () {
+        Y.StringAssert.doesNotStartWith("foo", "foobar");
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'foobar' does start with 'foo'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.endsWith()",
+
+    "should pass if 'foobar' ends with 'bar'": function () {
+        Y.StringAssert.endsWith('bar', 'foobar');
+    },
+
+    "should fail if 'foobar' does not end with 'zzz'": function () {
+        Y.StringAssert.endsWith('zzz', 'foobar');
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'foobar' does not end with 'zzz'": true
+        }
+    }
+}));
+
+Y.Test.Runner.add(new Y.Test.Case({
+
+    name: "StringAssert.doesNotEndWith()",
+
+    "should pass if 'foobar' does not end with 'zzz'": function () {
+        Y.StringAssert.doesNotEndWith('zzz', 'foobar');
+    },
+
+    "should fail if 'foobar' does end with 'bar'": function () {
+        Y.StringAssert.doesNotEndWith('bar', 'foobar');
+    },
+
+    _should: {
+        fail: {
+            "should fail if 'foobar' does end with 'bar'": true
+        }
+    }
+}));
+
+(new Y.Test.Console({
+    filters: {
+        pass: true,
+        fail: true,
+        status: true
+    }
+})).render('#testLogger');
+
+Y.Test.Runner.run();
+
+});
+
+</script>

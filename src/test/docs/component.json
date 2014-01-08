@@ -30,6 +30,13 @@
         },
 
         {
+            "name": "test-string-tests",
+            "displayName": "String Processing",
+            "description": "Demonstrates how to use the StringAssert object to test strings.",
+            "modules": ["test"]
+        },
+
+        {
             "name": "test-async-test",
             "displayName": "Asynchronous Testing",
             "description": "Demonstrates basic asynchronous tests.",

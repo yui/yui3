@@ -4,7 +4,7 @@ YUI Test Change History
 @VERSION@
 ------
 
-* No changes.
+* Added Y.StringAssert
 
 3.14.1
 ------
