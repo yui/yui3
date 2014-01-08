@@ -111,6 +111,16 @@
             "useModules": ["datatable"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-paginator",
+            "displayName": "DataTable with Paginator",
+            "modules": ["datatable", "paginator"],
+            "description": "Using the paginator.",
+            "useModules": ["datatable", "datatable-paginator"],
+
+            "hideTableOfContents": true
         }
 
     ]

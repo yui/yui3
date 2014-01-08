@@ -31,6 +31,7 @@ form {
 #ft {
     height:200px;
     opacity: 0.75;
+    filter: alpha(opacity=75);
 }
 .yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
     background: #070;
@@ -212,9 +213,13 @@ form {
             },
 
             test_setStyle: function() {
+                Y.DOM.setStyle(ft, 'opacity', 1);
+                Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
+                        1, "Y.DOM.getStyle(ft, 'opacity') is not 1");
+
                 Y.DOM.setStyle(ft, 'opacity', 0.5);
                 Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
-                        0.5, "Y.DOM.getStyle(ft, 'opacity')");
+                        0.5, "Y.DOM.getStyle(ft, 'opacity') is not 0.5");
 
                 Y.DOM.setStyle(main, 'float', 'none');
                 Assert.areEqual('none', Y.DOM.getStyle(main, 'float'),
@@ -753,6 +758,18 @@ form {
 
                 Y.DOM.addHTML(node, Y.DOM.create('<p>this is a <em>test</em></p>'));
                 Assert.areEqual('P', node.lastChild.nodeName, "Y.DOM.create('<p>this is a <em>test</em></p>')");
+            },
+            
+            test_selectedIndex: function() {
+                var node = document.createElement("select");
+                
+                Y.DOM.addHTML(node, 
+                    '<option value="1">One</option>' +
+                    '<option value="2" selected>Two</option>' +
+                    '<option value="3">Three</option>'
+                );
+                
+                Assert.areEqual(node.selectedIndex, 1);
             },
 
             testToHex: function() {

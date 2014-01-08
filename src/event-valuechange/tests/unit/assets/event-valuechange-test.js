@@ -22,10 +22,19 @@ var Assert = Y.Assert,
             // which I believe needs perms. to bring-to-front.
         }
 
-        this.textArea  = Y.Node.create('<textarea></textarea>');
-        this.textInput = Y.Node.create('<input type="text">');
+        this.textArea        = Y.Node.create('<textarea></textarea>');
+        this.textInput       = Y.Node.create('<input type="text">');
+        this.contentEditable = Y.Node.create('<div contenteditable="true"></div>');
+        this.selectOptions   = Y.Node.create('<select></select>');
 
-        Y.one('#test').append(this.textArea).append(this.textInput);
+        this.selectOptions.append('<option>foo</option>')
+                          .append('<option>bar</option>')
+                          .append('<option>baz</option>');
+
+        Y.one('#test').append(this.textArea)
+                      .append(this.textInput)
+                      .append(this.contentEditable)
+                      .append(this.selectOptions);
     },
 
     tearDownInputFieldTests = function() {
@@ -38,9 +47,13 @@ var Assert = Y.Assert,
 
         Y.ValueChange._stopPolling(this.textArea);
         Y.ValueChange._stopPolling(this.textInput);
+        Y.ValueChange._stopPolling(this.contentEditable);
+        Y.ValueChange._stopPolling(this.selectOptions);
 
         this.textArea.remove().destroy(true);
         this.textInput.remove().destroy(true);
+        this.contentEditable.remove().destroy(true);
+        this.selectOptions.remove().destroy(true);
     };
 
 suite.add(new Y.Test.Case({
@@ -88,6 +101,42 @@ suite.add(new Y.Test.Case({
 
         this.textArea.simulate('mousedown');
         this.textArea.set('value', 'foo');
+
+        this.wait();
+    },
+
+    'valuechange should support contenteditable areas as well': function () {
+        var test = this;
+
+        this.contentEditable.once('valuechange', function (e) {
+            test.resume(function () {
+                Assert.areSame('', e.prevVal, 'prevVal should be ""');
+                Assert.areSame('foo', e.newVal, 'newVal should be "foo"');
+                Assert.areSame(test.contentEditable, e.currentTarget, 'currentTarget should be the contenteditable node');
+                Assert.areSame(test.contentEditable, e.target, 'target should be the contenteditable node');
+            });
+        });
+
+        this.contentEditable.simulate('mousedown');
+        this.contentEditable.setHTML('foo');
+
+        this.wait();
+    },
+
+    'valuechange should support select elements as well': function () {
+        var test = this;
+
+        this.selectOptions.once('valuechange', function (e) {
+            test.resume(function () {
+                Assert.areSame('foo', e.prevVal, 'prevVal should be "foo"');
+                Assert.areSame('bar', e.newVal, 'newVal should be "bar"');
+                Assert.areSame(test.selectOptions, e.currentTarget, 'currentTarget should be the select node');
+                Assert.areSame(test.selectOptions, e.target, 'target should be the select node');
+            });
+        });
+
+        this.selectOptions.simulate('mousedown');
+        this.selectOptions.set('value', 'bar');
 
         this.wait();
     },
@@ -355,7 +404,13 @@ suite.add(new Y.Test.Case({
             .append('<input type="text" id="vc-delegate-c" class="odd">')
             .append('<textarea id="vc-delegate-d" class="even"></textarea>')
             .append('<textarea id="vc-delegate-e" class="odd"></textarea>')
-            .append('<textarea id="vc-delegate-f" class="even"></textarea>');
+            .append('<textarea id="vc-delegate-f" class="even"></textarea>')
+            .append('<div id="vc-delegate-g" class="odd" contenteditable="true"></div>')
+            .append('<div id="vc-delegate-h" class="even" contenteditable="true"></div>')
+            .append('<div id="vc-delegate-i" class="odd" contenteditable="true"></div>')
+            .append('<select id="vc-delegate-j" class="even"><option>foo</option><option>bar</option></select>')
+            .append('<select id="vc-delegate-k" class="odd"><option>foo</option><option>bar</option></select>')
+            .append('<select id="vc-delegate-l" class="even"><option>foo</option><option>bar</option></select>');
 
         this.a = Y.one('#vc-delegate-a');
         this.b = Y.one('#vc-delegate-b');
@@ -363,6 +418,12 @@ suite.add(new Y.Test.Case({
         this.d = Y.one('#vc-delegate-d');
         this.e = Y.one('#vc-delegate-e');
         this.f = Y.one('#vc-delegate-f');
+        this.g = Y.one('#vc-delegate-g');
+        this.h = Y.one('#vc-delegate-h');
+        this.i = Y.one('#vc-delegate-i');
+        this.j = Y.one('#vc-delegate-j');
+        this.k = Y.one('#vc-delegate-k');
+        this.l = Y.one('#vc-delegate-l');
     },
 
     tearDown: function () {
@@ -402,6 +463,42 @@ suite.add(new Y.Test.Case({
 
         this.f.simulate('mousedown');
         this.f.set('value', 'foo');
+
+        this.wait();
+    },
+
+    'delegation should be supported on contenteditable areas': function () {
+        var test = this;
+
+        this.container.delegate('valuechange', function (e) {
+            test.resume(function () {
+                Assert.areSame('', e.prevVal, 'prevVal should be ""');
+                Assert.areSame('foo', e.newVal, 'newVal should be "foo"');
+                Assert.areSame('div', e.currentTarget.get('nodeName').toLowerCase(), 'currentTarget should be the contenteditable node');
+                Assert.areSame('div', e.target.get('nodeName').toLowerCase(), 'target should be the contenteditable node');
+            });
+        }, '.odd');
+
+        this.g.simulate('mousedown');
+        this.g.setHTML('foo');
+
+        this.wait();
+    },
+
+    'delegation should be supported on select elements': function () {
+        var test = this;
+
+        this.container.delegate('valuechange', function (e) {
+            test.resume(function () {
+                Assert.areSame('foo', e.prevVal, 'prevVal should be "foo"');
+                Assert.areSame('bar', e.newVal, 'newVal should be "bar"');
+                Assert.areSame('select', e.currentTarget.get('nodeName').toLowerCase(), 'currentTarget should be the select node');
+                Assert.areSame('select', e.target.get('nodeName').toLowerCase(), 'target should be the select node');
+            });
+        }, '.even');
+
+        this.l.simulate('mousedown');
+        this.l.set('value', 'bar');
 
         this.wait();
     },

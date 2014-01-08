@@ -1,7 +1,44 @@
 DataTable Change History
 ========================
-
 @VERSION@
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Added datatable-keynav module, providing keyboard navigation within the
+  datatable. [Pull Request #596]
+
+3.13.0
+------
+* Add highlight module [Pull Request #1196]
+
+* Document updates and variable changes to improve understanding of code
+  [Pull Request #946] [Satyam]
+
+* Add Show All to language packs. [Pull Request #1173] [Issue #1167]
+
+* Added 'contentUpdate' after the DataTable has been updated when triggered
+  from a `dataChange` event. [Pull Request #1072][Issue #1052]
+
+* Fix issue where recursive nesting of objects was cloned infinitely
+  [Pull Request #1008][Ticket #915]
+
+* Fix issue where Paginator count becomes out of sync with DataTable when
+  DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
+
+* Add French language pack for DataTable's Paginator. ([#1166][] @Naouak)
+
+[#1166]: https://github.com/yui/yui3/pull/1166
+
+3.12.0
 ------
 
 * No changes.

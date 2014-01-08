@@ -18,11 +18,11 @@ function parseFlashVersion (flashVer) {
     if (lG.isNumber(makeInt(flashVer[0]))) {
         uA.flashMajor = flashVer[0];
     }
-    
+
     if (lG.isNumber(makeInt(flashVer[1]))) {
         uA.flashMinor = flashVer[1];
     }
-    
+
     if (lG.isNumber(makeInt(flashVer[2]))) {
         uA.flashRev = flashVer[2];
     }
@@ -63,12 +63,12 @@ else if(uA.ie) {
 /** Create a calendar view to represent a single or multiple
   * month range of dates, rendered as a grid with date and
   * weekday labels.
-  * 
+  *
   * @class SWFDetect
   * @constructor
   */
 
-        
+
 Y.SWFDetect = {
 
     /**
@@ -76,8 +76,8 @@ Y.SWFDetect = {
      * or the Flash Player ActiveX control (in IE), as a String of the form "MM.mm.rr", where
      * MM is the major version, mm is the minor version, and rr is the revision.
      * @method getFlashVersion
-     */ 
-    
+     */
+
     getFlashVersion : function () {
         return (String(uA.flashMajor) + "." + String(uA.flashMinor) + "." + String(uA.flashRev));
     },
@@ -87,15 +87,15 @@ Y.SWFDetect = {
      * than or equal to the one specified. If it is, this method returns true; it is false otherwise.
      * @method isFlashVersionAtLeast
      * @return {Boolean} Whether the Flash player version is greater than or equal to the one specified.
-     * @param flashMajor {int} The Major version of the Flash player to compare against.
-     * @param flashMinor {int} The Minor version of the Flash player to compare against.
-     * @param flashRev {int} The Revision version of the Flash player to compare against.
-     */ 
+     * @param flashMajor {Number} The Major version of the Flash player to compare against.
+     * @param flashMinor {Number} The Minor version of the Flash player to compare against.
+     * @param flashRev {Number} The Revision version of the Flash player to compare against.
+     */
     isFlashVersionAtLeast : function (flashMajor, flashMinor, flashRev) {
         var uaMajor    = makeInt(uA.flashMajor),
             uaMinor    = makeInt(uA.flashMinor),
             uaRev      = makeInt(uA.flashRev);
-            
+
         flashMajor = makeInt(flashMajor || 0);
         flashMinor = makeInt(flashMinor || 0);
         flashRev   = makeInt(flashRev || 0);
@@ -107,5 +107,5 @@ Y.SWFDetect = {
             return flashMinor < uaMinor;
         }
         return flashMajor < uaMajor;
-    }           
+    }
 };

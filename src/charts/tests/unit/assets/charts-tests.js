@@ -1,12 +1,14 @@
 YUI.add('charts-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts"),
+        ChartTests,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
     
     ChartTests = new Y.Test.Case({
         name: "Chart Tests",
         
         setUp: function () {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
             var myDataValues = [ 
                 {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
                 {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
@@ -15,29 +17,27 @@ YUI.add('charts-tests', function(Y) {
                 {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
             ];
             var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues});
-            mychart.render("#mychart");
+            mychart.render("#testdiv");
             this.chart = mychart;
         },
 
         tearDown: function () {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         //Test to ensure that all items in the series collection are of the correct type.
         testGetSeriesByIndex: function()
         {
-            var series = this.chart.getSeries(0),
-                assert = Y.Assert;
-                assert.isInstanceOf(Y.CartesianSeries, series);
+            var series = this.chart.getSeries(0);
+                Y.Assert.isInstanceOf(Y.CartesianSeries, series);
         },
         
         //Test to ensure that all items in the series collection are of the correct type.
         testGetSeriesByKey: function()
         {
-            var series = this.chart.getSeries("revenue"),
-                assert = Y.Assert;
-                assert.isInstanceOf(Y.CartesianSeries, series);
+            var series = this.chart.getSeries("revenue");
+                Y.Assert.isInstanceOf(Y.CartesianSeries, series);
         },
         
         //Test to ensure the series axes are numeric and the category axis is of type category

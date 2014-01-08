@@ -44,7 +44,7 @@ var HAS_LAYOUT = 'hasLayout',
                     current = _getStyleObj(el)[property];
 
                 if (property === OPACITY && Y.DOM.CUSTOM_STYLES[OPACITY]) {
-                    value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
+                    value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);
                 } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
                     value = current;
                 } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
@@ -71,7 +71,7 @@ var HAS_LAYOUT = 'hasLayout',
                 capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
                 offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
                 pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
-                sizeOffsets = ComputedStyle.sizeOffsets[prop], 
+                sizeOffsets = ComputedStyle.sizeOffsets[prop],
                 mode = el.ownerDocument.compatMode,
                 value = '';
 
@@ -100,14 +100,14 @@ var HAS_LAYOUT = 'hasLayout',
                     el.style[prop] = current;
                 }
                 value = el.style[pixel];
-                
+
             }
             return value + PX;
         },
 
         borderMap: {
             thin: (isIE8) ? '1px' : '2px',
-            medium: (isIE8) ? '3px': '4px', 
+            medium: (isIE8) ? '3px': '4px',
             thick: (isIE8) ? '5px' : '6px'
         },
 
@@ -234,14 +234,14 @@ if (!testFeature('style', 'opacity') && testFeature('style', 'filter')) {
 
             if (typeof currentFilter == 'string') { // in case not appended
                 style[FILTER] = currentFilter.replace(/alpha([^)]*\))/gi, '') +
-                        ((val < 1) ? 'alpha(' + OPACITY + '=' + val * 100 + ')' : '');
+                        ((val <= 1) ? 'alpha(' + OPACITY + '=' + val * 100 + ')' : '');
 
                 if (!style[FILTER]) {
                     style.removeAttribute(FILTER);
                 }
 
                 if (!styleObj[HAS_LAYOUT]) {
-                    style.zoom = 1; // needs layout 
+                    style.zoom = 1; // needs layout
                 }
             }
         }
@@ -290,7 +290,7 @@ if (!testFeature('style', 'computedStyle')) {
             IEComputed.borderRightColor = IEComputed.borderBottomColor =
             IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
 
-    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
+    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get;
 
     Y.namespace('DOM.IE');
     Y.DOM.IE.COMPUTED = IEComputed;

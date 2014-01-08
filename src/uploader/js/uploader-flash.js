@@ -1,24 +1,11 @@
 /**
-* This module provides a UI for file selection and multiple file upload capability using
-* Flash as a transport engine.
-* The supported features include: automatic upload queue management, upload progress
-* tracking, file filtering, server response retrieval and error reporting.
-*
-* @module uploader-flash
-*/
-
-// Shorthands for external modules
-var substitute            = Y.Lang.sub,
-    UploaderQueue         = Y.Uploader.Queue;
-
-
-/**
 * This module provides a UI for file selection and multiple file upload capability
 * using Flash as a transport engine.
 * @class UploaderFlash
 * @extends Widget
 * @param {Object} config Configuration object.
 * @constructor
+* @deprecated
 */
 
 function UploaderFlash() {
@@ -75,7 +62,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * it will be ignored.
     *
     * @property queue
-    * @type {Y.Uploader.Queue}
+    * @type {Uploader.Queue}
     */
     queue: null,
 
@@ -647,7 +634,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * Starts the upload of a specific file.
     *
     * @method upload
-    * @param file {Y.FileFlash} Reference to the instance of the file to be uploaded.
+    * @param file {FileFlash} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
     * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
@@ -729,7 +716,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * with width and height set to 100% of the parent.
     *
     * @property FLASH_CONTAINER
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default '<div id="{swfContainerId}" style="position:absolute; top:0px; left: 0px; margin: 0; padding: 0;
     *           border: 0; width:100%; height:100%"></div>'
@@ -741,7 +728,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default "<button type='button' class='yui3-button' tabindex='-1'>{selectButtonLabel}</button>"
     */
@@ -996,13 +983,13 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         *
         * @attribute swfURL
         * @type {String}
-        * @default "CDN Prefix + uploader/assets/flashuploader.swf" with a
+        * @default "flashuploader.swf" with a
         * random GET parameter for IE (to prevent buggy behavior when the SWF
         * is cached).
         */
         swfURL: {
             valueFn: function () {
-                var prefix = Y.Env.cdn + "uploader/assets/flashuploader.swf";
+                var prefix = "flashuploader.swf";
 
                 if (Y.UA.ie > 0) {
                     return (prefix + "?t=" + Y.guid("uploader"));

@@ -138,7 +138,10 @@ Y.extend(OHLCSeries, Y.RangeSeries, {
             right,
             leftPadding = styles.padding.left,
             marker,
-            up;
+            up,
+            cx,
+            i,
+            height;
         upmarker.set(styles.upmarker);
         downmarker.set(styles.downmarker);
         upmarker.clear();

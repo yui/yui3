@@ -8,8 +8,6 @@ YUI.add('datatype-xml-parse', function (Y, NAME) {
  * @for XML
  */
 
-var LANG = Y.Lang;
-
 Y.mix(Y.namespace("XML"), {
     /**
      * Converts data to type XMLDocument.
@@ -19,33 +17,24 @@ Y.mix(Y.namespace("XML"), {
      * @return {XMLDoc} XML Document.
      */
     parse: function(data) {
-        var xmlDoc = null;
-        if(LANG.isString(data)) {
-            try {
-                if(!LANG.isUndefined(ActiveXObject)) {
-                        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-                        xmlDoc.async = false;
-                        xmlDoc.loadXML(data);
-                }
-            }
-            catch(ee) {
-                try {
-                    if (!LANG.isUndefined(DOMParser)) {
-                        xmlDoc = new DOMParser().parseFromString(data, "text/xml");
-                    }
-                    if (!LANG.isUndefined(Windows.Data.Xml.Dom)) {
-                        xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
-                        xmlDoc.loadXml(data);
-                    }
-                }
-                catch(e) {
-                }
+        var xmlDoc = null, win;
+        if (typeof data === "string") {
+            win = Y.config.win;
+            if (win.DOMParser !== undefined) {
+                xmlDoc = new DOMParser().parseFromString(data, "text/xml");            
+            } else if (win.ActiveXObject !== undefined) {
+                xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async = false;
+                xmlDoc.loadXML(data);            
+            } else if (win.Windows !== undefined) {
+                xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+                xmlDoc.loadXml(data);            
             }
         }
-        
-        if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
+
+        if (xmlDoc === null || xmlDoc.documentElement === null || xmlDoc.documentElement.nodeName === "parsererror") {
         }
-        
+
         return xmlDoc;
     }
 });

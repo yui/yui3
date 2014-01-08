@@ -1,5 +1,9 @@
 YUI.add('charts-groupmarker-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: GroupMarker"),
+        GroupMarkerTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
     
     GroupMarkerTestTemplate = function(cfg, globalCfg)
     {
@@ -9,7 +13,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
         cfg.height = cfg.height || 300;
         cfg.groupMarkers = true;
         cfg.interactionType = "planar";
-        cfg.render = "#mychart";
+        cfg.render = "#testdiv";
         this.attrCfg = cfg;
         for(i in globalCfg)
         {
@@ -23,8 +27,6 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     Y.extend(GroupMarkerTestTemplate, Y.Test.Case, {
 
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
     
@@ -39,7 +41,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
     

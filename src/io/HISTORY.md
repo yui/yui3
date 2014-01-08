@@ -6,6 +6,27 @@ IO Utility Change History
 
 * No changes.
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* [!] #1155 Deprecate io-xdr.
+* Move all related swf and as files from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+
+3.12.0
+------
+
+* No changes.
+
 3.11.0
 ------
 

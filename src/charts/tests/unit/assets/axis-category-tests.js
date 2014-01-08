@@ -1,7 +1,7 @@
 YUI.add('axis-category-tests', function(Y) {
     Y.CategoryAxisTest = function() {
         Y.CategoryAxisTest.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(Y.CategoryAxisTest, Y.ChartTestTemplate, {
         setUp: function() {
             var position = this.position,
@@ -19,9 +19,10 @@ YUI.add('axis-category-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
-        
+
         _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, multiplier, direction, data)
         {
             var points = [],
@@ -49,7 +50,7 @@ YUI.add('axis-category-tests', function(Y) {
             for(i = 0; i < len; i = i + 1)
             {
                 labelValue = labelValues[i];
-                labelIndex = Y.Array.indexOf(data, labelValues);
+                labelIndex = Y.Array.indexOf(data, labelValue);
                 if(Y.Lang.isNumber(labelIndex) && labelIndex > -1)
                 {
                     rawVal = labelIndex ? (labelIndex * multiplier) : 0;
@@ -65,7 +66,7 @@ YUI.add('axis-category-tests', function(Y) {
                 values: values
             };
         },
-        
+
         "test: getMajorUnitDistance()" : function() {
             var position = this.position,
                 vertical = position === "left" || position === "right",
@@ -79,10 +80,10 @@ YUI.add('axis-category-tests', function(Y) {
                 }
             });
             Y.Assert.areEqual(
-                distance, 
+                distance,
                 this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit),
                 "The getMajorUnitDistance method should return " + distance + "."
-            ); 
+            );
             this.axis.set("styles", {
                 majorUnit: {
                     determinant: "distance",
@@ -90,17 +91,17 @@ YUI.add('axis-category-tests', function(Y) {
                 }
             });
             Y.Assert.areEqual(
-                distance, 
+                distance,
                 this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit),
                 "The getMajorUnitDistance method should return " + distance + "."
             );
             this.axis.set("styles", {
                 majorUnit: {
-                    determinant: "random"   
+                    determinant: "random"
                 }
             });
             Y.Assert.isUndefined(
-                this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit), 
+                this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit),
                 "An invalid majorUnit.determinant should result in the getMajorUnitDistance method returning undefined."
             );
         },
@@ -129,7 +130,7 @@ YUI.add('axis-category-tests', function(Y) {
                 position = this.position,
                 direction = position === "left" || position === "right" ? "vertical" : "horizontal";
                 testLabel = data[index];
-            
+
             Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len), "The label's value should be " + testLabel + ".");
         },
 
@@ -140,10 +141,10 @@ YUI.add('axis-category-tests', function(Y) {
                 len,
                 label,
                 date,
-                mydiv = Y.Node.create('<div style="width: 400px; height: 400px;">'),
+                mydiv = Y.Node.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
                 position = this.position,
                 direction = position === "left" || position === "right" ? "vertical" : "horizontal";
-                
+
             Y.one('body').append(mydiv);
             axis.render(mydiv);
             labels = axis.get("labels");
@@ -157,7 +158,7 @@ YUI.add('axis-category-tests', function(Y) {
             mydiv.destroy(true);
         },
 
-        "test: _getDataFromLabelValues()" : function() {
+        "test: _getLabelData()" : function() {
             var axis = this.axis,
                 labelValues = [
                     "01/02/2009",
@@ -179,14 +180,30 @@ YUI.add('axis-category-tests', function(Y) {
                 testLabelValues,
                 axisPoint,
                 testPoint,
-                data = axis.get("data"),
                 assertFn = function() {
-                    axisLabelData = axis._getDataFromLabelValues.apply(axis, [
-                        startPoint,
-                        labelValues,
+                    var min = axis.get("minimum"),
+                        max = axis.get("maximum"),
+                        staticCoord,
+                        dynamicCoord,
+                        constantVal;
+                    if(direction === "vertical") {
+                        staticCoord = "x";
+                        dynamicCoord = "y";
+                    } else {
+                        staticCoord = "y";
+                        dynamicCoord = "x";
+                    }
+                    constantVal = startPoint[staticCoord];
+                    axisLabelData = axis._getLabelData.apply(axis, [
+                        constantVal,
+                        staticCoord,
+                        dynamicCoord,
+                        min,
+                        max,
                         edgeOffset,
-                        layoutLength,
-                        direction
+                        layoutLength - edgeOffset - edgeOffset,
+                        len,
+                        labelValues
                     ]);
                     testLabelData = this._getDataFromLabelValues(
                         startPoint,
@@ -207,13 +224,14 @@ YUI.add('axis-category-tests', function(Y) {
                         testValue = testValues[i];
                         axisValue = axisPoints[i];
                         if(testPoint) {
-                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + "."); 
-                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + "."); 
+                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + ".");
+                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + ".");
                         } else {
                             Y.Assert.isNull(axisPoint, "There should not be a value for the axis point.");
                         }
                     }
                 };
+            len =  labelValues.length;
             assertFn.apply(this);
             //hit the branch
             labelValues[3] = "2/11/2012";
@@ -221,10 +239,16 @@ YUI.add('axis-category-tests', function(Y) {
             //use labels that include the first (to hit another branch)
             labelValues = ["01/01/2009", "01/11/2009", "01/21/2009"];
             assertFn.apply(this);
+            
+            //add a label that's not in the axis (to hit an else branch)
+            labelValues.push("nonexistent");
+            len =  labelValues.length;
+            assertFn.apply(this);
         }
     });
-    
+
     var suite = new Y.Test.Suite("Charts: CategoryAxis"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

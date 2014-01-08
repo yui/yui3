@@ -4,9 +4,6 @@
         "get",
         "loader"
     ],
-    "postbuilds": [
-        "simpleyui"
-    ],
     "exec": [
         "./scripts/build.js"
     ],
@@ -69,7 +66,7 @@
                     "intl-base",
                     "yui-log",
                     "yui-later"
-                ]   
+                ]
             },
             "prependfiles": [
                 "js/yui.js"
@@ -103,7 +100,7 @@
                     "loader-base",
                     "loader-rollup",
                     "loader-yui3"
-                ]   
+                ]
             },
             "prependfiles": [
                 "js/yui.js"
@@ -164,7 +161,7 @@
                     "intl-base",
                     "yui-log",
                     "yui-later"
-                ]   
+                ]
             },
             "files": [
                 "yui-base",

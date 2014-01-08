@@ -14,13 +14,13 @@
                 'timers'
             ],
             modules: {
-                'module-tests': {
-                    fullpath: './js/tests.js',
+                'timers-tests': {
+                    fullpath: './js/timers-tests.js',
                     requires: ['timers', 'test']
                 }
             },
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-        }).use('test-console', 'test', 'module-tests', function (Y) {
+        }).use('test-console', 'test', 'timers-tests', function (Y) {
             (new Y.Test.Console()).render('#logger');
             Y.Test.Runner.setName('Timers');
             Y.Test.Runner.run();

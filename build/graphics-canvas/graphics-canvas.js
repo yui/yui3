@@ -1127,7 +1127,6 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.CanvasGraphic({
                 render: render
             });
@@ -1144,8 +1143,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	addClass: function(className)
 	{
-		var node = Y.one(this.get("node"));
-		node.addClass(className);
+		var node = this.get("node");
+		Y.DOM.addClass(node, className);
 	},
 
 	/**
@@ -1156,8 +1155,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	removeClass: function(className)
 	{
-		var node = Y.one(this.get("node"));
-		node.removeClass(className);
+		var node = this.get("node");
+		Y.DOM.removeClass(node, className);
 	},
 
 	/**
@@ -1201,7 +1200,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -1213,8 +1213,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	test: function(selector)
 	{
-		return Y.one(this.get("node")).test(selector);
-		//return Y.Selector.test(this.node, selector);
+		return Y.Selector.test(this.node, selector);
 	},
 
 	/**
@@ -1349,7 +1348,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -2024,7 +2023,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     {
         if(this.node)
         {
-            Y.one(this.node).remove(true);
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.style.visibility = "";
+                this.node.parentNode.removeChild(this.node);
+            }
             this._context = null;
             this.node = null;
         }
@@ -3155,11 +3159,11 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      */
     getXY: function()
     {
-        var node = Y.one(this._node),
+        var node = this._node,
             xy;
         if(node)
         {
-            xy = node.getXY();
+            xy = Y.DOM.getXY(node);
         }
         return xy;
     },
@@ -3202,16 +3206,25 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var parentNode = Y.one(render),
+        var parentNode = render || DOCUMENT.body,
             node = this._node,
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
+            w,
+            h;
+        if(render instanceof Y.Node)
+        {
+            parentNode = render._node;
+        }
+        else if(Y.Lang.isString(render))
+        {
+            parentNode = Y.Selector.query(render, DOCUMENT.body, true);
+        }
+        w = this.get("width") || parseInt(Y.DOM.getComputedStyle(parentNode, "width"), 10);
+        h = this.get("height") || parseInt(Y.DOM.getComputedStyle(parentNode, "height"), 10);
         parentNode.appendChild(node);
         node.style.display = "block";
         node.style.position = "absolute";
-        node.style.left = "0px";
-        node.style.top = "0px";
+        node.style.left = this.get("x") + "px";
+        node.style.top = this.get("y") + "px";
         this.set("width", w);
         this.set("height", h);
         this.parentNode = parentNode;
@@ -3229,7 +3242,11 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         if(this._node)
         {
             this._removeChildren(this._node);
-            Y.one(this._node).destroy();
+            if(this._node.parentNode)
+            {
+                this._node.parentNode.removeChild(this._node);
+            }
+            this._node = null;
         }
     },
 

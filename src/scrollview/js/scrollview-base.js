@@ -156,12 +156,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _maxScrollY: null,
-    
+
     /**
      * Designated initializer
      *
      * @method initializer
-     * @param {config} Configuration object for the plugin
+     * @param {Object} Configuration object for the plugin
      */
     initializer: function () {
         var sv = this;
@@ -191,7 +191,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
         sv._bindMousewheel(true);
-        
+
         // Bind change events
         sv._bindAttrs();
 
@@ -344,7 +344,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             sv._set(AXIS, sv._cAxis);
         }
-        
+
         // get text direction on or inherited by scrollview node
         sv.rtl = (sv._cb.getComputedStyle('direction') === 'rtl');
 
@@ -426,7 +426,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxScrollX = (rtl ? 0 : Math.max(0, scrollWidth - width)),
             minScrollY = 0,
             maxScrollY = Math.max(0, scrollHeight - height);
-            
+
         if (svAxis && svAxis.x) {
             bb.addClass(CLASS_NAMES.horizontal);
         }
@@ -456,7 +456,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _setBounds: function (bounds) {
         var sv = this;
-        
+
         // TODO: Do a check to log if the bounds are invalid
 
         sv._minScrollX = bounds.minScrollX;
@@ -473,7 +473,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _getBounds: function () {
         var sv = this;
-        
+
         return {
             minScrollX: sv._minScrollX,
             maxScrollX: sv._maxScrollX,
@@ -608,12 +608,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Content box transition callback
      *
      * @method _onTransEnd
-     * @param {Event.Facade} e The event facade
+     * @param {EventFacade} e The event facade
      * @private
      */
     _onTransEnd: function () {
         var sv = this;
-        
+
         // If for some reason we're OOB, snapback
         if (sv._isOutOfBounds()) {
             sv._snapBack();
@@ -633,7 +633,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * gesturemovestart event handler
      *
      * @method _onGestureMoveStart
-     * @param e {Event.Facade} The gesturemovestart event facade
+     * @param e {EventFacade} The gesturemovestart event facade
      * @private
      */
     _onGestureMoveStart: function (e) {
@@ -689,7 +689,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             // Create some listeners for the rest of the gesture cycle
             onGestureMove: bb.on(DRAG + '|' + GESTURE_MOVE, Y.bind(sv._onGestureMove, sv)),
-            
+
             // @TODO: Don't bind gestureMoveEnd if it's a Flick?
             onGestureMoveEnd: bb.on(DRAG + '|' + GESTURE_MOVE + END, Y.bind(sv._onGestureMoveEnd, sv))
         };
@@ -699,7 +699,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * gesturemove event handler
      *
      * @method _onGestureMove
-     * @param e {Event.Facade} The gesturemove event facade
+     * @param e {EventFacade} The gesturemove event facade
      * @private
      */
     _onGestureMove: function (e) {
@@ -741,7 +741,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * gesturemoveend event handler
      *
      * @method _onGestureMoveEnd
-     * @param e {Event.Facade} The gesturemoveend event facade
+     * @param e {EventFacade} The gesturemoveend event facade
      * @private
      */
     _onGestureMoveEnd: function (e) {
@@ -772,9 +772,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             // If there was movement (_onGestureMove fired)
             if (gesture.deltaX !== null && gesture.deltaY !== null) {
-                
+
                 isOOB = sv._isOutOfBounds();
-                
+
                 // If we're out-out-bounds, then snapback
                 if (isOOB) {
                     sv._snapBack();
@@ -796,7 +796,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Execute a flick at the end of a scroll action
      *
      * @method _flick
-     * @param e {Event.Facade} The Flick event facade
+     * @param e {EventFacade} The Flick event facade
      * @private
      */
     _flick: function (e) {
@@ -912,7 +912,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Handle mousewheel events on the widget
      *
      * @method _mousewheel
-     * @param e {Event.Facade} The mousewheel event facade
+     * @param e {EventFacade} The mousewheel event facade
      * @private
      */
     _mousewheel: function (e) {
@@ -962,7 +962,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method _isOutOfBounds
      * @param x {Number} [optional] The X position to check
      * @param y {Number} [optional] The Y position to check
-     * @return {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
+     * @return {Boolean} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
     _isOutOfBounds: function (x, y) {
@@ -1017,7 +1017,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for changes to the scrollX or scrollY attribute
      *
      * @method _afterScrollChange
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterScrollChange: function (e) {
@@ -1054,7 +1054,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for changes to the flick attribute
      *
      * @method _afterFlickChange
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterFlickChange: function (e) {
@@ -1065,7 +1065,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for changes to the disabled attribute
      *
      * @method _afterDisabledChange
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterDisabledChange: function (e) {
@@ -1077,7 +1077,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for the axis attribute
      *
      * @method _afterAxisChange
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterAxisChange: function (e) {
@@ -1088,7 +1088,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for changes to the drag attribute
      *
      * @method _afterDragChange
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterDragChange: function (e) {
@@ -1099,7 +1099,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for the height or width attribute
      *
      * @method _afterDimChange
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterDimChange: function () {
@@ -1110,7 +1110,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * After listener for scrollEnd, for cleanup
      *
      * @method _afterScrollEnd
-     * @param e {Event.Facade} The event facade
+     * @param e {EventFacade} The event facade
      * @protected
      */
     _afterScrollEnd: function () {
@@ -1145,7 +1145,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             };
         }
     },
-    
+
     /**
     * The scrollX, scrollY setter implementation
     *

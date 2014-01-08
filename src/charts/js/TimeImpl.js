@@ -4,8 +4,8 @@
  * @module charts
  * @submodule axis-time-base
  */
-
 var Y_Lang = Y.Lang;
+
 /**
  * TimeImpl contains logic for time data. TimeImpl is used by the following classes:
  * <ul>
@@ -272,6 +272,41 @@ TimeImpl.prototype = {
         }
         this._dataMaximum = max;
         this._dataMinimum = min;
+    },
+
+    /**
+     * Returns a coordinate corresponding to a data values.
+     *
+     * @method _getCoordFromValue
+     * @param {Number} min The minimum for the axis.
+     * @param {Number} max The maximum for the axis.
+     * @param {Number} length The distance that the axis spans.
+     * @param {Number} dataValue A value used to ascertain the coordinate.
+     * @param {Number} offset Value in which to offset the coordinates.
+     * @param {Boolean} reverse Indicates whether the coordinates should start from
+     * the end of an axis. Only used in the numeric implementation.
+     * @return Number
+     * @private
+     */
+    _getCoordFromValue: function(min, max, length, dataValue, offset)
+    {
+        var range,
+            multiplier,
+            valuecoord,
+            isNumber = Y_Lang.isNumber;
+            dataValue = this._getNumber(dataValue);
+        if(isNumber(dataValue))
+        {
+            range = max - min;
+            multiplier = length/range;
+            valuecoord = (dataValue - min) * multiplier;
+            valuecoord = offset + valuecoord;
+        }
+        else
+        {
+            valuecoord = NaN;
+        }
+        return valuecoord;
     },
 
     /**

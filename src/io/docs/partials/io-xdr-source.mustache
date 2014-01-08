@@ -76,10 +76,6 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
         //time the button is clicked:
         var handleClick = function(o) {
             Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
-	    // Remove the default "X-Requested-With" header as this will
-	    // prevent the request from succeeding; the Pipes
-	    // resource will not accept user-defined HTTP headers.
-	    Y.io.header('X-Requested-With');
             var obj = Y.io(
                 //this is a specific Pipes feed, populated with cycling news:
                 "http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",

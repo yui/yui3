@@ -30,6 +30,7 @@
     <h1>Transition Tests</h1>
     <div class="demo"><div></div></div>
     <div class="demo"><div></div></div>
+    <div class="demo last"><div></div></div>
 
     <div id="yui-log"></div>
 <script type="text/javascript">
@@ -904,6 +905,37 @@ YUI({
                 Y.Assert.areEqual(nodes.size(), count);
             },
 
+            'should toggle using only the named toggle parameter': function() {
+                var node = Y.one('.demo'), test = this;
+                
+                // fade out
+                node.toggleView('fade');
+                
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        Y.Assert.areEqual('none', node.getStyle('display'));  
+                        node.destroy();
+                    });
+                });
+                
+                this.wait();
+                    
+                // fade in
+                node.toggleView('fade');
+                
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                        Y.Assert.areEqual('block', node.getStyle('display'));  
+                        node.destroy();
+                    });
+                });
+                
+                this.wait();
+                 
+            },
+            
             'should toggle using the named toggle': function() {
                 var nodes = Y.all('.demo'),
                     test = this,
@@ -1019,8 +1051,22 @@ YUI({
                     });
                 });
                 test.wait();
-            }
+            },
 
+            'nodelist should fire callback once when all nodes have transitioned': function() {
+                var test = this,
+                    nodes = Y.all('.demo'),
+                    callbackCount = 0;
+
+                nodes.transition({duration: 0.5, opacity: 0}, function(e) {
+                    callbackCount++;
+                }, true);
+
+                test.wait(function(){
+                    Y.Assert.areEqual(1, callbackCount, 'callback was called more than once');
+                },1000);//this should fire half a second after the transitions
+                        //have ended since they should all transition at the same time
+            }
         }));
         //return it
         return suite;

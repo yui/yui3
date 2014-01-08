@@ -152,7 +152,12 @@ YUI.add('button-group-test', function (Y) {
         name: 'MISC',
 
         setUp : function () {
-            Y.one("#container").setContent('<div id="group"><button><div class="yui3-button-label">Button A</div></button></div>');
+            Y.one("#container").setContent(
+                '<div id="group">' +
+                '<button><div class="yui3-button-label">Button A</div></button>' +
+                '<input type="reset" value="Button B"/>' +
+                '</div>'
+            );
             this.ButtonGroup = new Y.ButtonGroup({
                 srcNode: '#group'
             }).render();
@@ -168,6 +173,16 @@ YUI.add('button-group-test', function (Y) {
 
             Y.one('#group>button>div').simulate('click');
             Assert.areSame('button', Y.one('#group .yui3-button-selected').get('tagName').toLowerCase());
+        },
+
+        'ButtonGroup.disable()/enable() should disable/enable children': function () {
+            this.ButtonGroup.disable();
+            Assert.isTrue(this.ButtonGroup.getButtons().item(0).get('disabled'), '<button> should have been disabled');
+            Assert.isTrue(this.ButtonGroup.getButtons().item(1).get('disabled'), '<input> should have been disabled');
+
+            this.ButtonGroup.enable();
+            Assert.isFalse(this.ButtonGroup.getButtons().item(0).get('disabled'), '<button> should have been enabled');
+            Assert.isFalse(this.ButtonGroup.getButtons().item(1).get('disabled'), '<input> should have been enabled');
         }
     }));
 

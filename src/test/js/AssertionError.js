@@ -8,16 +8,16 @@
  * @module test
  * @class AssertionError
  * @constructor
- */ 
+ */
 YUITest.AssertionError = function (message){
-    
+
     /**
      * Error message. Must be duplicated to ensure browser receives it.
      * @type String
      * @property message
      */
     this.message = message;
-    
+
     /**
      * The name of the error that occurred.
      * @type String
@@ -40,7 +40,7 @@ YUITest.AssertionError.prototype = {
     getMessage : function () {
         return this.message;
     },
-    
+
     /**
      * Returns a string representation of the error.
      * @method toString

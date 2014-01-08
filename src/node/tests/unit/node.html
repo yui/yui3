@@ -190,6 +190,8 @@ button {
         <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em></div>
     </div>
 </div>
+<div id="test-node-addMethod">
+</div>
 
 <div id="yui-log"></div>
 <script type="text/javascript">
@@ -1385,7 +1387,7 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called);            
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
@@ -1401,7 +1403,7 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called); 
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
@@ -1427,7 +1429,7 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called); 
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
@@ -1447,14 +1449,14 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
-            node.setAttribute('hidden', true);    
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
 
             node.toggleView('foo', function() {
                 called = true;
             });
 
-            Assert.isTrue(called);            
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             Assert.areEqual('block', node.getStyle('display'));
         },
@@ -1760,6 +1762,25 @@ YUI({
         'should not cache document fragment': function() {
             var node = Y.Node.create('<div>foo</div><div>bar</div>');
             Assert.isUndefined(Y.Node._instances[node._yuid]);
+        },
+
+        'should return false if node is removed': function () {
+            var myNode = Y.Node.create('foo'),
+                _ref;
+
+            Assert.isTrue(myNode.inDoc() === false);
+
+            Y.one('body').append(myNode);
+
+            Assert.isTrue(myNode.inDoc() === true);
+
+            _ref = myNode.getDOMNode();
+
+            myNode.destroy();
+
+            Assert.isTrue(myNode.inDoc() === false);
+
+            _ref.parentNode.removeChild(_ref);
         }
     }));
 
@@ -1950,7 +1971,7 @@ YUI({
             node.setHTML(html);
             Assert.areEqual(html, node.getHTML().toLowerCase().replace(/\s+/g, ''));
 
-            // make sure node's contents have not disappeared 
+            // make sure node's contents have not disappeared
             Assert.areEqual(node.get("children").size(), 1);
         }
     }));
@@ -1998,6 +2019,31 @@ YUI({
 
             Assert.isUndefined(val[0]);
             Assert.isUndefined(val[1]);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.addMethod',
+
+        'should return a method': function() {
+            var nd = Y.one('#test-node-addMethod');
+
+            Y.Node.addMethod('testAddMethod', function () {
+                return this;
+            });
+
+            Assert.isFunction(nd.testAddMethod);
+            Assert.areSame(nd, nd.testAddMethod());
+        },
+        'should return property of context obj': function () {
+            var nd = Y.one('#test-node-addMethod'),
+                obj = { type: 'context obj' };
+
+            Y.Node.addMethod('testAMC', function () {
+                return this.type;
+            }, obj);
+
+            Assert.areEqual('context obj', nd.testAMC());
         }
     }));
 

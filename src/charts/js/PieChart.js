@@ -307,7 +307,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      *  </dl>
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
-     * @return {HTML}
+     * @return {HTMLElement}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)
@@ -379,6 +379,55 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         }
         msg += (itemIndex + 1) + " of " + len + ". ";
         return msg;
+    },
+
+    /**
+     * Destructor implementation for the PieChart class.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var series,
+            axis,
+            tooltip = this.get("tooltip"),
+            tooltipNode = tooltip.node,
+            graph = this.get("graph"),
+            axesCollection = this._axesCollection,
+            seriesCollection = this.get("seriesCollection");
+        while(seriesCollection.length > 0)
+        {
+            series = seriesCollection.shift();
+            series.destroy(true);
+        }
+        while(axesCollection.length > 0)
+        {
+            axis = axesCollection.shift();
+            if(axis instanceof Y.Axis)
+            {
+                axis.destroy(true);
+            }
+        }
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
+        if(graph)
+        {
+            graph.destroy(true);
+        }
+        if(tooltipNode)
+        {
+            tooltipNode.empty();
+            tooltipNode.remove(true);
+        }
     }
 }, {
     ATTRS: {
@@ -395,8 +444,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             {
                 if(this._description)
                 {
-                    this._description.setContent("");
-                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                    this._description.set("text", val);
                 }
                 return val;
             }

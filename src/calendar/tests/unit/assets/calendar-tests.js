@@ -2,10 +2,18 @@ YUI.add('calendar-tests', function(Y) {
 
         // Set up the page
         var ASSERT = Y.Assert,
-            ARRAYASSERT = Y.ArrayAssert;
+            ARRAYASSERT = Y.ArrayAssert,
+            yeti = window && window.$yetify;
 
         var BasicCalendar = new Y.Test.Case({
             name: "Basic Calendar Tests",
+
+            _should: {
+                ignore: {
+                    testFocus: yeti,
+                    testSelectionModes: yeti
+                }
+            },
 
             setUp : function () {
                 var firstcontainer = "<div id='firstcontainer'></div>";
@@ -223,6 +231,20 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,15)).hasClass("yui3-calendar-day-selected"));
                 this.firstcalendar._removeDateRangeFromSelection(new Date(2011,2,10), new Date(2011,2,15));
 
+            },
+
+            testMinDatesSelection : function () {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5),
+                    minimumDate: new Date(2011,11,5)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();
+                this.firstcalendar.selectDates(new Date(2011,11,5));
+
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,11,5)).hasClass("yui3-calendar-day-selected"));
             },
 
             testRules : function () {

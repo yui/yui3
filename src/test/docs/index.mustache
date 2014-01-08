@@ -460,7 +460,7 @@ var testCase = new Y.Test.Case({
         Y.Assert.isFalse(false);      //passes
         Y.Assert.isTrue(true);        //passes
         Y.Assert.isNaN(NaN);          //passes
-        Y.Assert.isNaN(5 / "5");      //passes
+        Y.Assert.isNaN(0 / 0);        //passes
         Y.Assert.isNotNaN(5);         //passes
         Y.Assert.isNull(null);        //passes
         Y.Assert.isNotNull(undefined);    //passes

@@ -233,6 +233,7 @@ LeftAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("leftTickOffset"),
             totalTitleSize = this._totalTitleSize,
             leftOffset = pt.x + totalTitleSize - tickOffset,
@@ -246,21 +247,22 @@ LeftAxisLayout.prototype = {
         if(rot === 0)
         {
             leftOffset -= labelWidth;
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
+            topOffset = topOffset + labelWidth/2 - (labelWidth * offset);
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
+            topOffset = topOffset - labelHeight + labelWidth/2 - (labelWidth * offset);
         }
         else
         {
             leftOffset -= labelWidth + (labelHeight * absRot/360);
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;
@@ -595,6 +597,7 @@ RightAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("rightTickOffset"),
             labelStyles = styles.label,
             margin = 0,
@@ -611,20 +614,21 @@ RightAxisLayout.prototype = {
         }
         if(rot === 0)
         {
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
+            topOffset = topOffset - labelHeight + labelWidth/2 - (labelWidth * offset);
         }
         else if(rot === -90)
         {
+            topOffset = topOffset + labelWidth/2 - (labelWidth * offset);
             leftOffset -= labelWidth * 0.5;
         }
         else
         {
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
             leftOffset += labelHeight/2 * absRot/90;
         }
         leftOffset += margin;
@@ -959,6 +963,7 @@ BottomAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("bottomTickOffset"),
             labelStyles = styles.label,
             margin = 0,
@@ -973,18 +978,29 @@ BottomAxisLayout.prototype = {
         {
             margin = labelStyles.margin.top;
         }
-        if(rot > 0)
+        if(rot === 90)
         {
+            topOffset -= labelHeight/2 * rot/90;
+            leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
+        }
+        else if(rot === -90)
+        {
+            topOffset -= labelHeight/2 * absRot/90;
+            leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
+        }
+        else if(rot > 0)
+        {
+            leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
             topOffset -= labelHeight/2 * rot/90;
         }
         else if(rot < 0)
         {
-            leftOffset -= labelWidth;
+            leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
             topOffset -= labelHeight/2 * absRot/90;
         }
         else
         {
-            leftOffset -= labelWidth * 0.5;
+            leftOffset -= labelWidth * offset;
         }
         topOffset += margin;
         topOffset += tickOffset;
@@ -1308,6 +1324,7 @@ TopAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             totalTitleSize = this._totalTitleSize,
             maxLabelSize = host._maxLabelSize,
             leftOffset = pt.x,
@@ -1319,27 +1336,29 @@ TopAxisLayout.prototype = {
             labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
-            leftOffset -= labelWidth * 0.5;
+            leftOffset -= labelWidth * offset;
             topOffset -= labelHeight;
         }
         else
         {
             if(rot === 90)
             {
-                leftOffset -= labelWidth;
+                leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
                 topOffset -= (labelHeight * 0.5);
             }
             else if (rot === -90)
             {
+                leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
                 topOffset -= (labelHeight * 0.5);
             }
             else if(rot > 0)
             {
-                leftOffset -= labelWidth;
+                leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
                 topOffset -= labelHeight - (labelHeight * rot/180);
             }
             else
             {
+                leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
                 topOffset -= labelHeight - (labelHeight * absRot/180);
             }
         }
@@ -1726,6 +1745,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 alpha: 1,
                 fontSize:"85%",
                 rotation: 0,
+                offset: 0.5,
                 margin: {
                     top: undefined,
                     right: undefined,
@@ -1865,10 +1885,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display !== "none",
-                tickPoint,
-                majorUnit = styles.majorUnit,
                 len,
-                majorUnitDistance,
                 i = 0,
                 layout = this._layout,
                 layoutLength,
@@ -1888,7 +1905,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 labelValues,
                 point,
                 points,
+                firstPoint,
+                lastPoint,
+                firstLabel,
+                lastLabel,
+                staticCoord,
+                dynamicCoord,
                 edgeOffset,
+                explicitLabels = this._labelValuesExplicitlySet ? this.get("labelValues") : null,
                 direction = (position === "left" || position === "right") ? "vertical" : "horizontal";
             this._labelWidths = [];
             this._labelHeights = [];
@@ -1909,42 +1933,50 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             this.set("edgeOffset", edgeOffset);
             lineStart = layout.getLineStart.apply(this);
 
-            //if labelValues are explicitly set, get the points based on the calculated positions of the labelValues
-            //if not, get the points based on the axis length, number of ticks and majorUnit values
-            if(this._labelValuesExplicitlySet)
+            if(direction === "vertical")
             {
-                labelData = this._getDataFromLabelValues(lineStart, this.get("labelValues"), edgeOffset, layoutLength, direction);
-                points = labelData.points;
-                labelValues = labelData.values;
-                len = points.length;
+                staticCoord = "x";
+                dynamicCoord = "y";
             }
             else
             {
-                majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
-                points = this._getPoints(lineStart, len, edgeOffset, majorUnitDistance, direction);
-                labelValues = [];
-                for(i = 0; i < len; i = i + 1)
-                {
-                    labelValues.push(this._getLabelByIndex(i, len, direction));
-                }
-
-                //Don't set labelValues fix for #2533172 is available
-                //this.set("labelValues", labelValues, {src: internal});
+                staticCoord = "y";
+                dynamicCoord = "x";
             }
-            
+
+            labelData = this._getLabelData(
+                lineStart[staticCoord],
+                staticCoord,
+                dynamicCoord,
+                this.get("minimum"),
+                this.get("maximum"),
+                edgeOffset,
+                layoutLength - edgeOffset - edgeOffset,
+                len,
+                explicitLabels
+            );
+
+            points = labelData.points;
+            labelValues = labelData.values;
+            len = points.length;
+            if(!this._labelValuesExplicitlySet)
+            {
+                this.set("labelValues", labelValues, {src: "internal"});
+            }
+
             //Don't create the last label or tick.
             if(this.get("hideFirstMajorUnit"))
             {
-                points.shift();
-                labelValues.shift();
+                firstPoint = points.shift();
+                firstLabel = labelValues.shift();
                 len = len - 1;
             }
 
             //Don't create the last label or tick.
             if(this.get("hideLastMajorUnit"))
             {
-                points.pop();
-                labelValues.pop();
+                lastPoint = points.pop();
+                lastLabel = labelValues.pop();
                 len = len - 1;
             }
 
@@ -1954,8 +1986,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             }
             else
             {
-                tickPoint = this.getFirstPoint(lineStart);
-                this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
+                this.drawLine(path, lineStart, this.getLineEnd(lineStart));
                 if(drawTicks)
                 {
                     tickPath = this.get("tickPath");
@@ -1975,7 +2006,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                     }
                 }
                 this._createLabelCache();
-                this._tickPoints = points;
                 this._maxLabelSize = 0;
                 this._totalTitleSize = 0;
                 this._titleSize = 0;
@@ -1986,7 +2016,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                     point = points[i];
                     if(point)
                     {
-                        label = this.getLabel(point, labelStyles);
+                        label = this.getLabel(labelStyles);
                         this._labels.push(label);
                         this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [labelValues[i], labelFormat]));
                         labelWidth = Math.round(label.offsetWidth);
@@ -2012,8 +2042,25 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 len = this._labels.length;
                 for(i = 0; i < len; ++i)
                 {
-                    layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                    layout.positionLabel.apply(this, [this.get("labels")[i], points[i], styles, i]);
                 }
+                if(firstPoint)
+                {
+                    points.unshift(firstPoint);
+                }
+                if(lastPoint)
+                {
+                    points.push(lastPoint);
+                }
+                if(firstLabel)
+                {
+                    labelValues.unshift(firstLabel);
+                }
+                if(lastLabel)
+                {
+                    labelValues.push(lastLabel);
+                }
+                this._tickPoints = points;
             }
         }
         this._drawing = false;
@@ -2162,12 +2209,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * Creates or updates an axis label.
      *
      * @method getLabel
-     * @param {Object} pt x and y coordinates for the label
      * @param {Object} styles styles applied to label
      * @return HTMLElement
      * @private
      */
-    getLabel: function(pt, styles)
+    getLabel: function(styles)
     {
         var i,
             label,
@@ -2327,55 +2373,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     },
 
     /**
-     * Calculates points based off the majorUnit count or distance of the Axis.
-     *
-     * @method _getPoints
-     * @param {Object} startPoint An object literal containing the x and y coordinates of the first
-     * point on the axis.
-     * @param {Number} len The number of points on an axis.
-     * @param {Number} edgeOffset The distance from the start of the axis and the point.
-     * @param {Number} majorUnitDistance The distance between points on an axis.
-     * @param {String} direction Indicates whether the axis is horizontal or vertical.
-     * @return Array
-     * @private
-     */
-    _getPoints: function(startPoint, len, edgeOffset, majorUnitDistance, direction)
-    {
-        var points = [],
-            i,
-            style = this.get("styles"),
-            staticCoord,
-            dynamicCoord,
-            constantVal,
-            newPoint,
-            padding,
-            coord;
-        if(direction === "vertical")
-        {
-            staticCoord = "x";
-            dynamicCoord = "y";
-            padding = style.padding.top;
-        }
-        else
-        {
-            staticCoord = "y";
-            dynamicCoord = "x";
-            padding = style.padding.left;
-        }
-        constantVal = startPoint[staticCoord];
-        coord = edgeOffset + padding;
-        for(i = 0; i < len; i = i + 1)
-        {
-            newPoint = {};
-            newPoint[staticCoord] = constantVal;
-            newPoint[dynamicCoord] = coord;
-            points.push(newPoint);
-            coord = coord + majorUnitDistance;
-        }
-        return points;
-    },
-
-    /**
      * Rotates and positions a text field.
      *
      * @method _rotate
@@ -2502,7 +2499,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             label,
             props = this._getTextRotationProps(labelStyles);
             props.transformOrigin = layout._getTransformOrigin(props.rot);
-        label = this.getLabel({x: 0, y: 0}, labelStyles);
+        label = this.getLabel(labelStyles);
         this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
@@ -2613,13 +2610,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     {
         var units,
             majorUnit = this.get("styles").majorUnit,
-            len = this.getLength();
+            len;
         if(majorUnit.determinant === "count")
         {
             units = majorUnit.count;
         }
         else if(majorUnit.determinant === "distance")
         {
+            len = this.getLength();
             units = (len/majorUnit.distance) + 1;
         }
         return units;
@@ -3146,6 +3144,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
          *              <dt>alpha</dt><dd>Number between 0 and 1 indicating the opacity of the labels. The default value is 1.</dd>
          *              <dt>fontSize</dt><dd>The font-size of the labels. The default value is 85%</dd>
          *              <dt>rotation</dt><dd>The rotation, in degrees (between -90 and 90) of the labels. The default value is 0.</dd>
+         *              <dt>offset</td><dd>A number between 0 and 1 indicating the relationship of the label to a tick. For a horizontal axis
+         *              label, a value of 0 will position the label's left side even to the the tick. A position of 1 would position the
+         *              right side of the label with the tick. A position of 0.5 would center the label horizontally with the tick. For a
+         *              vertical axis, a value of 0 would position the top of the label with the tick, a value of 1 would position the bottom
+         *              of the label with the tick and a value 0 would center the label vertically with the tick. The default value is 0.5.</dd>
          *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the `Axis`,
          *              only one of the properties used.
          *                  <dl>

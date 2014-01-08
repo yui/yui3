@@ -6,6 +6,30 @@ Uploader Utility (New) Change History
 
 * No changes.
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Addition of XHR's `responseText` to `uploaderror`'s event payload. ([#1356][]: @semafor)
+
+[#1356]: https://github.com/yui/yui3/issues/1356
+
+3.13.0
+------
+
+* Fixed typo with event `uploadcancel`. ([#1053][] @JetFault) [#1053]: https://github.com/yui/yui3/issues/1053
+* [!] #1154 Deprecate flash-uploader module.
+* Move all related swf and as files from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+
+3.12.0
+------
+
+* No changes.
+
 3.11.0
 ------
 

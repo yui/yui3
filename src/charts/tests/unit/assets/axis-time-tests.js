@@ -1,7 +1,7 @@
 YUI.add('axis-time-tests', function(Y) {
     Y.TimeAxisTest = function() {
         Y.TimeAxisTest.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(Y.TimeAxisTest, Y.ChartTestTemplate, {
         setUp: function() {
             var position = this.position,
@@ -19,21 +19,23 @@ YUI.add('axis-time-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
-        _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, layoutLength, direction, min, max)
+        _getDataFromLabelValues: function(startPoint, len, edgeOffset, layoutLength, direction, min, max, labelValues)
         {
             var points = [],
                 values = [],
                 labelValue,
                 i,
-                len = labelValues.length,
                 staticCoord,
                 dynamicCoord,
                 constantVal,
                 newPoint,
-                scaleFactor = (layoutLength - (edgeOffset * 2)) / (max - min);
+                range = max - min,
+                scaleFactor = (layoutLength - (edgeOffset * 2)) / range,
+                increm = range/(len - 1);
             if(direction === "vertical")
             {
                 staticCoord = "x";
@@ -45,6 +47,14 @@ YUI.add('axis-time-tests', function(Y) {
                 dynamicCoord = "x";
             }
             constantVal = startPoint[staticCoord];
+            if(!labelValues) {
+                labelValues = [];
+                labelValue = min;
+                for(i = 0; i < len; i = i + 1) {
+                    labelValues.push(labelValue);
+                    labelValue = labelValue + increm;
+                }
+            }
             for(i = 0; i < len; i = i + 1)
             {
                 labelValue = labelValues[i];
@@ -83,7 +93,7 @@ YUI.add('axis-time-tests', function(Y) {
             Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len), "The label's value should be " + testLabel + ".");
         },
 
-        "test: _getDataFromLabelValues()" : function() {
+        "test: _getLabelData()" : function() {
             var axis = this.axis,
                 labelValues = [
                     "01/02/2009",
@@ -110,21 +120,39 @@ YUI.add('axis-time-tests', function(Y) {
                 axisValue,
                 testValue,
                 assertFn = function() {
-                    axisLabelData = axis._getDataFromLabelValues.apply(axis, [
-                        startPoint,
-                        labelValues,
+                    var min = axis.get("minimum"),
+                        max = axis.get("maximum"),
+                        staticCoord,
+                        dynamicCoord,
+                        constantVal;
+                    if(direction === "vertical") {
+                        staticCoord = "x";
+                        dynamicCoord = "y";
+                    } else {
+                        staticCoord = "y";
+                        dynamicCoord = "x";
+                    }
+                    constantVal = startPoint[staticCoord];
+                    axisLabelData = axis._getLabelData.apply(axis, [
+                        constantVal,
+                        staticCoord,
+                        dynamicCoord,
+                        min,
+                        max,
                         edgeOffset,
-                        layoutLength,
-                        direction
+                        layoutLength - edgeOffset - edgeOffset,
+                        len,
+                        labelValues
                     ]);
                     testLabelData = this._getDataFromLabelValues(
                         startPoint,
-                        labelValues,
+                        len,
                         edgeOffset,
                         layoutLength,
                         direction,
                         axis.get("minimum"),
-                        axis.get("maximum")
+                        axis.get("maximum"),
+                        labelValues
                     );
                     testPoints = testLabelData.points;
                     testValues = testLabelData.values;
@@ -135,23 +163,31 @@ YUI.add('axis-time-tests', function(Y) {
                         testPoint = testPoints[i];
                         axisPoint = axisPoints[i];
                         testValue = testValues[i];
-                        axisValue = axisPoints[i];
+                        axisValue = axisValues[i];
                         if(testPoint) {
                             Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + "."); 
                             Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + "."); 
                         } else {
                             Y.Assert.isNull(axisPoint, "There should not be a value for the axis point.");
                         }
+                        if(testValue) {
+                            Y.Assert.areEqual(testValue, axisValue, "The label value for the " + i + " index should be " + testValue + ".");
+                        }
                     }
                 };
+            len = labelValues.length; 
             assertFn.apply(this);
             //hit the branch
             labelValues[3] = null;
+            assertFn.apply(this);
+            labelValues = null;
+            len = axis.getTotalMajorUnits();
             assertFn.apply(this);
         }
     });
     
     var suite = new Y.Test.Suite("Charts: TimeAxis"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

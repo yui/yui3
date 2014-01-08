@@ -10,19 +10,19 @@
  * @class DataSource.Get
  * @extends DataSource.Local
  * @constructor
- */    
+ */
 var DSGet = function() {
     DSGet.superclass.constructor.apply(this, arguments);
 };
-    
-    
+
+
 Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
     /**
      * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
      *
      * @method _defRequestFn
-     * @param e {Event.Facade} Event Facade with the following properties:
+     * @param e {EventFacade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -127,7 +127,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
      *
      * @property NAME
      * @type String
-     * @static     
+     * @static
      * @final
      * @value "dataSourceGet"
      */
@@ -204,5 +204,5 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         }
     }
 });
-  
+
 YUI.namespace("Env.DataSource.callbacks");

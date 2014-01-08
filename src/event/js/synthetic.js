@@ -56,8 +56,8 @@ function Notifier(handle, emitFacade) {
  * automatically added after those passed to fire().</p>
  *
  * @method fire
- * @param e {EventFacade|DOMEventFacade|Object|any} (see description)
- * @param arg* {any} additional arguments received by all subscriptions
+ * @param {EventFacade|DOMEventFacade|any} e (see description)
+ * @param {any[]} [arg*] additional arguments received by all subscriptions
  * @private
  */
 Notifier.prototype.fire = function (e) {
@@ -95,6 +95,17 @@ Notifier.prototype.fire = function (e) {
 
     sub.context = thisObj || event.currentTarget || ce.host;
     ret = ce.fire.apply(ce, args);
+
+    // have to handle preventedFn and stoppedFn manually because
+    // Notifier CustomEvents are forced to emitFacade=false
+    if (e.prevented && ce.preventedFn) {
+        ce.preventedFn.apply(ce, args);
+    }
+
+    if (e.stopped && ce.stoppedFn) {
+        ce.stoppedFn.apply(ce, args);
+    }
+
     sub.context = thisObj; // reset for future firing
 
     // to capture callbacks that return false to stopPropagation.

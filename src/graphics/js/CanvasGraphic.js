@@ -340,11 +340,11 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      */
     getXY: function()
     {
-        var node = Y.one(this._node),
+        var node = this._node,
             xy;
         if(node)
         {
-            xy = node.getXY();
+            xy = Y.DOM.getXY(node);
         }
         return xy;
     },
@@ -387,16 +387,25 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var parentNode = Y.one(render),
+        var parentNode = render || DOCUMENT.body,
             node = this._node,
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
+            w,
+            h;
+        if(render instanceof Y.Node)
+        {
+            parentNode = render._node;
+        }
+        else if(Y.Lang.isString(render))
+        {
+            parentNode = Y.Selector.query(render, DOCUMENT.body, true);
+        }
+        w = this.get("width") || parseInt(Y.DOM.getComputedStyle(parentNode, "width"), 10);
+        h = this.get("height") || parseInt(Y.DOM.getComputedStyle(parentNode, "height"), 10);
         parentNode.appendChild(node);
         node.style.display = "block";
         node.style.position = "absolute";
-        node.style.left = "0px";
-        node.style.top = "0px";
+        node.style.left = this.get("x") + "px";
+        node.style.top = this.get("y") + "px";
         this.set("width", w);
         this.set("height", h);
         this.parentNode = parentNode;
@@ -414,7 +423,11 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         if(this._node)
         {
             this._removeChildren(this._node);
-            Y.one(this._node).destroy();
+            if(this._node.parentNode)
+            {
+                this._node.parentNode.removeChild(this._node);
+            }
+            this._node = null;
         }
     },
 

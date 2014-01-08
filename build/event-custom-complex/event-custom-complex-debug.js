@@ -505,6 +505,7 @@ CEProto.halt = function(immediate) {
  * Included in the event-custom-complex submodule.
  *
  * @method addTarget
+ * @chainable
  * @param o {EventTarget} the target to add
  * @for EventTarget
  */
@@ -517,6 +518,8 @@ ETProto.addTarget = function(o) {
 
     etState.targets[Y.stamp(o)] = o;
     etState.hasTargets = true;
+
+    return this;
 };
 
 /**
@@ -532,6 +535,7 @@ ETProto.getTargets = function() {
 /**
  * Removes a bubble target
  * @method removeTarget
+ * @chainable
  * @param o {EventTarget} the target to remove
  * @for EventTarget
  */
@@ -545,6 +549,8 @@ ETProto.removeTarget = function(o) {
             this._yuievt.hasTargets = false;
         }
     }
+
+    return this;
 };
 
 /**

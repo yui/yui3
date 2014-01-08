@@ -4,11 +4,39 @@ Node Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Addition of `paste`, `copy`, and `cut` to Node's event white list. ([#1350][]: @JetFault)
+
+[#1350]: https://github.com/yui/yui3/issues/1350
+
+3.13.0
+------
+
+* Fix issue causing `inDoc` to fail if Node wasn't bound to a node.
+  [Pull Request #1169][Issue #1168]
+
+
+3.12.0
+------
+
 * Fixed: Node instances that were cached before `node-pluginhost` was loaded
   couldn't become plugin hosts. [Jeroen Versteeg]
 
 * Fixed: `Node#toggleView()` didn't show a node if that node's `hidden`
   attribute wasn't set (this was a regression in 3.10.2). [Jeroen Versteeg]
+
+* Fixed: `Node#addMethod` could not bind to contexts other than itself. ([#1070][]: @zhiyelee)
+
+[#1070]: https://github.com/yui/yui3/issues/1070
 
 3.11.0
 ------

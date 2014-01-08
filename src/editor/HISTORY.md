@@ -6,6 +6,48 @@ Rich Text Editor Change History
 
 * No changes.
 
+3.14.1
+------
+
+* Resolution of several issues in IE 11. ([#1505][]: @ezequiel)
+
+[#1505]: https://github.com/yui/yui3/issues/1505
+
+3.14.0
+------
+
+* Fix Y.Frame issue where the linked CSS in the frame was trying to call
+  `/undefined`. ([#1367][]: @ipeychev)
+
+[#1367]: https://github.com/yui/yui3/issues/1367
+
+3.13.0
+------
+* Add in `getEditorOffset` to calculate distance from current selection to the
+  beginning of the editor. [Pull Request #1232]
+
+* Editor is able to work in two modes - as an Inline Editor or using an iframe.
+  For that reason, some internal changes have been made:
+
+  Y.Frame is now a plugin and extends Y.Plugin.Base.
+
+  There is a new Plugin, called ContentEditable. This plugin allows
+  editor to work without using an iframe, as an inline editor.
+
+  If a container is not specified, EditorBase creates and plugs an instance of
+  Y.Frame. Otherwise, it uses the provided container (ContentEditable)
+
+  Added Y.InlineEditor which extends EditorBase and plugs ContentEditable
+  during the initialization process.
+
+  [Ticket #1041] [ipeychev]
+
+3.12.0
+------
+
+* No changes.
+
+
 3.11.0
 ------
 

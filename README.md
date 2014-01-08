@@ -1,5 +1,7 @@
-YUI 3: The Yahoo! User Interface Library
-========================================
+YUI 3: The Yahoo User Interface Library
+=======================================
+
+[![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
 
 YUI is a free, open source JavaScript and CSS framework for building richly
 interactive web applications. YUI is provided under a BSD license and is
@@ -12,12 +14,11 @@ Links
   * [Documentation](http://yuilibrary.com/yui/docs/)
   * [Blog](http://yuiblog.com)
   * [Latest Production Release](http://yuilibrary.com/download/yui3/)
-  * [Forums](http://yuilibrary.com/forum/)
+  * [Forums](https://groups.google.com/forum/#!forum/yui-support)
   * [License](http://yuilibrary.com/license/)
-  * [Contributor Info](https://github.com/yui/yui3/wiki/Contributing.md)
+  * [Contributor Info](https://github.com/yui/yui3/blob/master/CONTRIBUTING.md)
   * [Contributor Mailing List](https://groups.google.com/forum/?fromgroups#!forum/yui-contrib)
   * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
-  * [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
   * [Shifter, for building YUI](http://yui.github.com/shifter/)
 
 
@@ -60,11 +61,13 @@ each of these code branches represents:
     and evaluate. *All code in this branch has fully passed all unit tests and should be stable.*
 
   * `dev-master` and `dev-3.x`: Current working branches containing code that
-     **has not** been through the CI process. **Developers check their changes in to
-     these integration branches for the automated testing system to validate.** Once they
-     are validated, the code is merged into `master` and `3.x` respectively. **Never** check in to
-     `master` or `3.x` directly.
+    **has not** been through the CI process. **Developers check their changes in to
+    these integration branches for the automated testing system to validate.** Once they
+    are validated, the code is merged into `master` and `3.x` respectively. **Never** check in to
+    `master` or `3.x` directly.
 
+  * `release-3.x.x`: Short-lived release branches where code checkins are carefully
+    managed for extensive testing and release deployment.
 
 ## Source Tree
 

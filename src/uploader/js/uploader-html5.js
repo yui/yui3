@@ -54,7 +54,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * it will be ignored.
     *
     * @property queue
-    * @type {Y.Uploader.Queue}
+    * @type {Uploader.Queue}
     */
     queue: null,
 
@@ -276,6 +276,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
             this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
         }, this);
         this._fileInputField.on("change", this._updateFileList, this);
+        this._fileInputField.on("click", function(event) {
+            event.stopPropagation();
+        }, this);
 
         this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
     },
@@ -583,7 +586,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * Starts the upload of a specific file.
     *
     * @method upload
-    * @param file {Y.File} Reference to the instance of the file to be uploaded.
+    * @param file {File} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
     * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
@@ -681,7 +684,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default '<button type="button" class="yui3-button" role="button" aria-label="{selectButtonLabel}"
     *           tabindex="{tabIndex}">{selectButtonLabel}</button>'

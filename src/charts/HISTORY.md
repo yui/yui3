@@ -6,6 +6,33 @@ Charts Change History
 
 * No changes.
 
+3.14.1
+------
+
+* #1475 Address issue in which _maxSize property was not updated for single series histogram causing the column/bar to disappear
+on mouseover.  
+
+3.14.0
+------
+
+* #1402 Remove Y.Clone.
+* #1393 Address issue in which Candlestick series does not render nicely when there are large amounts of data.
+* #1392 Address issue in which histograms threw errors when groupMarkers is set to true and there is missing data.
+* #1391 Address issue in which histograms did not always size and space properly when used outside of charts app.
+* #1390 Address issue in which histograms threw error when used independently from the larger chart app.
+* #1382 Address issue in which first/last values were removed from axis when hideFirstMajorUnit/hideLastMajorUnit were set to true.
+* #1381 Added ability to offset labels in Axis.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* #716 Added logarithmic scaling.
+
 3.11.0
 ------
 

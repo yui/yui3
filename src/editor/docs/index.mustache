@@ -28,9 +28,33 @@ YUI().use('editor-base', function(Y) {
 
 });
 ```
+<h2 id="inline-editor">Inline Editor</h2>
+<p>You can alternatively create a content editable editor, referred to as an inline editor, on a node. To do this, include the `editor-inline` and create a new instance of the `Y.InlineEditor`.</p>
+<p>You can read more about content editable in HTML5 on <a title="Content Editable - HTML | MDN" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Content_Editable">MDN</a>.</p>
+```
+YUI().use('editor-inline', function(Y) {
+
+    var editor = new Y.InlineEditor({
+        content: '<strong>This is <em>a test</em></strong> <strong>This is <em>a test</em></strong> '
+    });
+
+    //Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    //Focusing the Editor when ready
+    editor.on('ready', function() {
+        editor.focus();
+    });
+
+    //Rendering the Editor.
+    editor.render('#editor');
+
+});
+```
+
 
 <h2 id="instance">Frame Instance</h2>
-<p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe. 
+<p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe.
 This means that you now have the full power of YUI 3 inside the Editor iframe. You can use Event, Stylesheet, Node and even DD
 inside the iframe, without having to load all the JavaScript inside the document.</p>
 

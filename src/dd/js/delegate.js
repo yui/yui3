@@ -151,7 +151,6 @@
         /**
         * Applies the Y.Plugin.Drop to all nodes matching the cont + nodes selector query.
         * @method syncTargets
-        * @return {Self}
         * @chainable
         */
         syncTargets: function() {

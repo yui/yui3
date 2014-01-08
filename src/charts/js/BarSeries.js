@@ -58,7 +58,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     {
         if(this._markers && this._markers[i])
         {
-            var styles = Y.clone(this.get("styles").marker),
+            var styles = this._copyObject(this.get("styles").marker),
                 markerStyles,
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
@@ -66,7 +66,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 marker = this._markers[i],
                 markers,
                 seriesCollection = this.get("seriesTypeCollection"),
-                seriesLen = seriesCollection.length,
+                seriesLen = seriesCollection ? seriesCollection.length : 0,
                 seriesStyles,
                 seriesSize = 0,
                 offset = 0,

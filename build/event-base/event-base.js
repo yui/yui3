@@ -1,15 +1,3 @@
-(function () {
-var GLOBAL_ENV = YUI.Env;
-
-if (!GLOBAL_ENV._ready) {
-    GLOBAL_ENV._ready = function() {
-        GLOBAL_ENV.DOMReady = true;
-        GLOBAL_ENV.remove(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
-    };
-
-    GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
-}
-})();
 YUI.add('event-base', function (Y, NAME) {
 
 /*
@@ -210,7 +198,9 @@ Y.extend(DOMEventFacade, Object, {
     preventDefault: function(returnValue) {
         var e = this._event;
         e.preventDefault();
-        e.returnValue = returnValue || false;
+        if (returnValue) {
+            e.returnValue = returnValue;
+        }
         this._wrapper.prevented = 1;
         this.prevented = 1;
     },
@@ -1296,12 +1286,17 @@ if (config.injected || YUI.Env.windowLoaded) {
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
-}
 
-try {
-    add(win, "unload", onUnload);
-} catch(e) {
-    /*jshint maxlen:300*/
+    // In IE6 and below, detach event handlers when the page is unloaded in
+    // order to try and prevent cross-page memory leaks. This isn't done in
+    // other browsers because a) it's not necessary, and b) it breaks the
+    // back/forward cache.
+    if (Y.UA.ie < 7) {
+        try {
+            add(win, "unload", onUnload);
+        } catch(e) {
+        }
+    }
 }
 
 Event.Custom = Y.CustomEvent;

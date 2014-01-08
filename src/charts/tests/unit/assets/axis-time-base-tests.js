@@ -2,7 +2,7 @@ YUI.add('axis-time-base-tests', function(Y) {
     Y.TimeAxisBaseTest = function() {
         Y.TimeAxisBaseTest.superclass.constructor.apply(this, arguments);
         this.prepValues();
-    }
+    };
     Y.extend(Y.TimeAxisBaseTest, Y.ChartTestTemplate, {
         prepValues : function() {
             var i,
@@ -22,6 +22,7 @@ YUI.add('axis-time-base-tests', function(Y) {
 
         tearDown: function() {
             this.axis = null;
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: get('type')" : function() {
@@ -137,7 +138,7 @@ YUI.add('axis-time-base-tests', function(Y) {
         "test: get('dataMaximum')" : function() {
             var dataMaximum;
             this.axis.set("keys", this.keys);
-            dataMaximum = this.axis.get("dataMaximum")
+            dataMaximum = this.axis.get("dataMaximum");
             Y.Assert.isTrue(dataMaximum >= this.dataMaximum, "The value for the attribute dataMaximum (" + dataMaximum + ") should be greater than or equal to " + this.dataMaximum + ".");
         },
 
@@ -199,6 +200,28 @@ YUI.add('axis-time-base-tests', function(Y) {
              Y.Assert.areEqual(formatted, returnedFormattedValue, "The label should equal " + formatted + ".");
         },
 
+        "test: _getCoordFromValue()" : function() {
+            var axis = this.axis,
+                min = new Date("1/1/2013"),
+                max = new Date("6/1/2013"),
+                dataValue = new Date("2/1/2013"),
+                length = 400,
+                offset = 5,
+                testResult = ((dataValue - min) * (length/(max.valueOf() - min.valueOf()))) + offset,
+                result;
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, dataValue, offset]
+            );
+            Y.Assert.isNumber(result, "The value should be a number.");
+            Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, null, offset]
+            );
+            Y.Assert.isNaN(result, "The value should not be a number.");
+        },
+
         "test: edgeCases" : function() {
             this.axis.set("keys", this.keys);
             this.axis.set("dataProvider", []);
@@ -214,6 +237,7 @@ YUI.add('axis-time-base-tests', function(Y) {
     });
     
     var suite = new Y.Test.Suite("Charts: TimeAxisBase"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},
@@ -228,7 +252,7 @@ YUI.add('axis-time-base-tests', function(Y) {
             {date: "01/11/2009", open: 60.42, close: 97.42},
             {date: new Date("01/12/2009").valueOf().toString(), open: 303.55, close: 265.55},
             {date: "01/13/2009", open: 47.48, close: 71.48},
-            {date: new String(new Date("01/14/2009").valueOf()), open: 327.64, close: 256.64},
+            {date: ((new Date("01/14/2009") + "").valueOf()), open: 327.64, close: 256.64},
             {date: "01/15/2009", open: 124.13, close: 61.13},
             {date: "01/16/2009", open: 58.21, close: 106.21},
             {date: "01/17/2009", open: 85.55, close: 151.55},

@@ -6,98 +6,110 @@ YUI.add('loader-base', function (Y, NAME) {
  * @submodule loader-base
  */
 
-if (!YUI.Env[Y.version]) {
-
-    (function() {
-        var VERSION = Y.version,
-            BUILD = '/build/',
-            ROOT = VERSION + '/',
-            CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.07.03-22-52',
-            TNT = '2in3',
-            TNT_VERSION = '4',
-            YUI2_VERSION = '2.9.0',
-            COMBO_BASE = CDN_BASE + 'combo?',
-            META = { version: VERSION,
-                              root: ROOT,
-                              base: Y.Env.base,
-                              comboBase: COMBO_BASE,
-                              skin: { defaultSkin: 'sam',
-                                           base: 'assets/skins/',
-                                           path: 'skin.css',
-                                           after: ['cssreset',
-                                                          'cssfonts',
-                                                          'cssgrids',
-                                                          'cssbase',
-                                                          'cssreset-context',
-                                                          'cssfonts-context']},
-                              groups: {},
-                              patterns: {} },
-            groups = META.groups,
-            yui2Update = function(tnt, yui2, config) {
-
-                var root = TNT + '.' +
-                        (tnt || TNT_VERSION) + '/' +
-                        (yui2 || YUI2_VERSION) + BUILD,
-                    base = (config && config.base) ? config.base : CDN_BASE,
-                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
-
-                groups.yui2.base = base + root;
-                groups.yui2.root = root;
-                groups.yui2.comboBase = combo;
-            },
-            galleryUpdate = function(tag, config) {
-                var root = (tag || GALLERY_VERSION) + BUILD,
-                    base = (config && config.base) ? config.base : CDN_BASE,
-                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
-
-                groups.gallery.base = base + root;
-                groups.gallery.root = root;
-                groups.gallery.comboBase = combo;
-            };
-
-
-        groups[VERSION] = {};
-
-        groups.gallery = {
-            ext: false,
-            combine: true,
+(function() {
+    var VERSION = Y.version,
+        BUILD = '/build/',
+        ROOT = VERSION + '/',
+        CDN_BASE = Y.Env.base,
+        GALLERY_VERSION = 'gallery-2014.01.03-22-50',
+        TNT = '2in3',
+        TNT_VERSION = '4',
+        YUI2_VERSION = '2.9.0',
+        COMBO_BASE = CDN_BASE + 'combo?',
+        META = {
+            version: VERSION,
+            root: ROOT,
+            base: Y.Env.base,
             comboBase: COMBO_BASE,
-            update: galleryUpdate,
-            patterns: { 'gallery-': { },
-                        'lang/gallery-': {},
-                        'gallerycss-': { type: 'css' } }
+            skin: {
+                defaultSkin: 'sam',
+                base: 'assets/skins/',
+                path: 'skin.css',
+                after: [
+                    'cssreset',
+                    'cssfonts',
+                    'cssgrids',
+                    'cssbase',
+                    'cssreset-context',
+                    'cssfonts-context'
+                ]
+            },
+            groups: {},
+            patterns: {}
+        },
+        groups = META.groups,
+        yui2Update = function(tnt, yui2, config) {
+            var root = TNT + '.' +
+                    (tnt || TNT_VERSION) + '/' +
+                    (yui2 || YUI2_VERSION) + BUILD,
+                base = (config && config.base) ? config.base : CDN_BASE,
+                combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+            groups.yui2.base = base + root;
+            groups.yui2.root = root;
+            groups.yui2.comboBase = combo;
+        },
+        galleryUpdate = function(tag, config) {
+            var root = (tag || GALLERY_VERSION) + BUILD,
+                base = (config && config.base) ? config.base : CDN_BASE,
+                combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+            groups.gallery.base = base + root;
+            groups.gallery.root = root;
+            groups.gallery.comboBase = combo;
         };
 
-        groups.yui2 = {
-            combine: true,
-            ext: false,
-            comboBase: COMBO_BASE,
-            update: yui2Update,
-            patterns: {
-                'yui2-': {
-                    configFn: function(me) {
-                        if (/-skin|reset|fonts|grids|base/.test(me.name)) {
-                            me.type = 'css';
-                            me.path = me.path.replace(/\.js/, '.css');
-                            // this makes skins in builds earlier than
-                            // 2.6.0 work as long as combine is false
-                            me.path = me.path.replace(/\/yui2-skin/,
-                                             '/assets/skins/sam/yui2-skin');
-                        }
+
+    groups[VERSION] = {};
+
+    groups.gallery = {
+        ext: false,
+        combine: true,
+        comboBase: COMBO_BASE,
+        update: galleryUpdate,
+        patterns: {
+            'gallery-': {},
+            'lang/gallery-': {},
+            'gallerycss-': {
+                type: 'css'
+            }
+        }
+    };
+
+    groups.yui2 = {
+        combine: true,
+        ext: false,
+        comboBase: COMBO_BASE,
+        update: yui2Update,
+        patterns: {
+            'yui2-': {
+                configFn: function(me) {
+                    if (/-skin|reset|fonts|grids|base/.test(me.name)) {
+                        me.type = 'css';
+                        me.path = me.path.replace(/\.js/, '.css');
+                        // this makes skins in builds earlier than
+                        // 2.6.0 work as long as combine is false
+                        me.path = me.path.replace(/\/yui2-skin/,
+                                            '/assets/skins/sam/yui2-skin');
                     }
                 }
             }
-        };
+        }
+    };
 
-        galleryUpdate();
-        yui2Update();
+    galleryUpdate();
+    yui2Update();
 
-        YUI.Env[VERSION] = META;
-    }());
-}
+    if (YUI.Env[VERSION]) {
+        Y.mix(META, YUI.Env[VERSION], false, [
+            'modules',
+            'groups',
+            'skin'
+        ], 0, true);
+    }
 
-
+    YUI.Env[VERSION] = META;
+}());
 /*jslint forin: true, maxlen: 350 */
 
 /**
@@ -2533,7 +2545,7 @@ Y.Loader.prototype = {
      * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
-     * @param {String} [base=self.base] The base url to use
+     * @param {String} [base] The base url to use. Defaults to self.base
      * @return {string} the full url.
      * @private
      */
@@ -2544,7 +2556,8 @@ Y.Loader.prototype = {
     * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
     * @method resolve
     * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
-    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @param {Array} [s] An override for the loader.sorted array. Defaults to
+    * `loader.sorted`.
     * @return {Object} Object hash (js and css) of two arrays of file lists
     * @example This method can be used as an off-line dep calculator
     *
@@ -2755,7 +2768,7 @@ Y.Loader.prototype = {
 
 
     @method load
-    @param {Callback} cb Executed after all load operations are complete
+    @param {Function} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {

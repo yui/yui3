@@ -2,10 +2,10 @@
     "axis-base": {
         "requires":[
             "classnamemanager",
-            "datatype-number", 
-            "datatype-date", 
+            "datatype-number",
+            "datatype-date",
             "base",
-            "event-custom" 
+            "event-custom"
         ]
     }
 }

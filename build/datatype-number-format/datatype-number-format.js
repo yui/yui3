@@ -14,7 +14,7 @@ YUI.add('datatype-number-format', function (Y, NAME) {
  * @module datatype-number
  * @submodule datatype-number-format
  */
- 
+
 /**
  * Number provides a set of utility functions to operate against Number objects.
  *

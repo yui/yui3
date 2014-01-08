@@ -11,10 +11,10 @@ YUITest.Mock = function(template){
 
     //use blank object is nothing is passed in
     template = template || {};
-    
+
     var mock,
         name;
-    
+
     //try to create mock that keeps prototype chain intact
     //fails in the case of ActiveX objects
     try {
@@ -39,9 +39,9 @@ YUITest.Mock = function(template){
     }
 
     //return it
-    return mock;    
+    return mock;
 };
-    
+
 /**
  * Assigns an expectation to a mock object. This is used to create
  * methods and properties on the mock object that are monitored for
@@ -58,10 +58,9 @@ YUITest.Mock = function(template){
  *      An optional 'error' key defines an error type to be thrown in all cases.
  *      The "callCount" key provides an optional number of times the method is
  *      expected to be called (the default is 1).
- * @return {void}
  * @method expect
  * @static
- */ 
+ */
 YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
 
     //make sure there's a place to store the expectations
@@ -84,26 +83,26 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
         mock.__expectations[name] = expectation;
         expectation.callCount = callCount;
         expectation.actualCallCount = 0;
-            
+
         //process arguments
         for (i=0; i < args.length; i++){
              if (!(args[i] instanceof YUITest.Mock.Value)){
                 args[i] = YUITest.Mock.Value(YUITest.Assert.areSame, [args[i]], "Argument " + i + " of " + name + "() is incorrect.");
-            }       
+            }
         }
-    
+
         //if the method is expected to be called
         if (callCount > 0){
-            mock[name] = function(){   
+            mock[name] = function(){
                 try {
                     expectation.actualCallCount++;
                     YUITest.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
                     for (var i=0, len=args.length; i < len; i++){
                         args[i].verify(arguments[i]);
-                    }                
+                    }
 
                     runResult = run.apply(this, arguments);
-                    
+
                     if (error){
                         throw error;
                     }
@@ -113,11 +112,11 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                 }
 
                 // Any value provided for 'returns' overrides any value returned
-                // by our 'run' function. 
+                // by our 'run' function.
                 return expectation.hasOwnProperty('returns') ? result : runResult;
             };
         } else {
-        
+
             //method should fail if called when not expected
             mock[name] = function(){
                 try {
@@ -125,7 +124,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                 } catch (ex){
                     //route through TestRunner for proper handling
                     YUITest.TestRunner._handleError(ex);
-                }                    
+                }
             };
         }
     } else if (expectation.property){
@@ -138,21 +137,20 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
  * Verifies that all expectations of a mock object have been met and
  * throws an assertion error if not.
  * @param {Object} mock The object to verify..
- * @return {void}
  * @method verify
  * @static
- */ 
-YUITest.Mock.verify = function(mock){    
+ */
+YUITest.Mock.verify = function(mock){
     try {
-    
+
         for (var name in mock.__expectations){
             if (mock.__expectations.hasOwnProperty(name)){
                 var expectation = mock.__expectations[name];
                 if (expectation.method) {
                     YUITest.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
                 } else if (expectation.property){
-                    YUITest.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
-                }                
+                    YUITest.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value.");
+                }
             }
         }
 

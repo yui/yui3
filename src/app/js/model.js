@@ -221,7 +221,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         any.
       @param {Boolean} [options.remove=false] If `true`, the model will be
         deleted via the sync layer in addition to the instance being destroyed.
-    @param {callback} [callback] Called after the model has been destroyed (and
+    @param {Function} [callback] Called after the model has been destroyed (and
         deleted via the sync layer if `options.remove` is `true`).
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. Otherwise _err_ will be `null`.
@@ -376,7 +376,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {Object} [options] Options to be passed to `sync()` and to `set()`
       when setting the loaded attributes. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         `null`.
@@ -733,7 +733,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     it will simply do nothing.
 
     @method undo
-    @param {Array} [attrNames] Array of specific attribute names to revert. If
+    @param {String[]} [attrNames] Array of specific attribute names to revert. If
       not specified, all attributes modified in the last change will be
       reverted.
     @param {Object} [options] Data to be mixed into the event facade of the

@@ -138,7 +138,6 @@
         * @private
         * @method _addValid
         * @param {Object} drop
-        * @return {Self}
         * @chainable
         */
         _addValid: function(drop) {
@@ -150,7 +149,6 @@
         * @private
         * @method _removeValid
         * @param {Object} drop
-        * @return {Self}
         * @chainable
         */
         _removeValid: function(drop) {

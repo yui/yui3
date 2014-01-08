@@ -10,13 +10,13 @@ var NODE_TYPE = 'nodeType',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_ARRAY = [],
-    
+
     // IE < 8 throws on node.contains(textNode)
     supportsContainsTextNode = (function() {
         var node = Y.config.doc.createElement('div'),
             textNode = node.appendChild(Y.config.doc.createTextNode('')),
             result = false;
-        
+
         try {
             result = node.contains(textNode);
         } catch(e) {}
@@ -24,10 +24,10 @@ var NODE_TYPE = 'nodeType',
         return result;
     })(),
 
-/** 
+/**
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
+ * for other common tasks.
  * @module dom
  * @main dom
  * @submodule dom-base
@@ -40,14 +40,14 @@ var NODE_TYPE = 'nodeType',
  * @class DOM
  *
  */
-    
+
 Y_DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
-     * @method byId         
-     * @param {String} id the id attribute 
-     * @param {Object} doc optional The document to search. Defaults to current document 
-     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
+     * @method byId
+     * @param {String} id the id attribute
+     * @param {Object} doc optional The document to search. Defaults to current document
+     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found.
      */
     byId: function(id, doc) {
         // handle dupe IDs and IE name collision
@@ -58,7 +58,7 @@ Y_DOM = {
         var id;
         // HTMLElement returned from FORM when INPUT name === "id"
         // IE < 8: HTMLCollection returned when INPUT id === "id"
-        // via both getAttribute and form.id 
+        // via both getAttribute and form.id
         if (node.id && !node.id.tagName && !node.id.item) {
             id = node.id;
         } else if (node.attributes && node.attributes.id) {
@@ -83,8 +83,8 @@ Y_DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the parentNode is returned.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
-     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
+     * @return {HTMLElement | null} The matching DOM node or null if none found.
      */
     ancestor: function(element, fn, testSelf, stopFn) {
         var ret = null;
@@ -102,7 +102,7 @@ Y_DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, all ancestors are returned.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @return {Array} An array containing all matching DOM nodes.
      */
     ancestors: function(element, fn, testSelf, stopFn) {
@@ -128,8 +128,9 @@ Y_DOM = {
      * @method elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).
-     * @param {Function} fn optional An optional boolean test to apply.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
+     * @param {Function} [fn] An optional boolean test to apply.
+     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
+     * just element nodes will be returned(default)
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, the first element is returned.
      * @return {HTMLElement | null} The matching element or null if none found.
@@ -167,7 +168,7 @@ Y_DOM = {
         } else if (element[COMPARE_DOCUMENT_POSITION]) {
             // Match contains behavior (node.contains(node) === true).
             // Needed for Firefox < 4.
-            if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
+            if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) {
                 ret = true;
             }
         } else {
@@ -182,7 +183,7 @@ Y_DOM = {
      * @method inDoc
      * @param {HTMLElement} element The containing html element.
      * @param {HTMLElement} doc optional The document to check.
-     * @return {Boolean} Whether or not the element is attached to the document. 
+     * @return {Boolean} Whether or not the element is attached to the document.
      */
     inDoc: function(element, doc) {
         var ret = false,
@@ -233,9 +234,9 @@ Y_DOM = {
                     // filter out matches on node.name
                     // and element.id as reference to element with id === 'id'
                     for (i = 0; node = nodes[i++];) {
-                        if (node.id === id  || 
+                        if (node.id === id  ||
                                 (node.attributes && node.attributes.id &&
-                                node.attributes.id.value === id)) { 
+                                node.attributes.id.value === id)) {
                             ret.push(node);
                         }
                     }
@@ -244,7 +245,7 @@ Y_DOM = {
         } else {
             ret = [Y_DOM._getDoc(root).getElementById(id)];
         }
-    
+
         return ret;
    },
 
@@ -300,7 +301,7 @@ Y_DOM = {
 
 // TODO: move to Lang?
     /**
-     * Memoizes dynamic regular expressions to boost runtime performance. 
+     * Memoizes dynamic regular expressions to boost runtime performance.
      * @method _getRegExp
      * @private
      * @param {String} str The string to convert to a regular expression.
@@ -322,7 +323,7 @@ Y_DOM = {
      * @method _getDoc
      * @private
      * @param {HTMLElement} element optional Target element.
-     * @return {Object} The document for the given element or the default document. 
+     * @return {Object} The document for the given element or the default document.
      */
     _getDoc: function(element) {
         var doc = Y.config.doc;
@@ -341,7 +342,7 @@ Y_DOM = {
      * @method _getWin
      * @private
      * @param {HTMLElement} element optional Target element.
-     * @return {Object} The window for the given element or the default window. 
+     * @return {Object} The window for the given element or the default window.
      */
     _getWin: function(element) {
         var doc = Y_DOM._getDoc(element);
@@ -373,10 +374,10 @@ Y_DOM = {
 
         if (!id) {
             id = Y.stamp(el);
-            el.id = id; 
-        }   
+            el.id = id;
+        }
 
-        return id; 
+        return id;
     }
 };
 

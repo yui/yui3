@@ -31,7 +31,7 @@ Histogram.prototype = {
         {
             return;
         }
-        var style = Y.clone(this.get("styles").marker),
+        var style = this._copyObject(this.get("styles").marker),
             graphic = this.get("graphic"),
             setSize,
             calculatedSize,
@@ -41,7 +41,7 @@ Histogram.prototype = {
             len = xcoords.length,
             top = ycoords[0],
             seriesTypeCollection = this.get("seriesTypeCollection"),
-            seriesLen = seriesTypeCollection.length || 0,
+            seriesLen = seriesTypeCollection ? seriesTypeCollection.length : 0,
             seriesSize = 0,
             totalSize = 0,
             offset = 0,
@@ -90,25 +90,38 @@ Histogram.prototype = {
         setSize = style[setSizeKey];
         calculatedSize = style[calculatedSizeKey];
         this._createMarkerCache();
-        for(; i < seriesLen; ++i)
+        this._maxSize = graphic.get(setSizeKey);
+        if(seriesTypeCollection && seriesLen > 1)
         {
-            renderer = seriesTypeCollection[i];
-            seriesSize += renderer.get("styles").marker[setSizeKey];
-            if(order > i)
+            for(; i < seriesLen; ++i)
             {
-                offset = seriesSize;
+                renderer = seriesTypeCollection[i];
+                seriesSize += renderer.get("styles").marker[setSizeKey];
+                if(order > i)
+                {
+                    offset = seriesSize;
+                }
+            }
+            totalSize = len * seriesSize;
+            if(totalSize > this._maxSize)
+            {
+                ratio = graphic.get(setSizeKey)/totalSize;
+                seriesSize *= ratio;
+                offset *= ratio;
+                setSize *= ratio;
+                setSize = Math.max(setSize, 1);
+                this._maxSize = setSize;
             }
         }
-        totalSize = len * seriesSize;
-        this._maxSize = graphic.get(setSizeKey);
-        if(totalSize > this._maxSize)
+        else
         {
-            ratio = graphic.get(setSizeKey)/totalSize;
-            seriesSize *= ratio;
-            offset *= ratio;
-            setSize *= ratio;
-            setSize = Math.max(setSize, 1);
-            this._maxSize = setSize;
+            seriesSize = style[setSizeKey];
+            totalSize = len * seriesSize;
+            if(totalSize > this._maxSize)
+            {
+                seriesSize = this._maxSize/len;
+                this._maxSize = seriesSize;
+            }
         }
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
@@ -119,7 +132,7 @@ Histogram.prototype = {
             yMarkerPlaneBottom = yMarkerPlaneTop + seriesSize;
             xMarkerPlane.push({start: xMarkerPlaneLeft, end: xMarkerPlaneRight});
             yMarkerPlane.push({start: yMarkerPlaneTop, end: yMarkerPlaneBottom});
-            if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
+            if(!groupMarkers && (isNaN(xcoords[i]) || isNaN(ycoords[i])))
             {
                 this._markers.push(null);
                 continue;

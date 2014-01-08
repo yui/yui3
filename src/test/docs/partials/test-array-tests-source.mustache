@@ -159,8 +159,40 @@ YUI().use('node', 'test-console', 'test', function (Y) {
             ArrayAssert.indexOf(-1, this.data, 0, "First item should be -1.");
 
             ArrayAssert.itemsAreEqual([-1,0,1,2,3,4,5], this.data, "Arrays should be equal.");
-        }
+        },
 
+        "[1, 2, 3] should be unique": function () {
+            Y.ArrayAssert.isUnique([1, 2, 3]);
+        },
+
+        "['a', 'b', 'c'] should be unique": function () {
+            Y.ArrayAssert.isUnique(['a', 'b', 'c']);
+        },
+
+        "fail: [1, 1, 2] is not unique": function () {
+            Y.ArrayAssert.isUnique([1, 1, 2]);
+        },
+
+        "fail: ['a', 'a', 'b'] is not unique": function () {
+            Y.ArrayAssert.isUnique(['a', 'a', 'b']);
+        },
+
+        /*
+         * When comparing objects a comparison function is almost mandatory.
+         *
+         * Example:
+         * var a = {}, b = {};
+         * if (a === b) {
+         *     //never true
+         * }
+         *
+         * Therefore if this test doesn't provide a comparison function then the test will pass.
+         */
+        "fail: [{id: 1}, {id: 1}] is not unique": function () {
+            Y.ArrayAssert.isUnique([{id: 1}, {id: 1}], function (a, b) {
+                return a.id === b.id;
+            });
+        }
     });
 
     //create the console

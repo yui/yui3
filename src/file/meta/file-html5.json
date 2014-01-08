@@ -2,6 +2,6 @@
     "file-html5": {
         "requires": [
           "base"
-        ] 
+        ]
     }
 }

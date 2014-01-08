@@ -1,5 +1,9 @@
 YUI.add('charts-legend-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: Legend"),
+        LegendTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     LegendTestTemplate = function(cfg, globalCfg)
     {
@@ -18,14 +22,12 @@ YUI.add('charts-legend-tests', function(Y) {
 
     Y.extend(LegendTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:800px;height:600px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
 
@@ -221,7 +223,7 @@ YUI.add('charts-legend-tests', function(Y) {
     {
         var cfg = {
             type: type,
-            render: "#mychart",
+            render: "#testdiv",
             dataProvider: basicDataValues
         }, 
         nameSuffix = " with basic dataProvider";
@@ -247,7 +249,7 @@ YUI.add('charts-legend-tests', function(Y) {
     {
         var cfg = {
             type: type,
-            render: "#mychart",
+            render: "#testdiv",
             dataProvider: basicDataValues,
             legend: legend
         };
@@ -264,7 +266,7 @@ YUI.add('charts-legend-tests', function(Y) {
     {
         var cfg = {
             type: type,
-            render: "#mychart",
+            render: "#testdiv",
             dataProvider: basicDataValues,
             legend: leftLegend()
         }, 
