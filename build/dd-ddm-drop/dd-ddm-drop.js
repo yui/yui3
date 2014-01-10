@@ -140,7 +140,6 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         * @private
         * @method _addValid
         * @param {Object} drop
-        * @return {Self}
         * @chainable
         */
         _addValid: function(drop) {
@@ -152,7 +151,6 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         * @private
         * @method _removeValid
         * @param {Object} drop
-        * @return {Self}
         * @chainable
         */
         _removeValid: function(drop) {

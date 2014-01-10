@@ -925,7 +925,7 @@ YUI.add('editor-base', function (Y, NAME) {
     /**
     * @event nodeChange
     * @description Fired from several mouse/key/paste event points.
-    * @param {Event.Facade} event An Event Facade object with the following specific properties added:
+    * @param {EventFacade} event An Event Facade object with the following specific properties added:
     * <dl>
     *   <dt>changedEvent</dt><dd>The event that caused the nodeChange</dd>
     *   <dt>changedNode</dt><dd>The node that was interacted with</dd>
@@ -938,14 +938,12 @@ YUI.add('editor-base', function (Y, NAME) {
     *   <dt>fontFamily</dt><dd>The cascaded fontFamily of the changedNode</dd>
     *   <dt>fontSize</dt><dd>The cascaded fontSize of the changedNode</dd>
     * </dl>
-    * @type {Event.Custom}
     */
 
     /**
     * @event ready
     * @description Fired after the frame is ready.
-    * @param {Event.Facade} event An Event Facade object.
-    * @type {Event.Custom}
+    * @param {EventFacade} event An Event Facade object.
     */
 
 

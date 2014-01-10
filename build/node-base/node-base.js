@@ -269,7 +269,7 @@ Y.mix(Y_Node.prototype, {
  * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
  * to escape html content or `set('text')` to add as text.
  * @method setHTML
- * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+ * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
  * @chainable
  */
 Y.Node.prototype.setHTML = Y.Node.prototype.setContent;

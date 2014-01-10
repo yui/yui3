@@ -33,7 +33,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     attribute is set.
 
     @property CAPTION_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<caption class="{className}"/>'
     @since 3.6.0
     **/
@@ -43,7 +43,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     The HTML template used to create the table Node.
 
     @property TABLE_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<table cellspacing="0" class="{className}"/>'
     @since 3.6.0
     **/
@@ -499,7 +499,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     Creates the UI in the configured `container`.
 
     @method render
-    @return {TableView}
     @chainable
     **/
     render: function () {
@@ -524,7 +523,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     value.  Empty values result in the caption being removed.
 
     @method _uiSetCaption
-    @param {HTML} htmlContent The content to populate the table caption
+    @param {String} htmlContent The content to populate the table caption
     @protected
     @since 3.5.0
     **/
