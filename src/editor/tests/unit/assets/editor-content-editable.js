@@ -741,9 +741,9 @@ YUI.add('editor-tests', function(Y) {
                 Y.Assert.isTrue(sel.isCollapsed, 'expected cursor, not range for selection');
                 Y.Assert.areEqual(1, container.all('p').size());
                 node = container.one('p');
-                Y.Assert.areEqual('P', sel.anchorNode.get('tagName'),
+                Y.Assert.areEqual('P', sel.anchorNode.get('nodeName'),
                                   'selection anchorNode wrong');
-                Y.Assert.areEqual('P', sel.focusNode.get('tagName'),
+                Y.Assert.areEqual('P', sel.focusNode.get('nodeName'),
                                   'selection focusNode wrong');
                 Y.Assert.areEqual(text.length, sel.anchorOffset,
                                   'selection anchorOffset wrong');
@@ -995,7 +995,8 @@ YUI.add('editor-tests', function(Y) {
             ignore: {
                 'test: EditorSelection <inline>': Y.UA.phantomjs,
                 'test_selection_methods <inline>': Y.UA.phantomjs,
-                'test_br_plugin <inline>': Y.UA.phantomjs
+                'test_br_plugin <inline>': Y.UA.phantomjs,
+                'test para plugin gecko fix <inline>': !Y.UA.gecko
             },
             error: { //These tests should error
                 'test_selection_methods <inline>': (Y.UA.ie ? true : false),
