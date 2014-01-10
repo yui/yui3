@@ -476,7 +476,7 @@ YUI.add('editor-selection', function (Y, NAME) {
     /**
     * The id of the outer cursor wrapper
     * @static
-    * @property DEFAULT_TAG
+    * @property CURID
     */
     Y.EditorSelection.CURID = 'yui-cursor';
 
@@ -863,7 +863,7 @@ YUI.add('editor-selection', function (Y, NAME) {
         /**
         * Wrapper for the different range creation methods.
         * @method createRange
-        * @return {RangeObject}
+        * @return {Range}
         */
         createRange: function() {
             if (Y.config.doc.selection) {

@@ -416,7 +416,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         /**
          Model used for this view
          @attribute model
-         @type {Y.Model}
+         @type {Model}
          @default null
          @since 3.11.0
          */
@@ -434,7 +434,7 @@ Controller.ATTRS = {
     /**
      A model instance or a configuration object for the Model.
      @attribute paginatorModel
-     @type {Y.Model | Object}
+     @type {Model|Object}
      @default null
      @since 3.11.0
      */
@@ -451,7 +451,7 @@ Controller.ATTRS = {
      This is only used if the `paginatorModel` is a configuration object or
      is null.
      @attribute paginatorModelType
-     @type {Y.Model | String}
+     @type {Model|String}
      @default 'DataTable.Paginator.Model'
      @since 3.11.0
      */
@@ -466,7 +466,7 @@ Controller.ATTRS = {
      created for each location provided. Each view created will be given the
      same model instance.
      @attribute paginatorView
-     @type {Y.View | String}
+     @type {View|String}
      @default 'DataTable.Paginator.View'
      @since 3.11.0
      */
@@ -508,7 +508,7 @@ Controller.ATTRS = {
      String of `footer` or `header`, a Y.Node, or an Array or any combination
      of those values.
      @attribute paginatorLocation
-     @type {String | Array | Y.Node}
+     @type {String|Array|Node}
      @default footer
      @since 3.11.0
      */
@@ -913,7 +913,7 @@ Y.mix(Controller.prototype, {
      type from `paginatorModelType`.
      @protected
      @method _setPaginatorModel
-     @param {Y.Model | Object} model
+     @param {Model|Object} model
      @return Y.Model instance
      @since 3.11.0
      */

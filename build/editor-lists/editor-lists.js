@@ -78,7 +78,7 @@ YUI.add('editor-lists', function (Y, NAME) {
     }, {
         /**
         * The non element placeholder, used for positioning the cursor and filling empty items
-        * @property REMOVE
+        * @property NON
         * @static
         */
         NON: '<span class="yui-non">&nbsp;</span>',
