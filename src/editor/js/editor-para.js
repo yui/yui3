@@ -269,12 +269,11 @@
         //leave the P.
         _fixGeckoOnBackspace: function (inst) {
             var sel = new inst.EditorSelection(),
-                offset,
                 node,
                 childNodes;
 
             //not a cursor, not in a paragraph, or anchored at paragraph start.
-            if (!sel.isCollapsed || !sel.anchorNode.get('tagName') === 'P' ||
+            if (!sel.isCollapsed || sel.anchorNode.get('nodeName') !== 'P' ||
                 sel.anchorOffset === 0) {
                 return;
             }
@@ -282,7 +281,7 @@
             //cursor not on the injected final BR
             childNodes = sel.anchorNode.get('childNodes');
             node = sel.anchorNode.get('lastChild');
-            if (sel.anchorOffset !== childNodes.size() || node.get('tagName') !== 'BR') {
+            if (sel.anchorOffset !== childNodes.size() || node.get('nodeName') !== 'BR') {
                 return;
             }
 
@@ -294,13 +293,9 @@
 
             //We only expect injected BR behavior when last Node is text
             node = node.get('previousSibling');
-            if (node.get('nodeType') !== Node.TEXT_NODE) {
-                return;
+            if (node.get('nodeType') === Node.TEXT_NODE) {
+                sel.selectNode(node, true, node.get('length'));
             }
-
-            offset = node.get('length');
-            sel.selectNode(node, true, offset);
-
         },
 
         initializer: function() {
