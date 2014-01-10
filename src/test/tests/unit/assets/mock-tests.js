@@ -133,6 +133,49 @@ YUI.add('mock-tests', function(Y) {
             });
 
             Y.Mock.verify(mock);
+        },
+
+        /*
+         * Tests stubbing a method of an object and testing a callCount of 1
+         * should verify the callCount and not call through the original method.
+         */
+        "Call count with no callThrough expectation should not call original method": function(){
+
+            var called = 0, realObject = {
+                myRealMethod: function () {called++;}
+            };
+
+            var stub = Y.Mock(realObject, "myRealMethod");
+            Y.Mock.expect(stub, {
+                method: "myRealMethod",
+                callCount: 1
+            });
+
+            stub.myRealMethod();
+            Y.Mock.verify(stub);
+            Y.Assert.areEqual(0, called);
+        },
+
+        /*
+         * Tests stubbing a method of an object and calling through it and testing a callCount of 1
+         * should verify the callCount and call through the original method.
+         */
+        "Call count with callThrough expectation should call through original method": function(){
+
+            var called = 0, realObject = {
+                myRealMethod: function () {called++;}
+            };
+
+            var stub = Y.Mock(realObject, "myRealMethod");
+            Y.Mock.expect(stub, {
+                method: "myRealMethod",
+                callThrough: true,
+                callCount: 1
+            });
+
+            stub.myRealMethod();
+            Y.Mock.verify(stub);
+            Y.Assert.areEqual(1, called);
         }
 
     }));
