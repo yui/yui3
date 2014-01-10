@@ -1,6 +1,162 @@
 App Framework Change History
 ============================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+### App
+
+* Added `req.aoo` which is a reference to the app instance.
+
+### Router
+
+* __[!]__ A router's `root` path is now enforced as its mount point. Routers
+  with a specified `root` will only consider paths as matching its route handles
+  if that path is semantically within the router's `root` path. For example:
+
+    ```js
+    router.set('root', '/app/');
+
+    router.hasRoute('/app/');    // => true
+    router.hasRoute('/app/foo'); // => true
+    router.hasRoute('/bar/');    // => false
+    ```
+
+  This fixed some issues with paths being erroneously considered matching even
+  when they were not semantically within the router's `root` path. ([#1083][])
+
+* __[!]__ The `getPath()` method now returns the _full_ current path, whereas
+  before it returned the current path relative to the router's `root`. This also
+  affects `req.path` which is now the full path as well.
+
+* __[!]__ Changed Router's dispatching process to take `req` and `res` objects
+  instead of creating them inside the `_dispatch()` method. This refactor also
+  removed the deprecated support for calling `res()` as an alias for `next()`.
+
+* Router now accepts route objects through its `route()` method. These route
+  objects are the same as those specified in a router's `routes` attribute and
+  what Router uses for its internal storage of its routes. If these route
+  objects contain a regular expression as their `path` or they contain a `regex`
+  or `regexp` property, then they are considered fully-processed. Route objects
+  can also contain any arbitrary metadata which will be preserved. ([#1067][])
+
+* Added `req.router` which is a reference to the router instance.
+
+* Added `req.route` which is a reference to the current route object whose
+  callbacks are being dispatched.
+
+* Calling the `dispatch()` method will now set `req.src` to `"dispatch"`.
+
+### Model
+
+* Added ModelSync.Local, an extension which provides a `sync()` implementation
+  for `localStorage` that can be mixed into your Models and ModelLists.
+  Examples of it in use can be seen in the [YUI TodoMVC][] example. ([#1218][])
+
+
+[#1067]: https://github.com/yui/yui3/issues/1067
+[#1083]: https://github.com/yui/yui3/issues/1083
+[#1218]: https://github.com/yui/yui3/issues/1218
+
+[YUI TodoMVC]: https://github.com/tastejs/todomvc/tree/gh-pages/architecture-examples/yui
+
+
+3.12.0
+------
+
+### ModelList
+
+* Added support for descending sort order via `sort({descending: true})`. In
+  order to support this, the `options` passed to `sort()` are now passed along
+  to the protected `_sort()` method. ([#1004][]: @rishabhm)
+
+### Router
+
+* Added support for registering route param handler functions or regexps. This
+  allows routes to be defined as string paths while adding validation/formatting
+  to route params, e.g., `"/posts:id"`, and register an `id` param handler to
+  parse string values into a number and make it available at `req.params.id`.
+  ([#1063][])
+
+* Fixed issue with trying to URL-decode matching path segments that are
+  `undefined`. Routes defined as regexps (instead of strings) can contain an
+  arbitrary number of captures; when executing the regex during dispatching, its
+  array of matches can contain `undefined` values. Router will now check that a
+  match is a truthy value before trying to URL-decode it, and coerce `undefined`
+  values to empty strings. ([#964][], [#1076][])
+
+
+[#964]: https://github.com/yui/yui3/issues/964
+[#1004]: https://github.com/yui/yui3/issues/1004
+[#1063]: https://github.com/yui/yui3/issues/1063
+[#1076]: https://github.com/yui/yui3/issues/1076
+
+
+3.11.0
+------
+
+* No changes.
+
+
+3.10.3
+------
+
+* No changes.
+
+
+3.10.2
+------
+
+### Router
+
+* Router now properly dispatches when using hash-based URLs and calling
+  `replace()` without arguments; before it would throw an error. [#739]
+
+
+3.10.1
+------
+
+* No changes.
+
+
+3.10.0
+------
+
+### Model
+
+* Fixed: The `options` object passed to Model's `setAttrs()` method was being
+  modified. Now a shallow copy of this object is now created so that the
+  `_transaction` property is added to the copy and not the passed-in object.
+  [#598]
+
+
+3.9.1
+-----
+
+### LazyModelList
+
+* Fixed: Changing an attribute on a revived model did not update the
+  corresponding property on the original object. [#528] [Ryan Grove]
+
+* Fixed: Revived models didn't have the same `clientId` as the original object.
+  [#530] [Ryan Grove]
+
+### Router
+
+* Added a more helpful error when a named route callback function doesn't exist.
+  [#513] [Ryan Grove]
+
+
 3.9.0
 -----
 

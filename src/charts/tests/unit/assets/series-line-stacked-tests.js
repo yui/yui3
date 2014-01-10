@@ -1,5 +1,6 @@
 YUI.add('series-line-stacked-tests', function(Y) {
-    var MockStackedLineSeries = Y.Base.create("mockStackedLineSeries", Y.Base, [], {
+    var DOC = Y.config.doc,
+        MockStackedLineSeries = Y.Base.create("mockStackedLineSeries", Y.Base, [], {
             _coordinatesStacked: false,
 
             _stackCoordinates: function() {
@@ -16,7 +17,8 @@ YUI.add('series-line-stacked-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: setAreaData()" : function()

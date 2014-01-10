@@ -44,6 +44,15 @@ function Resolver(promise) {
     @private
     **/
     this._status = 'pending';
+
+    /**
+    This value that this promise represents.
+
+    @property _result
+    @type Any
+    @private
+    **/
+    this._result = null;
 }
 
 Y.mix(Resolver.prototype, {
@@ -59,9 +68,10 @@ Y.mix(Resolver.prototype, {
     fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
+            this._status = 'fulfilled';
         }
 
-        if (this._status !== 'rejected') {
+        if (this._status === 'fulfilled') {
             this._notify(this._callbacks, this._result);
 
             // Reset the callback list so that future calls to fulfill()
@@ -75,8 +85,6 @@ Y.mix(Resolver.prototype, {
             // there is no point in keeping the list. Remove it to help
             // garbage collection
             this._errbacks = null;
-
-            this._status = 'fulfilled';
         }
     },
 
@@ -92,16 +100,16 @@ Y.mix(Resolver.prototype, {
     reject: function (reason) {
         if (this._status === 'pending') {
             this._result = reason;
+            this._status = 'rejected';
         }
 
-        if (this._status !== 'fulfilled') {
+        if (this._status === 'rejected') {
+            if (!this._errbacks.length) { Y.log('This promise was rejected but no error handlers were registered to it', 'info', NAME); }
             this._notify(this._errbacks, this._result);
 
             // See fulfill()
             this._callbacks = null;
             this._errbacks = [];
-
-            this._status = 'rejected';
         }
     },
 
@@ -138,16 +146,20 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList = this._callbacks,
+            errbackList  = this._errbacks;
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        if (callbackList) {
+            callbackList.push(typeof callback === 'function' ?
+                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+        }
+        if (errbackList) {
+            errbackList.push(typeof errback === 'function' ?
+                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
@@ -175,46 +187,35 @@ Y.mix(Resolver.prototype, {
     @private
     **/
     _wrap: function (thenFulfill, thenReject, fn) {
-        var promise = this.promise;
+        // callbacks and errbacks only get one argument
+        return function (valueOrReason) {
+            var result;
 
-        return function () {
-            // The args coming in to the callback/errback from the
-            // resolution of the parent promise.
-            var args = arguments;
+            // Promises model exception handling through callbacks
+            // making both synchronous and asynchronous errors behave
+            // the same way
+            try {
+                // Use the argument coming in to the callback/errback from the
+                // resolution of the parent promise.
+                // The function must be called as a normal function, with no
+                // special value for |this|, as per Promises A+
+                result = fn(valueOrReason);
+            } catch (e) {
+                // calling return only to stop here
+                return thenReject(e);
+            }
 
-            // Wrapping all callbacks in Y.soon to guarantee
-            // asynchronicity. Because setTimeout can cause unnecessary
-            // delays that *can* become noticeable in some situations
-            // (especially in Node.js)
-            Y.soon(function () {
-                // Call the callback/errback with promise as `this` to
-                // preserve the contract that access to the deferred is
-                // only for code that may resolve/reject it.
-                // Another option would be call the function from the
-                // global context, but it seemed less useful.
-                var result;
-
-                // Promises model exception handling through callbacks
-                // making both synchronous and asynchronous errors behave
-                // the same way
-                try {
-                    result = fn.apply(promise, args);
-                } catch (e) {
-                    return thenReject(e);
-                }
-
-                if (Promise.isPromise(result)) {
-                    // Returning a promise from a callback makes the current
-                    // promise sync up with the returned promise
-                    result.then(thenFulfill, thenReject);
-                } else {
-                    // Non-promise return values always trigger resolve()
-                    // because callback is affirmative, and errback is
-                    // recovery.  To continue on the rejection path, errbacks
-                    // must return rejected promises or throw.
-                    thenFulfill(result);
-                }
-            });
+            if (Promise.isPromise(result)) {
+                // Returning a promise from a callback makes the current
+                // promise sync up with the returned promise
+                result.then(thenFulfill, thenReject);
+            } else {
+                // Non-promise return values always trigger resolve()
+                // because callback is affirmative, and errback is
+                // recovery.  To continue on the rejection path, errbacks
+                // must return rejected promises or throw.
+                thenFulfill(result);
+            }
         };
     },
 
@@ -224,8 +225,10 @@ Y.mix(Resolver.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
+        Y.log('resolver.getStatus() will be removed in the future', 'warn', NAME);
         return this._status;
     },
 
@@ -239,10 +242,21 @@ Y.mix(Resolver.prototype, {
     @protected
     **/
     _notify: function (subs, result) {
-        var i, len;
+        // Since callback lists are reset synchronously, the subs list never
+        // changes after _notify() receives it. Avoid calling Y.soon() for
+        // an empty list
+        if (subs.length) {
+            // Calling all callbacks after Y.soon to guarantee
+            // asynchronicity. Because setTimeout can cause unnecessary
+            // delays that *can* become noticeable in some situations
+            // (especially in Node.js)
+            Y.soon(function () {
+                var i, len;
 
-        for (i = 0, len = subs.length; i < len; ++i) {
-            subs[i](result);
+                for (i = 0, len = subs.length; i < len; ++i) {
+                    subs[i](result);
+                }
+            });
         }
     }
 

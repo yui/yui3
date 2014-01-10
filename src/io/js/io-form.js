@@ -9,10 +9,10 @@
 var eUC = encodeURIComponent;
 
 /**
- * Method to enumerate through an HTML form's elements collection
+ * Enumerate through an HTML form's elements collection
  * and return a string comprised of key-value pairs.
  *
- * @method serialize
+ * @method stringify
  * @static
  * @param {Node|String} form YUI form node or HTML form id
  * @param {Object} [options] Configuration options.
@@ -34,7 +34,7 @@ Y.IO.stringify = function(form, options) {
 
 Y.mix(Y.IO.prototype, {
    /**
-    * Method to enumerate through an HTML form's elements collection
+    * Enumerate through an HTML form's elements collection
     * and return a string comprised of key-value pairs.
     *
     * @method _serialize

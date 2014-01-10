@@ -50,14 +50,14 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         coverage: ['dataschema']
     }).use("console", "test", "dump", "dataschema", "datatype", function(Y) {
-        
+
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
             btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
         btnRun.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
@@ -66,7 +66,7 @@
 
         var testJSON = new Y.Test.Case({
             name: "JSON Tests",
-        
+
             testJSONMeta: function() {
                 var schema = {
                         metaFields: {top:"top", nested:"second.nested"}
@@ -102,7 +102,7 @@
                         ]
                     },
                     data_out = Y.DataSchema.JSON.apply(schema, data_in);
-                    
+
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.areSame("alpha", data_out.results[0].name, "Expected first result.");
@@ -173,7 +173,7 @@
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
 
             },
-            
+
             testJSONFieldLocators: function() {
                 var schema_1 = {
                         metaFields: { total: "total" },
@@ -241,7 +241,7 @@
                 ASSERT.areSame(1, data_out_1.results[0]["User ID"], "Expected George Washington.");
                 ASSERT.areSame(3, data_out_1.results[2]["User ID"], "Expected Thomas Jefferson.");
                 ASSERT.areSame(3, data_out_1.meta.total, "Expected meta total.");
-                
+
                 ASSERT.isArray(data_out_2.results, "Expected results property.");
                 ASSERT.areSame(3, data_out_2.results.length, "Expected 3 results.");
                 ASSERT.areSame(1, data_out_2.results[0].UserID, "Expected first result.");
@@ -253,7 +253,7 @@
                 ASSERT.areSame("Monday", data_out_3.results[1].name, "Expected renamed key.");
 
             },
-            
+
             testJSONNestedFieldLocators: function() {
                   var schema = {
                     metaFields: {total:"total"},
@@ -367,7 +367,7 @@
                 ASSERT.isArray(data_out.results[0]["['array-pets']"], "Expected array.");
                 ASSERT.areSame(2, data_out.results[0]["['array-pets']"].length, "Expected array length.");
             },
-            
+
             "test results as root array with no resultListLocator": function() {
                 var schema = {
                     resultFields: ["name","calories"]
@@ -378,7 +378,7 @@
                     {"name":"orange", "calories":90}
                 ],
                 data_out = Y.DataSchema.JSON.apply(schema, data_in);
-                
+
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.areSame("apple", data_out.results[0].name, "Expected first result.");
                 ASSERT.areSame("orange", data_out.results[data_out.results.length-1].name, "Expected last result.");
@@ -397,7 +397,7 @@
                     ]
                 },
                 data_out = Y.DataSchema.JSON.apply(schema, data_in);
-                
+
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.areSame("apple", data_out.results[0]["fruit.name"], "Expected first result.");
                 ASSERT.areSame(90, data_out.results[2]["cal[0].ries"], "Expected first result.");
@@ -418,7 +418,7 @@
                     ]
                 },
                 data_out = Y.DataSchema.JSON.apply(schema, data_in);
-                
+
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.isTrue(data_out.results[0].uploaded, "Expected first result.");
                 ASSERT.areSame("result 3", data_out.results[2]["\u00e9mail"], "Expected first result.");
@@ -529,7 +529,7 @@
                     {name: "gamma", number: "2", letter: "c"}
                 ]};
                 schema.resultListLocator = "ResultSet.Result";
-                
+
                 data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
@@ -538,9 +538,16 @@
                 ASSERT.isObject(data_out.error, "Expected results error.");
             }
         });
-            
+
         var testXML = new Y.Test.Case({
             name: "XML Tests",
+            _should: {
+                ignore: {
+                    // Known Android issues (bugs 2529621, 2529758, 2529775): XML parsing is currently buggy on the Android WebKit browser.
+                    "testXMLMeta": (Y.UA.android < 3),
+                    "testXMLComplex": (Y.UA.android < 3)
+                }
+            },
 
             testXMLMeta: function() {
                 var schema = {
@@ -615,18 +622,18 @@
                 ASSERT.areSame(10, data_out.results[0].age, "Expected first age.");
                 ASSERT.areSame(12, data_out.results[2].age, "Expected last age.");
             },
-			
+
 			testXMLNestedSchema: function() {
                 var schema = {
                         resultListLocator: "item",
                         resultFields: [
-							{key:"type", locator:"@type"}, 
-							{key:"rank", parser:Y.DataType.Number.parse}, 
+							{key:"type", locator:"@type"},
+							{key:"rank", parser:Y.DataType.Number.parse},
 							"name",
 							{key:'attributes', schema: {
 								resultListLocator: 'attribute',
 								resultFields: [
-									{key:"units", locator:"@units"}, 
+									{key:"units", locator:"@units"},
 									{key:"value", locator:"."}
 								]
 							}}
@@ -642,12 +649,12 @@
                 ASSERT.areSame(0, data_out.results[0].rank, "Expected first number to be parsed.");
                 ASSERT.areSame(2, data_out.results[2].rank, "Expected last number to be parsed.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-				
+
 				ASSERT.isArray(data_out.results[0].attributes, "Expected attributes property.");
                 ASSERT.areSame(2, data_out.results[0].attributes.length, "Expected 2 attributes.");
                 ASSERT.areSame("foo1", data_out.results[0].attributes[0].units, "Expected first result.");
                 ASSERT.areSame("bar2", data_out.results[0].attributes[1].value, "Expected last result.");
-				
+
 				ASSERT.isArray(data_out.results[2].attributes, "Expected attributes property.");
                 ASSERT.areSame(0, data_out.results[2].attributes.length, "Expected 0 attributes.");
 			},
@@ -664,7 +671,7 @@
                 OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected XML parse error.");
-                
+
                 data_out = null;
                 data_in = [1,2,3];
                 schema.resultsListLocator = "item";
@@ -699,7 +706,7 @@
                 ASSERT.areSame(14, data_out.results[data_out.results.length-1]["quantity"], "Expected last result.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
-            
+
             testMultipleTbody: function() {
                 var schema = {
                         resultListLocator: "tr",
@@ -839,7 +846,7 @@
                 ASSERT.areSame("ghi", data_out.results[2].name, "Expected last name.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
-            
+
             testTextResultsOnly: function() {
                 var schema = {
                         resultDelimiter: ","
@@ -866,7 +873,7 @@
                 OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected text parse error.");
-                
+
                 schema = {
                     foo: "bar"
                 };

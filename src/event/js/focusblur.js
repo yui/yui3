@@ -1,6 +1,6 @@
 /**
  * Adds bubbling and delegation support to DOM events focus and blur.
- * 
+ *
  * @module event
  * @submodule event-focus
  */
@@ -66,7 +66,7 @@ function define(type, proxy, directEvent) {
                 yuid          = Y.stamp(currentTarget._node),
                 defer         = (useActivate || target !== currentTarget),
                 directSub;
-                
+
             notifier.currentTarget = (delegate) ? target : currentTarget;
             notifier.container     = (delegate) ? currentTarget : null;
 
@@ -193,7 +193,7 @@ function define(type, proxy, directEvent) {
                             break;
                         }
                     }
-                    
+
                     delete notifiers[yuid];
                     count--;
                 }
@@ -214,7 +214,14 @@ function define(type, proxy, directEvent) {
                             ret = notifier.fire(e);
                         }
 
-                        if (ret === false || e.stopped === 2) {
+                        if (ret === false || e.stopped === 2 ||
+                            // If e.stopPropagation() is called, notify any
+                            // delegate subs from the same container, but break
+                            // once the container changes. This emulates
+                            // delegate() behavior for events like 'click' which
+                            // won't notify delegates higher up the parent axis.
+                            (e.stopped && delegates[i+1] &&
+                             delegates[i+1].container !== notifier.container)) {
                             break;
                         }
                     }

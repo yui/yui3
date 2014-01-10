@@ -3,19 +3,22 @@ Normalize.css
 
 Normalize.css is a modern, HTML5-ready alternative to CSS resets.
 
-This component is a YUI port of the original Normalize.css project, which can be
-found at <http://necolas.github.com/normalize.css/>.
+This component is from [Pure Base](http://purecss.io/base/) which is a port of
+the original Normalize.css project, which can be found at
+<http://necolas.github.com/normalize.css/>.
 
 
 Differences
 -----------
 
-YUI-specific changes are minimal. YUI uses Normalize v1.1.0.
+YUI-specific changes are minimal. YUI uses Normalize v1.x.
 
-  - Create a contextual normalize.css (normalize-context.css) toggled off a parent class-name (.yui3-normalized)
+  - Create a contextual normalize.css (normalize-context.css) toggled off a
+    parent class-name (.yui3-normalized).
+
 
 License
-=======
+-------
 
 Copyright (c) Nicolas Gallagher and Jonathan Neal
 

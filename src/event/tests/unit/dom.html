@@ -9,6 +9,7 @@
             <p id="clicker1" class="clickers"><a id='clicka'>click1</a></p>
             <p id="clicker2" class="clickers">click2</p>
         </div>
+        <a href="#" id="focusme">Used for YInstanceEmitFacade test</a>
     </div>
     <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
     <script type="text/javascript">
@@ -620,7 +621,7 @@
                     Y.on("load", function() {
                         var thisWin = this;
 
-                        // setTimeout to make sure we don't hit resume w/o wait, because we don't have absolute control over whether this 
+                        // setTimeout to make sure we don't hit resume w/o wait, because we don't have absolute control over whether this
                         // fires async or sync - based on whether or not the window.load event has fired already.
 
                         setTimeout(function() {
@@ -656,10 +657,119 @@
                             });
                         }
                     }, null, true);
-    
+
                     Y.later(25, {}, function () {
                         Y.one('#clickcontainer')
                             .append('<p id="infinite-poll">THIS SHOULD NOT BE LEFT OVER</p>');
+                    });
+
+                    test.wait();
+                },
+
+                testYInstanceEmitFacade : function() {
+
+                    var clickFacade,
+                        focusFacade,
+                        fooFacade,
+                        YEmitFacade;
+
+                    // Not using wait/resume.
+
+                    // Using "*" makes sure the callback is always sync,
+                    // no matter what gets added to the outer Y instance.
+                    // Otherwise whether or not the callback is async depends
+                    // on how the 2 use statements compare and makes the
+                    // test fragile.
+
+                    YEmitFacade = YUI().use("*", function(YEmitFacade) {
+
+                        YEmitFacade._yuievt.config.emitFacade = true;
+
+                        // Regular DOM
+                        YEmitFacade.one("#clicker1").on('click', function(e) {
+                            clickFacade = e;
+                        });
+
+                        // Synthetic
+                        YEmitFacade.one("document").on('focus', function(e) {
+                            focusFacade = e;
+                        });
+
+                        // Regular Facade
+                        YEmitFacade.on("foo", function(e) {
+                            fooFacade = e;
+                        });
+
+                        YEmitFacade.fire("foo", {a:1, b:2});
+                        YEmitFacade.Event.simulate(document.getElementById('clicker1'), 'click');
+                        document.getElementById('focusme').focus();
+                    });
+
+                    Y.Assert.isTrue(clickFacade instanceof YEmitFacade.DOMEventFacade);
+                    Y.Assert.areSame(YEmitFacade.one("#clicker1"), clickFacade.target);
+                    Y.Assert.areSame(YEmitFacade.one("#clicker1"), clickFacade.currentTarget);
+                    Y.Assert.isTrue(!!clickFacade._event);
+                    Y.Assert.isFalse(clickFacade._event instanceof YEmitFacade.CustomEvent);
+
+                    Y.Assert.isTrue(focusFacade instanceof YEmitFacade.DOMEventFacade);
+                    Y.Assert.areSame(YEmitFacade.one("#focusme"), focusFacade.target);
+                    Y.Assert.areSame(YEmitFacade.one("document"), focusFacade.currentTarget);
+                    Y.Assert.isTrue(!!clickFacade._event);
+                    Y.Assert.isFalse(focusFacade._event instanceof YEmitFacade.CustomEvent);
+
+                    Y.Assert.isTrue(fooFacade instanceof YEmitFacade.EventFacade);
+                    Y.Assert.areSame(YEmitFacade, fooFacade.target);
+                    Y.Assert.areSame(YEmitFacade, fooFacade.currentTarget);
+                    Y.Assert.isTrue(fooFacade._event instanceof YEmitFacade.CustomEvent);
+                    Y.Assert.areEqual(1, fooFacade.a);
+                    Y.Assert.areEqual(2, fooFacade.b);
+                },
+
+                test_nodelist_on_with_custom_deps: function() {
+
+                    // See: http://yuilibrary.com/projects/yui3/ticket/2533242
+
+                    // NOTE: To reproduce the bug, you need to avoid having
+                    // 'requires' in the loader meta-data for testA, testB
+                    // below [which is not a good idea, but still a bug]
+
+                    var config = {
+                        groups: {
+                            'local-modules': {
+                                base: './',
+                                modules: {
+                                    'testA': {
+                                        path: 'assets/testA.js'
+                                    },
+                                    'testB': {
+                                        path: 'assets/testB.js'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    test = this,
+                    actualClicked = [],
+
+                    assertResults = function() {
+                        Y.ArrayAssert.itemsAreEqual(["clicker1", "clicker2"], actualClicked);
+                    }
+
+                    // Create a YUI instance
+                    YUI(config).use('node-base', 'testA', function(Y2) {
+
+                        function onClick(e) {
+                            actualClicked.push(e.target.get("id"));
+                        }
+
+                        var nodelist = Y2.all(".clickers");
+                        nodelist.on("click", onClick);
+
+                        Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                        Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                        test.resume(assertResults);
+
                     });
 
                     test.wait();

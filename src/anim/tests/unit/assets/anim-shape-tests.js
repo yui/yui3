@@ -183,7 +183,7 @@ Y.extend(AnimAttrTest, ShapeTestTemplate, {
             });
             
             anim.run();
-            test.wait(2000);
+            test.wait(5000);
     }
 });
 

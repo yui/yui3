@@ -336,7 +336,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                 self.add(model, options);
             }
 
-            callback && callback.apply(null, arguments);
+            if (callback) {
+                callback.apply(null, arguments);
+            }
         });
     },
 
@@ -615,7 +617,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                 self.fire(EVT_LOAD, facade);
             }
 
-            callback && callback.apply(null, arguments);
+            if (callback) {
+                callback.apply(null, arguments);
+            }
         });
 
         return this;
@@ -815,6 +819,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         `reset` event.
       @param {Boolean} [options.silent=false] If `true`, no `reset` event will
           be fired.
+      @param {Boolean} [options.descending=false] If `true`, the sort is
+          performed in descending order.
     @chainable
     **/
     sort: function (options) {
@@ -827,15 +833,18 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         options || (options = {});
 
-        models.sort(Y.bind(this._sort, this));
+        models.sort(Y.rbind(this._sort, this, options));
 
         facade = Y.merge(options, {
             models: models,
             src   : 'sort'
         });
 
-        options.silent ? this._defResetFn(facade) :
-                this.fire(EVT_RESET, facade);
+        if (options.silent) {
+            this._defResetFn(facade);
+        } else {
+            this.fire(EVT_RESET, facade);
+        }
 
         return this;
     },
@@ -845,7 +854,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     list. The default method just calls the callback without actually doing
     anything.
 
-    This method is called internally by `load()`.
+    This method is called internally by `load()` and its implementations relies
+    on the callback being called. This effectively means that when a callback is
+    provided, it must be called at some point for the class to operate correctly.
 
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
@@ -948,7 +959,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             model: model
         });
 
-        options.silent ? this._defAddFn(facade) : this.fire(EVT_ADD, facade);
+        if (options.silent) {
+            this._defAddFn(facade);
+        } else {
+            this.fire(EVT_ADD, facade);
+        }
 
         return model;
     },
@@ -1110,8 +1125,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             model: model
         });
 
-        options.silent ? this._defRemoveFn(facade) :
-                this.fire(EVT_REMOVE, facade);
+        if (options.silent) {
+            this._defRemoveFn(facade);
+        } else {
+            this.fire(EVT_REMOVE, facade);
+        }
 
         return model;
     },
@@ -1122,11 +1140,23 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method _sort
     @param {Model} a First model to compare.
     @param {Model} b Second model to compare.
-    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater.
+    @param {Object} [options] Options passed from `sort()` function.
+        @param {Boolean} [options.descending=false] If `true`, the sort is
+          performed in descending order.
+    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater
+      (for ascending order, the reverse for descending order).
     @protected
     **/
-    _sort: function (a, b) {
-        return this._compare(this.comparator(a), this.comparator(b));
+    _sort: function (a, b, options) {
+        var result = this._compare(this.comparator(a), this.comparator(b));
+
+        // Early return when items are equal in their sort comparison.
+        if (result === 0) {
+            return result;
+        }
+
+        // Flips sign when the sort is to be peformed in descending order.
+        return options && options.descending ? -result : result;
     },
 
     // -- Event Handlers -------------------------------------------------------

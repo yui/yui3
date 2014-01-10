@@ -22,7 +22,7 @@ to the `Y` object and is <a href="../classes/YUI.html#method_throttle">documente
  * @method throttle
  * @for YUI
  * @param fn {function} The function call to throttle.
- * @param ms {int} The number of milliseconds to throttle the method call.
+ * @param ms {Number} The number of milliseconds to throttle the method call.
  * Can set globally with Y.config.throttleTime or by call. Passing a -1 will
  * disable the throttle. Defaults to 150.
  * @return {function} Returns a wrapped function that calls fn throttled.
@@ -33,7 +33,7 @@ Y.throttle = function(fn, ms) {
 
     if (ms === -1) {
         return function() {
-            fn.apply(null, arguments);
+            fn.apply(this, arguments);
         };
     }
 
@@ -43,7 +43,7 @@ Y.throttle = function(fn, ms) {
         var now = Y.Lang.now();
         if (now - last > ms) {
             last = now;
-            fn.apply(null, arguments);
+            fn.apply(this, arguments);
         }
     };
 };

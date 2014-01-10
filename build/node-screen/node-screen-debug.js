@@ -2,7 +2,7 @@ YUI.add('node-screen', function (Y, NAME) {
 
 /**
  * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * Adds support for positioning elements and normalizes window size and scroll detection.
  * @module node
  * @submodule node-screen
  */
@@ -10,7 +10,7 @@ YUI.add('node-screen', function (Y, NAME) {
 // these are all "safe" returns, no wrapping required
 Y.each([
     /**
-     * Returns the inner width of the viewport (exludes scrollbar). 
+     * Returns the inner width of the viewport (exludes scrollbar).
      * @config winWidth
      * @for Node
      * @type {Int}
@@ -18,35 +18,35 @@ Y.each([
     'winWidth',
 
     /**
-     * Returns the inner height of the viewport (exludes scrollbar). 
+     * Returns the inner height of the viewport (exludes scrollbar).
      * @config winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
-     * Document width 
+     * Document width
      * @config docWidth
      * @type {Int}
      */
     'docWidth',
 
     /**
-     * Document height 
+     * Document height
      * @config docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
-     * Pixel distance the page has been scrolled horizontally 
+     * Pixel distance the page has been scrolled horizontally
      * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
-     * Pixel distance the page has been scrolled vertically 
+     * Pixel distance the page has been scrolled vertically
      * @config docScrollY
      * @type {Int}
      */
@@ -106,7 +106,7 @@ Y.Node.ATTRS.scrollTop = {
 
 Y.Node.importMethod(Y.DOM, [
 /**
- * Gets the current position of the node in page coordinates. 
+ * Gets the current position of the node in page coordinates.
  * @method getXY
  * @for Node
  * @return {Array} The XY position of the node
@@ -122,7 +122,7 @@ Y.Node.importMethod(Y.DOM, [
     'setXY',
 
 /**
- * Gets the current position of the node in page coordinates. 
+ * Gets the current position of the node in page coordinates.
  * @method getX
  * @return {Int} The X position of the node
 */
@@ -137,7 +137,7 @@ Y.Node.importMethod(Y.DOM, [
     'setX',
 
 /**
- * Gets the current position of the node in page coordinates. 
+ * Gets the current position of the node in page coordinates.
  * @method getY
  * @return {Int} The Y position of the node
 */
@@ -152,7 +152,7 @@ Y.Node.importMethod(Y.DOM, [
     'setY',
 
 /**
- * Swaps the XY position of this node with another node. 
+ * Swaps the XY position of this node with another node.
  * @method swapXY
  * @param {Node | HTMLElement} otherNode The node to swap with.
  * @chainable
@@ -226,7 +226,7 @@ Y.Node.prototype.intersect = function(node2, altRegion) {
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Boolean} all Whether or not all of the node must be in the region.
  * @param {Object} altRegion An alternate region to use (rather than this node's).
- * @return {Object} An object representing the intersection of the regions.
+ * @return {Boolean} True if in region, false if not.
  */
 Y.Node.prototype.inRegion = function(node2, all, altRegion) {
     var node1 = Y.Node.getDOMNode(this);

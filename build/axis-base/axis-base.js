@@ -14,20 +14,7 @@ YUI.add('axis-base', function (Y, NAME) {
  * @module charts
  * @submodule axis-base
  */
-
-var CONFIG = Y.config,
-    WINDOW = CONFIG.win,
-    DOCUMENT = CONFIG.doc,
-    Y_Lang = Y.Lang,
-    IS_STRING = Y_Lang.isString,
-    Y_DOM = Y.DOM,
-    LeftAxisLayout,
-    RightAxisLayout,
-    BottomAxisLayout,
-    TopAxisLayout,
-    _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
-
+var Y_Lang = Y.Lang;
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
@@ -111,7 +98,7 @@ Renderer.prototype = {
             b = {};
         }
         var newstyles = Y.merge(b, {});
-        Y.Object.each(a, function(value, key, a)
+        Y.Object.each(a, function(value, key)
         {
             if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isFunction(value) && !Y_Lang.isArray(value))
             {
@@ -123,6 +110,36 @@ Renderer.prototype = {
             }
         }, this);
         return newstyles;
+    },
+
+    /**
+     * Copies an object literal.
+     *
+     * @method _copyObject
+     * @param {Object} obj Object literal to be copied.
+     * @return Object
+     * @private
+     */
+    _copyObject: function(obj) {
+        var newObj = {},
+            key,
+            val;
+        for(key in obj)
+        {
+            if(obj.hasOwnProperty(key))
+            {
+                val = obj[key];
+                if(typeof val === "object" && !Y_Lang.isArray(val))
+                {
+                    newObj[key] = this._copyObject(val);
+                }
+                else
+                {
+                    newObj[key] = val;
+                }
+            }
+        }
+        return newObj;
     },
 
     /**
@@ -186,13 +203,23 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Returns the value corresponding to the origin on the axis.
+     *
+     * @method getOrigin
+     * @return Number
+     */
+    getOrigin: function() {
+        return this.get("minimum");
+    },
+
+    /**
      * Handles changes to `dataProvider`.
      *
      * @method _dataProviderChangeHandler
      * @param {Object} e Event object.
      * @private
      */
-    _dataProviderChangeHandler: function(e)
+    _dataProviderChangeHandler: function()
     {
         var keyCollection = this.get("keyCollection").concat(),
             keys = this.get("keys"),
@@ -381,7 +408,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
 
     /**
      * Returns values based on key identifiers. When a string is passed as an argument, an array of values is returned.
-     * When an array of keys is passed as an argument, an object literal with an array of values mapped to each key is 
+     * When an array of keys is passed as an argument, an object literal with an array of values mapped to each key is
      * returned.
      *
      * @method getDataByKey
@@ -395,14 +422,14 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             len,
             key,
             keys = this.get("keys");
-        if(Y_Lang.isArray(value)) 
+        if(Y_Lang.isArray(value))
         {
             obj = {};
             len = value.length;
-            for(i = 0; i < len; i = i + 1) 
+            for(i = 0; i < len; i = i + 1)
             {
                 key = value[i];
-                if(keys[key]) 
+                if(keys[key])
                 {
                     obj[key] = this.getDataByKey(key);
                 }
@@ -446,7 +473,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     {
         var edgeOffset;
         if(this.get("calculateEdgeOffset")) {
-            edgeOffset = l/ct;
+            edgeOffset = (l/ct)/2;
         } else {
             edgeOffset = 0;
         }
@@ -460,7 +487,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _keyChangeHandler: function(e)
+    _keyChangeHandler: function()
     {
         this._updateMinAndMax();
         this._updateTotalDataFlag = true;
@@ -486,7 +513,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         };
         return axisstyles;
     },
-          
+
     /**
      * Getter method for maximum attribute.
      *
@@ -510,7 +537,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         }
         return parseFloat(max);
     },
-  
+
     /**
      * Setter method for maximum attribute.
      *
@@ -540,7 +567,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         }
         return parseFloat(min);
     },
-  
+
     /**
      * Setter method for minimum attribute.
      *
@@ -565,7 +592,61 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     {
         return Y_Lang.isNumber(this._setMaximum);
     },
-  
+
+
+    /**
+     * Returns and array of coordinates corresponding to an array of data values.
+     *
+     * @method _getCoordsFromValues
+     * @param {Number} min The minimum for the axis.
+     * @param {Number} max The maximum for the axis.
+     * @param {length} length The distance that the axis spans.
+     * @param {Array} dataValues An array of values.
+     * @param {Number} offset Value in which to offset the coordinates.
+     * @param {Boolean} reverse Indicates whether the coordinates should start from
+     * the end of an axis. Only used in the numeric implementation.
+     * @return Array
+     * @private
+     */
+    _getCoordsFromValues: function(min, max, length, dataValues, offset, reverse)
+    {
+        var i,
+            valuecoords = [],
+            len = dataValues.length;
+        for(i = 0; i < len; i = i + 1)
+        {
+            valuecoords.push(this._getCoordFromValue.apply(this, [min, max, length, dataValues[i], offset, reverse]));
+        }
+        return valuecoords;
+    },
+
+    /**
+     * Returns and array of data values based on the axis' range and number of values.
+     *
+     * @method _getDataValuesByCount
+     * @param {Number} count The number of values to be used.
+     * @param {Number} min The minimum value of the axis.
+     * @param {Number} max The maximum value of the axis.
+     * @return Array
+     * @private
+     */
+    _getDataValuesByCount: function(count, min, max)
+    {
+        var dataValues = [],
+            dataValue = min,
+            len = count - 1,
+            range = max - min,
+            increm = range/len,
+            i;
+        for(i = 0; i < len; i = i + 1)
+        {
+            dataValues.push(dataValue);
+            dataValue = dataValue + increm;
+        }
+        dataValues.push(max);
+        return dataValues;
+    },
+
     /**
      * Indicates whether or not the minimum attribute has been explicitly set.
      *
@@ -588,13 +669,13 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         calculateEdgeOffset: {
             value: false
         },
-        
+
         labelFunction: {
             valueFn: function() {
                 return this.formatLabel;
             }
         },
-  
+
         /**
          * Hash of array identifed by a string value.
          *
@@ -703,7 +784,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             lazyAdd: false,
 
             getter: "_maximumGetter",
-          
+
             setter: "_maximumSetter"
         },
 
@@ -735,7 +816,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             lazyAdd: false,
 
             getter: "_minimumGetter",
-          
+
             setter: "_minimumSetter"
         },
 

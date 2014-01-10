@@ -1,7 +1,7 @@
 var IMPLEMENTATION = "svg",
     SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
-    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
 	SVGGraphic,
@@ -27,6 +27,18 @@ function SVGDrawing(){}
  * @constructor
  */
 SVGDrawing.prototype = {
+    /**
+     * Rounds a value to the nearest hundredth.
+     *
+     * @method _round
+     * @param {Number} val Value to be rounded.
+     * @return Number
+     * @private
+     */
+    _round: function(val) {
+        return Math.round(val * 100)/100;
+    },
+
     /**
      * Maps path to methods
      *
@@ -422,7 +434,7 @@ SVGDrawing.prototype = {
             pathArrayLen;
         this._pathArray = this._pathArray || [];
         yRadius = yRadius || radius;
-        if(this._pathType != "M")
+        if(this._pathType !== "M")
         {
             this._pathType = "M";
             currentArray = ["M"];
@@ -463,8 +475,8 @@ SVGDrawing.prototype = {
             this._pathType = "L";
             pathArrayLen++;
             this._pathArray[pathArrayLen] = ["L"];
-            this._pathArray[pathArrayLen].push(Math.round(ax));
-            this._pathArray[pathArrayLen].push(Math.round(ay));
+            this._pathArray[pathArrayLen].push(this._round(ax));
+            this._pathArray[pathArrayLen].push(this._round(ay));
             pathArrayLen++;
             this._pathType = "Q";
             this._pathArray[pathArrayLen] = ["Q"];
@@ -476,10 +488,10 @@ SVGDrawing.prototype = {
                 by = y + Math.sin(angle) * yRadius;
                 cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
                 cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                this._pathArray[pathArrayLen].push(Math.round(cx));
-                this._pathArray[pathArrayLen].push(Math.round(cy));
-                this._pathArray[pathArrayLen].push(Math.round(bx));
-                this._pathArray[pathArrayLen].push(Math.round(by));
+                this._pathArray[pathArrayLen].push(this._round(cx));
+                this._pathArray[pathArrayLen].push(this._round(cy));
+                this._pathArray[pathArrayLen].push(this._round(bx));
+                this._pathArray[pathArrayLen].push(this._round(by));
             }
         }
         this._currentX = x;
@@ -682,7 +694,6 @@ SVGDrawing.prototype = {
             pathType,
             len,
             val,
-            val2,
             i,
             path = "",
             node = this.node,
@@ -701,11 +712,11 @@ SVGDrawing.prototype = {
                 {
                     path += pathType + segmentArray[1] + "," + segmentArray[2];
                 }
-                else if(pathType == "z" || pathType == "Z")
+                else if(pathType === "z" || pathType === "Z")
                 {
                     path += " z ";
                 }
-                else if(pathType == "C" || pathType == "c")
+                else if(pathType === "C" || pathType === "c")
                 {
                     path += pathType + (segmentArray[1] - left)+ "," + (segmentArray[2] - top);
                 }

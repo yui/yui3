@@ -23,6 +23,7 @@ Fired when a node is closed.
 
 @event close
 @param {Tree.Node} node Node being closed.
+@param {String} src Source of the event.
 @preventable _defCloseFn
 **/
 var EVT_CLOSE = 'close';
@@ -32,6 +33,7 @@ Fired when a node is opened.
 
 @event open
 @param {Tree.Node} node Node being opened.
+@param {String} src Source of the event.
 @preventable _defOpenFn
 **/
 var EVT_OPEN = 'open';
@@ -50,14 +52,22 @@ Openable.prototype = {
     Closes the specified node if it isn't already closed.
 
     @method closeNode
+    @param {Tree.Node} node Node to close.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `close` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     closeNode: function (node, options) {
         if (node.canHaveChildren && node.isOpen()) {
-            this._fireTreeEvent(EVT_CLOSE, {node: node}, {
+            this._fireTreeEvent(EVT_CLOSE, {
+                node: node,
+                src : options && options.src
+            }, {
                 defaultFn: this._defCloseFn,
                 silent   : options && options.silent
             });
@@ -70,14 +80,22 @@ Openable.prototype = {
     Opens the specified node if it isn't already open.
 
     @method openNode
+    @param {Tree.Node} node Node to open.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `open` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     openNode: function (node, options) {
         if (node.canHaveChildren && !node.isOpen()) {
-            this._fireTreeEvent(EVT_OPEN, {node: node}, {
+            this._fireTreeEvent(EVT_OPEN, {
+                node: node,
+                src : options && options.src
+            }, {
                 defaultFn: this._defOpenFn,
                 silent   : options && options.silent
             });
@@ -95,6 +113,10 @@ Openable.prototype = {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, events will be
             suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     toggleOpenNode: function (node, options) {
@@ -152,6 +174,10 @@ NodeOpenable.prototype = {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `close` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     close: function (options) {
@@ -178,6 +204,10 @@ NodeOpenable.prototype = {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `open` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     open: function (options) {
@@ -193,6 +223,10 @@ NodeOpenable.prototype = {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, events will be
             suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     toggleOpen: function (options) {

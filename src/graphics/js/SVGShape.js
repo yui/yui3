@@ -9,7 +9,7 @@
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
  */
-SVGShape = function(cfg)
+SVGShape = function()
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
@@ -89,7 +89,6 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.SVGGraphic({
                 render: render
             });
@@ -163,7 +162,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -243,7 +243,15 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             concat = host._camelCaseConcat,
 			pointerEvents = host.get("pointerEvents");
 		host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
+		host.addClass(
+            _getClassName(SHAPE) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+            " " +
+            _getClassName(name) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, name))
+        );
         if(id)
 		{
 			node.setAttribute("id", id);
@@ -254,8 +262,9 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		}
         if(!host.get("visible"))
         {
-            Y.one(node).setStyle("visibility", "hidden");
+            Y.DOM.setStyle(node, "visibility", "hidden");
         }
+        Y.DOM.setAttribute(this.node, "shape-rendering", this.get("shapeRendering"));
 	},
 
 
@@ -272,7 +281,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -283,7 +292,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method _strokeChangeHandler
 	 * @private
 	 */
-	_strokeChangeHandler: function(e)
+	_strokeChangeHandler: function()
 	{
 		var node = this.node,
 			stroke = this.get("stroke"),
@@ -306,7 +315,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			node.setAttribute("stroke-linecap", stroke.linecap);
 			node.setAttribute("stroke-width",  stroke.weight);
 			node.setAttribute("stroke-opacity", stroke.opacity);
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				node.setAttribute("stroke-linejoin", linejoin);
 			}
@@ -332,7 +341,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method _fillChangeHandler
 	 * @private
 	 */
-	_fillChangeHandler: function(e)
+	_fillChangeHandler: function()
 	{
 		var node = this.node,
 			fill = this.get("fill"),
@@ -341,7 +350,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		if(fill)
 		{
 			type = fill.type;
-			if(type == "linear" || type == "radial")
+			if(type === "linear" || type === "radial")
 			{
 				this._setGradientFill(fill);
 				node.setAttribute("fill", "url(#grad" + this.get("id") + ")");
@@ -401,7 +410,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			fy = fill.fy,
 			r = fill.r,
             stopNodes = [];
-		if(type == "linear")
+		if(type === "linear")
 		{
             cx = w/2;
             cy = h/2;
@@ -530,7 +539,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @param {Number} x The value to transate on the x-axis.
 	 * @param {Number} y The value to translate on the y-axis.
 	 */
-	translate: function(x, y)
+	translate: function()
 	{
 		this._addTransform("translate", arguments);
 	},
@@ -542,7 +551,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method translateX
 	 * @param {Number} x The value to translate.
 	 */
-	translateX: function(x)
+	translateX: function()
     {
         this._addTransform("translateX", arguments);
     },
@@ -554,7 +563,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method translateY
 	 * @param {Number} y The value to translate.
 	 */
-	translateY: function(y)
+	translateY: function()
     {
         this._addTransform("translateY", arguments);
     },
@@ -566,7 +575,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-    skew: function(x, y)
+    skew: function()
     {
         this._addTransform("skew", arguments);
     },
@@ -577,7 +586,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-    skewX: function(x)
+    skewX: function()
     {
         this._addTransform("skewX", arguments);
     },
@@ -588,7 +597,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-    skewY: function(y)
+    skewY: function()
     {
         this._addTransform("skewY", arguments);
     },
@@ -599,7 +608,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-    rotate: function(deg)
+    rotate: function()
     {
         this._addTransform("rotate", arguments);
     },
@@ -610,7 +619,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-    scale: function(x, y)
+    scale: function()
     {
         this._addTransform("scale", arguments);
     },
@@ -643,8 +652,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	_updateTransform: function()
 	{
-		var isPath = this._type == "path",
-		    node = this.node,
+		var isPath = this._type === "path",
+            node = this.node,
 			key,
 			transform,
 			transformOrigin,
@@ -734,7 +743,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @method _updateHandler
 	 * @private
 	 */
-	_updateHandler: function(e)
+	_updateHandler: function()
 	{
 		this._draw();
 	},
@@ -763,15 +772,12 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			stroke = this.get("stroke"),
             w = this.get("width"),
 			h = this.get("height"),
-			x = type == "path" ? 0 : this._x,
-			y = type == "path" ? 0 : this._y,
+			x = type === "path" ? 0 : this._x,
+			y = type === "path" ? 0 : this._y,
             wt = 0;
-        if(type != "path")
+        if(stroke && stroke.weight)
         {
-            if(stroke && stroke.weight)
-            {
-                wt = stroke.weight;
-            }
+            wt = stroke.weight;
             w = (x + w + wt) - (x - wt);
             h = (y + h + wt) - (y - wt);
             x -= wt;
@@ -1058,6 +1064,41 @@ SVGShape.ATTRS = {
 		}
 	},
 
+    /**
+     * Only implemented in SVG implementation.
+     * Applies the SVG shape-rendering attribute to the shape.
+     *  <dl>
+     *      <dt>auto</dt>
+     *      <dd>Indicates that the user agent shall make appropriate tradeoffs to balance speed,
+     *      crisp edges and geometric precision, but with geometric precision given more importance than speed and crisp edges.</dd>
+     *      <dt>optimizeSpeed</dt>
+     *      <dd>Indicates that the user agent shall emphasize rendering speed over geometric precision and crisp edges.
+     *      This option will sometimes cause the user agent to turn off shape anti-aliasing.</dd>
+     *      <dt>crispEdges</dt>
+     *      <dd>Indicates that the user agent shall attempt to emphasize the contrast between clean edges of artwork over rendering
+     *      speed and geometric precision. To achieve crisp edges, the user agent might turn off anti-aliasing for all lines and curves
+     *      or possibly just for straight lines which are close to vertical or horizontal. Also, the user agent might adjust line
+     *      positions and line widths to align edges with device pixels.</dd>
+     *      <dt>geometricPrecision</dt>
+     *      <dd>Indicates that the user agent shall emphasize geometric precision over speed and crisp edges.</dd>
+     *  </dl>
+     *
+     *  @config shapeRendering
+     *  @type String
+     */
+    shapeRendering: {
+        value: "auto",
+
+        setter: function(val) {
+            if(this.node)
+            {
+                Y.DOM.setAttribute(this.node, "shape-rendering", val);
+            }
+            return val;
+        }
+    },
+
+
 	/**
 	 * Contains information about the fill of the shape.
      *  <dl>
@@ -1113,7 +1154,7 @@ SVGShape.ATTRS = {
 			fill = (val) ? Y.merge(tmpl, val) : null;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
 					fill.color = null;
 				}

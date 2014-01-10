@@ -13,5 +13,5 @@ even with thousands and thousands of nodes.
 The `Y.Tree` class doesn't expose any UI, but the following gallery modules are
 examples of components that extend `Y.Tree` and provide a UI:
 
-* [SmugMug Menu](https://github.com/smugmug/yui-gallery/src/sm-menu/)
-* [SmugMug TreeView](https://github.com/smugmug/yui-gallery/src/sm-treeview/)
+* [SmugMug Menu](https://github.com/smugmug/yui-gallery/tree/master/src/sm-menu)
+* [SmugMug TreeView](https://github.com/smugmug/yui-gallery/tree/master/src/sm-treeview)

@@ -9,10 +9,10 @@
     /**
      * A protected initialization method, used by the host class to initialize
      * plugin configurations passed the constructor, through the config object.
-     * 
+     *
      * Host objects should invoke this method at the appropriate time in their
      * construction lifecycle.
-     * 
+     *
      * @method _initConfigPlugins
      * @param {Object} config The configuration object passed to the constructor
      * @protected
@@ -56,9 +56,9 @@
             this.plug(config.plugins);
         }
     };
-    
+
     /**
-     * Registers plugins to be instantiated at the class level (plugins 
+     * Registers plugins to be instantiated at the class level (plugins
      * which should be plugged into every instance of the class by default).
      *
      * @method plug
@@ -72,17 +72,17 @@
     PluginHost.plug = function(hostClass, plugin, config) {
         // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
         var p, i, l, name;
-    
+
         if (hostClass !== Y.Base) {
             hostClass._PLUG = hostClass._PLUG || {};
-    
+
             if (!L.isArray(plugin)) {
                 if (config) {
                     plugin = {fn:plugin, cfg:config};
                 }
                 plugin = [plugin];
             }
-    
+
             for (i = 0, l = plugin.length; i < l;i++) {
                 p = plugin[i];
                 name = p.NAME || p.fn.NAME;
@@ -104,14 +104,14 @@
      */
     PluginHost.unplug = function(hostClass, plugin) {
         var p, i, l, name;
-    
+
         if (hostClass !== Y.Base) {
             hostClass._UNPLUG = hostClass._UNPLUG || {};
-    
+
             if (!L.isArray(plugin)) {
                 plugin = [plugin];
             }
-    
+
             for (i = 0, l = plugin.length; i < l; i++) {
                 p = plugin[i];
                 name = p.NAME;

@@ -4,12 +4,128 @@
 <title>DOM Test Suite</title>
 
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<style>
+h1, h2, h3, h4, h5, h6, p, ul, ol, li {
+    Xmargin:0;
+    Xpadding:0;
+}
+
+form {
+    width: 30em;
+}
+
+#doc {
+    border:5px solid #000;
+    margin:10px;
+    padding:10px;
+}
+
+#hd {
+    background:#ccc;
+}
+
+#foo {
+    float:left; /* required for getStyle test */
+}
+
+#ft {
+    height:200px;
+    opacity: 0.75;
+}
+.yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background: #070;
+    color: #fff;
+}
+.yui3-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background: #700;
+    color: #fff;
+}
+</style>
+</head>
+<body class="yui3-skin-sam">
+    <div id="doc">
+        <div id="hd"><h1>Page Header</h1></div>
+        <div id="bd">
+            <div id="main" class="main">
+                <h2 id="foo">Section Header</h2>
+                <select id="test-select"><option>choose</option></select>
+                <em class="lorem ipsum ipsum" id="lorem-ipsum">lorem ipsum</em>
+                <div class="mod" id="mod1">
+                    <div class="hd">
+                        <h3>Module Header</h3>
+                    </div>
+                    <div class="bd">
+                        <p>Fusce feugiat diam. Vestibulum elementum dui in augue. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris pulvinar.</p>
+                    </div>
+                    <div class="ft"><a href="#">more</a></div>
+                </div>
+                <div class="mod" id="mod2">
+                    <div class="hd">
+                        <h3>Module Header</h3>
+                    </div>
+                    <div class="bd">
+                        <form action="#" method="get" id="search">
+                            <fieldset id="search-fields">
+                                <legend>Search</legend>
+                                <label for="search-p" id="search-p-label">Query</label>
+                                <input type="text" name="p" id="search-p">
+                                <input name="id">
+                                <input type="submit" value="search">
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="ft"><a href="http://www.developer.yahoo.com">more</a></div>
+                </div>
+            </div>
+            <form id="test-form" class="test-class" action="#">
+                <input id="test-text-value" value="text value">
+                <input id="test-text-novalue" name=>
+                <input id="test-text-emptyvalue">
+
+
+                <textarea id="test-textarea-value" value="textarea value"></textarea>
+                <textarea id="test-textarea-novalue"></textarea>
+                <textarea id="test-textarea-textvalue">textarea text</textarea>
+
+                <button id="test-button-value" value="button value">button</button>
+                <button id="test-button-novalue"></button>
+                <button id="test-button-textvalue">button text</button>
+
+                <select id="test-select-value">
+                    <option id="test-option-value" value="option value">option text</option>
+                    <option id="test-option-textvalue">option text</option>
+                    <option id="test-option-emptyvalue" value="">empty value</option>
+                    <option id="test-option-emptyvalue-notext" value=""></option>
+                    <option id="test-option-novalue"></option>
+                </select>
+
+                <select id="test-select-textvalue">
+                    <option>option text</option>
+                </select>
+
+                <select id="test-select-emptyvalue">
+                    <option value="">option text</option>
+                </select>
+                <select id="test-select-emptyvalue-notext">
+                    <option value=""></option>
+                </select>
+            </form>
+            <form id="test-names">
+                <input id="test-name-id1" name="test-name-id2" >
+                <input id="test-name-id2" name="test-name-id1">
+            </form>
+            <div id="test-add">test</div>
+        </div>
+        <div id="ft">
+            <p>In hac habitasse platea dictumst. Sed sit amet ligula vitae justo consequat facilisis. Integer tortor. Integer erat. In hac habitasse platea dictumst. Phasellus convallis quam vitae turpis aliquam lobortis. Aliquam scelerisque condimentum lectus. Proin semper adipiscing leo. Nulla facilisi.</p>
+        </div>
+    </div>
 
 <script type="text/javascript">
     YUI({
-        coverage: ['dom', 'dom-deprecated'],
+        coverage: ['dom'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-    }).use('dom', 'dom-deprecated', 'console', 'test', function(Y) {
+    }).use('dom', 'console', 'test', function(Y) {
         var Assert = Y.Assert,
             ArrayAssert = Y.ArrayAssert,
             suite = new Y.Test.Suite("Dom");
@@ -82,19 +198,6 @@
                 Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
             },
 
-            test_children: function() {
-                ArrayAssert.itemsAreEqual([], Y.DOM.children(tmp), 'children(tmp)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.children(null), 'children(null)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.children(), 'children()');
-                ArrayAssert.itemsAreEqual([hd, bd, ft], Y.DOM.children(doc), 'children(doc)');
-
-/*
-                ArrayAssert.itemsAreEqual([mod1, mod2], Y.DOM.children(main, function(node) {
-                    return node.className === 'mod';
-                }), 'children(main, fn)');
-*/
-            },           
-
             test_getStyle: function() {
                 Assert.areEqual('left',
                         Y.DOM.getStyle(foo, 'float'), 'getStyle(foo, "float")');
@@ -106,7 +209,7 @@
 
                 Assert.areEqual('static',
                         Y.DOM.getStyle(doc, 'position'), 'doc, position');
-            },            
+            },
 
             test_setStyle: function() {
                 Y.DOM.setStyle(ft, 'opacity', 0.5);
@@ -651,73 +754,60 @@
                 Y.DOM.addHTML(node, Y.DOM.create('<p>this is a <em>test</em></p>'));
                 Assert.areEqual('P', node.lastChild.nodeName, "Y.DOM.create('<p>this is a <em>test</em></p>')");
             },
-
-            testFirstByTag: function() {
-                var tag = 'div',
-                    root = document;
-
-                Assert.areEqual(root.getElementsByTagName(tag)[0],
-                    Y.DOM.firstByTag(tag, root),
-                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
+            
+            test_selectedIndex: function() {
+                var node = document.createElement("select");
+                
+                Y.DOM.addHTML(node, 
+                    '<option value="1">One</option>' +
+                    '<option value="2" selected>Two</option>' +
+                    '<option value="3">Three</option>'
                 );
-
-                tag = 'input';
-                root = document.getElementById('test-form');
-
-                Assert.areEqual(root.getElementsByTagName(tag)[0],
-                    Y.DOM.firstByTag(tag, root),
-                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
-                );
-
-                tag = null;
-                root = null;
-
-                Assert.isNull(Y.DOM.firstByTag(tag, root),
-                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
-                );
+                
+                Assert.areEqual(node.selectedIndex, 1);
             },
 
             testToHex: function() {
                 var rgb = 'rgb(97, 11, 11)',
                     hex = Y.Color.toHex(rgb);
 
-                Assert.areEqual("#610B0B", hex, 'toHex(' + rgb + ')');
+                Assert.areEqual("#610B0B", hex.toUpperCase(), 'toHex(' + rgb + ')');
 
                 rgb = 'rgb(255, 255, 255)';
                 hex = Y.Color.toHex(rgb);
 
-                Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
+                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
 
                 rgb = '#fff';
                 hex = Y.Color.toHex(rgb);
 
-                Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
+                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
 
                 rgb = 'fff';
                 hex = Y.Color.toHex(rgb);
 
-                Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
+                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
 
                 rgb = '000';
                 hex = Y.Color.toHex(rgb);
 
-                Assert.areEqual("#000000", hex, 'toHex(' + rgb + ')');
+                Assert.areEqual("#000000", hex.toUpperCase(), 'toHex(' + rgb + ')');
 
                 rgb = "rgb(97, 56, 11)" ;
                 hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex, "#61380B", " shoudl be #61380B"); 
+                Assert.areSame(hex.toUpperCase(), "#61380B", " shoudl be #61380B");
 
                 rgb = "rgb(11, 97, 11)" ; // 0B610B
                 hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex, "#0B610B", " shoudl be #0B610B"); 
+                Assert.areSame(hex.toUpperCase(), "#0B610B", " shoudl be #0B610B");
 
                 rgb = "rgb(56, 11, 97)" ; //380B61
                 hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex, "#380B61", " shoudl be #380B61"); 
+                Assert.areSame(hex.toUpperCase(), "#380B61", " shoudl be #380B61");
 
                 rgb = "rgb(97, 11, 56)" ; //610B38
                 hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex, "#610B38", " shoudl be #610B38");
+                Assert.areSame(hex.toUpperCase(), "#610B38", " shoudl be #610B38");
             },
 
             test_inDoc: function() {
@@ -758,11 +848,11 @@
                 var width = Y.DOM.getScrollbarWidth();
 
                 Assert.isNumber(width);
-                
+
                 Assert.areSame(width, Y.DOM.getScrollbarWidth());
             }
 
-        })); 
+        }));
         Y.Test.Runner.add(suite);
 
         if (parent && parent != window && Y.Test.Manager) {
@@ -773,126 +863,5 @@
 
 });
 </script>
-<style>
-
-h1, h2, h3, h4, h5, h6, p, ul, ol, li {
-    Xmargin:0;
-    Xpadding:0;
-}
-
-form {
-    width: 30em;
-}
-
-#doc {
-    border:5px solid #000;
-    margin:10px;
-    padding:10px;
-}
-
-#hd {
-    background:#ccc;
-}
-
-#foo {
-    float:left; /* required for getStyle test */
-}
-
-#ft {
-    height:200px;
-    opacity: 0.75;
-}
-.yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
-    background: #070;
-    color: #fff;
-}
-.yui3-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
-    background: #700;
-    color: #fff;
-}
-</style>
-
-<style type="text/css">
-
-</style>
-</head>
-<body class="yui3-skin-sam">
-    <div id="doc">
-        <div id="hd"><h1>Page Header</h1></div>
-        <div id="bd">
-            <div id="main" class="main">
-                <h2 id="foo">Section Header</h2>
-                <select id="test-select"><option>choose</option></select>
-                <em class="lorem ipsum ipsum" id="lorem-ipsum">lorem ipsum</em>
-                <div class="mod" id="mod1">
-                    <div class="hd">
-                        <h3>Module Header</h3>
-                    </div>
-                    <div class="bd">
-                        <p>Fusce feugiat diam. Vestibulum elementum dui in augue. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris pulvinar.</p>
-                    </div>
-                    <div class="ft"><a href="#">more</a></div>
-                </div>
-                <div class="mod" id="mod2">
-                    <div class="hd">
-                        <h3>Module Header</h3>
-                    </div>
-                    <div class="bd">
-                        <form action="#" method="get" id="search">
-                            <fieldset id="search-fields">
-                                <legend>Search</legend>
-                                <label for="search-p" id="search-p-label">Query</label>
-                                <input type="text" name="p" id="search-p">
-                                <input name="id">
-                                <input type="submit" value="search">
-                            </fieldset>
-                        </form>
-                    </div>
-                    <div class="ft"><a href="http://www.developer.yahoo.com">more</a></div>
-                </div>
-            </div>
-            <form id="test-form" class="test-class" action="#">
-                <input id="test-text-value" value="text value">
-                <input id="test-text-novalue" name=>
-                <input id="test-text-emptyvalue">
-
-
-                <textarea id="test-textarea-value" value="textarea value"></textarea>
-                <textarea id="test-textarea-novalue"></textarea>
-                <textarea id="test-textarea-textvalue">textarea text</textarea>
-
-                <button id="test-button-value" value="button value">button</button>
-                <button id="test-button-novalue"></button>
-                <button id="test-button-textvalue">button text</button>
-
-                <select id="test-select-value">
-                    <option id="test-option-value" value="option value">option text</option>
-                    <option id="test-option-textvalue">option text</option>
-                    <option id="test-option-emptyvalue" value="">empty value</option>
-                    <option id="test-option-emptyvalue-notext" value=""></option>
-                    <option id="test-option-novalue"></option>
-                </select>
-
-                <select id="test-select-textvalue">
-                    <option>option text</option>
-                </select>
-
-                <select id="test-select-emptyvalue">
-                    <option value="">option text</option>
-                </select>
-                <select id="test-select-emptyvalue-notext">
-                    <option value=""></option>
-                </select>
-            </form>
-            <form id="test-names">
-                <input id="test-name-id1" name="test-name-id2" >
-                <input id="test-name-id2" name="test-name-id1">
-            </form>
-            <div id="test-add">test</div>
-        </div>
-        <div id="ft">
-            <p>In hac habitasse platea dictumst. Sed sit amet ligula vitae justo consequat facilisis. Integer tortor. Integer erat. In hac habitasse platea dictumst. Phasellus convallis quam vitae turpis aliquam lobortis. Aliquam scelerisque condimentum lectus. Proin semper adipiscing leo. Nulla facilisi.</p>
-        </div>
-    </div>
 </body>
 </html>

@@ -12,9 +12,9 @@ var documentElement = Y.config.doc.documentElement,
 
 Y.mix(Y_DOM, {
     /**
-     * Returns the text content of the HTMLElement. 
-     * @method getText         
-     * @param {HTMLElement} element The html element. 
+     * Returns the text content of the HTMLElement.
+     * @method getText
+     * @param {HTMLElement} element The html element.
      * @return {String} The text content of the element (includes text of any descending elements).
      */
     getText: (documentElement.textContent !== undefined) ?
@@ -33,10 +33,10 @@ Y.mix(Y_DOM, {
         },
 
     /**
-     * Sets the text content of the HTMLElement. 
-     * @method setText         
-     * @param {HTMLElement} element The html element. 
-     * @param {String} content The content to add. 
+     * Sets the text content of the HTMLElement.
+     * @method setText
+     * @param {HTMLElement} element The html element.
+     * @param {String} content The content to add.
      */
     setText: (documentElement.textContent !== undefined) ?
         function(element, content) {
@@ -60,7 +60,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Provides a normalized attribute interface. 
+     * Provides a normalized attribute interface.
      * @method setAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to set.
@@ -76,18 +76,19 @@ Y.mix(Y_DOM, {
 
 
     /**
-     * Provides a normalized attribute interface. 
+     * Provides a normalized attribute interface.
      * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
-     * @return {String} The current value of the attribute. 
+     * @return {String} The current value of the attribute.
      */
     getAttribute: function(el, attr, ieAttr) {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && attr && el.getAttribute) {
             attr = Y_DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            ret = el.getAttribute(attr, ieAttr);
+            // BUTTON value issue for IE < 8
+            ret = (el.tagName === "BUTTON" && attr === 'value') ? Y_DOM.getValue(el) : el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
                 ret = ''; // per DOM spec

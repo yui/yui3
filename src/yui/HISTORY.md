@@ -1,6 +1,93 @@
 YUI Core Change History
 =======================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Added support to the YUI module system to work with modules written as
+  ECMAScript Modules which are transpiled to YUI modules. ([#1407][])
+
+  Modules are being added to ES6, but need to be transpiled into code that can
+  run in today's JavaScript environments. This changes makes it possible for YUI
+  modules to work as ES6 Module transpile target.
+
+  An `es` flag on a YUI module's `details` signals to the YUI module system and
+  Loader that the module was transpiled from a ES6 module; this allows YUI to
+  conform to the module body's expectations around imports and exports.
+
+  When the `es` flag is set to a truthy value, the module body function will
+  receive two additional arguments: `imports` and `exports`, giving it the
+  signature: `function (Y, NAME, __imports__, __exports__) {...}`. Also, the
+  module body's `return` value becomes significant and is used and stored as the
+  module's `exports`.
+
+
+[#1407]: https://github.com/yui/yui3/issues/1407
+
+
+3.13.0
+------
+
+* Added `Y.Lang.isRegExp()` method.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
+  [Ezequiel Rodriguez]
+
+* Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
+  ES5, and added feature tests to ensure that native implementations are only
+  used if they work properly. [Ezequiel Rodriguez]
+
+* `Y.Object.keys()` now falls back to the non-native shim for Android 2.3.x
+  because the native version incorrectly enumerates the `prototype` property.
+
+* `Y.UA` now correctly identifies IE 11. [Ryan Grove]
+
+* `Y.UA` now identifies Opera 15+ as both Opera and WebKit. Previously it was
+  identified as Chrome, since it uses the same Blink rendering engine as
+  Chrome. [Ryan Grove]
+
+* Removed all instances of `path.existsSync()` from YUI core, as part of
+  node.js target environments being brought up to v0.8. [Clarence Leung]
+
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Add ability to filter log messages by threshold [andrewnicols]
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

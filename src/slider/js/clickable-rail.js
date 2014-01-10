@@ -48,7 +48,7 @@ Y.ClickableRail = Y.mix(ClickableRail, {
             this.on('destroy', this._unbindClickableRail);
         },
 
-        /** 
+        /**
          * Attaches DOM event subscribers to support rail interaction.
          *
          * @method _bindClickableRail
@@ -110,7 +110,7 @@ Y.ClickableRail = Y.mix(ClickableRail, {
                 thumb,
                 thumbSize,
                 xy;
-                
+
             if (dd) {
                 thumb = dd.get('dragNode');
                 thumbSize = parseFloat(thumb.getStyle(this._key.dim), 10);

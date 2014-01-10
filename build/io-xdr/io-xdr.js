@@ -6,6 +6,7 @@ cross-domain requests.
 @module io
 @submodule io-xdr
 @for IO
+@deprecated
 **/
 
 // Helpful resources when working with the mess that is XDomainRequest:

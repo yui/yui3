@@ -151,7 +151,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          *
          * @method _valueToOffset
          * @param val { Number } The value to map to pixel X or Y position
-         * @return { Number } The pixel offset 
+         * @return { Number } The pixel offset
          * @protected
          */
         _valueToOffset: function ( value ) {
@@ -249,7 +249,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
-         * Positions the thumb and its ARIA attributes in accordance with the 
+         * Positions the thumb and its ARIA attributes in accordance with the
          * translated value.
          *
          * @method _setPosition
@@ -300,7 +300,10 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _setNewValue: function ( value ) {
-            return round( this._nearestValue( value ) );
+            if ( Y.Lang.isNumber( value ) ) {
+                return round( this._nearestValue( value ) );
+            }
+            return Y.Attribute.INVALID_VALUE;
         },
 
         /**
@@ -369,7 +372,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             value    : 100,
             validator: '_validateNewMax'
         },
-        
+
         /**
          * amount to increment/decrement the Slider value
          * when the arrow up/down/left/right keys are pressed

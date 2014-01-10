@@ -61,7 +61,13 @@ function HistoryHTML5() {
 Y.extend(HistoryHTML5, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
-        var bookmarkedState = win.history.state;
+        var bookmarkedState;
+
+        try {
+            bookmarkedState = win.history.state;
+        } catch(e) {
+            bookmarkedState = null;
+        }
 
         // Treat empty state objects as `null` so they're not processed further.
         if (Y.Object.isEmpty(bookmarkedState)) {
@@ -106,7 +112,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
             win.history[src === SRC_REPLACE ? 'replaceState' : 'pushState'](
                 newState,
                 options.title || Y.config.doc.title || '',
-                options.url || null
+                options.url || Y.config.doc.URL
             );
         }
 

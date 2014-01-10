@@ -144,7 +144,7 @@ var SETTER = "setter",
                 getter = attrConfig[attr].getter;
                 if(getter)
                 {
-                    if(typeof getter == STR)
+                    if(typeof getter === STR)
                     {
                         return host[getter].apply(host);
                     }
@@ -165,9 +165,10 @@ var SETTER = "setter",
          * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
          * the name param.
          */
-        set: function(attr, val)
+        set: function()
         {
-            var i;
+            var attr = arguments[0],
+                i;
             if(Y_LANG.isObject(attr))
             {
                 for(i in attr)
@@ -206,7 +207,7 @@ var SETTER = "setter",
 				if(setter)
 				{
 					args = [val];
-					if(typeof setter == STR)
+					if(typeof setter === STR)
 					{
 						val = host[setter].apply(host, args);
 					}
@@ -306,20 +307,6 @@ Y.GraphicBase = GraphicBase;
  * @constructor
  */
     /**
-     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
-     *
-     * @method lineTo
-     * @param {Number} point1 x-coordinate for the end point.
-     * @param {Number} point2 y-coordinate for the end point.
-     */
-    /**
-     * Moves the current drawing position to specified x and y coordinates.
-     *
-     * @method moveTo
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    /**
      * Draws a bezier curve.
      *
      * @method curveTo
@@ -329,6 +316,7 @@ Y.GraphicBase = GraphicBase;
      * @param {Number} cp2y y-coordinate for the second control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     /**
      * Draws a quadratic bezier curve.
@@ -338,6 +326,7 @@ Y.GraphicBase = GraphicBase;
      * @param {Number} cpy y-coordinate for the control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     /**
      * Draws a rectangle.
@@ -347,6 +336,7 @@ Y.GraphicBase = GraphicBase;
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @chainable
      */
     /**
      * Draws a rectangle with rounded corners.
@@ -358,16 +348,102 @@ Y.GraphicBase = GraphicBase;
      * @param {Number} h height
      * @param {Number} ew width of the ellipse used to draw the rounded corners
      * @param {Number} eh height of the ellipse used to draw the rounded corners
+     * @chainable
+     */
+    /**
+     * Draws a circle.
+     *
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
+     * @chainable
+     * @protected
+     */
+    /**
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @chainable
+     * @protected
+     */
+    /**
+     * Draws a diamond.
+     *
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @chainable
+     * @protected
+     */
+    /**
+     * Draws a wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @chainable
+     * @private
+     */
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     *
+     * @method lineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
+     * @chainable
+     */
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the relative x and y coordinates.
+     *
+     * @method relativeLineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
+     * @chainable
+     */
+    /**
+     * Moves the current drawing position to specified x and y coordinates.
+     *
+     * @method moveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     * @chainable
+     */
+    /**
+     * Moves the current drawing position relative to specified x and y coordinates.
+     *
+     * @method relativeMoveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     /**
      * Completes a drawing operation.
      *
      * @method end
+     * @chainable
      */
     /**
      * Clears the path.
      *
      * @method clear
+     * @chainable
+     */
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     * @chainable
      */
 /**
  *  <p>Base class for creating shapes.</p>

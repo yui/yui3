@@ -5,6 +5,23 @@
     initialization (`initializer`) and destruction (`destructor`) methods for the class hierarchy.</p>
 
     <p>It also provides a way for classes to reuse implementation code through plugins, or through extensions.</p>
+
+    <p><strong>3.11.0 Upgrade Note:</strong></p>
+
+    <p>Prior to 3.11.0, Base would invoke Extension constructors, add attributes,
+    and invoke initializers one class at a time, which means Extension constructors would have been called after
+    superclass attributes were set up.</p>
+
+    <p>As of 3.11.0, Base adds all attributes in one shot, <em>after all</em> Extension constructors are called, and
+    before any `initializers` are called.</p>
+
+    <p>As a result, if you've created custom Extensions which have initialization code in the constructor
+    which accesses attributes, you'll need to move this code to the Extension's `initializer`, to make sure
+    attributes are available when this code is hit.</p>
+
+    <p>Base's <a href="https://github.com/yui/yui3/blob/master/src/base/HISTORY.md">HISTORY.md</a>, and the
+    originating <a href="https://github.com/yui/yui3/pull/917">pull request</a>, have more details about the
+    need for this change.</p>
 </div>
 
 {{>getting-started}}
@@ -172,6 +189,10 @@ the later attribute will be initialized on demand, when the first attribute atte
 It is worth noting that Base adds or initializes attributes lazily for performance reasons, meaning the attribute will not be initialized until the first call to get or set it is made. This behavior
 can be overridden if desired for specific attributes by setting the `lazyAdd` configuration property to `false` (for example if the `setter` for the attribute is responsible
 for setting some other non attribute state in the object).
+</p>
+
+<p>
+<strong>Note:</strong> If the `ATTRS` of a class need to be statically updated after the class has been created or defined, then to do so safely use the <a href="{{apiDocs}}/classes/Base.html#method_modifyAttrs">static `modifyAttrs()` method</a>.
 </p>
 
 <h2 id="initdestroy">Initialization and Destruction</h2>
@@ -369,7 +390,7 @@ wp.lock();
     <li>
        <p>
        Aggregates or copies any known static properties on the built class. Static properties to setup on the built class are defined by the component or class author, through a `_buildCfg` static property on the main class, or on the extension.
-       For example Base defines the `ATTRS` property as a property which needs to be custom aggregated when mixing in extentions, and Widget adds the `HTML_PARSER` property for aggregation.
+       For example Base defines the `ATTRS` property as a property which needs to be custom aggregated when mixing in extensions, and Widget adds the `HTML_PARSER` property for aggregation.
        </p>
        <p>
        The <a href="{{apiDocs}}/Base.html#method_Base.create">`Base.create` API Documention</a> provides more details about the structure of `_buildCfg` and how it can be used by component authors.

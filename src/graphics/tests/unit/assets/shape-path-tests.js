@@ -1,40 +1,40 @@
 YUI.add('shape-path-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Graphics: Path"),
-strokeAndFill = {
-    stroke: {
-        weight: 1,
-        color: "#000"
+    strokeAndFill = {
+        stroke: {
+            weight: 1,
+            color: "#000"
+        },
+        fill: {
+            color: "#9aa"
+        }
     },
-    fill: {
-        color: "#9aa"
-    }
-},
-
-strokeNoFill = {
-    stroke: {
-        weight: 1,
-        color: "#000"
+    strokeNoFill = {
+        stroke: {
+            weight: 1,
+            color: "#000"
+        },
+        fill: null
     },
-    fill: null
-},
-
-fillNoStroke = {
-    fill: {
-        color: "#9aa"
+    fillNoStroke = {
+        fill: {
+            color: "#9aa"
+        },
+        stroke: null
     },
-    stroke: null
-},
-
-pathData = "M5, 0l100, 215 c 150 60 150 60 300 0z",
-
-pathData2 = "M100,250 q150,-150 300,0z",
+    pathData = "M5, 0l100, 215 c 150 60 150 60 300 0z",
+    pathData2 = "M100,250 q150,-150 300,0z",
+    PathTestTemplate,
+    parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
+    DOC = Y.config.doc;
+DOC.body.appendChild(parentDiv);
 
 PathTestTemplate = function(cfg, globalCfg) {
     var i;
     PathTestTemplate.superclass.constructor.apply(this);
     this.attrCfg = cfg;
-    cfg.render = "#graphiccontainer";
+    cfg.render = "#testdiv";
     for(i in globalCfg)
     {
         if(globalCfg.hasOwnProperty(i))
@@ -46,8 +46,6 @@ PathTestTemplate = function(cfg, globalCfg) {
 
 Y.extend(PathTestTemplate, Y.Test.Case, {
     setUp: function () {
-        Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
         this.graphic = new Y.Graphic(this.attrCfg);
         if(!this.pathAttrs)
         {
@@ -59,7 +57,7 @@ Y.extend(PathTestTemplate, Y.Test.Case, {
     
     tearDown: function () {
         this.graphic.destroy();
-        Y.one("#testbed").remove(true);
+        Y.Event.purgeElement(DOC, false);
     }
 });
 
@@ -428,10 +426,13 @@ setPathDataTest = function(name, attrs, pathData)
 
         testDefault: function()
         {
-            var pathData = this.pathData,
-                mypath = this.path,
+            var mypath = this.path,
                 pathAttr = mypath.get("path");
             Y.Assert.areEqual(pathData, mypath.get("data"), "The path data should be " + pathData);
+            mypath.set("data", pathData2);
+            Y.Assert.areEqual(pathData2, mypath.get("data"), "The path data should be " + pathData2 + ".");
+            mypath.set("data", "");
+            Y.Assert.areEqual("", mypath.get("data"), "The path data should be an empty string.");
         }
     });
 };
@@ -476,7 +477,6 @@ suite.add(drawWedgeTest("DrawWedgeTestStrokeAndFill", strokeAndFill));
 suite.add(drawWedgeTest("DrawWedgeTestStrokeNoFill", strokeNoFill));
 suite.add(drawWedgeTest("DrawWedgeTestFillNoStroke", fillNoStroke));
 suite.add(setPathDataTest("TestPathDataAttr", {data: pathData}, pathData));
-suite.add(setPathDataTest("TestPathDataAttr", {data: pathData2}, pathData2));
 
 
 Y.Test.Runner.add( suite );

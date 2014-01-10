@@ -73,6 +73,12 @@ YUI.add('plugin-tests', function(Y) {
                     this.doAfter("methodB", this._methodB, this);
                     this.doBefore("mainAChange", this._onAChange);
                     this.doAfter("mainBChange", this._afterBChange);
+                    this.subscribeOnce();
+                },
+
+                subscribeOnce: function () {
+                    this.onceHostEvent("mainCChange", this._onCChange);
+                    this.onceAfterHostEvent("mainCChange", this._afterCChange);
                 },
 
                 _methodA : function(stack) {
@@ -89,9 +95,21 @@ YUI.add('plugin-tests', function(Y) {
                     }
                 },
 
+                _onCChange : function(e) {
+                    if (e.stack) {
+                        e.stack.push("PluginFour._onCChange");
+                    }
+                },
+
                 _afterBChange : function(e) {
                     if (e.stack) {
                         e.stack.push("PluginFour._afterBChange");
+                    }
+                },
+
+                _afterCChange : function(e) {
+                    if (e.stack) {
+                        e.stack.push("PluginFour._afterCChange");
                     }
                 }
             });
@@ -215,13 +233,13 @@ YUI.add('plugin-tests', function(Y) {
                     Y.Assert.isUndefined(h1.one);
                     Y.Assert.isUndefined(h1.two);
                 },
-                
+
                 testUnplugNonExistant : function() {
                     var h1 = new Host();
 
                     var NonExistant = function() {}
                     NonExistant.NS = "foo";
-                    
+
                     var SharedNS = function() {}
                     SharedNS.NS = "one";
 
@@ -233,10 +251,10 @@ YUI.add('plugin-tests', function(Y) {
                     }
 
                     h1.plug(PluginOne);
-                    
+
                     try {
                         // Unplugging a diff plugin with the same NS
-                        h1.unplug(SharedNS);                        
+                        h1.unplug(SharedNS);
                     } catch (e) {
                         Y.Assert.fail("Error unplugging a plugin which shares a NS with a plugged in plugin");
                     }
@@ -366,7 +384,7 @@ YUI.add('plugin-tests', function(Y) {
 
                     h1.one.set("host", this);
 
-                    Y.Assert.areEqual(h1, h1.one.get("host"));    
+                    Y.Assert.areEqual(h1, h1.one.get("host"));
                 },
 
                 testPluginEventListeners : function() {
@@ -376,6 +394,7 @@ YUI.add('plugin-tests', function(Y) {
                     stack = [];
                     h1.set("mainA", 10, {stack:stack});
                     h1.set("mainB", 20, {stack:stack});
+                    h1.set("mainC", 30, {stack:stack});
 
                     Y.ArrayAssert.itemsAreEqual([], stack);
 
@@ -383,14 +402,33 @@ YUI.add('plugin-tests', function(Y) {
 
                     h1.set("mainA", 11, {stack:stack});
                     h1.set("mainB", 21, {stack:stack});
+                    h1.set("mainC", 31, {stack:stack});
 
-                    Y.ArrayAssert.itemsAreEqual(["PluginFour._onAChange", "PluginFour._afterBChange"], stack);
-
-                    h1.unplug(PluginFour);
+                    Y.ArrayAssert.itemsAreEqual([
+                        "PluginFour._onAChange",
+                        "PluginFour._afterBChange",
+                        "PluginFour._onCChange",
+                        "PluginFour._afterCChange"
+                    ], stack);
 
                     stack = [];
                     h1.set("mainA", 12, {stack:stack});
                     h1.set("mainB", 22, {stack:stack});
+                    h1.set("mainC", 32, {stack:stack});
+
+                    Y.ArrayAssert.itemsAreEqual([
+                        "PluginFour._onAChange",
+                        "PluginFour._afterBChange"
+                    ], stack);
+
+                    h1.four.subscribeOnce();
+
+                    h1.unplug(PluginFour);
+
+                    stack = [];
+                    h1.set("mainA", 13, {stack:stack});
+                    h1.set("mainB", 23, {stack:stack});
+                    h1.set("mainC", 33, {stack:stack});
 
                     Y.ArrayAssert.itemsAreEqual([], stack);
                 },

@@ -169,7 +169,7 @@ Y.JSON.parse = function (s,reviver) {
 
         // Eval the text into a JavaScript data structure, apply any
         // reviver function, and return
-        return _revive( eval('(' + s + ')'), reviver );
+        return _revive(eval('(' + s + ')'), reviver);
     }
 
     throw new SyntaxError('JSON.parse');
@@ -178,5 +178,6 @@ Y.JSON.parse = function (s,reviver) {
 // Property available for testing if the implementation being used
 // is native or a shim
 Y.JSON.parse.isShim = true;
+
 
 }, '@VERSION@', {"requires": ["json-parse"]});

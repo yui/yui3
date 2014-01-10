@@ -23,6 +23,7 @@ It contains these subsections:</p>
 	    <li>An array to provide data for the chart.</li>
 	</ol>
 </p>
+<p><strong>*NOTE:</strong> By default, the chart will size itself to the dimensions of its container div. Be sure to include a width and height as demonstrated below:</p>
 
 <h4>CSS</h4>
 ```
@@ -428,7 +429,15 @@ mySeries.set("visible", false);
 
     <h3 id="usinglegend">Using the `legend` Attribute</h3>
     <p>The `legend` attribute allows you to define a legend for your `Chart` instance. The `legend` is an object containing the attributes necessary for defining and
-    styling the legend. Below is a list of the available attributes.</p>
+    styling the legend. You must include the 'charts-legend' module if you want have legends in your chart.</p>
+    ```
+YUI().use('charts-legend', function (Y) {
+    // Charts is available and ready for use. Add implementation
+    // code here.
+});
+    ```
+    
+    <p>To see how to create a chart with a legend, check out the <a href="charts-legend.html">example</a>. Below is a list of the available attributes.</p>
     <table>
 	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
     <tr><td>chart</td><td>`Chart`</td><td>Reference to the `Chart` instance.</td></tr>

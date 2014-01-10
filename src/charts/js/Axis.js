@@ -31,7 +31,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     getLabelByIndex: function(i, l)
     {
         var position = this.get("position"),
-            direction = position == "left" || position == "right" ? "vertical" : "horizontal";
+            direction = position === "left" || position === "right" ? "vertical" : "horizontal";
         return this._getLabelByIndex(i, l, direction);
     },
 
@@ -76,7 +76,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * @param {Object} e Event object
      * @private
      */
-    _dataChangeHandler: function(e)
+    _dataChangeHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -107,7 +107,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     _updateGraphic: function(position)
     {
         var graphic = this.get("graphic");
-        if(position == "none")
+        if(position === "none")
         {
             if(graphic)
             {
@@ -130,7 +130,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * @param {Object} e Event object
      * @private
      */
-    _updateHandler: function(e)
+    _updateHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -254,6 +254,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 alpha: 1,
                 fontSize:"85%",
                 rotation: 0,
+                offset: 0.5,
                 margin: {
                     top: undefined,
                     right: undefined,
@@ -290,12 +291,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     {
         var attrName = e.attrName,
             pos = this.get("position"),
-            vert = pos == "left" || pos == "right",
+            vert = pos === "left" || pos === "right",
             cb = this.get("contentBox"),
-            hor = pos == "bottom" || pos == "top";
+            hor = pos === "bottom" || pos === "top";
         cb.setStyle("width", this.get("width"));
         cb.setStyle("height", this.get("height"));
-        if((hor && attrName == "width") || (vert && attrName == "height"))
+        if((hor && attrName === "width") || (vert && attrName === "height"))
         {
             this._drawAxis();
         }
@@ -392,15 +393,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 line = styles.line,
                 labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
-                drawTicks = majorTickStyles.display != "none",
-                tickPoint,
-                majorUnit = styles.majorUnit,
+                drawTicks = majorTickStyles.display !== "none",
                 len,
-                majorUnitDistance,
                 i = 0,
                 layout = this._layout,
                 layoutLength,
-                position,
                 lineStart,
                 label,
                 labelWidth,
@@ -413,7 +410,19 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 tickPath,
                 explicitlySized,
                 position = this.get("position"),
-                direction = (position == "left" || position == "right") ? "vertical" : "horizontal";
+                labelData,
+                labelValues,
+                point,
+                points,
+                firstPoint,
+                lastPoint,
+                firstLabel,
+                lastLabel,
+                staticCoord,
+                dynamicCoord,
+                edgeOffset,
+                explicitLabels = this._labelValuesExplicitlySet ? this.get("labelValues") : null,
+                direction = (position === "left" || position === "right") ? "vertical" : "horizontal";
             this._labelWidths = [];
             this._labelHeights = [];
             graphic.set("autoDraw", false);
@@ -427,18 +436,66 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             this._labelRotationProps.transformOrigin = layout._getTransformOrigin(this._labelRotationProps.rot);
             layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
+
+            len = this.getTotalMajorUnits();
+            edgeOffset = this.getEdgeOffset(len, layoutLength);
+            this.set("edgeOffset", edgeOffset);
             lineStart = layout.getLineStart.apply(this);
-            len = this.getTotalMajorUnits(majorUnit);
-            majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
-            this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
+
+            if(direction === "vertical")
+            {
+                staticCoord = "x";
+                dynamicCoord = "y";
+            }
+            else
+            {
+                staticCoord = "y";
+                dynamicCoord = "x";
+            }
+
+            labelData = this._getLabelData(
+                lineStart[staticCoord],
+                staticCoord,
+                dynamicCoord,
+                this.get("minimum"),
+                this.get("maximum"),
+                edgeOffset,
+                layoutLength - edgeOffset - edgeOffset,
+                len,
+                explicitLabels
+            );
+
+            points = labelData.points;
+            labelValues = labelData.values;
+            len = points.length;
+            if(!this._labelValuesExplicitlySet)
+            {
+                this.set("labelValues", labelValues, {src: "internal"});
+            }
+
+            //Don't create the last label or tick.
+            if(this.get("hideFirstMajorUnit"))
+            {
+                firstPoint = points.shift();
+                firstLabel = labelValues.shift();
+                len = len - 1;
+            }
+
+            //Don't create the last label or tick.
+            if(this.get("hideLastMajorUnit"))
+            {
+                lastPoint = points.pop();
+                lastLabel = labelValues.pop();
+                len = len - 1;
+            }
+
             if(len < 1)
             {
                 this._clearLabelCache();
             }
             else
             {
-                tickPoint = this.getFirstPoint(lineStart);
-                this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
+                this.drawLine(path, lineStart, this.getLineEnd(lineStart));
                 if(drawTicks)
                 {
                     tickPath = this.get("tickPath");
@@ -448,35 +505,38 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                         color: majorTickStyles.color,
                         opacity: majorTickStyles.alpha
                     });
-                   layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
+                    for(i = 0; i < len; i = i + 1)
+                    {
+                        point = points[i];
+                        if(point)
+                        {
+                            layout.drawTick.apply(this, [tickPath, points[i], majorTickStyles]);
+                        }
+                    }
                 }
                 this._createLabelCache();
-                this._tickPoints = [];
                 this._maxLabelSize = 0;
                 this._totalTitleSize = 0;
                 this._titleSize = 0;
                 this._setTitle();
                 explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
-                for(; i < len; ++i)
+                for(i = 0; i < len; i = i + 1)
                 {
-                    if(drawTicks)
+                    point = points[i];
+                    if(point)
                     {
-                        layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
+                        label = this.getLabel(labelStyles);
+                        this._labels.push(label);
+                        this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [labelValues[i], labelFormat]));
+                        labelWidth = Math.round(label.offsetWidth);
+                        labelHeight = Math.round(label.offsetHeight);
+                        if(!explicitlySized)
+                        {
+                            this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                        }
+                        this._labelWidths.push(labelWidth);
+                        this._labelHeights.push(labelHeight);
                     }
-                    position = this.getPosition(tickPoint);
-                    label = this.getLabel(tickPoint, labelStyles);
-                    this._labels.push(label);
-                    this._tickPoints.push({x:tickPoint.x, y:tickPoint.y});
-                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this._getLabelByIndex(i, len, direction), labelFormat]));
-                    labelWidth = Math.round(label.offsetWidth);
-                    labelHeight = Math.round(label.offsetHeight);
-                    if(!explicitlySized)
-                    {
-                        this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
-                    }
-                    this._labelWidths.push(labelWidth);
-                    this._labelHeights.push(labelHeight);
-                    tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
                 }
                 this._clearLabelCache();
                 if(this.get("overlapGraph"))
@@ -488,10 +548,28 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 {
                     this._layout.positionTitle.apply(this, [this._titleTextField]);
                 }
+                len = this._labels.length;
                 for(i = 0; i < len; ++i)
                 {
-                    layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                    layout.positionLabel.apply(this, [this.get("labels")[i], points[i], styles, i]);
                 }
+                if(firstPoint)
+                {
+                    points.unshift(firstPoint);
+                }
+                if(lastPoint)
+                {
+                    points.push(lastPoint);
+                }
+                if(firstLabel)
+                {
+                    labelValues.unshift(firstLabel);
+                }
+                if(lastLabel)
+                {
+                    labelValues.push(lastLabel);
+                }
+                this._tickPoints = points;
             }
         }
         this._drawing = false;
@@ -526,7 +604,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             matrix = new Y.Matrix();
         matrix.rotate(rot);
         bounds = matrix.getContentRect(w, h);
-        if(position == "left" || position == "right")
+        if(position === "left" || position === "right")
         {
             size = bounds.right - bounds.left;
             if(margin)
@@ -640,12 +718,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * Creates or updates an axis label.
      *
      * @method getLabel
-     * @param {Object} pt x and y coordinates for the label
      * @param {Object} styles styles applied to label
      * @return HTMLElement
      * @private
      */
-    getLabel: function(pt, styles)
+    getLabel: function(styles)
     {
         var i,
             label,
@@ -805,87 +882,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     },
 
     /**
-     * Gets the position of the next point on an axis.
-     *
-     * @method getNextPoint
-     * @param {Object} point Object containing x and y coordinates.
-     * @param {Number} majorUnitDistance Distance in pixels between ticks.
-     * @return Object
-     * @private
-     */
-    getNextPoint: function(point, majorUnitDistance)
-    {
-        var pos = this.get("position");
-        if(pos === "top" || pos === "bottom")
-        {
-            point.x = point.x + majorUnitDistance;
-        }
-        else
-        {
-            point.y = point.y - majorUnitDistance;
-        }
-        return point;
-    },
-
-    /**
-     * Calculates the placement of last tick on an axis.
-     *
-     * @method getLastPoint
-     * @return Object
-     * @private
-     */
-    getLastPoint: function()
-    {
-        var style = this.get("styles"),
-            padding = style.padding,
-            w = this.get("width"),
-            pos = this.get("position");
-        if(pos === "top" || pos === "bottom")
-        {
-            return {x:w - padding.right, y:padding.top};
-        }
-        else
-        {
-            return {x:padding.left, y:padding.top};
-        }
-    },
-
-    /**
-     * Calculates position on the axis.
-     *
-     * @method getPosition
-     * @param {Object} point contains x and y values
-     * @private
-     */
-    getPosition: function(point)
-    {
-        var p,
-            h = this.get("height"),
-            style = this.get("styles"),
-            padding = style.padding,
-            pos = this.get("position"),
-            dataType = this.get("dataType");
-        if(pos === "left" || pos === "right")
-        {
-            //Numeric data on a vertical axis is displayed from bottom to top.
-            //Categorical and Timeline data is displayed from top to bottom.
-            if(dataType === "numeric")
-            {
-                p = (h - (padding.top + padding.bottom)) - (point.y - padding.top);
-            }
-            else
-            {
-                p = point.y - padding.top;
-            }
-        }
-        else
-        {
-            p = point.x - padding.left;
-        }
-        return p;
-    },
-
-    /**
      * Rotates and positions a text field.
      *
      * @method _rotate
@@ -1012,7 +1008,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             label,
             props = this._getTextRotationProps(labelStyles);
             props.transformOrigin = layout._getTransformOrigin(props.rot);
-        label = this.getLabel({x: 0, y: 0}, labelStyles);
+        label = this.getLabel(labelStyles);
         this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
@@ -1123,13 +1119,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     {
         var units,
             majorUnit = this.get("styles").majorUnit,
-            len = this.getLength();
+            len;
         if(majorUnit.determinant === "count")
         {
             units = majorUnit.count;
         }
         else if(majorUnit.determinant === "distance")
         {
+            len = this.getLength();
             units = (len/majorUnit.distance) + 1;
         }
         return units;
@@ -1149,7 +1146,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
         var dist;
         if(majorUnit.determinant === "count")
         {
-            if(!this.get("calculateEdgeOffset")) 
+            if(!this.get("calculateEdgeOffset"))
             {
                 len = len - 1;
             }
@@ -1307,7 +1304,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
         },
 
         /**
-         * Difference betweend the first/last tick and edge of axis.
+         * Difference between the first/last tick and edge of axis.
          *
          * @attribute edgeOffset
          * @type Number
@@ -1391,10 +1388,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
 
             setter: function(val)
             {
-                var layoutClass = this._layoutClasses[val];
-                if(val && val != "none")
+                var LayoutClass = this._layoutClasses[val];
+                if(val && val !== "none")
                 {
-                    this._layout = new layoutClass();
+                    this._layout = new LayoutClass();
                 }
                 return val;
             }
@@ -1469,7 +1466,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
 
             getter: function()
             {
-                if(this.get("position") == "none")
+                if(this.get("position") === "none")
                 {
                     return this.get("styles").majorUnit.count;
                 }
@@ -1569,6 +1566,54 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             {
                 return this._setText;
             }
+        },
+
+        /**
+         * An array containing the unformatted values of the axis labels. By default, TimeAxis, NumericAxis and
+         * StackedAxis labelValues are determined by the majorUnit style. By default, CategoryAxis labels are
+         * determined by the values of the dataProvider.
+         * <p>When the labelValues attribute is explicitly set, the labelValues are dictated by the set value and
+         * the position of ticks and labels are determined by where those values would fall on the axis. </p>
+         *
+         * @attribute labelValues
+         * @type Array
+         */
+        labelValues: {
+            lazyAdd: false,
+
+            setter: function(val)
+            {
+                var opts = arguments[2];
+                if(!val || (opts && opts.src && opts.src === "internal"))
+                {
+                    this._labelValuesExplicitlySet = false;
+                }
+                else
+                {
+                    this._labelValuesExplicitlySet = true;
+                }
+                return val;
+            }
+        },
+
+        /**
+         * Suppresses the creation of the the first visible label and tick.
+         *
+         * @attribute hideFirstMajorUnit
+         * @type Boolean
+         */
+        hideFirstMajorUnit: {
+            value: false
+        },
+
+        /**
+         * Suppresses the creation of the the last visible label and tick.
+         *
+         * @attribute hideLastMajorUnit
+         * @type Boolean
+         */
+        hideLastMajorUnit: {
+            value: false
         }
 
         /**
@@ -1608,6 +1653,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
          *              <dt>alpha</dt><dd>Number between 0 and 1 indicating the opacity of the labels. The default value is 1.</dd>
          *              <dt>fontSize</dt><dd>The font-size of the labels. The default value is 85%</dd>
          *              <dt>rotation</dt><dd>The rotation, in degrees (between -90 and 90) of the labels. The default value is 0.</dd>
+         *              <dt>offset</td><dd>A number between 0 and 1 indicating the relationship of the label to a tick. For a horizontal axis
+         *              label, a value of 0 will position the label's left side even to the the tick. A position of 1 would position the
+         *              right side of the label with the tick. A position of 0.5 would center the label horizontally with the tick. For a
+         *              vertical axis, a value of 0 would position the top of the label with the tick, a value of 1 would position the bottom
+         *              of the label with the tick and a value 0 would center the label vertically with the tick. The default value is 0.5.</dd>
          *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the `Axis`,
          *              only one of the properties used.
          *                  <dl>

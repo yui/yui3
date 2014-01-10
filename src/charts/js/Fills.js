@@ -13,7 +13,7 @@ var Y_Lang = Y.Lang;
  * @constructor
  * @submodule series-fill-util
  */
-function Fills(cfg) {}
+function Fills() {}
 
 Fills.ATTRS = {
     area: {
@@ -200,7 +200,6 @@ Fills.prototype = {
             ycoords = this.get("ycoords"),
             curvecoords,
             order = this.get("order"),
-            type = this.get("type"),
             seriesCollection = this.get("seriesTypeCollection"),
             prevXCoords,
             prevYCoords,
@@ -332,7 +331,7 @@ Fills.prototype = {
      */
     _getHighestValidOrder: function(seriesCollection, index, order, direction)
     {
-        var coords = direction == "vertical" ? "stackedXCoords" : "stackedYCoords",
+        var coords = direction === "vertical" ? "stackedXCoords" : "stackedYCoords",
             coord;
         while(isNaN(coord) && order > -1)
         {
@@ -360,7 +359,7 @@ Fills.prototype = {
     {
         var xcoord,
             ycoord;
-        if(direction == "vertical")
+        if(direction === "vertical")
         {
             xcoord = order < 0 ? this._leftOrigin : seriesCollection[order].get("stackedXCoords")[index];
             ycoord = this.get("stackedYCoords")[index];
@@ -383,7 +382,6 @@ Fills.prototype = {
     _getStackedClosingPoints: function()
     {
         var order = this.get("order"),
-            type = this.get("type"),
             direction = this.get("direction"),
             seriesCollection = this.get("seriesTypeCollection"),
             firstValidIndex,
@@ -410,7 +408,7 @@ Fills.prototype = {
         previousSeries = seriesCollection[order - 1];
         previousXCoords = previousSeries.get("stackedXCoords").concat();
         previousYCoords = previousSeries.get("stackedYCoords").concat();
-        if(direction == "vertical")
+        if(direction === "vertical")
         {
             firstValidIndex = this._getFirstValidIndex(xcoords);
             lastValidIndex = this._getLastValidIndex(xcoords);
@@ -455,7 +453,10 @@ Fills.prototype = {
             closingYCoords.push(coords[1]);
             currentIndex = currentIndex + 1;
         }
-        if(previousXCoords && previousXCoords.length > 0 && previousSeriesLastValidIndex > firstValidIndex && previousSeriesFirstValidIndex < lastValidIndex)
+        if(previousXCoords &&
+            previousXCoords.length > 0 &&
+            previousSeriesLastValidIndex > firstValidIndex &&
+            previousSeriesFirstValidIndex < lastValidIndex)
         {
             closingXCoords = closingXCoords.concat(previousXCoords);
             closingYCoords = closingYCoords.concat(previousYCoords);

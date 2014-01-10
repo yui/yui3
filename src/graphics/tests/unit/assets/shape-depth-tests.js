@@ -1,13 +1,14 @@
 YUI.add('shape-depth-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Graphics: Graphic");
 var suite = new Y.Test.Suite("Graphics: Shape Depth Tests"),
+    parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
     DepthTests,
     ENGINE = "vml",
-    DOCUMENT = Y.config.doc,
-	svg = DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
-    canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+    DOC = Y.config.doc,
+	svg = DOC && DOC.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
+    canvas = DOC && DOC.createElement("canvas"),
     DEFAULTENGINE = Y.config.defaultGraphicEngine;
+DOC.body.appendChild(parentDiv);
 
 if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
 {
@@ -59,12 +60,9 @@ Y.RoundedRect = RoundedRect;
 DepthTests = new Y.Test.Case({
     name: "ShapeDepthTests",
 
-    loadShapes: function () {
-        Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
-        graphic = new Y.Graphic({render: "#graphiccontainer"});
-        this.graphic = graphic;
-        this.rect = graphic.addShape({
+    setUp: function() {
+        this.graphic = new Y.Graphic({render: "#testdiv"});
+        this.rect = this.graphic.addShape({
             type: "rect",
             width: 120,
             height: 80,
@@ -78,7 +76,7 @@ DepthTests = new Y.Test.Case({
                 color: "#000"
             }
         });
-        this.circle = graphic.addShape({
+        this.circle = this.graphic.addShape({
             type: "circle",
             radius: 45,
             x: 60,
@@ -91,7 +89,7 @@ DepthTests = new Y.Test.Case({
                 color: "#000"
             }
         });
-        this.ellipse = graphic.addShape({
+        this.ellipse = this.graphic.addShape({
             type: "ellipse",
             width: 80,
             height: 110,
@@ -105,7 +103,7 @@ DepthTests = new Y.Test.Case({
                 color: "#000"
             }
         });
-        this.roundRect = graphic.addShape({
+        this.roundRect = this.graphic.addShape({
             type: Y.RoundedRect,
             width: 130,
             height: 90,
@@ -119,16 +117,26 @@ DepthTests = new Y.Test.Case({
                 color: "#000"
             }
         });
-        this._contentNode = ENGINE == "svg" ? graphic._contentNode : graphic.get("node");
+        this._contentNode = ENGINE == "svg" ? this.graphic._contentNode : this.graphic.get("node");
     },
 
-    destroyShapesAndGraphic: function () {
+    tearDown: function() {
         this.graphic.destroy();
-        Y.one("#testbed").remove(true);
+        Y.Event.purgeElement(DOC, false);
     },
 
-    testRectToFront: function() {
-        this.loadShapes();
+    testDefault: function() {
+        this.rectToFront();
+        this.circleToFront();
+        this.ellipseToFront();
+        this.roundRectToFront();
+        this.roundRectToBack();
+        this.ellipseToBack();
+        this.circleToBack();
+        this.rectToBack();
+    },
+
+    rectToFront: function() {
         var shape = this.rect,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -137,7 +145,7 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.lastChild, "The shape's dom node should be the last child of the graphic node.");
     },
 
-    testCircleToFront: function() {
+    circleToFront: function() {
         var shape = this.circle,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -146,7 +154,7 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.lastChild, "The shape's dom node should be the last child of the graphic node.");
     },
 
-    testEllipseToFront: function() {
+    ellipseToFront: function() {
         var shape = this.ellipse,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -155,7 +163,7 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.lastChild, "The shape's dom node should be the last child of the graphic node.");
     },
 
-    testRoundRectToFront: function() {
+    roundRectToFront: function() {
         var shape = this.roundRect,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -164,7 +172,7 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.lastChild, "The shape's dom node should be the last child of the graphic node.");
     },
     
-    testRoundRectToBack: function() {
+    roundRectToBack: function() {
         var shape = this.roundRect,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -173,7 +181,7 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.firstChild, "The shape's dom node should be the first child of the graphic node.");
     },
     
-    testEllipseToBack: function() {
+    ellipseToBack: function() {
         var shape = this.ellipse,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -182,7 +190,7 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.firstChild, "The shape's dom node should be the first child of the graphic node.");
     },
     
-    testCircleToBack: function() {
+    circleToBack: function() {
         var shape = this.circle,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
@@ -191,14 +199,13 @@ DepthTests = new Y.Test.Case({
         Y.Assert.areEqual(shapeNode, contentNode.firstChild, "The shape's dom node should be the first child of the graphic node.");
     },
 
-    testRectToBack: function() {
+    rectToBack: function() {
         var shape = this.rect,
             shapeNode = shape.get("node"),
             contentNode = this._contentNode;
         Y.Assert.areNotEqual(shapeNode, contentNode.firstChild, "The shape's dom node should not be the first child of the graphic node.");
         shape.toBack();
         Y.Assert.areEqual(shapeNode, contentNode.firstChild, "The shape's dom node should be the first child of the graphic node.");
-        this.destroyShapesAndGraphic();
     }
 });
 

@@ -12,15 +12,15 @@ YUI.add('json-freeze-thaw-tests', function(Y) {
             Assert.isNotNull(Y.one('#demo_thawed'));
         },
         'freeze button click': function() {
-            var html = Y.one('#demo_frozen').get('innerHTML');
-            Assert.areEqual('(stringify results here)', html);
+            var text = Y.one('#demo_frozen').get('text');
+            Assert.areEqual('(stringify results here)', text);
             Assert.isTrue(Y.one('#demo_thaw').get('disabled'));
             var button = Y.one('#demo_freeze');
             button.simulate('click');
 
             this.wait(function() {
                 Assert.isFalse(Y.one('#demo_thaw').get('disabled'));
-                var json = Y.JSON.parse(Y.one('#demo_frozen').get('innerHTML'));
+                var json = Y.JSON.parse(Y.one('#demo_frozen').get('text'));
                 Assert.areEqual(json.type, 'Hominid');
                 Assert.areEqual(json.count, 1);
                 Assert.isArray(json.specimen);
@@ -30,8 +30,8 @@ YUI.add('json-freeze-thaw-tests', function(Y) {
             }, 200);
         },
         'thaw button click': function() {
-            var html = Y.one('#demo_thawed').get('innerHTML');
-            Assert.areEqual('', html);
+            var text = Y.one('#demo_thawed').get('text');
+            Assert.areEqual('', text);
             Assert.isFalse(Y.one('#demo_thaw').get('disabled'));
             var button = Y.one('#demo_thaw');
             button.simulate('click');
@@ -39,10 +39,10 @@ YUI.add('json-freeze-thaw-tests', function(Y) {
             this.wait(function() {
                 Assert.isFalse(Y.one('#demo_thaw').get('disabled'));
                 var ps = Y.all('#demo_thawed p');
-                Assert.areEqual(ps.item(0).get('innerHTML'), 'Specimen count: 1');
-                Assert.areEqual(ps.item(1).get('innerHTML'), 'Specimen type: Hominid');
-                Assert.areEqual(ps.item(2).get('innerHTML'), 'Instanceof CaveMan: true');
-                Assert.areEqual(ps.item(3).get('innerHTML'), 'Name: Ed, the cave man');
+                Assert.areEqual(ps.item(0).get('text'), 'Specimen count: 1');
+                Assert.areEqual(ps.item(1).get('text'), 'Specimen type: Hominid');
+                Assert.areEqual(ps.item(2).get('text'), 'Instanceof CaveMan: true');
+                Assert.areEqual(ps.item(3).get('text'), 'Name: Ed, the cave man');
             }, 200);
         }
     }));

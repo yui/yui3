@@ -78,7 +78,7 @@ var LANG = Y.Lang,
 
             // response.results[0] is { fruit: "Banana", color: "yellow" }
 
-            
+
             // Process array of objects
             data = [
                 { fruit: 'Banana', color: 'yellow', price: '1.96' },
@@ -107,7 +107,7 @@ var LANG = Y.Lang,
 
             // Note price was converted from a numeric string to a number
             // response.results[0] looks like { fruit: "BANANA", price: 1.96 }
-         
+
         @method apply
         @param {Object} [schema] Schema to apply.  Supported configuration
             properties are:

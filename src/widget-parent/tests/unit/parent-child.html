@@ -34,7 +34,7 @@
     </style>
 </head>
 <body class="yui3-skin-sam">
-
+    <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
     <script type="text/javascript">
 
         YUI({
@@ -222,7 +222,7 @@
                     widget.add({type: Y.ChildWidget, label: "Child Two", id: "child-2" }, 1);
                     widget.add({type: Y.ChildWidget, label: "Child One", id: "child-1" }, 0);
                     widget.add({type: Y.ChildWidget, label: "Child Three", id: "child-3" }, 2);
-                    
+
                     widget.render();
 
                     var children = widget.get("children");
@@ -239,18 +239,18 @@
 
                     widget.destroy();
                 },
-                
+
                 testAddOutOfOrderPostRender : function() {
                     var widget = new Y.ParentWidget({
                         id:"widget-1"
                     });
-                    
+
                     widget.render();
 
                     widget.add({type: Y.ChildWidget, label: "Child Two", id: "child-2" }, 1);
                     widget.add({type: Y.ChildWidget, label: "Child One", id: "child-1" }, 0);
                     widget.add({type: Y.ChildWidget, label: "Child Three", id: "child-3" }, 2);
-                    
+
                     Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
                     Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
                     Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
@@ -321,7 +321,7 @@
                     widget.selectChild(1);
 
                     Y.Assert.areSame(widget.item(1), widget.get("selection"));
-                    
+
                     Y.Assert.areEqual(widget.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
                     Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
                     Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
@@ -355,7 +355,7 @@
 
                     Y.Assert.areSame(widget.item(1), widget.get("activeDescendant"));
 
-                    var removedChild = widget.remove(1); 
+                    var removedChild = widget.remove(1);
 
                     Y.Assert.isFalse(removedChild.get("focused"));
                     Y.Assert.areEqual(removedChild.get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
@@ -467,7 +467,7 @@
                     Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
                     Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-3", "The subtree's \"selection\" attribute should return its third child.");
 
-                    // Confirm that we can't do a multiple selection 
+                    // Confirm that we can't do a multiple selection
                     var evts = [];
 
                     tree.on("selectedChange", function() {
@@ -482,13 +482,13 @@
 
                     Y.ArrayAssert.itemsAreEqual(["root:onSelectedChange"], evts);
                     Y.Assert.areEqual(2, tree.get("selected"));
-                    
+
                     evts = [];
 
                     tree.item(2).on("selectedChange", function() {
                         evts.push("subTree:onSelectedChange");
                     });
-                    
+
                     tree.item(2).after("selectedChange", function() {
                         evts.push("subTree:afterSelectedChange");
                     });
@@ -635,7 +635,7 @@
                     Y.Assert.areEqual(widget.item(0).ancestor(-1).get("id"), "widget-1", "The ancestor of \"child-1\" at depth -1 should be \"widget-1\"");    // parent depth
 
                     root.destroy();
-                    
+
                     // So tests can be rerun
                     Y.ParentWidget.prototype.ROOT_TYPE = null;
                     Y.ChildWidget.prototype.ROOT_TYPE = null;
@@ -722,9 +722,9 @@
                     // seem to be working (subtree is missing). Otherwise we would use tree.on("*:destroy");
 
                     tree.each(function(child) {
-                        
+
                         var id = child.get("id");
-                        
+
                         child.after("destroy", function(e) {
                             destroyed.push(id);
                             Y.Assert.isNull(Y.Node.one("#" + id), "Child bounding box still in DOM");
@@ -732,8 +732,8 @@
 
                         if (child.hasImpl(Y.WidgetParent)) {
                             child.each(function(subtreechild) {
-                        
-                                var id = subtreechild.get("id");        
+
+                                var id = subtreechild.get("id");
 
                                 subtreechild.after("destroy", function(e) {
                                     destroyed.push(id);
@@ -742,16 +742,16 @@
                             });
                         }
                     });
-                    
+
                     var rootId = tree.get("id");
-                    
+
                     tree.after("destroy", function(e) {
                         destroyed.push(rootId);
                         Y.Assert.isNull(Y.Node.one("#" + rootId), "Root Bounding box still in DOM");
                     });
 
                     tree.destroy();
-                    
+
                     Y.ArrayAssert.itemsAreEqual(expected, destroyed, "Unexpected destroy events");
                 },
 
@@ -779,15 +779,15 @@
                     tree.item(1).destroy();
 
                     Y.Assert.areEqual(2, tree.size(), "Item 1 doesn't seem to have been removed. Tree size is the same");
-                    Y.Assert.areEqual("subtree", tree.item(1).get("id"), "Item 1 doesn't seem to have been removed");  
+                    Y.Assert.areEqual("subtree", tree.item(1).get("id"), "Item 1 doesn't seem to have been removed");
 
-                    subree = tree.item(1); 
+                    subree = tree.item(1);
 
                     subtree.item(0).destroy();
 
                     Y.Assert.areEqual(1, subtree.size(), "Subtree item 0 doesn't seem to have been removed. subtree size is the same");
                     Y.Assert.areEqual("subtree-leaf-2", subtree.item(0).get("id"), "Subtree item 0 doesn't seem to have been removed");
-                    Y.Assert.areEqual(subtree.item(1), null, "Subtree item 1 should have moved up to item 0");  
+                    Y.Assert.areEqual(subtree.item(1), null, "Subtree item 1 should have moved up to item 0");
 
                     tree.destroy();
                 },
@@ -801,7 +801,7 @@
                         actualEvents = [],
 
                         expectedChildEvents = [
-                            "childwidget:click", 
+                            "childwidget:click",
                             "childwidget:click"
                         ],
                         actualChildEvents = [];
@@ -836,12 +836,12 @@
 
                     widget.destroy();
                 },
-                
+
                 testCustomAsyncRender : function() {
 
                     // NOTE: This is not a unit test for "out-of-the-box" code per-se.
 
-                    // It's testing an additional check for "rendered", added to _uiAddChild, specifically 
+                    // It's testing an additional check for "rendered", added to _uiAddChild, specifically
                     // for a customization which modified child.render() to be async.
 
                     // See http://yuilibrary.com/projects/yui3/ticket/2529863 for more details.
@@ -866,7 +866,7 @@
                         render: function() {
                             var w = this,
                                 args = arguments;
-        
+
                             this.get("parent").renderQ.add(function() {
                                 AsyncRenderChild.superclass.render.apply(w, args);
                             });
@@ -881,17 +881,17 @@
 
                     widget.after("asyncAddComplete", function(e) {
                         test.resume(function() {
-    
+
                             Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
                             Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
                             Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
-        
+
                             var renderedChildren = widget.get("contentBox").get("children");
-        
+
                             Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
                             Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
                             Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
-    
+
                             widget.destroy();
                         });
                     });
@@ -902,7 +902,7 @@
                         {type: AsyncRenderChild, label: "Child Three", id: "child-3"}
                     ]);
 
-                    test.wait();                    
+                    test.wait();
                 }
 
             }));
@@ -929,12 +929,11 @@
                     '</pre>'
                 }).render();
             }
-    
+
             Y.Test.Runner.enableLogging();
             Y.Test.Runner.run();
         });
     });
     </script>
-    <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 </body>
 </html>

@@ -1,12 +1,14 @@
 YUI.add('axis-stacked-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: StackedAxis"),
+        DOC = Y.config.doc,
         axisTest = new Y.Test.Case({
         setUp: function() {
             this.axis = new Y.StackedAxisBase();
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: get('type')" : function() {

@@ -9,7 +9,7 @@
  * @class CanvasEllipse
  * @constructor
  */
-CanvasEllipse = function(cfg)
+CanvasEllipse = function()
 {
 	CanvasEllipse.superclass.constructor.apply(this, arguments);
 };

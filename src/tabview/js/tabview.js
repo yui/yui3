@@ -4,9 +4,7 @@
  * @module tabview
  */
 
-var _queries = Y.TabviewBase._queries,
-    _classNames = Y.TabviewBase._classNames,
-    DOT = '.',
+var DOT = '.',
 
     /**
      * Provides a tabbed widget interface
@@ -18,16 +16,25 @@ var _queries = Y.TabviewBase._queries,
      * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
+
     _afterChildAdded: function() {
         this.get('contentBox').focusManager.refresh();
     },
 
     _defListNodeValueFn: function() {
-        return Y.Node.create(TabView.LIST_TEMPLATE);
+        var node = Y.Node.create(this.LIST_TEMPLATE);
+
+        node.addClass(Y.TabviewBase._classNames.tabviewList);
+
+        return node;
     },
 
     _defPanelNodeValueFn: function() {
-        return Y.Node.create(TabView.PANEL_TEMPLATE);
+        var node = Y.Node.create(this.PANEL_TEMPLATE);
+
+        node.addClass(Y.TabviewBase._classNames.tabviewPanel);
+
+        return node;
     },
 
     _afterChildRemoved: function(e) { // update the selected tab when removed
@@ -44,9 +51,8 @@ var _queries = Y.TabviewBase._queries,
         this.get('contentBox').focusManager.refresh();
     },
 
-    _initAria: function() {
-        var contentBox = this.get('contentBox'),
-            tablist = contentBox.one(_queries.tabviewList);
+    _initAria: function(contentBox) {
+        var tablist = contentBox.one(Y.TabviewBase._queries.tabviewList);
 
         if (tablist) {
             tablist.setAttrs({
@@ -62,7 +68,7 @@ var _queries = Y.TabviewBase._queries,
         //  among each of the tabs.
 
         this.get('contentBox').plug(Y.Plugin.NodeFocusManager, {
-                        descendants: DOT + _classNames.tabLabel,
+                        descendants: DOT + Y.TabviewBase._classNames.tabLabel,
                         keys: { next: 'down:39', // Right arrow
                                 previous: 'down:37' },  // Left arrow
                         circular: true
@@ -72,13 +78,14 @@ var _queries = Y.TabviewBase._queries,
         this.after('addChild', this._afterChildAdded);
         this.after('removeChild', this._afterChildRemoved);
     },
-    
+
     renderUI: function() {
         var contentBox = this.get('contentBox');
         this._renderListBox(contentBox);
         this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
+        this._initAria(contentBox);
     },
 
     _setDefSelection: function() {
@@ -113,7 +120,9 @@ var _queries = Y.TabviewBase._queries,
     },
 
     _renderTabs: function(contentBox) {
-        var tabs = contentBox.all(_queries.tab),
+        var _classNames = Y.TabviewBase._classNames,
+            _queries = Y.TabviewBase._queries,
+            tabs = contentBox.all(_queries.tab),
             panelNode = this.get('panelNode'),
             panels = (panelNode) ? this.get('panelNode').get('children') : null,
             tabview = this;
@@ -134,10 +143,6 @@ var _queries = Y.TabviewBase._queries,
         }
     }
 }, {
-
-    LIST_TEMPLATE: '<ul class="' + _classNames.tabviewList + '"></ul>',
-    PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
-
     ATTRS: {
         defaultChildType: {
             value: 'Tab'
@@ -147,7 +152,7 @@ var _queries = Y.TabviewBase._queries,
             setter: function(node) {
                 node = Y.one(node);
                 if (node) {
-                    node.addClass(_classNames.tabviewList);
+                    node.addClass(Y.TabviewBase._classNames.tabviewList);
                 }
                 return node;
             },
@@ -159,7 +164,7 @@ var _queries = Y.TabviewBase._queries,
             setter: function(node) {
                 node = Y.one(node);
                 if (node) {
-                    node.addClass(_classNames.tabviewPanel);
+                    node.addClass(Y.TabviewBase._classNames.tabviewPanel);
                 }
                 return node;
             },
@@ -174,9 +179,21 @@ var _queries = Y.TabviewBase._queries,
     },
 
     HTML_PARSER: {
-        listNode: _queries.tabviewList,
-        panelNode: _queries.tabviewPanel
-    }
+        listNode: function(srcNode) {
+            return srcNode.one(Y.TabviewBase._queries.tabviewList);
+        },
+        panelNode: function(srcNode) {
+            return srcNode.one(Y.TabviewBase._queries.tabviewPanel);
+        }
+    },
+
+    // Static for legacy support.
+    LIST_TEMPLATE: '<ul></ul>',
+    PANEL_TEMPLATE: '<div></div>'
 });
+
+// Map to static values by default.
+TabView.prototype.LIST_TEMPLATE = TabView.LIST_TEMPLATE;
+TabView.prototype.PANEL_TEMPLATE = TabView.PANEL_TEMPLATE;
 
 Y.TabView = TabView;

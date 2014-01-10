@@ -20,7 +20,6 @@ baseSuite.add(new Y.Test.Case({
     "test new Y.EventTarget(config)": function () {
         var target1 = new Y.EventTarget(),
             target2 = new Y.EventTarget({
-                // These are all the currently supported default overrides...
                 broadcast: 2,
                 bubbles: false,
                 context: target1,
@@ -29,38 +28,33 @@ baseSuite.add(new Y.Test.Case({
                 fireOnce: true,
                 monitored: true,
                 queuable: true,
-                // ...except this one
-                async: "is not supported as a default (yet?)"
+                async: true
             }),
             config1 = target1._yuievt,
             config2 = target2._yuievt;
 
-        Y.Assert.isString(config1.id);
         Y.Assert.isObject(config1.events);
-        Y.Assert.isObject(config1.targets);
+        Y.Assert.isNull(config1.targets);
         Y.Assert.isObject(config1.config);
-        Y.Assert.isFalse(config1.bubbling);
-        Y.Assert.isObject(config1.defaults);
+        Y.Assert.isUndefined(config1.bubbling);
 
-        Y.Assert.isUndefined(config1.defaults.broadcast);
-        Y.Assert.isTrue(config1.defaults.bubbles);
-        Y.Assert.areSame(target1, config2.defaults.context);
-        Y.Assert.isUndefined(config1.defaults.defaultTargetOnly);
-        Y.Assert.isUndefined(config1.defaults.emitFacade);
-        Y.Assert.isUndefined(config1.defaults.fireOnce);
-        Y.Assert.isUndefined(config1.defaults.monitored);
-        Y.Assert.isUndefined(config1.defaults.queuable);
+        Y.Assert.isUndefined(config1.config.broadcast);
+        Y.Assert.areSame(target1, config2.config.context);
+        Y.Assert.isUndefined(config1.config.defaultTargetOnly);
+        Y.Assert.isUndefined(config1.config.emitFacade);
+        Y.Assert.isUndefined(config1.config.fireOnce);
+        Y.Assert.isUndefined(config1.config.monitored);
+        Y.Assert.isUndefined(config1.config.queuable);
 
-        Y.Assert.isObject(config2.defaults);
-        Y.Assert.areSame(2, config2.defaults.broadcast);
-        Y.Assert.isFalse(config2.defaults.bubbles);
-        Y.Assert.areSame(target1, config2.defaults.context);
-        Y.Assert.isTrue(config2.defaults.defaultTargetOnly);
-        Y.Assert.isTrue(config2.defaults.emitFacade);
-        Y.Assert.isTrue(config2.defaults.fireOnce);
-        Y.Assert.isTrue(config2.defaults.monitored);
-        Y.Assert.isTrue(config2.defaults.queuable);
-        Y.Assert.isUndefined(config2.defaults.async);
+        Y.Assert.areSame(2, config2.config.broadcast);
+        Y.Assert.isFalse(config2.config.bubbles);
+        Y.Assert.areSame(target1, config2.config.context);
+        Y.Assert.isTrue(config2.config.defaultTargetOnly);
+        Y.Assert.isTrue(config2.config.emitFacade);
+        Y.Assert.isTrue(config2.config.fireOnce);
+        Y.Assert.isTrue(config2.config.monitored);
+        Y.Assert.isTrue(config2.config.queuable);
+        Y.Assert.isTrue(config2.config.async);
     },
 
     "test Y.augment(Clz, Y.EventTarget)": function () {
@@ -86,7 +80,7 @@ baseSuite.add(new Y.Test.Case({
         instance.fire("test");
 
         Y.Assert.isObject(instance._yuievt);
-        Y.Assert.isUndefined(instance._yuievt.defaults.fireOnce);
+        Y.Assert.isUndefined(instance._yuievt.config.fireOnce);
         Y.Assert.areSame(instance.on, Y.EventTarget.prototype.on);
         Y.Assert.areSame(instance, thisObj);
 
@@ -112,7 +106,7 @@ baseSuite.add(new Y.Test.Case({
         instance.fire("test");
 
         Y.Assert.isObject(instance._yuievt);
-        Y.Assert.isTrue(instance._yuievt.defaults.fireOnce);
+        Y.Assert.isTrue(instance._yuievt.config.fireOnce);
         Y.Assert.areSame(instance.on, Y.EventTarget.prototype.on);
         Y.Assert.areSame(instance, thisObj);
     },
@@ -4751,7 +4745,7 @@ suite.add(new Y.Test.Case({
         }
 
         target.method = method;
-            
+
         // awkward that you have to pass the target, and even more so
         // because this means every EventTarget is effectively an alias
         // for Y.Do
@@ -4789,7 +4783,7 @@ suite.add(new Y.Test.Case({
         }
 
         target.method = method;
-            
+
         // awkward that you have to pass the target, and even more so
         // because this means every EventTarget is effectively an alias
         // for Y.Do

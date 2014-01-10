@@ -14,7 +14,6 @@ YUI.add('mouseenter-tests', function(Y) {
         name: 'mouseenter',
         setUp: function() {
             var handles = [];
-
             handles.push(node.on('mouseenter', noop));
             handles.push(node.on('mouseleave', noop));
             handles.push(node.delegate('mouseenter', noop));

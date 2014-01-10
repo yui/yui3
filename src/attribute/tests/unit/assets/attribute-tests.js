@@ -1188,6 +1188,8 @@ YUI.add('attribute-tests', function(Y) {
         testGetAttrCfg : function() {
 
             var h = this.createHost(),
+                expected,
+                val,
                 attrCfg = h._getAttrCfg("testGetCfg");
 
             Y.Assert.areEqual(2, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected initial lazy state");
@@ -1197,22 +1199,27 @@ YUI.add('attribute-tests', function(Y) {
                 added : true
             }, attrCfg);
 
-            var val = h.get("testGetCfg");
+            val = h.get("testGetCfg");
 
             attrCfg = h._getAttrCfg("testGetCfg");
 
-            Y.Assert.areEqual(8, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected populated state");
-
-            Y.ObjectAssert.ownsKeys({
+            expected = {
                 added: true,
                 defaultValue: "foo",
                 getter: function (val) { return val; },
                 initValue: "foo",
-                isLazyAdd: true,
                 readOnly: true,
                 setter: function (val) { return val; },
-                value: "foo"
-            }, attrCfg);
+                value: "foo",
+
+                // Internals. Left in for performance, to avoid delete
+                initializing: false,
+                isLazyAdd: true
+            };
+
+            Y.Assert.areEqual(Y.Object.size(expected), Y.Object.size(attrCfg), "getAttrCfg returned unexpected populated state");
+
+            Y.ObjectAssert.ownsKeys(expected, attrCfg);
         },
 
         testGetAllAttrCfgs : function () {
@@ -1411,6 +1418,52 @@ YUI.add('attribute-tests', function(Y) {
             var o = new MyClass();
 
             Y.Assert.areEqual("bar", o.get("testValueFn"));
+        },
+
+        testSuperClassToSubClassSetterWithLazyAddFalse : function() {
+
+            // CandleStickSeries use case, where graphic === a, upcandle = b
+
+            function MySubClass() {
+                MySubClass.superclass.constructor.apply(this, arguments);
+            }
+
+            function MySuperClass() {
+                MySuperClass.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MySuperClass, Y.Base, null, {
+                NAME : "mySuperClass",
+                ATTRS : {
+                    a : {
+                        lazyAdd : false,
+                        setter : function(val) {
+                            return val;
+                        }
+                    }
+                }
+            });
+
+            Y.extend(MySubClass, MySuperClass, null, {
+                NAME : "mySubClass",
+                ATTRS : {
+                    a : {
+                        lazyAdd : false,
+                        setter : function(val) {
+                            this.set("b", 10);
+                            return val;
+                        }
+                    },
+                    b : {}
+                }
+            });
+
+            var o = new MySubClass({
+                a:20
+            });
+
+            Y.Assert.areEqual(20, o.get("a"));
+            Y.Assert.areEqual(10, o.get("b"));
         }
     };
 
@@ -2007,10 +2060,328 @@ YUI.add('attribute-tests', function(Y) {
             h.set("Z", "MYZ");
 
             Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+        },
+
+        testSetterWithOpts : function() {
+            var h = this.createHost(),
+                actualOpts,
+                actualFacades;
+
+            h.addAttr("setterWithOpts", {
+                setter: function(val, name, opts) {
+                    if (actualOpts) {
+                        actualOpts.push(opts);
+                    }
+                },
+                value: "X"
+            });
+
+            h.after("setterWithOptsChange", function(e) {
+                actualFacades.push(e);
+            });
+
+            actualOpts = [];
+            actualFacades = [];
+
+            h.set("setterWithOpts", "A");
+
+            Y.Assert.isUndefined(actualOpts[0]);
+            Y.Assert.isFalse("foo" in actualFacades[0]);
+
+            h.set("setterWithOpts", "B", {foo: 10});
+
+            Y.ObjectAssert.areEqual({foo:10}, actualOpts[1]);
+            Y.Assert.areEqual(10, actualFacades[1].foo);
+
+            h.set("setterWithOpts", "C", {foo: 20});
+
+            Y.ObjectAssert.areEqual({foo:20}, actualOpts[2]);
+            Y.Assert.areEqual(20, actualFacades[2].foo);
+
+            h.set("setterWithOpts", "D", {bar: 30});
+
+            Y.ObjectAssert.areEqual({bar:30}, actualOpts[3]);
+            Y.Assert.areEqual(30, actualFacades[3].bar);
+            Y.Assert.isFalse("foo" in actualFacades[3]);
+        },
+
+        testOptsWithSubscriberArgs : function() {
+
+            var h = this.createHost(),
+                onArgs,
+                afterArgs,
+                onContext,
+                afterContext,
+                subscriberArgs = [];
+
+            h.addAttr("setterWithOpts", {
+                value: "X"
+            });
+
+            h.on("setterWithOptsChange", function() {
+                subscriberArgs.push(Y.Array(arguments));
+                subscriberArgs.push(this);
+            }, {context:"on"}, {argsA:10}, {argsB:20});
+
+            h.after("setterWithOptsChange", function() {
+                subscriberArgs.push(Y.Array(arguments));
+                subscriberArgs.push(this);
+            }, {context:"after"}, {argsA:30}, {argsB:40});
+
+            h.set("setterWithOpts", "A", {myopts:50});
+
+            onArgs = subscriberArgs[0];
+            onContext = subscriberArgs[1]
+            afterArgs = subscriberArgs[2];
+            afterContext = subscriberArgs[3];
+
+            Y.Assert.areEqual(3, onArgs.length, "Expected 3 args to the on subscriber");
+            Y.Assert.isTrue(onArgs[0] instanceof Y.EventFacade, "on subscriber didn't get opts");
+            Y.Assert.areEqual(50, onArgs[0].myopts, "on subscriber didn't get opts");
+            Y.ObjectAssert.areEqual({argsA:10}, onArgs[1], "on subscriber didn't get first subscriber arg");
+            Y.ObjectAssert.areEqual({argsB:20}, onArgs[2], "on subscriber didn't get second subscriber arg");
+            Y.ObjectAssert.areEqual({context:"on"}, onContext, "on context not set correctly");
+
+            Y.Assert.areEqual(3, afterArgs.length, "Expected 3 args to the after subscriber");
+            Y.Assert.isTrue(afterArgs[0] instanceof Y.EventFacade, "after subscriber didn't get opts");
+            Y.Assert.areEqual(50, afterArgs[0].myopts, "after subscriber didn't get opts");
+            Y.ObjectAssert.areEqual({argsA:30}, afterArgs[1], "after subscriber didn't get first subscriber arg");
+            Y.ObjectAssert.areEqual({argsB:40}, afterArgs[2], "after subscriber didn't get second subscriber arg");
+            Y.ObjectAssert.areEqual({context:"after"}, afterContext, "after context not set correctly");
         }
     };
 
     extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
+
+    var eventByPass = {
+
+        name: "Attribute Event ByPass",
+
+        setUp : function() {
+
+            var test = this,
+
+                MyBase = function() {
+                    MyBase.superclass.constructor.apply(this, arguments);
+                };
+
+            this.actualEvents = [];
+
+            this.MyBase = Y.extend(MyBase, Y.Base, {
+
+                // An additional verification that the "init" flow has
+                // actually happened, in addition to "initialized" being set.
+                initializer : function(cfg) {
+                    test.actualEvents.push(cfg);
+                }
+            }, {
+                NAME: "myBase",
+
+                ATTRS: {
+                    foo: {
+                        value: 0
+                    }
+                }
+            })
+        },
+
+        tearDown : function() {
+            this.MyBase = null;
+            this.actualEvents = null;
+        },
+
+        testInitWithOnListeners : function() {
+
+            var actualEvents = this.actualEvents,
+
+                cfg = {
+                    foo: 10,
+                    on: {
+                        init: function(e) {
+                            actualEvents.push(e);
+                        }
+                    }
+                };
+
+                o = new this.MyBase(cfg);
+
+            Y.Assert.areEqual(true, o.get("initialized"));
+            Y.Assert.areEqual(2, actualEvents.length);
+
+            Y.Assert.areEqual("myBase:init", actualEvents[0].type);
+            Y.Assert.isTrue(actualEvents[0] instanceof Y.EventFacade);
+
+            Y.Assert.areSame(cfg, actualEvents[0].cfg);
+            Y.Assert.areSame(cfg, actualEvents[1]);
+        },
+
+        testInitWithAfterListeners : function() {
+
+            var actualEvents = this.actualEvents,
+
+                cfg = {
+                    foo: 20,
+                    after: {
+                        init: function(e) {
+                            actualEvents.push(e);
+                        }
+                    }
+                };
+
+                o = new this.MyBase(cfg);
+
+            Y.Assert.areEqual(true, o.get("initialized"));
+            Y.Assert.areEqual(2, actualEvents.length);
+
+            Y.Assert.areSame(cfg, actualEvents[0]);
+            Y.Assert.areSame(cfg, actualEvents[1].cfg);
+
+            Y.Assert.areEqual("myBase:init", actualEvents[1].type);
+            Y.Assert.isTrue(actualEvents[1] instanceof Y.EventFacade);
+        },
+
+        testInitWithoutListeners : function() {
+
+            var actualEvents = this.actualEvents,
+
+                cfg = {
+                    foo: 30
+                };
+
+                o = new this.MyBase(cfg);
+
+            Y.Assert.areEqual(true, o.get("initialized"));
+            Y.Assert.areEqual(1, actualEvents.length);
+
+            Y.Assert.areSame(cfg, actualEvents[0]);
+        },
+
+        testInitFireOnceBehaviorAfterFire : function() {
+
+            var actualEvents = this.actualEvents,
+
+                cfg = {
+                    foo: 40
+                },
+
+                o = new this.MyBase(cfg);
+
+            o.on("init", function(e) {
+                actualEvents.push(e);
+            });
+
+            o.after("init", function(e) {
+                actualEvents.push(e);
+            });
+
+            Y.Assert.areEqual(true, o.get("initialized"));
+            Y.Assert.areEqual(3, actualEvents.length);
+
+            Y.Assert.areSame(cfg, actualEvents[0]);
+
+            Y.Assert.areEqual("myBase:init", actualEvents[1].type);
+            Y.Assert.isTrue(actualEvents[1] instanceof Y.EventFacade);
+            Y.Assert.areEqual("myBase:init", actualEvents[2].type);
+            Y.Assert.isTrue(actualEvents[2] instanceof Y.EventFacade);
+        },
+
+        testAttributeChangeWithoutListeners : function() {
+            var o = new this.MyBase({foo: 50});
+
+            Y.Assert.areSame(50, o.get("foo"));
+
+            o.set("foo", 55);
+
+            Y.Assert.areSame(55, o.get("foo"));
+        },
+
+        testAttributeChangeWithOnListeners : function() {
+            var o = new this.MyBase({foo: 60}),
+                onPayload;
+
+            o.on("fooChange", function(e) {
+                onPayload = e;
+            });
+
+            Y.Assert.areSame(60, o.get("foo"));
+
+            o.set("foo", 65);
+
+            Y.Assert.areSame(65, o.get("foo"));
+
+
+            Y.Assert.isTrue(onPayload instanceof Y.EventFacade);
+            Y.Assert.areSame("myBase:fooChange", onPayload.type);
+
+            Y.Assert.areSame(60, onPayload.prevVal);
+            Y.Assert.areSame(65, onPayload.newVal);
+        },
+
+        testAttributeChangeWithAfterListeners : function() {
+            var o = new this.MyBase({foo: 70}),
+                afterPayload;
+
+            o.after("fooChange", function(e) {
+                afterPayload = e;
+            });
+
+            Y.Assert.areSame(70, o.get("foo"));
+
+            o.set("foo", 75);
+
+            Y.Assert.areSame(75, o.get("foo"));
+
+            Y.Assert.isTrue(afterPayload instanceof Y.EventFacade);
+            Y.Assert.areSame("myBase:fooChange", afterPayload.type);
+
+            Y.Assert.areSame(70, afterPayload.prevVal);
+            Y.Assert.areSame(75, afterPayload.newVal);
+        },
+
+        testAttributeChangeWithModifiedListeners : function() {
+
+            var o = new this.MyBase({foo: 80}),
+                onPayload,
+                afterPayload;
+
+            Y.Assert.areSame(80, o.get("foo"));
+
+            o.set("foo", 85);
+
+            Y.Assert.areSame(85, o.get("foo"));
+
+            o.after("fooChange", function(e) {
+                afterPayload = e;
+            });
+
+            o.set("foo", 90);
+
+            Y.Assert.areSame(90, o.get("foo"));
+
+            Y.Assert.isTrue(afterPayload instanceof Y.EventFacade);
+            Y.Assert.areSame("myBase:fooChange", afterPayload.type);
+            Y.Assert.areSame(85, afterPayload.prevVal);
+            Y.Assert.areSame(90, afterPayload.newVal);
+
+            o.on("fooChange", function(e) {
+                onPayload = e;
+            });
+
+            o.set("foo", 95);
+
+            Y.Assert.areSame(95, o.get("foo"));
+
+            Y.Assert.isTrue(onPayload instanceof Y.EventFacade);
+            Y.Assert.areSame("myBase:fooChange", onPayload.type);
+            Y.Assert.areSame(90, onPayload.prevVal);
+            Y.Assert.areSame(95, onPayload.newVal);
+
+            Y.Assert.isTrue(afterPayload instanceof Y.EventFacade);
+            Y.Assert.areSame("myBase:fooChange", afterPayload.type);
+            Y.Assert.areSame(90, afterPayload.prevVal);
+            Y.Assert.areSame(95, afterPayload.newVal);
+        }
+    };
 
     var suite = new Y.Test.Suite("Attribute");
 
@@ -2022,6 +2393,8 @@ YUI.add('attribute-tests', function(Y) {
     suite.add(new Y.Test.Case(basicTemplate));
     suite.add(new Y.Test.Case(extendedTemplate));
     suite.add(new Y.Test.Case(augmentTemplate));
+
+    suite.add(new Y.Test.Case(eventByPass));
 
     Y.Test.Runner.setName("Attribute Tests");
     Y.Test.Runner.add(suite);

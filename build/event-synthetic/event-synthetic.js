@@ -97,6 +97,17 @@ Notifier.prototype.fire = function (e) {
 
     sub.context = thisObj || event.currentTarget || ce.host;
     ret = ce.fire.apply(ce, args);
+
+    // have to handle preventedFn and stoppedFn manually because
+    // Notifier CustomEvents are forced to emitFacade=false
+    if (e.prevented && ce.preventedFn) {
+        ce.preventedFn.apply(ce, args);
+    }
+
+    if (e.stopped && ce.stoppedFn) {
+        ce.stoppedFn.apply(ce, args);
+    }
+
     sub.context = thisObj; // reset for future firing
 
     // to capture callbacks that return false to stopPropagation.
@@ -105,7 +116,9 @@ Notifier.prototype.fire = function (e) {
 };
 
 /**
- * Manager object for synthetic event subscriptions to aggregate multiple synths on the same node without colliding with actual DOM subscription entries in the global map of DOM subscriptions.  Also facilitates proper cleanup on page unload.
+ * Manager object for synthetic event subscriptions to aggregate multiple synths on the
+ * same node without colliding with actual DOM subscription entries in the global map of
+ * DOM subscriptions.  Also facilitates proper cleanup on page unload.
  *
  * @class SynthRegistry
  * @constructor
@@ -235,7 +248,7 @@ Y.mix(SyntheticEvent, {
             yuid   = Y.stamp(el),
             key    = 'event:' + yuid + type + '_synth',
             events = DOMMap[yuid];
-            
+
         if (create) {
             if (!events) {
                 events = DOMMap[yuid] = {};

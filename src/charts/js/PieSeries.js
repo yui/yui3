@@ -51,7 +51,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
             graphic,
             cb,
             areaNode;
-        if(graph) 
+        if(graph)
         {
             cb = graph.get("contentBox");
         }
@@ -71,7 +71,8 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
             cb.removeChild(this._map);
         }
         this._image = DOCUMENT.createElement("img");
-        this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
+        this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSB" +
+                        "JbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
         cb.appendChild(this._image);
         this._image.style.position = "absolute";
         this._image.style.left = "0px";
@@ -125,7 +126,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
         }
         this.after("categoryAxisChange", this.categoryAxisChangeHandler);
         this.after("valueAxisChange", this.valueAxisChangeHandler);
-        this.after("stylesChange", this._updateHandler);
+        this._stylesChangeHandle = this.after("stylesChange", this._updateHandler);
         this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
 
@@ -148,7 +149,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} e Event object.
      * @private
      */
-    _categoryAxisChangeHandler: function(e)
+    _categoryAxisChangeHandler: function()
     {
         var categoryAxis = this.get("categoryAxis");
         categoryAxis.after("dataReady", Y.bind(this._categoryDataChangeHandler, this));
@@ -162,7 +163,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} e Event object.
      * @private
      */
-    _valueAxisChangeHandler: function(e)
+    _valueAxisChangeHandler: function()
     {
         var valueAxis = this.get("valueAxis");
         valueAxis.after("dataReady", Y.bind(this._valueDataChangeHandler, this));
@@ -185,7 +186,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} event Event object.
      * @private
      */
-    _categoryDataChangeHandler: function(event)
+    _categoryDataChangeHandler: function()
     {
        if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
         {
@@ -200,7 +201,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} event Event object.
      * @private
      */
-    _valueDataChangeHandler: function(event)
+    _valueDataChangeHandler: function()
     {
         if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
         {
@@ -262,7 +263,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
     drawPlots: function()
     {
         var values = this.get("valueAxis").getDataByKey(this.get("valueKey")).concat(),
-            catValues = this.get("categoryAxis").getDataByKey(this.get("categoryKey")).concat(),
             totalValue = 0,
             itemCount = values.length,
             styles = this.get("styles").marker,
@@ -294,7 +294,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder") || 0,
-            isCanvas = Y.Graphic.NAME == "canvasGraphic";
+            isCanvas = Y.Graphic.NAME === "canvasGraphic";
         for(; i < itemCount; ++i)
         {
             value = parseFloat(values[i]);
@@ -377,7 +377,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
         }
         this._clearMarkerCache();
     },
-    
+
     /**
      * @protected
      *
@@ -471,7 +471,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
                 indexStyles,
                 marker = this._markers[i],
                 styles = this.get("styles").marker;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state];
+            markerStyles = state === "off" || !styles[state] ? styles : styles[state];
             indexStyles = this._mergeStyles(markerStyles, {});
             indexStyles.fill.color = indexStyles.fill.colors[i % indexStyles.fill.colors.length];
             indexStyles.fill.alpha = indexStyles.fill.alphas[i % indexStyles.fill.alphas.length];
@@ -484,16 +484,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      *
      * @method _createMarker
      * @param {Object} styles Hash of style properties.
-     * @param {Number} order Order of the series.
-     * @param {Number} index Index within the series associated with the marker.
      * @return Shape
      * @private
      */
-    _createMarker: function(styles, order, index)
+    _createMarker: function(styles)
     {
         var graphic = this.get("graphic"),
             marker,
-            cfg = Y.clone(styles);
+            cfg = this._copyObject(styles);
         marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
         return marker;

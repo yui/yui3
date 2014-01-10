@@ -1,4 +1,5 @@
 YUI.add('series-base-tests', function(Y) {
+    var DOC = Y.config.doc;
     Y.SeriesBaseTest = function() {
         Y.SeriesBaseTest.superclass.constructor.apply(this, arguments);
     };
@@ -9,6 +10,7 @@ YUI.add('series-base-tests', function(Y) {
 
         tearDown: function() {
             this.series = null;
+            Y.Event.purgeElement(DOC, false);
         },
         
         "test: render()" : function() {

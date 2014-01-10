@@ -8,7 +8,7 @@ YUI.add('series-ohlc', function (Y, NAME) {
  */
 /**
  * The OHLCSeries class renders lines representing the open, high, low and close
- * values for a chart. 
+ * values for a chart.
  *
  * @class OHLCSeries
  * @extends RangeSeries
@@ -51,10 +51,10 @@ OHLCSeries.ATTRS = {
                 this.set("rendered", true);
             }
             this.set("upmarker", val.addShape({
-               type: "path" 
+               type: "path"
             }));
             this.set("downmarker", val.addShape({
-               type: "path" 
+               type: "path"
             }));
             return val;
         }
@@ -67,7 +67,7 @@ OHLCSeries.ATTRS = {
     /**
      * Style properties used for drawing markers. This attribute is inherited from `RangeSeries`. Below are the default values:
      *  <dl>
-     *      <dt>upmarker</dt><dd>Properties for a marker representing a period that closes higher than it opens.    
+     *      <dt>upmarker</dt><dd>Properties for a marker representing a period that closes higher than it opens.
      *          <dl>
      *              <dt>fill</dt><dd>A hash containing the following values:
      *                  <dl>
@@ -85,7 +85,7 @@ OHLCSeries.ATTRS = {
      *              </dd>
      *          </dl>
      *      </dd>
-     *      <dt>downmarker</dt><dd>Properties for a marker representing a period that opens higher than it closes.    
+     *      <dt>downmarker</dt><dd>Properties for a marker representing a period that opens higher than it closes.
      *          <dl>
      *              <dt>fill</dt><dd>A hash containing the following values:
      *                  <dl>
@@ -96,7 +96,7 @@ OHLCSeries.ATTRS = {
      *              </dd>
      *              <dt>border</dt><dd>A hash containing the following values:
      *                  <dl>
-     *                      <dt>color</dt><dd>Color of the border. The default value is "#000000".</dd> 
+     *                      <dt>color</dt><dd>Color of the border. The default value is "#000000".</dd>
      *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
      *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 0.</dd>
      *                  </dl>
@@ -138,7 +138,10 @@ Y.extend(OHLCSeries, Y.RangeSeries, {
             right,
             leftPadding = styles.padding.left,
             marker,
-            up;
+            up,
+            cx,
+            i,
+            height;
         upmarker.set(styles.upmarker);
         downmarker.set(styles.downmarker);
         upmarker.clear();
@@ -189,11 +192,11 @@ Y.extend(OHLCSeries, Y.RangeSeries, {
     {
         var upmarker = this.get("upmarker"),
             downmarker = this.get("downmarker");
-        if(upmarker) 
+        if(upmarker)
         {
             upmarker.destroy();
         }
-        if(downmarker) 
+        if(downmarker)
         {
             downmarker.destroy();
         }

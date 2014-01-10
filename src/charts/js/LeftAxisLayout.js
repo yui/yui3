@@ -5,7 +5,6 @@
  * @submodule axis
  */
 var CONFIG = Y.config,
-    WINDOW = CONFIG.win,
     DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
@@ -13,9 +12,7 @@ var CONFIG = Y.config,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout,
-    _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
+    TopAxisLayout;
 /**
  * Algorithmic strategy for rendering a left axis.
  *
@@ -234,6 +231,7 @@ LeftAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("leftTickOffset"),
             totalTitleSize = this._totalTitleSize,
             leftOffset = pt.x + totalTitleSize - tickOffset,
@@ -247,21 +245,22 @@ LeftAxisLayout.prototype = {
         if(rot === 0)
         {
             leftOffset -= labelWidth;
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
+            topOffset = topOffset + labelWidth/2 - (labelWidth * offset);
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
+            topOffset = topOffset - labelHeight + labelWidth/2 - (labelWidth * offset);
         }
         else
         {
             leftOffset -= labelWidth + (labelHeight * absRot/360);
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;
@@ -344,10 +343,10 @@ LeftAxisLayout.prototype = {
      * Adjust the position of the Axis widget's content box for internal axes.
      *
      * @method offsetNodeForTick
-     * @param {Node} cb Content box of the Axis.
+     * @param {Node} cb contentBox of the axis
      * @protected
      */
-    offsetNodeForTick: function(cb)
+    offsetNodeForTick: function()
     {
     },
 

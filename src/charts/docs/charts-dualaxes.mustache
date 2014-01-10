@@ -18,6 +18,22 @@
 <p>Multiple axes charts are useful for comparing trends in two or more data sets whose numeric range differs greatly. In this example, we'll create two `NumericAxis` through the 
 `axes` attribute. By defining a separate axis for each key in our data provider, we can plot percentages and dollar sales on the same graph.</p>
 
+<h4>CSS</h4>
+```
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+```
+
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+
+<h4>JavaScript</h4>
 ```
 YUI().use('charts', function (Y) 
 { 

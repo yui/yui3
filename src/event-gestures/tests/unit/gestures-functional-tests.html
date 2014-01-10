@@ -1,0 +1,51 @@
+<html>
+<head>
+    <title>Gesture Functional Tests</title>
+
+    <style>
+        #box {
+            width:300px;
+            height:300px;
+            background: red;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+    <div id="box"></div>
+    <div id="groceryheader" class="myexample-hidden">
+        <h1>Grocery List (swipe left to delete item)</h1>
+    </div>
+    <ul id="swipe" class="myexample-hidden">
+        <li><span>Fat Free Milk</span><button class="myapp-delete myapp-hidden">Delete</button></li>
+        <li><span>Egg Whites</span><button class="myapp-delete myapp-hidden">Delete</button></li>
+        <li><span>Whole Wheat Bread</span><button class="myapp-delete myapp-hidden">Delete</button></li>
+        <li><span>Organic Apples</span><button class="myapp-delete myapp-hidden">Delete</button></li>
+        <li id="kitkat"><span>Jumbo KitKat (24 pack)</span><button class="myapp-delete myapp-hidden">Delete</button></li>
+    </ul>
+
+    <div id="log"></div>
+
+    <div id="tester"></div>
+
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({
+        coverage: [ 'event-gestures' ],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+        modules: {
+            'gesture-functional-tests': {
+                fullpath: './assets/gesture-functional-tests.js',
+                requires: [ 'event-gestures', 'test', 'node', 'node-event-simulate' ]
+            }
+        },
+        combo: false
+    }).use('gesture-functional-tests', 'test-console', function(Y) {
+
+        (new Y.Test.Console()).render('#log');
+        Y.Test.Runner.setName('Gestures Functional Tests');
+        Y.Test.Runner.run();
+
+    });
+    </script>
+</body>
+</html>

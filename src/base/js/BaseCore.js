@@ -54,6 +54,61 @@
      * change events can extend BaseCore instead of Base for optimal kweight and
      * runtime performance.
      *
+     * **3.11.0 BACK COMPAT NOTE FOR COMPONENT DEVELOPERS**
+     *
+     * Prior to version 3.11.0, ATTRS would get added a class at a time. That is:
+     *
+     * <pre>
+     *    for each (class in the hierarchy) {
+     *       Call the class Extension constructors.
+     *
+     *       Add the class ATTRS.
+     *
+     *       Call the class initializer
+     *       Call the class Extension initializers.
+     *    }
+     * </pre>
+     *
+     * As of 3.11.0, ATTRS from all classes in the hierarchy are added in one `addAttrs` call
+     * before **any** initializers are called. That is, the flow becomes:
+     *
+     * <pre>
+     *    for each (class in the hierarchy) {
+     *       Call the class Extension constructors.
+     *    }
+     *
+     *    Add ATTRS for all classes
+     *
+     *    for each (class in the hierarchy) {
+     *       Call the class initializer.
+     *       Call the class Extension initializers.
+     *    }
+     * </pre>
+     *
+     * Adding all ATTRS at once fixes subtle edge-case issues with subclass ATTRS overriding
+     * superclass `setter`, `getter` or `valueFn` definitions and being unable to get/set attributes
+     * defined by the subclass. It also leaves us with a cleaner order of operation flow moving
+     * forward.
+     *
+     * However, it may require component developers to upgrade their components, for the following
+     * scenarios:
+     *
+     * 1. It impacts components which may have `setter`, `getter` or `valueFn` code which
+     * expects a superclass' initializer to have run.
+     *
+     * This is expected to be rare, but to support it, Base now supports a `_preAddAttrs()`, method
+     * hook (same signature as `addAttrs`). Components can implement this method on their prototype
+     * for edge cases which do require finer control over the order in which attributes are added
+     * (see widget-htmlparser for example).
+     *
+     * 2. Extension developers may need to move code from Extension constructors to `initializer`s
+     *
+     * Older extensions, which were written before `initializer` support was added, had a lot of
+     * initialization code in their constructors. For example, code which acccessed superclass
+     * attributes. With the new flow this code would not be able to see attributes. The recommendation
+     * is to move this initialization code to an `initializer` on the Extension, which was the
+     * recommendation for anything created after `initializer` support for Extensions was added.
+     *
      * @class BaseCore
      * @constructor
      * @uses AttributeCore
@@ -166,6 +221,51 @@
         destroyed: {
             readOnly:true,
             value:false
+        }
+    };
+
+    /**
+    Provides a way to safely modify a `Y.BaseCore` subclass' static `ATTRS`
+    after the class has been defined or created.
+
+    BaseCore-based classes cache information about the class hierarchy in order
+    to efficiently create instances. This cache includes includes the aggregated
+    `ATTRS` configs. If the static `ATTRS` configs need to be modified after the
+    class has been defined or create, then use this method which will make sure
+    to clear any cached data before making any modifications.
+
+    @method modifyAttrs
+    @param {Function} [ctor] The constructor function whose `ATTRS` should be
+        modified. If a `ctor` function is not specified, then `this` is assumed
+        to be the constructor which hosts the `ATTRS`.
+    @param {Object} configs The collection of `ATTRS` configs to mix with the
+        existing attribute configurations.
+    @static
+    @since 3.10.0
+    **/
+    BaseCore.modifyAttrs = function (ctor, configs) {
+        // When called without a constructor, assume `this` is the constructor.
+        if (typeof ctor !== 'function') {
+            configs = ctor;
+            ctor    = this;
+        }
+
+        var attrs, attr, name;
+
+        // Eagerly create the `ATTRS` object if it doesn't already exist.
+        attrs = ctor.ATTRS || (ctor.ATTRS = {});
+
+        if (configs) {
+            // Clear cache because it has ATTRS aggregation data which is about
+            // to be modified.
+            ctor._CACHED_CLASS_DATA = null;
+
+            for (name in configs) {
+                if (configs.hasOwnProperty(name)) {
+                    attr = attrs[name] || (attrs[name] = {});
+                    Y.mix(attr, configs[name], true);
+                }
+            }
         }
     };
 
@@ -309,30 +409,57 @@
         },
 
         /**
-         * A helper method used when processing ATTRS across the class hierarchy during
-         * initialization. Returns a disposable object with the attributes defined for
-         * the provided class, extracted from the set of all attributes passed in.
+         * A helper method used to isolate the attrs config for this instance to pass to `addAttrs`,
+         * from the static cached ATTRS for the class.
          *
-         * @method _filterAttrCfs
+         * @method _getInstanceAttrCfgs
          * @private
          *
-         * @param {Function} clazz The class for which the desired attributes are required.
          * @param {Object} allCfgs The set of all attribute configurations for this instance.
          * Attributes will be removed from this set, if they belong to the filtered class, so
          * that by the time all classes are processed, allCfgs will be empty.
          *
-         * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object with attribute name/configuration pairs.
+         * @return {Object} The set of attributes to be added for this instance, suitable
+         * for passing through to `addAttrs`.
          */
-        _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr, attrs = clazz.ATTRS;
+        _getInstanceAttrCfgs : function(allCfgs) {
 
-            if (attrs) {
-                for (attr in attrs) {
-                    if (allCfgs[attr]) {
-                        cfgs = cfgs || {};
-                        cfgs[attr] = allCfgs[attr];
-                        allCfgs[attr] = null;
+            var cfgs = {},
+                cfg,
+                val,
+                subAttr,
+                subAttrs,
+                subAttrPath,
+                attr,
+                attrCfg,
+                allSubAttrs = allCfgs._subAttrs,
+                attrCfgProperties = this._attrCfgHash();
+
+            for (attr in allCfgs) {
+
+                if (allCfgs.hasOwnProperty(attr) && attr !== "_subAttrs") {
+
+                    attrCfg = allCfgs[attr];
+
+                    // Need to isolate from allCfgs, because we're going to set values etc.
+                    cfg = cfgs[attr] = _wlmix({}, attrCfg, attrCfgProperties);
+
+                    val = cfg.value;
+
+                    if (val && (typeof val === "object")) {
+                        this._cloneDefaultValue(attr, cfg);
+                    }
+
+                    if (allSubAttrs && allSubAttrs.hasOwnProperty(attr)) {
+                        subAttrs = allCfgs._subAttrs[attr];
+
+                        for (subAttrPath in subAttrs) {
+                            subAttr = subAttrs[subAttrPath];
+
+                            if (subAttr.path) {
+                                O.setValue(cfg.value, subAttr.path, subAttr.value);
+                            }
+                        }
                     }
                 }
             }
@@ -379,7 +506,9 @@
          * @private
          */
         _initHierarchyData : function() {
+
             var ctor = this.constructor,
+                cachedClassData = ctor._CACHED_CLASS_DATA,
                 c,
                 i,
                 l,
@@ -387,65 +516,103 @@
                 attrCfgHash,
                 needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
-                nonAttrs = (this._allowAdHocAttrs) ? {} : null,
+                nonAttrs = {},
                 classes = [],
                 attrs = [];
 
             // Start with `this` instance's constructor.
             c = ctor;
 
-            while (c) {
-                // Add to classes
-                classes[classes.length] = c;
+            if (!cachedClassData) {
 
-                // Add to attributes
-                if (c.ATTRS) {
-                    attrs[attrs.length] = c.ATTRS;
+                while (c) {
+                    // Add to classes
+                    classes[classes.length] = c;
+
+                    // Add to attributes
+                    if (c.ATTRS) {
+                        attrs[attrs.length] = c.ATTRS;
+                    }
+
+                    // Aggregate ATTR cfg whitelist.
+                    if (needsAttrCfgHash) {
+                        attrCfg     = c._ATTR_CFG;
+                        attrCfgHash = attrCfgHash || {};
+
+                        if (attrCfg) {
+                            for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                                attrCfgHash[attrCfg[i]] = true;
+                            }
+                        }
+                    }
+
+                    // Commenting out the if. We always aggregate, since we don't
+                    // know if we'll be needing this on the instance or not.
+                    // if (this._allowAdHocAttrs) {
+                        nonAttrsCfg = c._NON_ATTRS_CFG;
+                        if (nonAttrsCfg) {
+                            for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
+                                nonAttrs[nonAttrsCfg[i]] = true;
+                            }
+                        }
+                    //}
+
+                    c = c.superclass ? c.superclass.constructor : null;
                 }
 
-                // Aggregate ATTR cfg whitelist.
+                // Cache computed `_ATTR_CFG_HASH` on the constructor.
                 if (needsAttrCfgHash) {
-                    attrCfg     = c._ATTR_CFG;
-                    attrCfgHash = attrCfgHash || {};
-
-                    if (attrCfg) {
-                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
-                            attrCfgHash[attrCfg[i]] = true;
-                        }
-                    }
+                    ctor._ATTR_CFG_HASH = attrCfgHash;
                 }
 
-                if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG;
-                    if (nonAttrsCfg) {
-                        for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
-                            nonAttrs[nonAttrsCfg[i]] = true;
-                        }
-                    }
-                }
+                cachedClassData = ctor._CACHED_CLASS_DATA = {
+                    classes : classes,
+                    nonAttrs : nonAttrs,
+                    attrs : this._aggregateAttrs(attrs)
+                };
 
-                c = c.superclass ? c.superclass.constructor : null;
             }
 
-            // Cache computed `_ATTR_CFG_HASH` on the constructor.
-            if (needsAttrCfgHash) {
-                ctor._ATTR_CFG_HASH = attrCfgHash;
-            }
-
-            this._classes = classes;
-            this._nonAttrs = nonAttrs;
-            this._attrs = this._aggregateAttrs(attrs);
+            this._classes = cachedClassData.classes;
+            this._attrs = cachedClassData.attrs;
+            this._nonAttrs = cachedClassData.nonAttrs;
         },
 
         /**
          * Utility method to define the attribute hash used to filter/whitelist property mixes for
-         * this class.
+         * this class for iteration performance reasons.
          *
          * @method _attrCfgHash
          * @private
          */
         _attrCfgHash: function() {
             return this.constructor._ATTR_CFG_HASH;
+        },
+
+        /**
+         * This method assumes that the value has already been checked to be an object.
+         * Since it's on a critical path, we don't want to re-do the check.
+         *
+         * @method _cloneDefaultValue
+         * @param {Object} cfg
+         * @private
+         */
+        _cloneDefaultValue : function(attr, cfg) {
+
+            var val = cfg.value,
+                clone = cfg.cloneDefaultValue;
+
+            if (clone === DEEP || clone === true) {
+                Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.clone(val);
+            } else if (clone === SHALLOW) {
+                Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.merge(val);
+            } else if ((clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val)))) {
+                cfg.value = Y.clone(val);
+            }
+            // else if (clone === false), don't clone the static default value.
+            // It's intended to be used by reference.
         },
 
         /**
@@ -463,41 +630,28 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
+
             var attr,
                 attrs,
+                subAttrsHash,
                 cfg,
-                val,
                 path,
                 i,
-                clone,
                 cfgPropsHash = this._attrCfgHash(),
                 aggAttr,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
+
                     attrs = allAttrs[i];
 
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect config passed in
+                            // PERF TODO: Do we need to merge here, since we're merging later in getInstanceAttrCfgs
+                            // Should we move this down to only merge if we hit the path or valueFn ifs below?
                             cfg = _wlmix({}, attrs[attr], cfgPropsHash);
-
-                            val = cfg.value;
-                            clone = cfg.cloneDefaultValue;
-
-                            if (val) {
-                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
-                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.clone(val);
-                                } else if (clone === SHALLOW) {
-                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.merge(val);
-                                }
-                                // else if (clone === false), don't clone the static default value.
-                                // It's intended to be used by reference.
-                            }
 
                             path = null;
                             if (attr.indexOf(DOT) !== -1) {
@@ -506,15 +660,34 @@
                             }
 
                             aggAttr = aggAttrs[attr];
+
                             if (path && aggAttr && aggAttr.value) {
-                                O.setValue(aggAttr.value, path, val);
+
+                                subAttrsHash = aggAttrs._subAttrs;
+
+                                if (!subAttrsHash) {
+                                    subAttrsHash = aggAttrs._subAttrs = {};
+                                }
+
+                                if (!subAttrsHash[attr]) {
+                                    subAttrsHash[attr] = {};
+                                }
+
+                                subAttrsHash[attr][path.join(DOT)] = {
+                                    value: cfg.value,
+                                    path : path
+                                };
+
                             } else if (!path) {
+
                                 if (!aggAttr) {
                                     aggAttrs[attr] = cfg;
                                 } else {
                                     if (aggAttr.valueFn && VALUE in cfg) {
                                         aggAttr.valueFn = null;
                                     }
+
+                                    // Mix into existing config.
                                     _wlmix(aggAttr, cfg, cfgPropsHash);
                                 }
                             }
@@ -537,50 +710,72 @@
          * @private
          */
         _initHierarchy : function(userVals) {
+
             var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
+                i,
+                l,
                 ci,
                 ei,
                 el,
+                ext,
                 extProto,
                 exts,
+                instanceAttrs,
+                initializers = [],
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
+            // Constructors
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 exts = constr._yuibuild && constr._yuibuild.exts;
 
-                if (exts) {
-                    for (ei = 0, el = exts.length; ei < el; ei++) {
-                        exts[ei].apply(this, arguments);
-                    }
-                }
-
-                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
-
-                if (this._allowAdHocAttrs && ci === cl) {
-                    this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
-                }
-
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
                 // referencing string literals). Not using it in apply, again, for performance "." is faster.
+
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto.initializer.apply(this, arguments);
+                    // Store initializer while we're here and looping
+                    initializers[initializers.length] = constrProto.initializer;
                 }
 
                 if (exts) {
-                    for (ei = 0; ei < el; ei++) {
-                        extProto = exts[ei].prototype;
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+
+                        ext = exts[ei];
+
+                        // Ext Constructor
+                        ext.apply(this, arguments);
+
+                        extProto = ext.prototype;
                         if (extProto.hasOwnProperty(INITIALIZER)) {
-                            extProto.initializer.apply(this, arguments);
+                            // Store initializer while we're here and looping
+                            initializers[initializers.length] = extProto.initializer;
                         }
                     }
                 }
+            }
+
+            // ATTRS
+            instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
+
+            if (this._preAddAttrs) {
+                this._preAddAttrs(instanceAttrs, userVals, lazy);
+            }
+
+            if (this._allowAdHocAttrs) {
+                this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+            }
+
+            this.addAttrs(instanceAttrs, userVals, lazy);
+
+            // Initializers
+            for (i = 0, l = initializers.length; i < l; i++) {
+                initializers[i].apply(this, arguments);
             }
         },
 

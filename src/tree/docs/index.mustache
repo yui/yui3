@@ -541,7 +541,7 @@ tree.getNodeById('edit').close();
 tree.getNodeById('file').open();
 ```
 
-<p>Tree instances that mix in the Openable extension receive two new events: <a href="{{apiDocs}}/classes/Tree.Node.Openable.html#event_open">`open`</a> and <a href="{{apiDocs}}/classes/Tree.Node.Openable.html#event_close">`close`</a>. These events fire when a node is opened or closed, respectively.</p>
+<p>Tree instances that mix in the Openable extension receive two new events: <a href="{{apiDocs}}/classes/Tree.Openable.html#event_open">`open`</a> and <a href="{{apiDocs}}/classes/Tree.Openable.html#event_close">`close`</a>. These events fire when a node is opened or closed, respectively.</p>
 
 <p>See the <a href="{{apiDocs}}/modules/tree-openable.html">API docs</a> for more details on the methods and events added by the Openable extension.</p>
 
@@ -664,6 +664,44 @@ tree.getNodeById('pug').select();
 <p>When a node is selected, the Selectable extension fires a <a href="{{apiDocs}}/classes/Tree.Selectable.html#event_select">`select`</a> event. When a node is unselected, it fires an <a href="{{apiDocs}}/classes/Tree.Selectable.html#event_unselect">`unselect`</a> event.</p>
 
 <p>See the <a href="{{apiDocs}}/modules/tree-selectable.html">API docs</a> for more details.</p>
+
+<h3>Sortable Extension</h3>
+
+<p>The Sortable extension makes it possible to sort the children of any node using custom sorting logic, and also ensures that inserted nodes are added at the appropriate index to maintain the current sort order.</p>
+
+<p>To use the Sortable extension, include the <a href="{{apiDocs}}/modules/tree-sortable.html">`tree-sortable`</a> module, then create a class that extends `Y.Tree` and mixes in <a href="{{apiDocs}}/classes/Tree.Sortable.html">`Y.Tree.Sortable`</a>.</p>
+
+```js
+// Load the tree-sortable module.
+YUI().use('tree-sortable', function (Y) {
+    // Create a custom Tree class that mixes in the Sortable extension.
+    Y.SortableTree = Y.Base.create('sortableTree', Y.Tree, [Y.Tree.Sortable]);
+
+    // ... additional implementation code here ...
+});
+```
+
+<p>Nodes will now be sorted automatically as they're inserted in this tree, or you can manually re-sort all children of a specific node by calling that node's <a href="{{apiDocs}}/classes/Tree.Node.Sortable.html#method_sort">`sort()`</a> method.</p>
+
+<p>By default, nodes are sorted in insertion order, meaning that the first node you insert gets index 0, the second node inserted gets index 1, and so on. To customize the sort criteria, pass a custom `sortComparator` function to the tree's constructor, or set it on the tree's prototype. This function will receive a node as an argument, and should return a value by which that node should be sorted.</p>
+
+<p>Here's a `sortComparator` function that sorts nodes by id:</p>
+
+```js
+var tree = new Y.SortableTree({
+    sortComparator: function (node) {
+        return node.id;
+    }
+});
+```
+
+<p>To sort nodes in descending order instead of ascending order, set the tree's <a href="{{apiDocs}}/classes/Tree.Sortable.html#property_sortReverse">`sortReverse`</a> property to `true`.</p>
+
+<p>Each node in a tree may optionally have its own custom `sortComparator` and/or `sortReverse` properties to govern the sort order of its children. This makes it possible to use different sort criteria for different nodes in the tree. Setting these properties on a node will override the tree's `sortComparator` and `sortReverse` properties for that node's children (but not for its children's children).</p>
+
+<p>Tree instances that mix in the Sortable extension receive a <a href="{{apiDocs}}/classes/Tree.Sortable.html#event_sort">`sort`</a> event that fires when a node's children are manually re-sorted by calling the `sort()` method.</p>
+
+<p>See the <a href="{{apiDocs}}/modules/tree-sortable.html">API docs</a> for more details on the methods and events added by the Sortable extension.</p>
 
 <h2>Creating Custom Tree Extensions</h2>
 

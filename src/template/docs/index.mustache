@@ -364,6 +364,89 @@ The generic `Y.Template` interface is [[#Generic Template API|designed]] to work
     </dd>
 </dl>
 
+<h3>Abstracting Templates Through Registration</h3>
+
+<p>
+The template registry decouples making templates available from invoking a template to render it. This central registry and abstraction of templates to names separates concerns, creates a level of indirection, and enables templates to be easily overridden.
+</p>
+
+<p>
+When precompiling templates, the template registry can be used as an abstraction layer allowing application code to render templates without having to know about the underlying template engine or what component is providing the template and its location on that component. This creates a clear separation between allowing the code that consumes a template to reference it by an abstracted template name in the registry which is registered by a dependency, like a YUI module.
+</p>
+
+<p>
+This central template registry is used through two <em>static</em> methods on `Y.Template`:
+</p>
+
+<dl>
+    <dt>`Y.Template.register( templateName , template )`</dt>
+    <dd>
+        <p>
+        Registers a pre-compiled template into the central template registry with a given template string, allowing that template to be called and rendered by that name using the `Y.Template.render()` static method.
+        </p>
+    </dd>
+
+    <dt>`Y.Template.get( templateName )`</dt>
+    <dd>
+        <p>
+        Returns a revived template function registered under the given `templateName`, if it exists. Otherwise, it returns `undefined`.
+        </p>
+    </dd>
+
+    <dt>`Y.Template.render( templateName , [data] , [options] )`</dt>
+    <dd>
+        <p>
+        Renders a registered template under the given `templateName`, passing along any additional `data` or `options` values needed.
+        </p>
+    </dd>
+</dl>
+
+<p>
+Using template registration usually involves taking a precompiled template, and wrapping it as a YUI module. You can use packages such as <a href="https://github.com/yahoo/locator-handlebars">locator-handlebars</a> to do so automatically, by having it find the location of your existing templates.  The wrapped pre-compiled template should look something like this:
+</p>
+
+<strong>foo.handlebars</strong>
+
+```html
+<p>\{{tagline}}</p>
+```
+
+<strong>templates-foo.js</strong>
+
+```javascript
+YUI.add('templates-foo', function (Y) {
+
+    var engine = new Y.Template(Y.Handlebars),
+        precompiled;
+
+    // Generated from the Handlebars compiler. This is the evaluated result of
+    // precompiling `foo.handlebars`.
+    precompiled = function (Handlebars,depth0,helpers,partials,data) {\n  this.compilerInfo = [4,\'>= 1.0.0\'];\nhelpers = this.merge(helpers, Handlebars.helpers); data = data || {};\n  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;\n\n\n  buffer += "<p>";\n  if (stack1 = helpers.tagline) { stack1 = stack1.call(depth0, {hash:{},data:data}); }\n  else { stack1 = depth0.tagline; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }\n  buffer += escapeExpression(stack1)\n    + "</p>";\n  return buffer;\n  };
+
+    Y.Template.register('foo', engine.revive(precompiled));
+
+}, '0.0.1', {requires: ['template-base', 'handlebars-base']});
+```
+
+<p>
+Then, once the precompiled template is revived and registered, you can simply render the template in the following way:
+</p>
+
+<strong>bar.js</strong>
+
+```javascript
+YUI.add('bar', function (Y) {
+
+    var html = Y.Template.render('foo', {
+        tagline: '"bar" is now template language agnostic'
+    });
+
+}, '0.0.1', {requires: ['template-base', 'templates-foo']});
+```
+
+Our template can now be used as a dependency like any other YUI module, and rendered without needing the full Handlebars compiler (which is much larger in file size than `handlebars-base`) or even having to know which template engine is being used in the application code.
+
+
 <h2>Using `Template.Micro`</h2>
 
 <p>
@@ -456,7 +539,7 @@ To execute arbitrary JavaScript code within the template without rendering its o
 
                 <ul class="<%= this.classNames.list %>">
                   <% Y.Array.each(this.animals, function (animal, i) { %>
-                    <li class="<% i % 2 ? 'odd' : 'even' %>">
+                    <li class="<%= i % 2 ? 'odd' : 'even' %>">
                         <%= animal %>
                     </li>
                   <% }); %>

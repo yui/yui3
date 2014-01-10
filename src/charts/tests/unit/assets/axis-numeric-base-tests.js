@@ -1,257 +1,4 @@
 YUI.add('axis-numeric-base-tests', function(Y) {
-    Y.NumericAxisBaseTest = function() {
-        Y.NumericAxisBaseTest.superclass.constructor.apply(this, arguments);
-        this.prepValues();
-    }
-    Y.extend(Y.NumericAxisBaseTest, Y.ChartTestTemplate, {
-        prepValues : function() {
-            var i,
-                dataProvider = this.dataProvider,
-                len = dataProvider.length,
-                openValue,
-                closeValue,
-                openValues = [],
-                closeValues = [],
-                openTotal = 0,
-                closeTotal = 0,
-                record;
-            for(i = 0; i < len; i = i + 1) {
-                record = dataProvider[i];
-                openValue = record.open;
-                closeValue = record.close;
-                    openValues.push(openValue);
-                    closeValues.push(closeValue);
-                if(Y.Lang.isNumber(openValue)) {
-                    openTotal = openTotal + openValue;
-                } else {
-                  //  openValues.push(NaN);
-                }
-                if(Y.Lang.isNumber(closeValue)) {
-                    closeTotal = closeTotal + closeValue;
-                } else {
-                //    closeValues.push(NaN);
-                }
-            }
-            this.openValues = openValues;
-            this.closeValues = closeValues;
-            this.openTotal = openTotal;
-            this.closeTotal = closeTotal;
-            this.keys = ["open", "close"];
-        },
-
-        setUp: function() {
-            this.axis = new Y.NumericAxisBase();
-            this.axis.set("dataProvider", this.dataProvider);
-            this.axis.set("alwaysShowZero", this.alwaysShowZero);
-            this.axis.set("roundingMethod", this.roundingMethod);
-        },
-
-        tearDown: function() {
-            this.axis = null;
-        },
-
-        "test: get('type')" : function() {
-            Y.Assert.isInstanceOf(Y.NumericAxisBase, this.axis, "The axis should be and instanceof NumericAxisBase.");
-            Y.Assert.areEqual("numeric", this.axis.get("type"), "The axis type attribute should be numeric.");
-        },
-
-        "test: _getDefaultStyles()" : function() {
-           var defaultMajorUnit = {
-                    determinant: "count",
-                    count: 11,
-                    distance: 75
-               },
-               axisStyles = this.axis._getDefaultStyles(),
-               key,
-               axisMajorUnit;
-           Y.Assert.isTrue(axisStyles.hasOwnProperty("majorUnit"), "The axis styles should include a majorUnit property.");
-           axisMajorUnit = axisStyles.majorUnit;
-           for(key in defaultMajorUnit) {
-                if(defaultMajorUnit.hasOwnProperty(key)) {
-                    Y.Assert.isTrue(axisMajorUnit.hasOwnProperty(key), "The default axis styles.majorUnit should contain a " + key + " property.");
-                    Y.Assert.areEqual(
-                        defaultMajorUnit[key], 
-                        axisMajorUnit[key], 
-                        "The default axis styles.majorUnit." + key + " property should be equal to the defaultMajorUnit." + key + " property."
-                    ); 
-                }
-           }
-        },
-
-        "test: set('alwaysShowZero')" : function() {
-            var alwaysShowZero = this.alwaysShowZero,
-                testMethod = alwaysShowZero ? "isTrue" : "isFalse";
-            Y.Assert[testMethod](this.axis.get("alwaysShowZero"), "The attribute alwaysShowZero should be " + alwaysShowZero + ".");
-        },
-
-        "test: set('roundingMethod')" : function() {
-            var roundingMethod = this.roundingMethod;
-            Y.Assert.areEqual(roundingMethod, this.axis.get("roundingMethod"), "The roundingMethod attribute should be " + roundingMethod + ".");
-        },
-
-        "test: get('dataProvider')" : function() {
-            Y.Assert.areEqual(this.dataProvider, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");  
-        },
-
-        "test: set('keys')" : function() {
-            var i,
-                len,
-                axisKeys,
-                openDataByKey,
-                closeDataByKey,
-                openKeyValue,
-                closeKeyValue;
-            this.axis.set("keys", this.keys);
-            axisKeys = this.axis.get("keys");
-            openDataByKey = this.axis.getDataByKey("open");
-            closeDataByKey = this.axis.getDataByKey("close");
-            len = this.dataProvider.length;
-            
-            for(i = 0; i < len; i = i + 1) {
-                Y.Assert.areEqual(this.openValues[i], axisKeys.open[i], "The keys attribute should be equal to the values it received.");
-                Y.Assert.areEqual(this.closeValues[i], axisKeys.close[i], "The keys attribute should be equal to the values it received.");
-                Y.Assert.areEqual(this.openValues[i], openDataByKey[i], "The getDataByKey method should return the correct values.");
-                Y.Assert.areEqual(this.closeValues[i], closeDataByKey[i], "The getDataByKey method should return the correct values.");
-                openKeyValue = this.axis.getKeyValueAt("open", i);
-                closeKeyValue = this.axis.getKeyValueAt("close", i);
-                if(!Y.Lang.isNumber(openKeyValue)) {
-                    openKeyValue = undefined;
-                } 
-                if(!Y.Lang.isNumber(closeKeyValue)) {
-                    closeKeyValue = undefined;
-                } 
-                Y.Assert.areEqual(
-                    this.openValues[i], 
-                    openKeyValue,
-                    'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
-                );
-                Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    closeKeyValue, 
-                    'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
-                );
-            }
-        },
-        
-        "test: addKey()" : function() {
-            var i,
-                len = this.dataProvider.length,
-                axisKeys,
-                openDataByKey,
-                closeDataByKey,
-                openKeyValue,
-                closeKeyValue;
-            this.axis.addKey("open");
-            this.axis.addKey("close");
-            axisKeys = this.axis.get("keys");
-            openDataByKey = this.axis.getDataByKey("open");
-            closeDataByKey = this.axis.getDataByKey("close");
-            for(i = 0; i < len; i = i + 1) {
-                Y.Assert.areEqual(this.openValues[i], axisKeys.open[i], "The keys attribute should be equal to the values it received.");
-                Y.Assert.areEqual(this.closeValues[i], axisKeys.close[i], "The keys attribute should be equal to the values it received.");
-                Y.Assert.areEqual(this.openValues[i], openDataByKey[i], "The getDataByKey method should return the correct values.");
-                Y.Assert.areEqual(this.closeValues[i], closeDataByKey[i], "The getDataByKey method should return the correct values.");
-                openKeyValue = this.axis.getKeyValueAt("open", i);
-                closeKeyValue = this.axis.getKeyValueAt("close", i);
-                if(!Y.Lang.isNumber(openKeyValue)) {
-                    openKeyValue = undefined;
-                } 
-                if(!Y.Lang.isNumber(closeKeyValue)) {
-                    closeKeyValue = undefined;
-                } 
-                Y.Assert.areEqual(
-                    this.openValues[i], 
-                    openKeyValue,
-                    'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
-                );
-                Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    closeKeyValue, 
-                    'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
-                );
-            }
-        },
-
-        "test: get('data')" : function() {
-            var length,
-                data;
-            this.axis.set("keys", ["open", "close"]);
-            length = this.closeValues.length + this.openValues.length;
-            data = this.axis.get("data");
-            Y.Assert.areEqual(length, data.length, "The length of the data attribute should be " + length + ".");
-        },
-
-        "test: get('dataMaximum')" : function() {
-            var dataMaximum;
-            this.axis.set("keys", ["open", "close"]);
-            dataMaximum = this.axis.get("dataMaximum")
-            Y.Assert.isTrue(dataMaximum >= this.dataMaximum, "The value for the attribute dataMaximum (" + dataMaximum + ") should be greater than or equal to " + this.dataMaximum + ".");
-        },
-
-        "test: get('dataMinimum')" : function() {
-            var dataMinimum;
-            this.axis.set("keys", ["open", "close"]);
-            dataMinimum = this.axis.get("dataMinimum");
-            Y.Assert.isTrue(dataMinimum <= this.dataMinimum, "The value for the attribute dataMinimum (" + dataMinimum + ") should be less than or equal to " + this.dataMinimum + ".");
-        },
-
-        "test: getTotalMajorUnits()" : function() {
-            Y.Assert.areEqual(11, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 11.");
-            this.axis.set("styles", {
-                majorUnit: {
-                    count: 8
-                }
-            });
-            Y.Assert.areEqual(8, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 8.");
-        },
-
-        "test: getTotalByKey()" : function() {
-            this.axis.set("keys", ["open", "close"]);
-            Y.Assert.areEqual(this.openTotal, this.axis.getTotalByKey("open"), "The sum of all open values should be " + this.openTotal + ".");
-            Y.Assert.areEqual(this.closeTotal, this.axis.getTotalByKey("close"), "The sum of all close values should be " + this.closeTotal + ".");
-            Y.Assert.areEqual(0, this.axis.getTotalByKey("nonexistantkey"), "The getTotalByKey method should return 0 for a non-existant key.");
-        },
-
-        "test: set('maximum')" : function() {
-            this.axis.set("keys", ["open", "close"]);
-            this.axis.set("maximum", this.setMaximum);
-            Y.Assert.areEqual(this.setMaximum, this.axis.get("maximum"), "The get max method should return " + this.setMaximum + ".");
-        },
-
-        "test: set('minimum')" : function() {
-            this.axis.set("keys", ["open", "close"]);
-            this.axis.set("minimum", this.setMinimum);
-            Y.Assert.areEqual(this.setMinimum, this.axis.get("minimum"), "The get min method should return " + this.setMinimum + ".");
-        },
-
-        "test: set('maximum') and set('minimum')" : function() {
-            this.axis.set("keys", ["open", "close"]);
-            this.axis.set("maximum", this.setMaximum);
-            this.axis.set("minimum", this.setMinimum);
-            Y.Assert.areEqual(this.setMaximum, this.axis.get("maximum"), "The get max method should return " + this.setMaximum + ".");
-            Y.Assert.areEqual(this.setMinimum, this.axis.get("minimum"), "The get min method should return " + this.setMinimum + ".");
-        },
-        
-        "test: labelFunction()" : function() {
-            var val = 300,
-                format = {
-                    prefix: "$",
-                    decimalPlaces: 2
-                },
-                unformatted = "300",
-                formatted = "$300.00";
-             Y.Assert.areEqual(unformatted, this.axis.get("labelFunction")(val), "The label should equal " + unformatted + ".");
-             Y.Assert.areEqual(formatted, this.axis.get("labelFunction")(val, format), "The label should equal " + formatted + ".");
-        },
-        
-        "test: roundingMethods" : function() {
-            Y.Assert.areEqual(18, this.axis._roundToNearest(18), "The _roundToNearest method should round 18 to 18.");
-            Y.Assert.areEqual(18, this.axis._roundToNearest(18, 0), "The _roundToNearest method should round 18 to 18.");
-            Y.Assert.areEqual(0, this.axis._roundDownToNearest(0.2), "The _roundDownToNearest method should round to 0.");
-            Y.Assert.areEqual(2, this.axis._roundToPrecision(1.8), "The _roundToPrecision method should round 1.8 to 2.");
-        }
-    });
-    
     var suite = new Y.Test.Suite("Charts: NumericAxisBase"),
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
@@ -397,7 +144,6 @@ YUI.add('axis-numeric-base-tests', function(Y) {
             {date: "01/21/2009", open: -0.91, close: -0.91},
             {date: "01/22/2009", open: -0.28, close: -0.28}
         ],
-
         positiveAndNegativeSmallValuesData = [
             {date: "01/01/2009", open: 0.27, close: -0.27},
             {date: "01/02/2009", open: -0.55, close: 0.55},
@@ -421,7 +167,327 @@ YUI.add('axis-numeric-base-tests', function(Y) {
             {date: "01/20/2009", open: -0.88, close: -0.88},
             {date: "01/21/2009", open: -0.91, close: 0.91},
             {date: "01/22/2009", open: 0.28, close: 0.28}
-        ];
+        ],
+        DOC = Y.config.doc;
+    Y.NumericAxisBaseTest = function() {
+        Y.NumericAxisBaseTest.superclass.constructor.apply(this, arguments);
+        this.prepValues();
+    };
+    Y.extend(Y.NumericAxisBaseTest, Y.ChartTestTemplate, {
+        prepValues : function() {
+            var i,
+                dataProvider = this.dataProvider,
+                len = dataProvider.length,
+                openValue,
+                closeValue,
+                openValues = [],
+                closeValues = [],
+                openTotal = 0,
+                closeTotal = 0,
+                record;
+            for(i = 0; i < len; i = i + 1) {
+                record = dataProvider[i];
+                openValue = record.open;
+                closeValue = record.close;
+                    openValues.push(openValue);
+                    closeValues.push(closeValue);
+                if(Y.Lang.isNumber(openValue)) {
+                    openTotal = openTotal + openValue;
+                } else {
+                  //  openValues.push(NaN);
+                }
+                if(Y.Lang.isNumber(closeValue)) {
+                    closeTotal = closeTotal + closeValue;
+                } else {
+                //    closeValues.push(NaN);
+                }
+            }
+            this.openValues = openValues;
+            this.closeValues = closeValues;
+            this.openTotal = openTotal;
+            this.closeTotal = closeTotal;
+            this.keys = ["open", "close"];
+        },
+
+        setUp: function() {
+            this.axis = new Y.NumericAxisBase();
+            this.axis.set("dataProvider", this.dataProvider);
+            this.axis.set("alwaysShowZero", this.alwaysShowZero);
+            this.axis.set("roundingMethod", this.roundingMethod);
+            this.axis.set("keys", this.keys);
+            if(this.scaleType) {
+                this.axis.set("scaleType", this.scaleType);
+            }
+        },
+
+        tearDown: function() {
+            this.axis = null;
+            Y.Event.purgeElement(DOC, false);
+        },
+
+        "test: get('type')" : function() {
+            Y.Assert.isInstanceOf(Y.NumericAxisBase, this.axis, "The axis should be and instanceof NumericAxisBase.");
+            Y.Assert.areEqual("numeric", this.axis.get("type"), "The axis type attribute should be numeric.");
+        },
+
+        "test: _getDefaultStyles()" : function() {
+           var defaultMajorUnit = {
+                    determinant: "count",
+                    count: 11,
+                    distance: 75
+               },
+               axisStyles = this.axis._getDefaultStyles(),
+               key,
+               axisMajorUnit;
+           Y.Assert.isTrue(axisStyles.hasOwnProperty("majorUnit"), "The axis styles should include a majorUnit property.");
+           axisMajorUnit = axisStyles.majorUnit;
+           for(key in defaultMajorUnit) {
+                if(defaultMajorUnit.hasOwnProperty(key)) {
+                    Y.Assert.isTrue(axisMajorUnit.hasOwnProperty(key), "The default axis styles.majorUnit should contain a " + key + " property.");
+                    Y.Assert.areEqual(
+                        defaultMajorUnit[key], 
+                        axisMajorUnit[key], 
+                        "The default axis styles.majorUnit." + key + " property should be equal to the defaultMajorUnit." + key + " property."
+                    ); 
+                }
+           }
+        },
+
+        "test: set('alwaysShowZero')" : function() {
+            var alwaysShowZero = this.alwaysShowZero,
+                testMethod = alwaysShowZero ? "isTrue" : "isFalse";
+            Y.Assert[testMethod](this.axis.get("alwaysShowZero"), "The attribute alwaysShowZero should be " + alwaysShowZero + ".");
+        },
+
+        "test: set('roundingMethod')" : function() {
+            var roundingMethod = this.roundingMethod;
+            Y.Assert.areEqual(roundingMethod, this.axis.get("roundingMethod"), "The roundingMethod attribute should be " + roundingMethod + ".");
+        },
+
+        "test: get('dataProvider')" : function() {
+            Y.Assert.areEqual(this.dataProvider, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");  
+        },
+
+        "test: set('keys')" : function() {
+            var i,
+                len,
+                axisKeys,
+                openDataByKey,
+                closeDataByKey,
+                openKeyValue,
+                closeKeyValue;
+            this.axis.set("keys", this.keys);
+            axisKeys = this.axis.get("keys");
+            openDataByKey = this.axis.getDataByKey("open");
+            closeDataByKey = this.axis.getDataByKey("close");
+            len = this.dataProvider.length;
+            
+            for(i = 0; i < len; i = i + 1) {
+                Y.Assert.areEqual(this.openValues[i], axisKeys.open[i], "The keys attribute should be equal to the values it received.");
+                Y.Assert.areEqual(this.closeValues[i], axisKeys.close[i], "The keys attribute should be equal to the values it received.");
+                Y.Assert.areEqual(this.openValues[i], openDataByKey[i], "The getDataByKey method should return the correct values.");
+                Y.Assert.areEqual(this.closeValues[i], closeDataByKey[i], "The getDataByKey method should return the correct values.");
+                openKeyValue = this.axis.getKeyValueAt("open", i);
+                closeKeyValue = this.axis.getKeyValueAt("close", i);
+                if(!Y.Lang.isNumber(openKeyValue)) {
+                    openKeyValue = undefined;
+                } 
+                if(!Y.Lang.isNumber(closeKeyValue)) {
+                    closeKeyValue = undefined;
+                } 
+                Y.Assert.areEqual(
+                    this.openValues[i], 
+                    openKeyValue,
+                    'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
+                );
+                Y.Assert.areEqual(
+                    this.closeValues[i], 
+                    closeKeyValue, 
+                    'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
+                );
+            }
+        },
+        
+        "test: addKey()" : function() {
+            var i,
+                len = this.dataProvider.length,
+                axisKeys,
+                openDataByKey,
+                closeDataByKey,
+                openKeyValue,
+                closeKeyValue;
+            this.axis.addKey("open");
+            this.axis.addKey("close");
+            axisKeys = this.axis.get("keys");
+            openDataByKey = this.axis.getDataByKey("open");
+            closeDataByKey = this.axis.getDataByKey("close");
+            for(i = 0; i < len; i = i + 1) {
+                Y.Assert.areEqual(this.openValues[i], axisKeys.open[i], "The keys attribute should be equal to the values it received.");
+                Y.Assert.areEqual(this.closeValues[i], axisKeys.close[i], "The keys attribute should be equal to the values it received.");
+                Y.Assert.areEqual(this.openValues[i], openDataByKey[i], "The getDataByKey method should return the correct values.");
+                Y.Assert.areEqual(this.closeValues[i], closeDataByKey[i], "The getDataByKey method should return the correct values.");
+                openKeyValue = this.axis.getKeyValueAt("open", i);
+                closeKeyValue = this.axis.getKeyValueAt("close", i);
+                if(!Y.Lang.isNumber(openKeyValue)) {
+                    openKeyValue = undefined;
+                } 
+                if(!Y.Lang.isNumber(closeKeyValue)) {
+                    closeKeyValue = undefined;
+                } 
+                Y.Assert.areEqual(
+                    this.openValues[i], 
+                    openKeyValue,
+                    'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
+                );
+                Y.Assert.areEqual(
+                    this.closeValues[i], 
+                    closeKeyValue, 
+                    'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
+                );
+            }
+        },
+
+        "test: get('data')" : function() {
+            var length,
+                data;
+            this.axis.set("keys", ["open", "close"]);
+            length = this.closeValues.length + this.openValues.length;
+            data = this.axis.get("data");
+            Y.Assert.areEqual(length, data.length, "The length of the data attribute should be " + length + ".");
+        },
+
+        "test: get('dataMaximum')" : function() {
+            var dataMaximum;
+            this.axis.set("keys", ["open", "close"]);
+            dataMaximum = this.axis.get("dataMaximum");
+            Y.Assert.isTrue(dataMaximum >= this.dataMaximum, "The value for the attribute dataMaximum (" + dataMaximum + ") should be greater than or equal to " + this.dataMaximum + ".");
+        },
+
+        "test: get('dataMinimum')" : function() {
+            var dataMinimum;
+            this.axis.set("keys", ["open", "close"]);
+            dataMinimum = this.axis.get("dataMinimum");
+            Y.Assert.isTrue(dataMinimum <= this.dataMinimum, "The value for the attribute dataMinimum (" + dataMinimum + ") should be less than or equal to " + this.dataMinimum + ".");
+        },
+
+        "test: getTotalMajorUnits()" : function() {
+            Y.Assert.areEqual(11, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 11.");
+            this.axis.set("styles", {
+                majorUnit: {
+                    count: 8
+                }
+            });
+            Y.Assert.areEqual(8, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 8.");
+        },
+
+        "test: getTotalByKey()" : function() {
+            this.axis.set("keys", ["open", "close"]);
+            Y.Assert.areEqual(this.openTotal, this.axis.getTotalByKey("open"), "The sum of all open values should be " + this.openTotal + ".");
+            Y.Assert.areEqual(this.closeTotal, this.axis.getTotalByKey("close"), "The sum of all close values should be " + this.closeTotal + ".");
+            Y.Assert.areEqual(0, this.axis.getTotalByKey("nonexistantkey"), "The getTotalByKey method should return 0 for a non-existant key.");
+        },
+
+        "test: set('maximum')" : function() {
+            this.axis.set("keys", ["open", "close"]);
+            this.axis.set("maximum", this.setMaximum);
+            Y.Assert.areEqual(this.setMaximum, this.axis.get("maximum"), "The get max method should return " + this.setMaximum + ".");
+        },
+
+        "test: set('minimum')" : function() {
+            this.axis.set("keys", ["open", "close"]);
+            this.axis.set("minimum", this.setMinimum);
+            Y.Assert.areEqual(this.setMinimum, this.axis.get("minimum"), "The get min method should return " + this.setMinimum + ".");
+        },
+
+        "test: set('maximum') and set('minimum')" : function() {
+            this.axis.set("keys", ["open", "close"]);
+            this.axis.set("maximum", this.setMaximum);
+            this.axis.set("minimum", this.setMinimum);
+            Y.Assert.areEqual(this.setMaximum, this.axis.get("maximum"), "The get max method should return " + this.setMaximum + ".");
+            Y.Assert.areEqual(this.setMinimum, this.axis.get("minimum"), "The get min method should return " + this.setMinimum + ".");
+        },
+        
+        "test: labelFunction()" : function() {
+            var val = 300,
+                format = {
+                    prefix: "$",
+                    decimalPlaces: 2
+                },
+                unformatted = "300",
+                formatted = "$300.00";
+             Y.Assert.areEqual(unformatted, this.axis.get("labelFunction")(val), "The label should equal " + unformatted + ".");
+             Y.Assert.areEqual(formatted, this.axis.get("labelFunction")(val, format), "The label should equal " + formatted + ".");
+        },
+        
+        "test: roundingMethods" : function() {
+            Y.Assert.areEqual(18, this.axis._roundToNearest(18), "The _roundToNearest method should round 18 to 18.");
+            Y.Assert.areEqual(18, this.axis._roundToNearest(18, 0), "The _roundToNearest method should round 18 to 18.");
+            Y.Assert.areEqual(0, this.axis._roundDownToNearest(0.2), "The _roundDownToNearest method should round to 0.");
+            Y.Assert.areEqual(2, this.axis._roundToPrecision(1.8), "The _roundToPrecision method should round 1.8 to 2.");
+        },
+
+        "test: _getCoordFromValue()" : function() {
+            var axis = this.axis,
+                min = axis.get("minimum"),
+                max = axis.get("maximum"),
+                dataValue = 220,
+                length = 400,
+                horizontalOffset = 5,
+                verticalOffset = 395,
+                scaleType = axis.get("scaleType"),
+                getTestResult = function(scale, offset, reverse) {
+                    var logMin,
+                        logMax,
+                        logDataValue;
+                    if(scale !== "logarithmic") {
+                        val = ((dataValue - min) * (length/(max - min)));
+                    } else {
+                        logMin = Math.log(min);
+                        logMax = Math.log(max);
+                        logDataValue = Math.log(dataValue);
+                        val = ((logDataValue - logMin) * (length/(logMax - logMin)));
+                    }
+                    if(reverse) {
+                        val = offset - val;
+                    } else {
+                        val = val + offset;
+                    }
+                    return val;
+                },
+                result,
+                testResult = getTestResult(scaleType, horizontalOffset);
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, dataValue, horizontalOffset]
+            );
+            Y.Assert.isNumber(result, "The value should be a number.");
+            Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
+            
+            testResult = getTestResult(scaleType, verticalOffset, true);
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, dataValue, verticalOffset, true]
+            );
+            Y.Assert.isNumber(result, "The value should be a number.");
+            Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
+            
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, null, horizontalOffset]
+            );
+            Y.Assert.isNaN(result, "The value should not be a number.");
+        },
+
+        "test: getOrigin()" : function() {
+            var axis = this.axis,
+                min = axis.get("minimum"),
+                max = axis.get("maximum"),
+                origin = 0;
+            origin = Math.max(origin, min);
+            origin = Math.min(origin, max);
+            Y.Assert.areEqual(origin, axis.getOrigin(), "The origin value should be " + origin + ".");
+        }
+    });
     
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: plainOldDataProvider,
@@ -431,6 +497,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
     
@@ -442,6 +509,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values Tests"
     }));
 
@@ -453,6 +521,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values Tests"
     }));
 
@@ -464,6 +533,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
     
@@ -475,6 +545,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values Tests"
     }));
 
@@ -486,6 +557,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -50,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Tests"
     }));
 
@@ -497,6 +569,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -500,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Low Min and Max Tests"
     }));
 
@@ -508,6 +581,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -5,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data Tests"
     }));
 
@@ -519,6 +593,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max Tests"
     }));
 
@@ -530,6 +605,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
     
@@ -541,6 +617,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values alwaysShowZero=false Tests"
     }));
     
@@ -552,6 +629,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values alwaysShowZero=false Tests"
     }));
 
@@ -563,6 +641,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
     
@@ -574,6 +653,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values alwaysShowZero=false Tests"
     }));
 
@@ -585,6 +665,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -200,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data alwaysShowZero=false Tests"
     }));
 
@@ -596,6 +677,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.005,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data alwaysShowZero=false Tests"
     }));
 
@@ -607,6 +689,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -50,
         alwaysShowZero: true,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Tests"
     }));
 
@@ -618,6 +701,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: false,
         roundingMethod: "niceNumber",
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
       
@@ -629,6 +713,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
     
@@ -640,6 +725,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values Tests"
     }));
 
@@ -651,6 +737,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values Tests"
     }));
 
@@ -662,6 +749,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
 
@@ -673,6 +761,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values Tests"
     }));
 
@@ -684,6 +773,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -50,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Tests"
     }));
 
@@ -695,6 +785,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -500,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Low Min and Max Tests"
     }));
 
@@ -706,6 +797,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data Tests"
     }));
 
@@ -717,6 +809,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: true,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max Tests"
     }));
 
@@ -728,6 +821,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
     
@@ -739,6 +833,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values alwaysShowZero=false Tests"
     }));
 
@@ -750,6 +845,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values alwaysShowZero=false Tests"
     }));
 
@@ -761,6 +857,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
     
@@ -772,6 +869,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values alwaysShowZero=false Tests"
     }));
 
@@ -783,6 +881,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -200,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data alwaysShowZero=false Tests"
     }));
 
@@ -794,6 +893,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data alwaysShowZero=false Tests"
     }));
 
@@ -805,6 +905,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: false,
         roundingMethod: "auto",
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
     
@@ -816,6 +917,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
     
@@ -827,6 +929,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values Tests"
     }));
 
@@ -838,6 +941,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values Tests"
     }));
 
@@ -849,6 +953,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
     
@@ -860,6 +965,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values Tests"
     }));
 
@@ -871,6 +977,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -50,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Tests"
     }));
 
@@ -882,6 +989,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -500,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Low Min and Max Tests"
     }));
 
@@ -893,6 +1001,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data Tests"
     }));
 
@@ -904,6 +1013,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: true,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max Tests"
     }));
 
@@ -915,6 +1025,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
     
@@ -926,6 +1037,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values alwaysShowZero=false Tests"
     }));
     
@@ -937,6 +1049,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values alwaysShowZero=false Tests"
     }));
 
@@ -948,6 +1061,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
     
@@ -959,6 +1073,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values alwaysShowZero=false Tests"
     }));
 
@@ -970,6 +1085,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -200,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data alwaysShowZero=false Tests"
     }));
 
@@ -981,6 +1097,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data alwaysShowZero=false Tests"
     }));
 
@@ -992,6 +1109,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: false,
         roundingMethod: null,
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
     
@@ -1003,6 +1121,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
     
@@ -1014,6 +1133,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: true,
         roundingMethod: 0.1,
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values Tests"
     }));
     
@@ -1025,6 +1145,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: true,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values Tests"
     }));
 
@@ -1036,6 +1157,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: true,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
     
@@ -1047,6 +1169,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: 0.1,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values Tests"
     }));
 
@@ -1058,6 +1181,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -50,
         alwaysShowZero: true,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Tests"
     }));
 
@@ -1069,6 +1193,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -500,
         alwaysShowZero: true,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data Low Min and Max Tests"
     }));
 
@@ -1080,6 +1205,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: true,
         roundingMethod: 0.1,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data Tests"
     }));
 
@@ -1091,6 +1217,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: true,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max Tests"
     }));
 
@@ -1102,6 +1229,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
     
@@ -1113,6 +1241,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 0.5,
         alwaysShowZero: false,
         roundingMethod: 0.1,
+        keys: ["open", "close"],
         name: "NumericAxisBase Small Values alwaysShowZero=false Tests"
     }));
 
@@ -1124,6 +1253,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: 20,
         alwaysShowZero: false,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Missing Values alwaysShowZero=false Tests"
     }));
 
@@ -1135,6 +1265,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -300,
         alwaysShowZero: false,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
 
@@ -1146,6 +1277,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: 0.1,
+        keys: ["open", "close"],
         name: "NumericAxisBase All Negative Small Values alwaysShowZero=false Tests"
     }));
 
@@ -1157,6 +1289,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -200,
         alwaysShowZero: false,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Data alwaysShowZero=false Tests"
     }));
 
@@ -1168,6 +1301,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -0.5,
         alwaysShowZero: false,
         roundingMethod: 0.1,
+        keys: ["open", "close"],
         name: "NumericAxisBase Positive and Negative Small Values Data alwaysShowZero=false Tests"
     }));
 
@@ -1179,6 +1313,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: false,
         roundingMethod: 100,
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
 
@@ -1190,7 +1325,21 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         setMinimum: -10000,
         alwaysShowZero: false,
         roundingMethod: "badValue",
+        keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false badValue roundingMethod Tests"
+    }));
+
+    suite.add(new Y.NumericAxisBaseTest({
+        dataProvider: plainOldDataProvider,
+        dataMaximum: 400.55,
+        dataMinimum: 8.55,
+        alwaysShowZero: true,
+        setMaximum: 300,
+        setMinimum: 20,
+        roundingMethod: "niceNumber",
+        scaleType: "logarithmic",
+        keys: ["open", "close"],
+        name: "NumericAxisBase Logarithmic Tests"
     }));
 
     Y.Test.Runner.add(suite);

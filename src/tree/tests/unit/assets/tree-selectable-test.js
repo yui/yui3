@@ -198,6 +198,19 @@ suite.add(new Y.Test.Case({
         this.tree.selectNode(node, {silent: true});
     },
 
+    'selectNode() should pass along a `src`': function () {
+        var node = this.tree.children[0],
+            fired;
+
+        this.tree.once('select', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.selectNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
+    },
+
     'unselectNode() should fire an `unselect` event': function () {
         var node = this.tree.children[0],
             fired;
@@ -235,6 +248,21 @@ suite.add(new Y.Test.Case({
         this.tree.unselectNode(node, {silent: true});
     },
 
+    'unselectNode() should pass along a `src`': function () {
+        var node = this.tree.children[0],
+            fired;
+
+        this.tree.selectNode(node);
+
+        this.tree.once('unselect', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.unselectNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
+    },
+
     '`select` event should be preventable': function () {
         var node = this.tree.children[0];
 
@@ -260,9 +288,9 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-// -- Events -------------------------------------------------------------------
+// -- Miscellaneous ------------------------------------------------------------
 suite.add(new Y.Test.Case({
-    name: 'Events',
+    name: 'Miscellaneous',
 
     setUp: function () {
         this.tree = new Tree({nodes: [
