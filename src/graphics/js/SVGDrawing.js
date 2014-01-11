@@ -47,6 +47,8 @@ SVGDrawing.prototype = {
      * @private
      */
     _pathSymbolToMethod: {
+        A: "ellipticalArc",
+        a: "relativeEllipticalArc",
         M: "moveTo",
         m: "relativeMoveTo",
         L: "lineTo",
@@ -86,6 +88,261 @@ SVGDrawing.prototype = {
      * @type String
      */
     _type: "path",
+
+    /**
+     * Draws an elliptical arc based on the svg arc spec.
+     *
+     * @method ellipticalArc
+     * @param {Number} rx The x-radius for the arc.
+     * @param {Number} ry The y-radius for the arc.
+     * @param {Number} xAxisRotation Indicates how much to rotate the ellipse relative to the x-axis
+     * of the current coordinate system.
+     * @param {Number} largeArcFlag Indicates whether a large arc or small arc will be drawn. A value of `1`
+     * indicates a large arc. A value of `0` represents a small arc.
+     * @param {Number} sweepFlag Indicates whether a positive or negative angle will be drawn. A value of `1`
+     * indicates a positive value. A value of `0` represents a negative value.
+     * @param {Number} x The x-coordinate of the arc's end point.
+     * @param {Number} y The y-coordinate of the arc's end point.
+     * @chainable
+     */
+    ellipticalArc: function()
+    {
+        this._ellipticalArc.apply(this, Y.Array(arguments));
+        return this;
+    },
+
+    /**
+     * Draws a relative elliptical arc based on the svg arc spec.
+     *
+     * @method relativeEllipticalArc
+     * @param {Number} rx The x-radius for the arc.
+     * @param {Number} ry The y-radius for the arc.
+     * @param {Number} xAxisRotation Indicates how much to rotate the ellipse relative to the x-axis
+     * of the current coordinate system.
+     * @param {Number} largeArcFlag Indicates whether a large arc or small arc will be drawn. A value of `1`
+     * indicates a large arc. A value of `0` represents a small arc.
+     * @param {Number} sweepFlag Indicates whether a positive or negative angle will be drawn. A value of `1`
+     * indicates a positive value. A value of `0` represents a negative value.
+     * @param {Number} x The x-coordinate of the arc's end point.
+     * @param {Number} y The y-coordinate of the arc's end point.
+     * @chainable
+     */
+    relativeEllipticalArc: function()
+    {
+        var args = Y.Array(arguments);
+        args.push(true);
+        this._ellipticalArc.apply(this, args);
+        return this;
+    },
+
+    /**
+     * Implements ellipticalArc methods.
+     *
+     * @method _ellipticalArc
+     * @param {Number} rx The x-radius for the arc.
+     * @param {Number} ry The y-radius for the arc.
+     * @param {Number} xAxisRotation Indicates how much to rotate the ellipse relative to the x-axis
+     * of the current coordinate system.
+     * @param {Number} largeArcFlag Indicates whether a large arc or small arc will be drawn. A value of `1`
+     * indicates a large arc. A value of `0` represents a small arc.
+     * @param {Number} sweepFlag Indicates whether a positive or negative angle will be drawn. A value of `1`
+     * indicates a positive value. A value of `0` represents a negative value.
+     * @param {Number} x The x-coordinate of the arc's end point.
+     * @param {Number} y The y-coordinate of the arc's end point.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _ellipticalArc: function(rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y, relative) {
+        var command = relative ? "a" : "A",
+            currentArray,
+            pathArrayLen;
+        this._calculateEllipticalArcBounds.apply(this, arguments);
+        if(this._pathType !== command)
+        {
+            this._pathType = command;
+            currentArray = [command];
+            this._pathArray.push(currentArray);
+        }
+        else
+        {
+            currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
+            if(!currentArray)
+            {
+                currentArray = [];
+                this._pathArray.push(currentArray);
+            }
+        }
+        pathArrayLen = this._pathArray.length - 1;
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y]);
+    },
+    
+    /**
+     * Calculates the bounds of an ellipticalArc.
+     *
+     * @method _calculateEllipticalArcBounds
+     * @param {Number} rx The x-radius for the arc.
+     * @param {Number} ry The y-radius for the arc.
+     * @param {Number} xAxisRotation Indicates how much to rotate the ellipse relative to the x-axis
+     * of the current coordinate system.
+     * @param {Number} largeArcFlag Indicates whether a large arc or small arc will be drawn. A value of `1`
+     * indicates a large arc. A value of `0` represents a small arc.
+     * @param {Number} sweepFlag Indicates whether a positive or negative angle will be drawn. A value of `1`
+     * indicates a positive value. A value of `0` represents a negative value.
+     * @param {Number} x The x-coordinate of the arc's end point.
+     * @param {Number} y The y-coordinate of the arc's end point.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _calculateEllipticalArcBounds: function(rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y, relative) {
+        var x1 = this._currentX,
+            y1 = this._currentY,
+            x2 = x,
+            y2 = y,
+            x1_,
+            y1_,
+            x1_pow2,
+            y1_pow2,
+            cx,
+            cy,
+            cx_,
+            cy_,
+            rxpow2,
+            rypow2,
+            sinTheta,
+            cosTheta,
+            radian360 = 2 * Math.PI,
+            scalarMultiplier,
+            thetaOne,
+            deltaTheta,
+            thetaTwo,
+            sign,
+            ux,
+            uy,
+            vx,
+            vy,
+            lambda,
+            i,
+            angle,
+            segments,
+            segmentAngle,
+            px,
+            py,
+            top,
+            right,
+            bottom,
+            left,
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        if(relative) {
+            x2 = x2 + x1;
+            y2 = y2 + y1;
+        }
+        //if rx or ry are 0, return lineTo
+        if((x1 === x && y1 === y) || rx === 0 || ry === 0) {
+            return;
+        }
+        //ensure radii are positive
+        rx = Math.abs(rx);
+        ry = Math.abs(ry);
+        //flags are true unless explicitly set to zero per spec
+        largeArcFlag = parseFloat(largeArcFlag) !== 0;
+        sweepFlag = parseFloat(sweepFlag) !== 0;
+        //ensure its between -360 and 360
+        xAxisRotation = xAxisRotation % 360;
+        //convert to radians
+        xAxisRotation = xAxisRotation/180 * Math.PI;
+        //cache sin and cos of angle
+        sinTheta = Math.sin(xAxisRotation);
+        cosTheta = Math.cos(xAxisRotation);
+
+        //step 1: compute x and y derivatives
+        x1_ = (cosTheta * (x1 - x2)/2) + (sinTheta * (y1 - y2)/2);
+        y1_ = (-sinTheta * (x1 - x2)/2) + (cosTheta * (y1 - y2)/2);
+
+        //cache squared values
+        rxpow2 = Math.pow(rx, 2);
+        rypow2 = Math.pow(ry, 2);
+        x1_pow2 = Math.pow(x1_, 2);
+        y1_pow2 = Math.pow(y1_, 2);
+        lambda = x1_pow2/rxpow2 + y1_pow2/rypow2;
+
+        if(lambda > 1) {
+            //correct rx and ry and resquare
+            lambda = Math.sqrt(lambda);
+            rx = lambda * rx;
+            ry = lambda * ry;
+            rxpow2 = Math.pow(rx, 2);
+            rypow2 = Math.pow(ry, 2);
+        }
+
+        x1_pow2 = Math.round(x1_pow2 * 10)/10;
+        y1_pow2 = Math.round(y1_pow2 * 10)/10;
+        rxpow2 = Math.round(rxpow2 * 10)/10;
+        rypow2 = Math.round(rypow2 * 10)/10;
+        
+        //compute cx/cy derivatives
+        //cache the scalr value for use in getting both derivatives
+        scalarMultiplier = ((rxpow2 * rypow2) - (rxpow2 * y1_pow2) - (rypow2 * x1_pow2)) /  ((rxpow2 * y1_pow2) + (rypow2 * x1_pow2));
+        scalarMultiplier = Math.sqrt(scalarMultiplier);
+        if(largeArcFlag === sweepFlag) {
+            scalarMultiplier = -scalarMultiplier;
+        }
+        cx_ = scalarMultiplier * (rx * y1_)/ry;
+        cy_ = scalarMultiplier * -(ry * x1_)/rx;
+
+        //compute cx and cy
+        cx = (cosTheta * cx_) - (sinTheta * cy_) + (x1 + x2)/2;
+        cy = (sinTheta * cx_) + (cosTheta * cy_) + (y1 + y2)/2;
+
+        //set vectors for thetaOne
+        ux = 1;
+        uy = 0;
+        vx = (x1_ - cx_)/rx;
+        vy = (y1_ - cy_)/ry;
+        sign = vy < 0 ? -1 : 1;
+        //get the angle between the two vectors
+        thetaOne = sign * Math.acos((ux * vx + uy * vy) / (Math.sqrt(ux * ux + uy * uy) * Math.sqrt(vx * vx + vy * vy)));
+        
+        //set the vectors for deltaTheta
+        ux = (x1_ - cx_)/rx;
+        uy = (y1_ - cy_)/ry;
+        vx = (-x1_ - cx_)/rx;
+        vy = (-y1_ - cy_)/ry;
+        sign = (ux * vy - uy * vx) < 0 ? -1 : 1;
+        //sign = sign < 0 ? -1 : 1;
+        //get the angle between the two vectors
+        deltaTheta = sign * Math.acos((ux * vx + uy * vy) / (Math.sqrt(ux * ux + uy * uy) * Math.sqrt(vx * vx + vy * vy))) % radian360;
+
+        if(!sweepFlag && deltaTheta > 0) {
+            deltaTheta = deltaTheta - radian360;
+        } else if(sweepFlag && deltaTheta < 0) {
+            deltaTheta = deltaTheta + radian360;
+        }
+        segments = Math.ceil(Math.abs(deltaTheta) / (1/360 * Math.PI));
+        thetaTwo = thetaOne + deltaTheta;
+        segmentAngle = deltaTheta/segments;
+        angle = thetaOne - segmentAngle;
+        for(i = 0; i < segments; i = i + 1) {
+            angle += segmentAngle;
+            px = (cosTheta * (rx * Math.cos(angle))) - (sinTheta * (ry * Math.sin(angle))) + cx;
+            py =(sinTheta * (rx * Math.cos(angle))) + (cosTheta * (ry * Math.sin(angle))) + cy;
+            left = isNaN(left) ? px : Math.min(px, left);
+            right = isNaN(right) ? px : Math.max(px, right);
+            top = isNaN(top) ? py : Math.min(py, top);
+            bottom = isNaN(bottom) ? py : Math.max(py, bottom);
+        }
+        left = Math.round(left * 10)/10;
+        right = Math.round(right * 10)/10;
+        top = Math.round(top * 10)/10;
+        bottom = Math.round(bottom * 10)/10;
+        x = x + relativeX;
+        y = y + relativeY;
+        this._currentX = x;
+        this._currentY = y;
+        this._trackSize(x, y);
+        this._trackSize(right, bottom);
+        this._trackSize(left, top);
+    },
 
     /**
      * Draws a bezier curve.
@@ -708,7 +965,7 @@ SVGDrawing.prototype = {
                 segmentArray = pathArray.shift();
                 len = segmentArray.length;
                 pathType = segmentArray[0];
-                if(pathType === "A")
+                if(pathType === "A" || pathType === "a")
                 {
                     path += pathType + segmentArray[1] + "," + segmentArray[2];
                 }
@@ -739,6 +996,7 @@ SVGDrawing.prototype = {
                             path += ", " + parseFloat(val);
                         }
                     break;
+                    case "a" :
                     case "A" :
                         val = " " + parseFloat(segmentArray[3]) + " " + parseFloat(segmentArray[4]);
                         val += "," + parseFloat(segmentArray[5]) + " " + parseFloat(segmentArray[6] - left);
