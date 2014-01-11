@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">    
+    <title>Elliptical Arc Example</title>
+    <style type="text/css">
+        #container {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script type="text/javascript">
+    YUI({
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('graphics', function(Y) {
+        var graphic = new Y.Graphic({
+                render: "#container"
+            }),
+            rect,
+            path1,
+            path2,
+            path3;
+        rect = graphic.addShape({
+            type: "rect",
+            x: 1,
+            y: 1,
+            width: 1198,
+            height: 398,
+            stroke: {
+                weight: 1,
+                color: "#00f"
+            }
+        });
+        path1 = graphic.addShape({
+            type: "path",
+            fill: {
+                color: "#f00"   
+            },
+            stroke: {
+                weight: 1,
+                color: "#00f"
+            }
+        }).moveTo(300, 200).
+            relativeLineTo(-150, 0).
+            relativeEllipticalArc(150, 150, 0, 1, 0, 150, -150).
+            end();
+        path2 = graphic.addShape({
+            type: "path",
+            fill: {
+                color: "#fc0"
+            },
+            stroke: {
+                weight: 5,
+                color: "#00f"
+            }
+        }).moveTo(275, 175).
+            relativeLineTo(0, -150).
+            relativeEllipticalArc(150, 150, 0, 0, 0, -150, 150).
+            end();
+        path3 = graphic.addShape({
+            type: "path",
+            stroke: {
+                weight: 5,
+                color: "#f00"
+            }
+        }).moveTo(600, 350).
+            relativeLineTo(50, -25).
+            relativeEllipticalArc(25, 25, -30, 0, 1, 50, -25).
+            relativeLineTo(50, -25).
+            relativeEllipticalArc(25, 25, -30, 0, 1, 50, -25).
+            relativeLineTo(50, -25).
+            relativeEllipticalArc(25, 25, -30, 0, 1, 50, -25).
+            relativeLineTo(50, -25).
+            relativeEllipticalArc(25, 100, -30, 0, 1, 50, -25).
+            relativeLineTo(50, -25).
+            end();
+    });
+    </script>
+</body>
+</html>
