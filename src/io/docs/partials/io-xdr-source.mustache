@@ -16,7 +16,7 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
         //Event handler called when the transaction begins:
         var handleStart = function(id, a) {
             Y.log("io:start firing.", "info", "example");
-            output.set("innerHTML", "<li>Loading news stories via Yahoo! Pipes feed...</li>");
+            output.setHTML("<li>Loading news stories via Yahoo! Pipes feed...</li>");
         }
 
         //Event handler for the success event -- use this handler to write the fetched
@@ -41,7 +41,7 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
                 }
 
                 //Output the string to the page:
-                output.set("innerHTML", s);
+                output.setHTML(s);
                 output.addClass("yui-null");
 
             } else {
@@ -55,9 +55,9 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
         var handleFailure = function(id, o, a) {
             Y.log("ERROR " + id + " " + a, "info", "example");
             if (o.status === 0) {
-                output.set('innerHTML',
-                '<li>The service might be down - would you like to ' +
-                '<a href="xdr.html?mock=true">try this example with mock data</a>?</li>');
+                output.setHTML('<li>The service might be down - ' + 
+                'would you like to <a href="xdr.html?mock=true">try this '+
+                'example with mock data</a>?</li>');
             }
         }
 
