@@ -21,23 +21,32 @@ var DOM_MOUSE_SCROLL = 'DOMMouseScroll',
         }
     };
 
+function attach() {
+    return Y.Event._attach(arguments, {
+        facade: false
+    });
+}
+
 if (win.WheelEvent) {
     eventDef.on = function (node, sub, notifier) {
-        sub._handle = Y.Event.attach('wheel', function (domEvent) {
-            notifier.fire(this._createFacade(domEvent, node, domEvent.deltaY));
+        var self = this;
+        sub._handle = attach('wheel', function (domEvent) {
+            notifier.fire(self._createFacade(domEvent, node, domEvent.deltaY));
         }, win);
     };
 } else if ('onmousewheel' in doc) {
     eventDef.on = function (node, sub, notifier) {
-        sub._handle = Y.Event.attach('mousewheel', function (domEvent) {
-            notifier.fire(this._createFacade(domEvent, node,
+        var self = this;
+        sub._handle = attach('mousewheel', function (domEvent) {
+            notifier.fire(self._createFacade(domEvent, node,
                 - 1/40 * ('wheelDeltaX' in domEvent ? domEvent.wheelDeltaX : domEvent.wheelDelta)));
         }, doc);
     };
 } else {
     eventDef.on = function (node, sub, notifier) {
-        sub._handle = Y.Event.attach('MozMousePixelScroll', function (domEvent) {
-            notifier.fire(this._createFacade(domEvent, node, domEvent.detail));
+        var self = this;
+        sub._handle = attach('MozMousePixelScroll', function (domEvent) {
+            notifier.fire(self._createFacade(domEvent, node, domEvent.detail));
         }, win);
     };
 }
