@@ -986,6 +986,40 @@ with any configuration info required for the module.
     },
 
     /**
+    Sugar for loading both legacy and ES6-based YUI modules.
+
+    @method require
+    @param {String[]} modules List of module names to import.
+    @param {Function} callback Callback that gets called once all the modules
+        were loaded. Each parameter of the callback is the export value of the
+        corresponding module in the list. If the module is a legacy YUI module,
+        the YUI instance is used instead of the module exports.
+    @return {YUI} The YUI instance
+    @example
+    ```
+    YUI().require(['es6-set', 'es6-map'], function (Set, Map) {
+        var set = new Set();
+    });
+    ```
+    **/
+    require: function (modules, callback) {
+        if (!this.Lang.isArray(modules)) {
+            throw new TypeError('Expected an array of module names');
+        }
+        return this.use(modules, function (Y) {
+            var results = [],
+                i = 0,
+                length = modules.length,
+                exported = Y.Env._exported;
+
+            for (; i < length; i++) {
+                results[i] = modules[i] in exported ? exported[modules[i]] : Y;
+            }
+            callback.apply(undefined, results);
+        });
+    },
+
+    /**
     Handles Loader notifications about attachment/load errors.
 
     @method _notify
