@@ -997,8 +997,9 @@ with any configuration info required for the module.
     @return {YUI} The YUI instance
     @example
     ```
-    YUI().require(['es6-set', 'es6-map'], function (Set, Map) {
-        var set = new Set();
+    YUI().require(['es6-collections'], function (Collections) {
+        var Set = Collections.Set,
+            set = new Set();
     });
     ```
     **/
