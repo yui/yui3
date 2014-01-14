@@ -13,6 +13,8 @@ YUI.add('mousewheel-tests', function(Y) {
         }
     }));
 
+    Y.MouseWheelSuite = suite;
+
     Y.Test.Runner.add(suite);
 
 });
