@@ -1005,7 +1005,7 @@ with any configuration info required for the module.
     **/
     require: function (modules, callback) {
         if (!this.Lang.isArray(modules)) {
-            throw new TypeError('Expected an array of module names');
+            this.error('Expected an array of module names');
         }
         return this.use(modules, function (Y) {
             var results = [],
@@ -1014,7 +1014,7 @@ with any configuration info required for the module.
                 exported = Y.Env._exported;
 
             for (; i < length; i++) {
-                results[i] = modules[i] in exported ? exported[modules[i]] : Y;
+                results[i] = exported.hasOwnProperty(modules[i]) ? exported[modules[i]] : Y;
             }
             callback.apply(undefined, results);
         });
