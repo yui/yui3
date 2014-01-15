@@ -32,7 +32,7 @@ YUI({ filter: 'raw' }).use( "datatable-sort", "datatable-scroll", "cssbutton", f
             {   key:        'select',
                 allowHTML:  true, // to avoid HTML escaping
                 label:      '<input type="checkbox" class="protocol-select-all" title="Toggle ALL records"/>',
-                formatter:      '<input type="checkbox" checked/>',
+                formatter: '<input type="checkbox" checked/>',
                 emptyCellValue: '<input type="checkbox"/>'
             },
             {   key: 'port',   label: 'Port No.' },
@@ -60,8 +60,10 @@ YUI({ filter: 'raw' }).use( "datatable-sort", "datatable-scroll", "cssbutton", f
     table.delegate("click", function(e){
         // undefined to trigger the emptyCellValue
         var checked = e.target.get('checked') || undefined;
-
-        this.getRecord(e.target).set('select', checked);
+        
+        // Don't pass `{silent:true}` if there are other objects in your app
+        // that need to be notified of the checkbox change.
+        this.getRecord(e.target).set('select', checked, { silent: true });
 
         // Uncheck the header checkbox
         this.get('contentBox')
