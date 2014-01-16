@@ -4,7 +4,7 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* Fix an issue when Feb 1st is Saturday Mar 2nd appears to be selectable. (@shunner)
 
 3.14.1
 ------
