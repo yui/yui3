@@ -156,7 +156,7 @@
         */
         bubbles: {
             setter: function(t) {
-                Y.log('bubbles is deprecated use bubbleTargets: HOST', 'warn', 'dd');
+                Y.message('bubbles is deprecated use bubbleTargets: HOST', 'warn', 'dd');
                 this.addTarget(t);
                 return t;
             }

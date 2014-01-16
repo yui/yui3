@@ -339,7 +339,7 @@ ET.prototype = {
      * @deprecated use on
      */
     subscribe: function() {
-        Y.log('EventTarget subscribe() is deprecated, use on()', 'warn', 'deprecated');
+        Y.message('EventTarget subscribe() is deprecated, use on()', 'warn', 'deprecated');
         return this.on.apply(this, arguments);
     },
 
@@ -462,7 +462,7 @@ ET.prototype = {
      * @deprecated use detach
      */
     unsubscribe: function() {
-Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
+Y.message('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
         return this.detach.apply(this, arguments);
     },
 
@@ -486,7 +486,7 @@ Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecat
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
-Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
+Y.message('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
         return this.detachAll.apply(this, arguments);
     },
 

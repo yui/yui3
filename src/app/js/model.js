@@ -914,7 +914,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         if (self.validate.length === 1) {
             // Backcompat for 3.4.x-style synchronous validate() functions that
             // don't take a callback argument.
-            Y.log('Synchronous validate() methods are deprecated since YUI 3.5.0.', 'warn', 'Model');
+            Y.message('Synchronous validate() methods are deprecated since YUI 3.5.0.', 'warn', 'Model');
             handler(self.validate(attributes, handler));
         } else {
             self.validate(attributes, handler);

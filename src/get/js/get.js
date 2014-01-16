@@ -256,7 +256,7 @@ Y.Get = Get = {
     abort: function (transaction) {
         var i, id, item, len, pending;
 
-        Y.log('`Y.Get.abort()` is deprecated as of 3.5.0. Use the `abort()` method on the transaction instead.', 'warn', 'get');
+        Y.message('`Y.Get.abort()` is deprecated as of 3.5.0. Use the `abort()` method on the transaction instead.', 'warn', 'get');
 
         if (!transaction.abort) {
             id          = transaction;
@@ -614,14 +614,14 @@ Y.Get = Get = {
 
             // Backcompat for <3.5.0 behavior.
             if (req.win) {
-                Y.log('The `win` option is deprecated as of 3.5.0. Use `doc` instead.', 'warn', 'get');
+                Y.message('The `win` option is deprecated as of 3.5.0. Use `doc` instead.', 'warn', 'get');
                 req.doc = req.win.document;
             } else {
                 req.win = req.doc.defaultView || req.doc.parentWindow;
             }
 
             if (req.charset) {
-                Y.log('The `charset` option is deprecated as of 3.5.0. Set `attributes.charset` instead.', 'warn', 'get');
+                Y.message('The `charset` option is deprecated as of 3.5.0. Set `attributes.charset` instead.', 'warn', 'get');
                 req.attributes.charset = req.charset;
             }
 
