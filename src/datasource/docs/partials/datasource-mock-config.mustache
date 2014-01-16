@@ -5,7 +5,7 @@ YUI.GlobalConfig = {
             fullpath: '../assets/datasource/datasource-api-mock.js',
             condition: {
                 trigger: 'datasource-get',
-                when: 'instead',
+                when: 'after',
                 test: function () {
                     return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
                 }
