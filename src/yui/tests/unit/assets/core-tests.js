@@ -880,54 +880,5 @@ YUI.add('core-tests', function(Y) {
         }
     });
 
-    YUI.add("some-es6-module", function(Y, NAME, __imports__, __exports__) {
-        "use strict";
-        /*jslint esnext: true*/
-        var foo = 'foo';
-        __exports__.foo = foo;
-        __exports__["default"] = function bar() {
-            return true;
-        };
-        return __exports__;
-    }, "@VERSION@", {"es":true,"requires":[]});
-    YUI.add("non-es6-module", function(Y) {
-        "use strict";
-        Y.foo = 'foo';
-    }, "@VERSION@", {"requires":[]});
-
-    Y.SeedTests.add(new Y.Test.Case({
-        name: 'Y.require tests',
-
-        _should: {
-            error: {
-                'calling require without an array throws an error': true
-            }
-        },
-
-        'require() is defined': function () {
-            Y.Assert.isFunction(YUI().require);
-        },
-
-        'calling require without an array throws an error': function () {
-            YUI().require('some-es6-module', function (SomeES6Module) {
-            });
-        },
-
-        'require(fn) gets a loaded ES6 module as a parameter': function () {
-            YUI().require(['some-es6-module'], function (SomeES6Module) {
-                Y.Assert.isNotUndefined(SomeES6Module, 'ES6 module not imported');
-                Y.Assert.areSame('foo', SomeES6Module.foo, 'ES6 module does not contain expected named export');
-                Y.Assert.isFunction(SomeES6Module['default'], 'ES6 modules does not contain expected default export');
-            });
-        },
-
-        'require(fn) gets a YUI instance when loading a non-es6 module': function () {
-            YUI().require(['non-es6-module'], function ($Y) {
-                Y.Assert.areEqual('foo', $Y.foo, 'non-es6 module failed to load correctly');
-                Y.Assert.isInstanceOf(YUI, $Y, 'requiring a non-es6 module should get a YUI instance');
-            });
-        }
-    }));
-
     Y.SeedTests.add(testCore);
 });
