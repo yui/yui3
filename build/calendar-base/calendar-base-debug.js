@@ -1204,7 +1204,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
                         } else {
                             curCell.setContent("&nbsp;");
-                            curCell.addClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
+                            curCell.removeClass(CAL_DAY).addClass(CAL_NEXTMONTH_DAY);
                         }
                         break;
                     case 1:
