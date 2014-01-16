@@ -67,33 +67,30 @@ suite.add(new Y.Test.Case({
 Y.SeedTests.add(new Y.Test.Case({
     name: 'Y.require tests',
 
-    _should: {
-        error: {
-            'calling require without an array throws an error': true
-        }
-    },
-
     'require() is defined': function () {
         Y.Assert.isFunction(YUI().require);
     },
 
-    'calling require without an array throws an error': function () {
+    'calling require() with a string parameter': function () {
         YUI().require('mod3-es-mix', function (SomeES6Module) {
+            Assert.isNotUndefined(SomeES6Module, 'ES6 module not imported');
+            Assert.areSame(3, SomeES6Module['default'], 'ES6 module does not contain expected named export');
+            Assert.isFalse(SomeES6Module instanceof YUI, 'ES6 module should not be an instance of YUI');
         });
     },
 
     'require(fn) gets a loaded ES6 module as a parameter': function () {
         YUI().require(['mod3-es-mix'], function (SomeES6Module) {
-            Y.Assert.isNotUndefined(SomeES6Module, 'ES6 module not imported');
-            Y.Assert.areSame(3, SomeES6Module['default'], 'ES6 module does not contain expected named export');
-            Y.Assert.isFalse(SomeES6Module instanceof YUI, 'ES6 module should not be an instance of YUI');
+            Assert.isNotUndefined(SomeES6Module, 'ES6 module not imported');
+            Assert.areSame(3, SomeES6Module['default'], 'ES6 module does not contain expected named export');
+            Assert.isFalse(SomeES6Module instanceof YUI, 'ES6 module should not be an instance of YUI');
         });
     },
 
     'require(fn) gets a YUI instance when loading a non-es6 module': function () {
         YUI().require(['mod1-legacy'], function ($Y) {
-            Y.Assert.areEqual('mod1-legacy', $Y['mod1-legacy'][1], 'non-es6 module failed to load correctly');
-            Y.Assert.isInstanceOf(YUI, $Y, 'requiring a non-es6 module should get a YUI instance');
+            Assert.areEqual('mod1-legacy', $Y['mod1-legacy'][1], 'non-es6 module failed to load correctly');
+            Assert.isInstanceOf(YUI, $Y, 'requiring a non-es6 module should get a YUI instance');
         });
     }
 }));

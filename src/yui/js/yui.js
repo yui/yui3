@@ -1004,9 +1004,10 @@ with any configuration info required for the module.
     ```
     **/
     require: function (modules, callback) {
-        if (!this.Lang.isArray(modules)) {
-            this.error('Expected an array of module names');
+        if (!this.Array) {
+            this._attach(['yui-base']);
         }
+        modules = this.Array(modules);
         return this.use(modules, function (Y) {
             var results = [],
                 i = 0,
