@@ -1010,11 +1010,10 @@ with any configuration info required for the module.
         modules = this.Array(modules);
         return this.use(modules, function (Y) {
             var results = [],
-                i = 0,
-                length = modules.length,
+                i, length,
                 exported = Y.Env._exported;
 
-            for (; i < length; i++) {
+            for (i = 0, length = modules.length; i < length; i++) {
                 results[i] = exported.hasOwnProperty(modules[i]) ? exported[modules[i]] : Y;
             }
             callback.apply(undefined, results);
