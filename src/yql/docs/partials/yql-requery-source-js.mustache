@@ -8,13 +8,14 @@ YUI().use('node', 'yql', function(Y) {
         allowCache: false,
         on: {
             success: function(r) {
-                if (r.query && r.query.results) {
-                    count++;
-                    res.setHTML('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
-                    Y.each(r.query.results.photo, function(v) {
-                        res.append(Y.Lang.sub(url, v));
-                    });
-                }
+                count++;
+                res.setHTML('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
+                Y.each(r.query.results.photo, function(v) {
+                    res.append(Y.Lang.sub(url, v));
+                });
+            },
+            failure: function() {
+                res.setHTML('YQL is down at the moment. Please <a href="?mock=true">try this example with mocked data</a>.');
             }
         }
     });
