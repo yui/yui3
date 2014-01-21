@@ -4,7 +4,10 @@ Drag and Drop Change History
 @VERSION@
 ------
 
-* No changes.
+* Prevent the default page action when starting a `gesturemove` event. This
+  fixes browsers that select the text when dragging. ([#1557][]: @andrewnicols)
+
+[#1557]: https://github.com/yui/yui3/issues/1557
 
 3.14.1
 ------
