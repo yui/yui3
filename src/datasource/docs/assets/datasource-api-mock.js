@@ -1,5 +1,5 @@
 YUI.add('datasource-api-mock', function (Y) {
-    Y.DataSource.Get.prototype.sendRequest = function (e) {
+    (Y.DataSource.Get || Y.DataSource.IO).prototype.sendRequest = function (e) {
         var response = {
             meta: {}
         };
@@ -106,6 +106,12 @@ YUI.add('datasource-api-mock', function (Y) {
                     {name: 'node-tokeninput'},
                     {name: 'pact'}
                 ];
+                break;
+            case '?output=json':
+                response = '{results =&gt; [{Title =&gt; Madonna}, {Title =&gt; Madonna - MySpace}, {Title =&gt; YouTube - madonna\'s Channel}, {Title =&gt; Madonna Music Profile on IMEEM}, {Title =&gt; Madonna | Music Artist | Videos, News, Photos &amp;amp; Ringtones | MTV}, {Title =&gt; Madonnalicious}, {Title =&gt; Madonna on MSN Music}, {Title =&gt; Madonna (I)}, {Title =&gt; Madonna Rehabilitation Hospital}, {Title =&gt; AbsoluteMadonna.com}], meta =&gt; {}}';
+                break;
+            case '?output=xml':
+                response = '{results => [{title => <b>madonna</b>.com home}, {title => <b>Madonna</b> (Entertainer) - Wikipedia}, {title => <b>Madonna</b> - MySpace}, {title => YouTube - <b>madonna\'s</b> Channel}, {title => <b>Madonna</b> Music Profile on IMEEM}, {title => <b>Madonna</b> | Music Artist | Videos, News, Photos &amp; Ringtones | MTV}, {title => Madonnalicious}, {title => <b>Madonna</b> on MSN Music}, {title => All About <b>Madonna</b>}, {title => <b>Madonna</b> Rehabilitation Hospital}], meta => {}}';
                 break;
             default:
                 response.results = [
