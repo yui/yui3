@@ -316,7 +316,12 @@ Y.mix(Y_DOM, {
             pos,
             delta,
             newXY,
-            currentXY;
+            currentXY,
+            x,
+            hAttr,
+            rtl,
+            nodeWidth,
+            winWidth;
 
         if (node && xy) {
             pos = Y_DOM.getStyle(node, POSITION);
@@ -328,8 +333,23 @@ Y.mix(Y_DOM, {
             }
             currentXY = Y_DOM.getXY(node);
 
+            x = xy[0];
+            hAttr = LEFT;
+
+            rtl = Y_DOM.getComputedStyle(node, 'direction') === 'rtl' || Y.one(node).ancestor('[dir="rtl"]');
+
+            if (rtl) {
+                hAttr = 'right';
+                nodeWidth = Y.one(node).width();
+                winWidth = Y_DOM.winWidth();
+
+                x = winWidth - (xy[0] + nodeWidth);
+                delta[0] = parseInt(Y_DOM.getComputedStyle(node, 'right'), 10);
+                currentXY[0] = (winWidth - (currentXY[0] + nodeWidth));
+            }
+
             if (xy[0] !== null) {
-                setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
+                setStyle(node, hAttr, x - currentXY[0] + delta[0] + 'px');
             }
 
             if (xy[1] !== null) {
