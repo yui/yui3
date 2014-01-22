@@ -12,7 +12,8 @@
     },
     "main": "./index.js",
     "dependencies": {
-        "request": "~2.21.0"
+        "request": "~2.21.0",
+        "asap": "~1.0.0"
     },
     "devDependencies": {
         "yogi": "~0.1.0",
