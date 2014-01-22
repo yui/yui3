@@ -36,5 +36,6 @@ function soon(callbackFunction) {
 }
 
 soon._asynchronizer = asap;
+soon._impl = 'asap';
 
 Y.soon = soon;
