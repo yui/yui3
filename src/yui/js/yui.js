@@ -675,6 +675,7 @@ with any configuration info required for the module.
             len = r.length, loader, def, go,
             c = [],
             modArgs, esCompat, reqlen,
+            condition,
             __exports__, __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
@@ -811,6 +812,16 @@ with any configuration info required for the module.
                         if (esCompat) {
                             // store the `exports` in case others `es` modules requires it
                             exported[name] = __exports__;
+                            
+                            // If an ES module is conditionally loaded and set
+                            // to be used "instead" another module, replace the
+                            // trigger module's content with the conditionally
+                            // loaded one so the values returned by require()
+                            // still makes sense
+                            condition = mod.details.condition;
+                            if (condition && condition.when === 'instead') {
+                                exported[condition.trigger] = __exports__;
+                            }
                         }
                     }
 

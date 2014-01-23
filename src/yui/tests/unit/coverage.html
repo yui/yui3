@@ -94,6 +94,9 @@ YUI({
             fullpath: './assets/core-tests.js',
             requires: ['classnamemanager', 'node']
         },
+        'es-modules-test': {
+            fullpath: './assets/es-modules-test.js'
+        },
 
         'config-test': {
             fullpath: './assets/config-test.js'
@@ -122,7 +125,7 @@ YUI({
         }
 
     }
-}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
+}).use('ua-tests', 'seed-tests', 'core-tests', 'es-modules-test', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
     //This is a YUITest hack to rename this test for reporting
