@@ -812,7 +812,7 @@ with any configuration info required for the module.
                         if (esCompat) {
                             // store the `exports` in case others `es` modules requires it
                             exported[name] = __exports__;
-                            
+
                             // If an ES module is conditionally loaded and set
                             // to be used "instead" another module, replace the
                             // trigger module's content with the conditionally
@@ -1000,12 +1000,13 @@ with any configuration info required for the module.
     Sugar for loading both legacy and ES6-based YUI modules.
 
     @method require
-    @param {String[]} modules List of module names to import.
+    @param {String|String[]} modules List of module names to import or a single
+        module name.
     @param {Function} callback Callback that gets called once all the modules
         were loaded. Each parameter of the callback is the export value of the
         corresponding module in the list. If the module is a legacy YUI module,
         the YUI instance is used instead of the module exports.
-    @return {YUI} The YUI instance
+    @chainable
     @example
     ```
     YUI().require(['es6-collections'], function (collections) {
