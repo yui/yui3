@@ -235,7 +235,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         getBestMatch: function(drops, all) {
             var biggest = null, area = 0, out;
 
-            Y.Array.each(drops, function(v) {
+            Y.each(drops, function(v) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
                 v.region.area = inter.area;
 
@@ -304,7 +304,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             if (this._hasActiveShim()) {
                 this._handleTargetOver();
             } else {
-                Y.Array.each(this.otherDrops, function(v) {
+                Y.each(this.otherDrops, function(v) {
                     v._handleOut.apply(v, []);
                 });
             }
