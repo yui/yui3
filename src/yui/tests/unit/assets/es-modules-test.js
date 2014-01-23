@@ -28,6 +28,39 @@ YUI.add('mod5-es', function (Y, NAME, __imports__, __exports__) {
     return __exports__;
 }, '', { es: true, requires: ['mod2-es-legacy', 'mod3-es-mix', 'mod4-es-without-export'] });
 
+YUI.add('mod6-es', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'foo';
+    return __exports__;
+}, '', { es: true });
+
+YUI.add('mod7-es-condition', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'bar';
+    return __exports__;
+}, '', {
+    es: true,
+    condition: {
+        trigger: 'mod6-es',
+        when: 'instead'
+    }
+});
+
+// Module 8 defined with a condition before module 9
+YUI.add('mod8-es-condition-before', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'bar';
+    return __exports__;
+}, '', {
+    es: true,
+    condition: {
+        trigger: 'mod9-es',
+        when: 'instead'
+    }
+});
+
+YUI.add('mod9-es', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'foo';
+    return __exports__;
+}, '', { es: true });
+
 suite.add(new Y.Test.Case({
     name: 'ES Modules Compat tests',
 
@@ -91,6 +124,18 @@ Y.SeedTests.add(new Y.Test.Case({
         YUI().require(['mod1-legacy'], function ($Y) {
             Assert.areEqual('mod1-legacy', $Y['mod1-legacy'][1], 'non-es6 module failed to load correctly');
             Assert.isInstanceOf(YUI, $Y, 'requiring a non-es6 module should get a YUI instance');
+        });
+    },
+
+    'replacing modules with conditional loading': function () {
+        YUI().require(['mod6-es'], function (mod) {
+            Assert.areEqual('bar', mod.foo, 'Conditionally loaded module did not overwrite trigger module');
+        });
+    },
+
+    'replacing modules with conditional loading - reverse order': function () {
+        YUI().require(['mod9-es'], function (mod) {
+            Assert.areEqual('bar', mod.foo, 'Conditionally loaded module did not overwrite trigger module');
         });
     }
 }));
