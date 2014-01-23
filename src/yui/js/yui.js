@@ -1016,18 +1016,24 @@ with any configuration info required for the module.
     ```
     **/
     require: function (modules, callback) {
-        if (!this.Array) {
-            this._attach(['yui-base']);
-        }
-        modules = this.Array(modules);
         return this.use(modules, function (Y) {
             var results = [],
                 i, length,
                 exported = Y.Env._exported;
 
+            modules = Y.Array(modules);
+
             for (i = 0, length = modules.length; i < length; i++) {
+                // If a module is not registered as an ES module, use the Y instead
                 results[i] = exported.hasOwnProperty(modules[i]) ? exported[modules[i]] : Y;
             }
+
+            // Using `undefined` because:
+            // - Using `Y.config.global` would force the value of `this` to be
+            //   the global object even in strict mode
+            // - Using `Y` goes against the goal of moving away from a shared
+            //   object and start thinking in terms of imported and exported
+            //   objects
             callback.apply(undefined, results);
         });
     },
