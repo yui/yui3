@@ -7,6 +7,8 @@ YUI Core Change History
 * Fixed UA detection in recent versions of the Amazon Silk browser.
   ([#1576][]: @adinardi)
 
+[#1576]: https://github.com/yui/yui3/pull/1576
+
 3.14.1
 ------
 
