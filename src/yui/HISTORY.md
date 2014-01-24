@@ -4,7 +4,8 @@ YUI Core Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed UA detection in recent versions of the Amazon Silk browser.
+  ([#1576][]: @adinardi)
 
 3.14.1
 ------
