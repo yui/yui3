@@ -496,7 +496,9 @@ proto = {
 
         Y.config.lang = Y.config.lang || 'en-US';
 
-        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        Y.config.base = (YUI.config.baseBase && YUI.config.root ?
+                YUI.config.baseBase + YUI.config.root : YUI.config.base) ||
+                Y.Env.getBase(Y.Env._BASE_RE);
 
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';
