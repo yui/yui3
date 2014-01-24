@@ -101,6 +101,21 @@ YUI.add('general-tests', function(Y) {
 
             self.wait();
         },
+        'test: next() bounds the function to the test': function () {
+            var self = this;
+
+            self.foo = 'bar';
+
+            function async(callback) {
+                setTimeout(callback, 0);
+            }
+
+            async(self.next(function () {
+                self.assert(this.foo === 'bar');
+            }));
+
+            self.wait();
+        },
         _should: {
             error: {
                 'test: resume without wait': true
