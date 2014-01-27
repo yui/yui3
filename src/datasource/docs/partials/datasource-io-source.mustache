@@ -117,7 +117,7 @@ YUI().use("dump", "node", "datasource-io", "datasource-jsonschema", "datasource-
                 Y.one("#demo_output_json").setHTML(Y.dump(e.response));
             },
             failure: function(e){
-                Y.one("#demo_output_json").setHTML("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_json").setHTML('The data could not be retrieved. Please <a href="?mock=true">try this example with mocked data</a> instead.');
             }
         };
 
@@ -141,7 +141,7 @@ YUI().use("dump", "node", "datasource-io", "datasource-jsonschema", "datasource-
                 Y.one("#demo_output_xml").setHTML(Y.dump(e.response).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
             },
             failure: function(e){
-                Y.one("#demo_output_xml").setHTML("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_xml").setHTML('The data could not be retrieved. Please <a href="?mock=true">try this example with mocked data</a> instead.');
             }
         };
 

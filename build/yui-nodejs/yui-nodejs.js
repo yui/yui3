@@ -978,6 +978,41 @@ with any configuration info required for the module.
     },
 
     /**
+    Sugar for loading both legacy and ES6-based YUI modules.
+
+    @method require
+    @param {String[]} modules List of module names to import.
+    @param {Function} callback Callback that gets called once all the modules
+        were loaded. Each parameter of the callback is the export value of the
+        corresponding module in the list. If the module is a legacy YUI module,
+        the YUI instance is used instead of the module exports.
+    @return {YUI} The YUI instance
+    @example
+    ```
+    YUI().require(['es6-collections'], function (collections) {
+        var Set = collections.Set,
+            set = new Set();
+    });
+    ```
+    **/
+    require: function (modules, callback) {
+        if (!this.Array) {
+            this._attach(['yui-base']);
+        }
+        modules = this.Array(modules);
+        return this.use(modules, function (Y) {
+            var results = [],
+                i, length,
+                exported = Y.Env._exported;
+
+            for (i = 0, length = modules.length; i < length; i++) {
+                results[i] = exported.hasOwnProperty(modules[i]) ? exported[modules[i]] : Y;
+            }
+            callback.apply(undefined, results);
+        });
+    },
+
+    /**
     Handles Loader notifications about attachment/load errors.
 
     @method _notify
@@ -3650,7 +3685,7 @@ YUI.Env.parseUA = function(subUA) {
 
                 }
                 if (/Silk/.test(ua)) {
-                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    m = ua.match(/Silk\/([^\s]*)/);
                     if (m && m[1]) {
                         o.silk = numberify(m[1]);
                     }
@@ -4849,7 +4884,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2014.01.10-22-44',
+        GALLERY_VERSION = 'gallery-2014.01.22-18-38',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
