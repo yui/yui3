@@ -160,16 +160,6 @@ available.
 
         Y.instanceOf = instanceOf;
 
-        // Hook to patch intialized instance
-        if (!Y._patched && Y.config.patches) {
-            (function (patches, len, i) {
-                Y._patched = true;
-                for (i = 0, len = patches.length; i < len; i += 1) {
-                    patches[i](Y);
-                }
-            }(Y.config.patches));
-        }
-
         return Y;
     };
 

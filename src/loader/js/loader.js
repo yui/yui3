@@ -110,6 +110,16 @@ Y.Loader = function(o) {
     //Catch no config passed.
     o = o || {};
 
+    // Hook to patch loader
+    if (!Y._patched && Y.config.patches) {
+        (function (patches, len, i) {
+            Y._patched = true;
+            for (i = 0, len = patches.length; i < len; i += 1) {
+                patches[i](Y, self);
+            }
+        }(Y.config.patches));
+    }
+
     modulekey = META.md5;
 
     /**
