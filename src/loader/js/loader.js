@@ -2473,7 +2473,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-            groupName = group || (this.getModuleInfo(name) || {}).group || null;
+            groupName = group || (this._getModuleInfo(name) || {}).group || null;
 
         if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
             modFilter = this.groups[groupName].filter;
