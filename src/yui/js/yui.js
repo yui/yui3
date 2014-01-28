@@ -70,7 +70,7 @@ available.
         if (!Y._instancePatched && gconf && gconf.instancePatches) {
             (function (patches, len, i) {
                 Y._instancePatched = true;
-                for (i = 0, len = patches.length; i < len; i += 0) {
+                for (i = 0, len = patches.length; i < len; i += 1) {
                     patches[i](Y);
                 }
             }(gconf.instancePatches));
@@ -164,7 +164,7 @@ available.
         if (!Y._patched && Y.config.patches) {
             (function (patches, len, i) {
                 Y._patched = true;
-                for (i = 0, len = patches.length; i < len; i += 0) {
+                for (i = 0, len = patches.length; i < len; i += 1) {
                     patches[i](Y);
                 }
             }(Y.config.patches));
