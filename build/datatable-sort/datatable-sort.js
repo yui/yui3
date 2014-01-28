@@ -222,7 +222,7 @@ Y.mix(Sortable.prototype, {
     columns.
 
     @property SORTABLE_HEADER_TEMPLATE
-    @type {HTML}
+    @type {String}
     @value '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>'
     @since 3.5.0
     **/

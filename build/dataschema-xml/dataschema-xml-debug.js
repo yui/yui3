@@ -109,7 +109,7 @@ SchemaXML = {
           details.
       @param {Array} [schema.metaFields] XPath locators to extract extra
           non-record related information from the XML data
-    @param {XMLDoc} data XML data to parse
+    @param {XMLDocument} data XML data to parse
     @return {Object} An Object with properties `results` and `meta`
     @static
     **/

@@ -66,6 +66,16 @@ available.
             },
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
+        // Early hook to patch YUI instance
+        if (!Y._instancePatched && gconf && gconf.instancePatches) {
+            (function (patches, len, i) {
+                Y._instancePatched = true;
+                for (i = 0, len = patches.length; i < len; i += 0) {
+                    patches[i](Y);
+                }
+            }(gconf.instancePatches));
+        }
+
         if (!(instanceOf(Y, YUI))) {
             Y = new YUI();
         } else {
@@ -149,6 +159,16 @@ available.
         }
 
         Y.instanceOf = instanceOf;
+
+        // Hook to patch intialized instance
+        if (!Y._patched && Y.config.patches) {
+            (function (patches, len, i) {
+                Y._patched = true;
+                for (i = 0, len = patches.length; i < len; i += 0) {
+                    patches[i](Y);
+                }
+            }(Y.config.patches));
+        }
 
         return Y;
     };
@@ -1791,6 +1811,25 @@ Skin configuration and customizations.
 /**
 Hash of per-component filter specifications. If specified for a given component,
 this overrides the global `filter` config.
+
+@example
+    YUI({
+        modules: {
+            'foo': './foo.js',
+            'bar': './bar.js',
+            'baz': './baz.js'
+        },
+        filters: {
+            'foo': {
+                searchExp: '.js',
+                replaceStr: '-coverage.js'
+            }
+        }
+    }).use('foo', 'bar', 'baz', function (Y) {
+        // foo-coverage.js is loaded
+        // bar.js is loaded
+        // baz.js is loaded
+    });
 
 @property {Object} filters
 **/
