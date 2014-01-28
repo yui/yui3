@@ -89,29 +89,56 @@ YUI.add('general-tests', function(Y) {
         'test: next() resumes the test': function () {
             var self = this;
 
-            function async(data, callback) {
+            function async(callback) {
+                setTimeout(callback, 0);
+            }
+
+            async(self.next( function () {} ));
+
+            self.wait();
+        },
+        'test: next() passes parameters to the callback': function () {
+            var self = this;
+
+            function async(callback) {
                 setTimeout(function () {
-                    callback(data);
+                    callback('hello world');
                 }, 0);
             }
 
-            async('hello world', self.next(function (message) {
+            async(self.next(function (message) {
                 self.assert(message === 'hello world');
             }));
 
             self.wait();
         },
-        'test: next() bounds the function to the test': function () {
+        'test: next() bounds the function to given context': function () {
+            var self = this, async;
+
+            async = {
+                i_am_async: true,
+                execute: function (callback) {
+                    setTimeout(callback, 0);
+                }
+            };
+
+            async.execute(self.next(function () {
+                self.assert(this.i_am_async === true);
+            }, async));
+
+            self.wait();
+        },
+        'test: next() bounds the function to the test if no context is given': function () {
             var self = this;
 
-            self.foo = 'bar';
+            self.i_am_test = true;
 
             function async(callback) {
                 setTimeout(callback, 0);
             }
 
             async(self.next(function () {
-                self.assert(this.foo === 'bar');
+                self.assert(this.i_am_test === true);
             }));
 
             self.wait();
