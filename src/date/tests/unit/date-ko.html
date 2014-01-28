@@ -10,21 +10,21 @@
     <div id="log"></div>
 
     <script>
-    var curLang, dateEN;
+    var curLang, dateKR;
 
     YUI({
         coverage: ['datatype-date-format','datatype-date-parse'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        lang: 'en-US,pa-IN',
+        lang: 'en-US,ko-KR,pa-IN',
         modules: {
-            'date-tests': {
-                fullpath: './assets/date-tests.js',
+            'date-ko-tests': {
+                fullpath: './assets/date-ko-tests.js',
                 requires:['datatype-date', 'test']
             }
         }
-    }).use('test-console', 'date-tests', function (Y) {
-        curLang = 'en-US';
-        dateEN = Y.Date;
+    }).use('test-console', 'date-ko-tests', 'lang/datatype-date-format_ko-KR', function (Y) {
+        curLang = 'ko-KR';
+        dateKR = Y.Date;
 
         (new Y.Test.Console()).render('#log');
 
