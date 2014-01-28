@@ -66,6 +66,16 @@ available.
             },
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
+        // Early hook to patch YUI instance
+        if (!Y._instancePatched && gconf && gconf.instancePatches) {
+            (function (patches, len, i) {
+                Y._instancePatched = true;
+                for (i = 0, len = patches.length; i < len; i += 0) {
+                    patches[i](Y);
+                }
+            }(gconf.instancePatches));
+        }
+
         if (!(instanceOf(Y, YUI))) {
             Y = new YUI();
         } else {
@@ -149,6 +159,16 @@ available.
         }
 
         Y.instanceOf = instanceOf;
+
+        // Hook to patch intialized instance
+        if (!Y._patched && Y.config.patches) {
+            (function (patches, len, i) {
+                Y._patched = true;
+                for (i = 0, len = patches.length; i < len; i += 0) {
+                    patches[i](Y);
+                }
+            }(Y.config.patches));
+        }
 
         return Y;
     };
