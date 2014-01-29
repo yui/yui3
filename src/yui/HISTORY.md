@@ -4,7 +4,14 @@ YUI Core Change History
 @VERSION@
 ------
 
-* No changes.
+* Added `Y.require()` for importing ES6 modules. It's similar to `Y.use()` but
+  it follow the following signature:
+
+```js
+YUI().require('some-es6-module', function (Y, imports) {
+  var foo = imports['some-es6-module'].foo;
+});
+```
 
 3.14.1
 ------
