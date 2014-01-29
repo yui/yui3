@@ -535,10 +535,8 @@ Y.Loader.prototype = {
             globalRenderedMods = GLOBAL_ENV._renderedMods,
             v;
 
-        if (globalRenderedMods && !this.ignoreRegistered) {
-            if (globalRenderedMods.hasOwnProperty(name)) {
-                this.moduleInfo[name] = Y.merge(globalRenderedMods[name]);
-            }
+        if (globalRenderedMods && globalRenderedMods.hasOwnProperty(name) && !this.ignoreRegistered) {
+            this.moduleInfo[name] = Y.merge(globalRenderedMods[name]);
             if (globalConditions.hasOwnProperty(name)) {
                 this.conditions[name] = Y.merge(globalConditions[name]);
             }
