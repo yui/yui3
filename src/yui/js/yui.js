@@ -1000,42 +1000,51 @@ with any configuration info required for the module.
     Sugar for loading both legacy and ES6-based YUI modules.
 
     @method require
-    @param {String|String[]} modules List of module names to import or a single
+    @param {String} [modules*] List of module names to import or a single
         module name.
     @param {Function} callback Callback that gets called once all the modules
         were loaded. Each parameter of the callback is the export value of the
         corresponding module in the list. If the module is a legacy YUI module,
         the YUI instance is used instead of the module exports.
-    @chainable
     @example
     ```
-    YUI().require(['es6-collections'], function (collections) {
-        var Set = collections.Set,
+    YUI().require(['es6-set'], function (Y, imports) {
+        var Set = imports.Set,
             set = new Set();
     });
     ```
     **/
-    require: function (modules, callback) {
-        return this.use(modules, function (Y) {
-            var results = [],
-                i, length,
-                exported = Y.Env._exported;
+    require: function () {
+        var args = SLICE.call(arguments),
+            callback;
 
-            modules = Y.Array(modules);
+        if (typeof args[args.length - 1] === 'function') {
+            callback = args.pop();
 
-            for (i = 0, length = modules.length; i < length; i++) {
-                // If a module is not registered as an ES module, use the Y instead
-                results[i] = exported.hasOwnProperty(modules[i]) ? exported[modules[i]] : Y;
-            }
+            // only add the callback if one was provided
+            // YUI().require('foo'); is valid
+            args.push(function (Y) {
+                var i, length = args.length,
+                    exported = Y.Env._exported,
+                    __imports__ = {};
 
-            // Using `undefined` because:
-            // - Using `Y.config.global` would force the value of `this` to be
-            //   the global object even in strict mode
-            // - Using `Y` goes against the goal of moving away from a shared
-            //   object and start thinking in terms of imported and exported
-            //   objects
-            callback.apply(undefined, results);
-        });
+                // Get only the imports requested as arguments
+                for (i = 0; i < length; i++) {
+                    if (exported.hasOwnProperty(args[i])) {
+                        __imports__[args[i]] = exported[args[i]];
+                    }
+                }
+
+                // Using `undefined` because:
+                // - Using `Y.config.global` would force the value of `this` to be
+                //   the global object even in strict mode
+                // - Using `Y` goes against the goal of moving away from a shared
+                //   object and start thinking in terms of imported and exported
+                //   objects
+                callback.call(undefined, Y, __imports__);
+            });
+        }
+        this.use.apply(this, args);
     },
 
     /**
