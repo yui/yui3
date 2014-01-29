@@ -110,10 +110,19 @@ Y.SeedTests.add(new Y.Test.Case({
 
     'calling require() with a string parameter': function () {
         YUI().require('mod3-es-mix', function ($Y, imports) {
+            var keys = [], key;
+
+            for (key in imports) {
+                if (imports.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+
             Assert.isNotUndefined(imports, 'Callback did not get a dictionary of imports');
             Assert.isNotUndefined(imports['mod3-es-mix'], 'ES6 module not imported');
             Assert.areSame(3, imports['mod3-es-mix']['default'], 'ES6 module does not contain expected named export');
             Assert.isFalse(imports['mod3-es-mix'] instanceof YUI, 'ES6 module should not be an instance of YUI');
+            Y.ArrayAssert.itemsAreSame(['mod3-es-mix'], keys, 'YUI should only import the required ES6 modules');
         });
     },
 
