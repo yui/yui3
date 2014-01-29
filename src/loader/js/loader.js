@@ -23,7 +23,7 @@ var NOT_FOUND = {},
     // MAX_URL_LENGTH = 1024,
     MAX_URL_LENGTH = 1600,
     ////////////////////////////////////////////////////////////
-    //                  END WF2 CHANGE                      //
+    //                  END WF2 CHANGE                        //
     ////////////////////////////////////////////////////////////
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
