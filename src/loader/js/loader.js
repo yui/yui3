@@ -102,6 +102,7 @@ Y.Env.meta = META;
  * @param {Object} config.groups A list of group definitions.  Each group can contain specific definitions for `base`, `comboBase`, `combine`, and accepts a list of `modules`.
  * @param {String} config.2in3 The version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.
  * @param {String} config.yui2 When using the 2in3 project, you can select the version of YUI 2 to use.  Valid values are `2.2.2`, `2.3.1`, `2.4.1`, `2.5.2`, `2.6.0`, `2.7.0`, `2.8.0`, `2.8.1` and `2.9.0` [default] -- plus all versions of YUI 2 going forward.
+ * @param {Function} config.hookForLoader An optional hook that allows the patching of the loader instance
  */
 Y.Loader = function(o) {
 
@@ -111,13 +112,8 @@ Y.Loader = function(o) {
     o = o || {};
 
     // Hook to patch loader
-    if (!Y._patched && Y.config.patches) {
-        (function (patches, len, i) {
-            Y._patched = true;
-            for (i = 0, len = patches.length; i < len; i += 1) {
-                patches[i](Y, self);
-            }
-        }(Y.config.patches));
+    if (o.hookForLoader) {
+        o.hookForLoader(Y, self);
     }
 
     modulekey = META.md5;
