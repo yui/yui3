@@ -1044,6 +1044,14 @@ with any configuration info required for the module.
                 callback.call(undefined, Y, __imports__);
             });
         }
+        // Do not return the Y object. This makes it hard to follow this
+        // traditional pattern:
+        //   var Y = YUI().use(...);
+        // This is a good idea in the light of ES6 modules, to avoid working
+        // in the global scope.
+        // This also leaves the door open for returning a promise, once the
+        // YUI loader is based on the ES6 loader which uses
+        // loader.import(...).then(...)
         this.use.apply(this, args);
     },
 
