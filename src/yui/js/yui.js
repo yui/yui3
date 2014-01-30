@@ -66,16 +66,6 @@ available.
             },
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
-        // Early hook to patch YUI instance
-        if (!Y._instancePatched && gconf && gconf.instancePatches) {
-            (function (patches, len, i) {
-                Y._instancePatched = true;
-                for (i = 0, len = patches.length; i < len; i += 1) {
-                    patches[i](Y);
-                }
-            }(gconf.instancePatches));
-        }
-
         if (!(instanceOf(Y, YUI))) {
             Y = new YUI();
         } else {
