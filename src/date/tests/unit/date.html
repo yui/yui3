@@ -1,37 +1,76 @@
-<!doctype html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Date Tests</title>
     <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
+
 <body class="yui3-skin-sam">
 
-    <div id="log"></div>
+<h1>Date Tests</h1>
 
-    <script>
-    var curLang, dateEN;
+<div id="log"></div>
+
+
+<script type="text/javascript">
+
+YUI.applyConfig({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+});
+
+var dateUS, dateFR, dateKR;
+(function() {
+
+    var start = function() {
+        if (!dateUS || !dateFR || !dateKR) {
+            return;
+        }
+        YUI({
+            lang: "en-US",
+            coverage: ['datatype-date'],
+            modules: {
+                'date-tests': {
+                    fullpath: './assets/date-tests.js',
+                    requires: [ "test", "dump", "datatype-date" ]
+                }
+            }
+        }).use('date-tests', "test-console", function(Y) {
+
+            (new Y.Test.Console()).render('#log');
+
+            Y.Test.Runner.run();
+        });
+    };
 
     YUI({
-        coverage: ['datatype-date-format','datatype-date-parse'],
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        lang: 'en-US,pa-IN',
-        modules: {
-            'date-tests': {
-                fullpath: './assets/date-tests.js',
-                requires:['datatype-date', 'test']
-            }
-        }
-    }).use('test-console', 'date-tests', function (Y) {
-        curLang = 'en-US';
-        dateEN = Y.Date;
-
-        (new Y.Test.Console()).render('#log');
-
-        Y.Test.Runner.run();
+        coverage: ['datatype-date'],
+        lang: "en-US"
+    }).use("datatype-date", function(Y) {
+        dateUS = Y.Date;
+        start();
     });
 
 
-    </script>
+    YUI({
+        coverage: ['datatype-date'],
+        lang: "fr-FR"
+    }).use("datatype-date", function(Y) {
+        dateFR = Y.Date;
+        start();
+    });
+
+    YUI({
+        coverage: ['datatype-date'],
+        lang: "ko-KR"
+    }).use("datatype-date", function(Y) {
+        dateKR = Y.Date;
+        start();
+    });
+
+
+
+})();
+</script>
 </body>
 </html>
