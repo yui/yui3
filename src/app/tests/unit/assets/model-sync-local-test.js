@@ -206,9 +206,13 @@ modelSyncLocalSuite.add(new Y.Test.Case({
     'Failed syncs due to errors should pass an error message to the callback': function () {
         var model = new Y.TestModel({id: 'users-5'});
 
+        model._save = function () {
+            throw new Error('Failed sync');
+        };
+
         model.set('name', 'jeff');
         model.save(function (err, res) {
-            Assert.isNull(err);
+            Assert.areSame('Failed sync', err);
         });
     }
 }));
