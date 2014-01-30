@@ -286,28 +286,28 @@ YUI.add('date-tests', function(Y) {
         name: "Date Format U.S. Tests",
 
         testUS: function() {
-            if (!dateUS || curLang !== 'en-US') {
+            if (!dateEN || curLang !== 'en-US') {
                 return;
             }
 
-            ASSERT.isNotNull(dateUS, "Expected U.S. Date to be loaded.");
+            ASSERT.isNotNull(dateEN, "Expected U.S. Date to be loaded.");
 
             var date = new Date("17 Dec 1995 00:24:00"),
                 output;
 
-            output = dateUS.format(date);
+            output = dateEN.format(date);
             ASSERT.areSame("1995-12-17", output, "Expected default format (%F).");
 
-            output = dateUS.format(date, {format:"%a %A"});
+            output = dateEN.format(date, {format:"%a %A"});
             ASSERT.areSame("Sun Sunday", output, "Expected %a %A format.");
 
-            output = dateUS.format(date, {format:"%b %B"});
+            output = dateEN.format(date, {format:"%b %B"});
             ASSERT.areSame("Dec December", output, "Expected %b %B format.");
 
-            output = dateUS.format(date, {format:"%x"});
+            output = dateEN.format(date, {format:"%x"});
             ASSERT.areSame("12/17/95", output, "Expected %x format.");
 
-            output = dateUS.format(date, {format:"%r"});
+            output = dateEN.format(date, {format:"%r"});
             ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "en-US"), output, "Expected %r format.");
         }
     });
