@@ -78,3 +78,13 @@ suite.add({
         loader.resolve(true);
     }
 });
+
+suite.add({
+    "caculate dependecies": function () {
+        var loader = new Y.Loader({
+            require: ['app', 'charts']
+        });
+
+        loader.calculate();
+    }
+});
