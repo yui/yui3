@@ -288,7 +288,7 @@ Promise.all = function (values) {
         }
 
         for (; i < length; i++) {
-            Promise.cast(values[i]).then(oneDone(i), reject);
+            Promise.resolve(values[i]).then(oneDone(i), reject);
         }
     });
 };
@@ -315,7 +315,7 @@ Promise.race = function (values) {
         // This abuses the fact that calling resolve/reject multiple times
         // doesn't change the state of the returned promise
         for (var i = 0, count = values.length; i < count; i++) {
-            Promise.cast(values[i]).then(resolve, reject);
+            Promise.resolve(values[i]).then(resolve, reject);
         }
     });
 };

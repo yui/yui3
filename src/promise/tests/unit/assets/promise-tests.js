@@ -464,11 +464,11 @@ YUI.add('promise-tests', function (Y) {
         name: 'Promise.resolve() tests',
 
         'a promise should not be modified': function () {
-            var promise = new Promise(),
+            var promise = new Promise(function () {}),
                 wrapped = Promise.resolve(promise);
 
-            Assert.isTrue(Promise.isPromise(promise), 'Promise.cast should always return a promise');
-            Assert.areSame(promise, wrapped, 'Promise.cast should not modify a promise');
+            Assert.isTrue(Promise.isPromise(promise), 'Promise.resolve should always return a promise');
+            Assert.areSame(promise, wrapped, 'Promise.resolve should not modify a promise');
         },
 
         'values should be wrapped in a promise': function () {
