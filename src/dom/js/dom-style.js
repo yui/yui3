@@ -207,21 +207,33 @@ Y.DOM._getAttrOffset = function(node, attr) {
     return val;
 };
 
-Y.DOM._getOffset = function(node) {
+Y.DOM._getOffset = function(node, dir) {
     var pos,
-        xy = null;
+        xy = null,
+        offset = {
+            left: 'offsetLeft',
+            right: 'offsetRight'
+        },
+        margins = {
+            left: 'marginLeft',
+            right: 'marginRight'
+        },
+        margin;
+
+    dir = dir || 'left';
 
     if (node) {
         pos = Y_DOM.getStyle(node, 'position');
+        margin = parseInt(Y_DOM[GET_COMPUTED_STYLE](node, margins[dir]), 10);
         xy = [
-            parseInt(Y_DOM[GET_COMPUTED_STYLE](node, 'left'), 10),
+            parseInt(Y_DOM[GET_COMPUTED_STYLE](node, dir), 10),
             parseInt(Y_DOM[GET_COMPUTED_STYLE](node, 'top'), 10)
         ];
 
         if ( isNaN(xy[0]) ) { // in case of 'auto'
-            xy[0] = parseInt(Y_DOM.getStyle(node, 'left'), 10); // try inline
+            xy[0] = parseInt(Y_DOM.getStyle(node, dir), 10); // try inline
             if ( isNaN(xy[0]) ) { // default to offset value
-                xy[0] = (pos === 'relative') ? 0 : node.offsetLeft || 0;
+                xy[0] = (pos === 'relative') ? 0 : (node[offset[dir]] - margin) || 0;
             }
         }
 
