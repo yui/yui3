@@ -1,0 +1,69 @@
+    YUI().use('datatable', 'datatable-paginator', 'datatype-number', function (Y) {
+
+        var foods = ('Achoccha|Amaranth|Angelica|...|Watermelon|Yams').split('|'),
+            data = [],
+            i,
+            len;
+
+        for (i = 0, len = foods.length; i < len; i++) {
+            data.push({
+                id: i + 1,
+                name: foods[i],
+                price: Math.round((Math.random()) * 500) / 500,
+                qty: Math.ceil(len * Math.random())
+            });
+        }
+
+        var table = new Y.DataTable({
+            columns: [
+                {
+                    key: 'id',
+                    label: ' ',
+                    width: '70px',
+                    className: 'numeric'
+                },
+                {
+                    key: 'name',
+                    label: 'Food'
+                },
+                {
+                    key: 'price',
+                    label: 'Price',
+                    formatter: function (o) {
+                        return Y.Number.format(o.data.price, {
+                            prefix: "$",
+                            thousandsSeparator: ",",
+                            decimalSeparator: ".",
+                            decimalPlaces: 2
+                        })
+                    },
+                    width: '100px',
+                    className: 'numeric'
+                },
+                {
+                    key: 'qty',
+                    label: 'QTY',
+                    width: '80px',
+                    className: 'numeric'
+                },
+                {
+                    key: 'fn',
+                    label: 'Price',
+                    formatter: function(o) {
+                        return Y.Number.format(o.data.price * o.data.qty, {
+                            prefix: "$",
+                            thousandsSeparator: ",",
+                            decimalSeparator: ".",
+                            decimalPlaces: 2
+                        });
+                    },
+                    width: '120px',
+                    className: 'numeric'
+                }
+            ],
+            data: data
+        });
+
+        table.render('#dtable');
+
+    });

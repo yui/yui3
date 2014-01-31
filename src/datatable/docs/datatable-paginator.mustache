@@ -1,0 +1,57 @@
+<div class="intro">
+    <p>
+        {{description}}
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>datatable-paginator-css}}
+    {{>datatable-paginator-html}}
+    <script>
+        {{>datatable-paginator-js}}
+    </script>
+</div>
+
+
+<h2>Getting started</h2>
+<p>Because DataTable Paginator comes with it's own UI, there really isn't much
+mark up we need to get started.</p>
+```
+{{>datatable-paginator-html}}
+```
+<p>After that we need to right align our numbers.</p>
+```
+{{>datatable-paginator-css}}
+```
+<p>That's it! Just a place to put the table when we render it and some
+formatting on the columns containing numbers.</p>
+
+<h2>Implementation</h2>
+<p>For this example we create an Array of data out of 185 words and some random
+numbers. We add in some formatting to make it a little prettier. Finally we
+create a "total" column multiplying the price and quantity values.</p>
+```
+{{>datatable-paginator-js-abbr}}
+```
+<p>At this point it's just a typical datatable. A datatable with 185 rows! We
+were hoping to have something a little easier to read. All we need to do is
+define the number of row per page with `rowsPerPage`. Any number greater than
+zero (0) will do the trick.</p>
+```
+        table.set('rowsPerPage', 10);
+```
+
+<p>We can also add a UI controller to the header.</p>
+```
+        table.set('paginatorLocation', ['header', 'footer']);
+```
+
+<h2>All the code!</h2>
+<p>For simplicity, we put our paginator specifics in the configuration object.</p>
+```
+{{>datatable-paginator-css}}
+{{>datatable-paginator-html}}
+<script>
+{{>datatable-paginator-js}}
+</script>
+```

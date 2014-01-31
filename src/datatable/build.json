@@ -75,6 +75,16 @@
             "jsfiles": [
                 "foot.js"
             ]
+        },
+        "datatable-keynav": {
+            "jsfiles": [
+                "keynav.js"
+            ]
+        },
+        "datatable-highlight": {
+            "jsfiles": [
+                "highlight.js"
+            ]
         }
     }
 }
