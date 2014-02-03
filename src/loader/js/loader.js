@@ -253,7 +253,7 @@ Y.Loader = function(o) {
      */
     self.maxURLLength = MAX_URL_LENGTH;
 
-    /**
+    /** 
      * Ignore modules registered on the YUI global
      * @property ignoreRegistered
      * @default false
@@ -533,6 +533,7 @@ Y.Loader.prototype = {
         var rawMetaModules = META.modules,
             globalConditions = GLOBAL_ENV._conditions,
             globalRenderedMods = GLOBAL_ENV._renderedMods,
+            internal = this._internal;
             v;
 
         if (globalRenderedMods && globalRenderedMods.hasOwnProperty(name) && !this.ignoreRegistered) {
@@ -542,6 +543,7 @@ Y.Loader.prototype = {
             }
         } else {
             if (rawMetaModules.hasOwnProperty(name)) {
+                this._internal = true; // making sure that modules from raw data are marked as internal
                 v = this.addModule(rawMetaModules[name], name);
                 // Inspect the page for the CSS module and mark it as loaded.
                 if (v && v.type && v.type === CSS) {
@@ -550,6 +552,7 @@ Y.Loader.prototype = {
                         this.loaded[v.name] = true;
                     }
                 }
+                this._internal = internal;
             }
         }
         return this.moduleInfo[name];
