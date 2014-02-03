@@ -295,7 +295,7 @@ LocalSync.prototype = {
             this.storage.setItem(id, hash);
         }
 
-        if (!Y.Array.indexOf(LocalSync._store[this.root], id)) {
+        if (Y.Array.indexOf(LocalSync._store[this.root], id) === -1) {
             LocalSync._store[this.root].push(id);
         }
 
