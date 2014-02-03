@@ -28,6 +28,39 @@ YUI.add('mod5-es', function (Y, NAME, __imports__, __exports__) {
     return __exports__;
 }, '', { es: true, requires: ['mod2-es-legacy', 'mod3-es-mix', 'mod4-es-without-export'] });
 
+YUI.add('mod6-es', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'foo';
+    return __exports__;
+}, '', { es: true });
+
+YUI.add('mod7-es-condition', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'bar';
+    return __exports__;
+}, '', {
+    es: true,
+    condition: {
+        trigger: 'mod6-es',
+        when: 'instead'
+    }
+});
+
+// Module 8 defined with a condition before module 9
+YUI.add('mod8-es-condition-before', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'bar';
+    return __exports__;
+}, '', {
+    es: true,
+    condition: {
+        trigger: 'mod9-es',
+        when: 'instead'
+    }
+});
+
+YUI.add('mod9-es', function (Y, NAME, __imports__, __exports__) {
+    __exports__.foo = 'foo';
+    return __exports__;
+}, '', { es: true });
+
 suite.add(new Y.Test.Case({
     name: 'ES Modules Compat tests',
 
@@ -71,26 +104,51 @@ Y.SeedTests.add(new Y.Test.Case({
         Y.Assert.isFunction(YUI().require);
     },
 
+    'require() returns undefined': function () {
+        Y.Assert.isUndefined(YUI().require());
+    },
+
     'calling require() with a string parameter': function () {
-        YUI().require('mod3-es-mix', function (SomeES6Module) {
-            Assert.isNotUndefined(SomeES6Module, 'ES6 module not imported');
-            Assert.areSame(3, SomeES6Module['default'], 'ES6 module does not contain expected named export');
-            Assert.isFalse(SomeES6Module instanceof YUI, 'ES6 module should not be an instance of YUI');
+        YUI().require('mod3-es-mix', function ($Y, imports) {
+            var keys = [], key;
+
+            for (key in imports) {
+                if (imports.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+
+            Assert.isNotUndefined(imports, 'Callback did not get a dictionary of imports');
+            Assert.isNotUndefined(imports['mod3-es-mix'], 'ES6 module not imported');
+            Assert.areSame(3, imports['mod3-es-mix']['default'], 'ES6 module does not contain expected named export');
+            Assert.isFalse(imports['mod3-es-mix'] instanceof YUI, 'ES6 module should not be an instance of YUI');
+            Y.ArrayAssert.itemsAreSame(['mod3-es-mix'], keys, 'YUI should only import the required ES6 modules');
         });
     },
 
-    'require(fn) gets a loaded ES6 module as a parameter': function () {
-        YUI().require(['mod3-es-mix'], function (SomeES6Module) {
-            Assert.isNotUndefined(SomeES6Module, 'ES6 module not imported');
-            Assert.areSame(3, SomeES6Module['default'], 'ES6 module does not contain expected named export');
-            Assert.isFalse(SomeES6Module instanceof YUI, 'ES6 module should not be an instance of YUI');
+    'require(fn) gets a list of ES6 modules as a parameter': function () {
+        YUI().require(['mod3-es-mix'], function ($Y, imports) {
+            Assert.isNotUndefined(imports['mod3-es-mix'], 'ES6 module not imported');
+            Assert.areSame(3, imports['mod3-es-mix']['default'], 'ES6 module does not contain expected named export');
+            Assert.isFalse(imports['mod3-es-mix'] instanceof YUI, 'ES6 module should not be an instance of YUI');
         });
     },
 
     'require(fn) gets a YUI instance when loading a non-es6 module': function () {
-        YUI().require(['mod1-legacy'], function ($Y) {
-            Assert.areEqual('mod1-legacy', $Y['mod1-legacy'][1], 'non-es6 module failed to load correctly');
-            Assert.isInstanceOf(YUI, $Y, 'requiring a non-es6 module should get a YUI instance');
+        YUI().require(['mod1-legacy'], function ($Y, imports) {
+            Assert.isUndefined(imports['mod1-legacy'], 'YUI modules should not be exposed as imports');
+        });
+    },
+
+    'replacing modules with conditional loading': function () {
+        YUI().require(['mod6-es'], function ($Y, imports) {
+            Assert.areEqual('bar', imports['mod6-es'].foo, 'Conditionally loaded module did not overwrite trigger module');
+        });
+    },
+
+    'replacing modules with conditional loading - reverse order': function () {
+        YUI().require(['mod9-es'], function ($Y, imports) {
+            Assert.areEqual('bar', imports['mod9-es'].foo, 'Conditionally loaded module did not overwrite trigger module');
         });
     }
 }));
