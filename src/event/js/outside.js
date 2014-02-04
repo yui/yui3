@@ -66,7 +66,7 @@ Y.Event.defineOutside = function (event, name) {
 
         on: function (node, sub, notifier) {
             sub.handle = Y.one('doc').on(event, function(e) {
-                if (this.isOutside(node, e.target)) {
+                if (config.isOutside(node, e.target)) {
                     e.currentTarget = node;
                     notifier.fire(e);
                 }
@@ -79,7 +79,7 @@ Y.Event.defineOutside = function (event, name) {
 
         delegate: function (node, sub, notifier, filter) {
             sub.handle = Y.one('doc').on(event, function (e) {
-                if (this.isOutside(node, e.target, filter)) {
+                if (config.isOutside(node, e.target, filter)) {
                     e.currentTarget = node;
                     notifier.fire(e);
                 }

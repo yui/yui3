@@ -7,7 +7,9 @@ YUI.add('outside-tests', function(Y) {
     node = Y.one('#tester');
 
 
-    //Only testing "clickoutside" since it's all the same logic.
+    // Only testing the full logic with "clickoutside" as it's always the same
+    // "tapoutside" regression test just checks that the "has no method
+    // 'isOutside'" error is fixed.
 
     suite.add(new Y.Test.Case({
         name: 'outside events',
@@ -88,6 +90,48 @@ YUI.add('outside-tests', function(Y) {
 
             handle.detach();
         },
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'tapoutside event regression test',
+
+        setUp: function () {
+            Y.Event.defineOutside('tap');
+        },
+
+        'test: on': function() {
+            var handle, that = this;
+
+            handle = node.on('tapoutside', function (e) {
+                that.resume(function () {
+                    Assert.areSame('tapoutside', e.type);
+                    Assert.areSame(node, e.currentTarget);
+                    Assert.areSame(body, e.target);
+                    handle.detach();
+                });
+            });
+
+            body.simulateGesture('tap');
+
+            this.wait();
+        },
+
+        'test: delegate': function() {
+            var handle, that = this;
+
+            handle = node.delegate('tapoutside', function (e) {
+                that.resume(function () {
+                    Assert.areSame('tapoutside', e.type);
+                    Assert.areSame(node, e.currentTarget);
+                    Assert.areSame(body, e.target);
+                    handle.detach();
+                });
+            });
+
+            body.simulateGesture('tap');
+            this.wait();
+        }
+
     }));
 
     Y.Test.Runner.add(suite);
