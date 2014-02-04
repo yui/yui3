@@ -533,7 +533,7 @@ Y.Loader.prototype = {
         var rawMetaModules = META.modules,
             globalConditions = GLOBAL_ENV._conditions,
             globalRenderedMods = GLOBAL_ENV._renderedMods,
-            internal = this._internal;
+            internal = this._internal,
             v;
 
         if (globalRenderedMods && globalRenderedMods.hasOwnProperty(name) && !this.ignoreRegistered) {
