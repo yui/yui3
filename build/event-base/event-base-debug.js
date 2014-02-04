@@ -51,7 +51,7 @@ if (YUI.Env.DOMReady) {
  * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
- * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+ * @param wrapper {CustomEvent} the custom event wrapper for this DOM event
  */
 
     var ua = Y.UA,
@@ -198,7 +198,9 @@ Y.extend(DOMEventFacade, Object, {
     preventDefault: function(returnValue) {
         var e = this._event;
         e.preventDefault();
-        e.returnValue = returnValue || false;
+        if (returnValue) {
+            e.returnValue = returnValue;
+        }
         this._wrapper.prevented = 1;
         this.prevented = 1;
     },
@@ -222,7 +224,7 @@ Y.DOMEventFacade = DOMEventFacade;
     /**
      * The native event
      * @property _event
-     * @type {Native DOM Event}
+     * @type {DOMEvent}
      * @private
      */
 
@@ -463,7 +465,7 @@ Event = function() {
      * Custom event wrappers for DOM events.  Key is
      * 'event:' + Element uid stamp + event type
      * @property _wrappers
-     * @type Y.Event.Custom
+     * @type CustomEvent
      * @static
      * @private
      */
@@ -1262,7 +1264,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @param {HTMLElement} el      the element to bind the handler to
          * @param {string}      type   the type of event handler
          * @param {function}    fn      the callback to invoke
-         * @param {boolen}      capture capture or bubble phase
+         * @param {Boolean}      capture capture or bubble phase
          * @static
          * @private
          */
@@ -1275,7 +1277,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @param {HTMLElement} el      the element to bind the handler to
          * @param {string}      type   the type of event handler
          * @param {function}    fn      the callback to invoke
-         * @param {boolen}      capture capture or bubble phase
+         * @param {Boolean}      capture capture or bubble phase
          * @static
          * @private
          */

@@ -95,10 +95,16 @@ YUI.add('core-tests', function(Y) {
                 }
             }).use('skin-test', function(Y, status) {
                 test.resume(function() {
-                    var modules = status.data.sort();
+                    var modules = status.data.sort(),
+                        greenTextStyle = green.getStyle('textDecoration').toLowerCase(),
+                        samTextStyle = sam.getStyle('textDecoration').toLowerCase(),
+
+                        greenSkinTest = greenTextStyle.indexOf('underline') > -1,
+                        samSkinTest = samTextStyle.indexOf('underline') > -1;
+
                     Assert.isTrue(Y.SKIN_TEST, 'Failed to load external module');
-                    Assert.areEqual('underline', green.getStyle('textDecoration').toLowerCase(), 'Green Skin Failed to Load');
-                    Assert.areNotEqual('underline', sam.getStyle('textDecoration').toLowerCase(), 'Sam Skin Loaded');
+                    Assert.isTrue(greenSkinTest, 'Green Skin Failed to Load');
+                    Assert.isFalse(samSkinTest, 'Sam Skin Loaded');
                 });
             });
 
@@ -787,7 +793,7 @@ YUI.add('core-tests', function(Y) {
                             patterns: {
                                 'mygroup-': {
                                     test: function(name) {
-                                        return /^mygroup-/.test(name);
+                                        return (/^mygroup-/).test(name);
                                     },
                                     configFn: function(me) {
                                         var parts = me.name.split("-"),
@@ -867,7 +873,9 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_3', myY.guid());
         },
         'test Y.config.global': function() {
+            /*jslint evil: true*/
             var global = Function('return this')();
+            /*jslint evil: false*/
             Y.Assert.areEqual(global, Y.config.global);
         }
     });

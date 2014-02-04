@@ -31,6 +31,7 @@ form {
 #ft {
     height:200px;
     opacity: 0.75;
+    filter: alpha(opacity=75);
 }
 .yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
     background: #070;
@@ -212,9 +213,13 @@ form {
             },
 
             test_setStyle: function() {
+                Y.DOM.setStyle(ft, 'opacity', 1);
+                Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
+                        1, "Y.DOM.getStyle(ft, 'opacity') is not 1");
+
                 Y.DOM.setStyle(ft, 'opacity', 0.5);
                 Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
-                        0.5, "Y.DOM.getStyle(ft, 'opacity')");
+                        0.5, "Y.DOM.getStyle(ft, 'opacity') is not 0.5");
 
                 Y.DOM.setStyle(main, 'float', 'none');
                 Assert.areEqual('none', Y.DOM.getStyle(main, 'float'),

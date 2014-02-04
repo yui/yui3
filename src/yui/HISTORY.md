@@ -4,6 +4,23 @@ YUI Core Change History
 @VERSION@
 ------
 
+* Added `Y.require()` for importing ES6 modules. It's similar to `Y.use()` but
+  it follow the following signature:
+
+```js
+YUI().require('some-es6-module', function (Y, imports) {
+  var foo = imports['some-es6-module'].foo;
+});
+```
+
+* Fixed UA detection in recent versions of the Amazon Silk browser.
+  ([#1576][]: @adinardi)
+
+[#1576]: https://github.com/yui/yui3/pull/1576
+
+3.14.1
+------
+
 * No changes.
 
 3.14.0

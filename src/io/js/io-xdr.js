@@ -51,7 +51,7 @@ Method that creates the Flash transport swf.
 @private
 @param {String} uri - location of io.swf.
 @param {String} yid - YUI sandbox id.
-@param {String} yid - IO instance id.
+@param {String} uid - IO instance id.
 **/
 function _swf(uri, yid, uid) {
     var o = '<object id="io_swf" type="application/x-shockwave-flash" data="' +

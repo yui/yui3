@@ -818,7 +818,7 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
          * where the calling method has already obtained the config from state.
          *
-         * @return {booolean} true if the new attribute value was stored, false if not.
+         * @return {Boolean} true if the new attribute value was stored, false if not.
          */
         _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
 
@@ -930,7 +930,7 @@ YUI.add('attribute-core', function (Y, NAME) {
          * Gets multiple attribute values.
          *
          * @method getAttrs
-         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {String[]|Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
          */
@@ -943,7 +943,7 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @method _getAttrs
          * @protected
-         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {String[]|Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
          */

@@ -11,7 +11,7 @@
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
-    if (Y.UA.ie) {
+    if (Y.UA.ie && Y.UA.ie < 11) {
         textContent = 'nodeValue';
     }
 
@@ -20,7 +20,7 @@
             comp, moved = 0, n, id, root = Y.EditorSelection.ROOT;
 
 
-        if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9)) {
+        if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9 || Y.UA.ie > 10)) {
             sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
             sel = Y.config.doc.selection.createRange();
@@ -483,7 +483,7 @@
     /**
     * The id of the outer cursor wrapper
     * @static
-    * @property DEFAULT_TAG
+    * @property CURID
     */
     Y.EditorSelection.CURID = 'yui-cursor';
 
@@ -876,7 +876,7 @@
         /**
         * Wrapper for the different range creation methods.
         * @method createRange
-        * @return {RangeObject}
+        * @return {Range}
         */
         createRange: function() {
             if (Y.config.doc.selection) {

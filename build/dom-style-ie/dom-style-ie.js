@@ -234,7 +234,7 @@ if (!testFeature('style', 'opacity') && testFeature('style', 'filter')) {
 
             if (typeof currentFilter == 'string') { // in case not appended
                 style[FILTER] = currentFilter.replace(/alpha([^)]*\))/gi, '') +
-                        ((val < 1) ? 'alpha(' + OPACITY + '=' + val * 100 + ')' : '');
+                        ((val <= 1) ? 'alpha(' + OPACITY + '=' + val * 100 + ')' : '');
 
                 if (!style[FILTER]) {
                     style.removeAttribute(FILTER);

@@ -4,6 +4,11 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
+* Fixed the `event.returnValue is deprecated` warning in chrome. [#1460](https://github.com/yui/yui3/issues/1460) @zhiyelee
+
+3.14.1
+------
+
 * No changes.
 
 3.14.0

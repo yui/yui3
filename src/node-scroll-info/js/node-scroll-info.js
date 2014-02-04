@@ -358,10 +358,11 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     refreshDimensions: function () {
         var docEl = doc.documentElement;
 
-        // On iOS devices, documentElement.clientHeight/Width aren't reliable,
-        // but window.innerHeight/Width are. The dom-screen module's viewport
-        // size methods don't account for this, which is why we do it here.
-        if (Y.UA.ios) {
+        // On iOS devices and on Chrome for Android,
+        // documentElement.clientHeight/Width aren't reliable, but
+        // window.innerHeight/Width are. The dom-screen module's viewport size
+        // methods don't account for this, which is why we do it here.
+        if (Y.UA.ios || (Y.UA.android && Y.UA.chrome)) {
             this._winHeight = win.innerHeight;
             this._winWidth  = win.innerWidth;
         } else {

@@ -377,7 +377,7 @@ var WIDGET       = 'widget',
          *
          * @method _uiSetHostZIndexModal
          * @protected
-         * @param {Number} Z-Index of the widget
+         * @param {Number} zIndex Z-Index of the widget
          */
         _uiSetHostZIndexModal : function (zIndex) {
 
@@ -433,7 +433,6 @@ var WIDGET       = 'widget',
                 }
 
                 else {
-                    Y.Log('focusOn ATTR Error: The event with name "'+o.ev+'" could not be attached.');
                 }
 
             }
@@ -536,7 +535,7 @@ var WIDGET       = 'widget',
          * Resyncs the mask in the viewport for browsers that don't support fixed positioning
          *
          * @method _resyncMask
-         * @param {Y.Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
+         * @param {Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
          * @private
          */
         _resyncMask: function (e) {

@@ -85,7 +85,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     /**
     * @method _setDataSource
     * @description Creates new DataSource instance if one is not provided.
-    * @param ds {Object | Y.DataSource}
+    * @param ds {Object|DataSource}
     * @return {DataSource}
     * @private
     */
@@ -165,7 +165,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
      * an entire DataTable with new data, clearing previous data, if any.
      *
      * @method onDataReturnInitializeTable
-     * @param e {Event.Facade} DataSource Event Facade object.
+     * @param e {EventFacade} DataSource Event Facade object.
      */
     onDataReturnInitializeTable : function(e) {
         var records = (e.response && e.response.results) || [];
