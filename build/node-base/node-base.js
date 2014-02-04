@@ -269,7 +269,7 @@ Y.mix(Y_Node.prototype, {
  * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
  * to escape html content or `set('text')` to add as text.
  * @method setHTML
- * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+ * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
  * @chainable
  */
 Y.Node.prototype.setHTML = Y.Node.prototype.setContent;
@@ -439,28 +439,8 @@ Y_Node.ATTRS = {
 };
 
 Y.Node.importMethod(Y.DOM, [
-    /**
-     * Allows setting attributes on DOM nodes, normalizing in some cases.
-     * This passes through to the DOM node, allowing for custom attributes.
-     * @method setAttribute
-     * @for Node
-     * @for NodeList
-     * @chainable
-     * @param {string} name The attribute name
-     * @param {string} value The value to set
-     */
     'setAttribute',
-    /**
-     * Allows getting attributes on DOM nodes, normalizing in some cases.
-     * This passes through to the DOM node, allowing for custom attributes.
-     * @method getAttribute
-     * @for Node
-     * @for NodeList
-     * @param {string} name The attribute name
-     * @return {string} The attribute value
-     */
     'getAttribute'
-
 ]);
 /**
  * @module node
