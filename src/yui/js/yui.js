@@ -800,10 +800,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;

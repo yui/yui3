@@ -13,6 +13,8 @@ YUI().require('some-es6-module', function (Y, imports) {
 });
 ```
 
+* Fixed value of `this` inside ES6 module definitions.
+
 * Fixed UA detection in recent versions of the Amazon Silk browser.
   ([#1576][]: @adinardi)
 
