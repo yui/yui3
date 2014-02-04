@@ -16,7 +16,7 @@ are provided, the original promise is returned.
 @return {Promise}
 **/
 Y.when = function (promise, callback, errback) {
-    promise = Promise.cast(promise);
+    promise = Promise.resolve(promise);
 
     return (callback || errback) ? promise.then(callback, errback) : promise;
 };

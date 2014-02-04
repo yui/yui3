@@ -363,50 +363,6 @@ YUI.add('promise-tests', function (Y) {
             this.isRejected(promise, function (reason) {
                 Assert.areSame('foo', reason, 'subpromise should have the correct rejection reason');
             });
-        },
-
-        'Promise.resolve() is fulfilled when passed a regular value': function () {
-            var value = {},
-                promise = Promise.resolve(value);
-
-            this.isFulfilled(promise, function (result) {
-                Assert.areSame(value, result, 'resolved promise should respect the value passed to it');
-            });
-        },
-
-        'Promise.resolve() adopts the state of an fulfilled promise': function () {
-            var value = {},
-                fulfilled = Promise.resolve(value),
-                promise = Promise.resolve(fulfilled);
-
-            this.isFulfilled(promise, function (result) {
-                Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
-            });
-        },
-
-        'Promise.resolve() adopts the state of a rejected promise': function () {
-            var value = {},
-                fulfilled = Promise.reject(value),
-                promise = Promise.resolve(fulfilled);
-
-            this.isRejected(promise, function (result) {
-                Assert.areSame(value, result, 'resolved promise should take the value of the provided promise');
-            });
-        },
-
-        'Promise.resolve() should preserve the constructor when using inheritance': function () {
-            function Subpromise() {
-                Subpromise.superclass.constructor.apply(this, arguments);
-            }
-            Y.extend(Subpromise, Promise, null, {resolve: Promise.resolve});
-
-            var promise = Subpromise.resolve('foo');
-
-            Assert.isInstanceOf(Subpromise, promise, 'resolved promise should be an instance of the subclass');
-
-            this.isFulfilled(promise, function (value) {
-                Assert.areSame('foo', value, 'subpromise should have the correct fulfilled value');
-            });
         }
     }));
 
@@ -505,34 +461,34 @@ YUI.add('promise-tests', function (Y) {
     }));
 
     suite.add(new Y.Test.Case({
-        name: 'Promise.cast() tests',
+        name: 'Promise.resolve() tests',
 
         'a promise should not be modified': function () {
-            var promise = Promise.resolve(),
-                wrapped = Promise.cast(promise);
+            var promise = new Promise(function () {}),
+                wrapped = Promise.resolve(promise);
 
-            Assert.isTrue(Promise.isPromise(promise), 'Promise.cast should always return a promise');
-            Assert.areSame(promise, wrapped, 'Promise.cast should not modify a promise');
+            Assert.isTrue(Promise.isPromise(promise), 'Promise.resolve should always return a promise');
+            Assert.areSame(promise, wrapped, 'Promise.resolve should not modify a promise');
         },
 
         'values should be wrapped in a promise': function () {
             // truthy values
-            Assert.isInstanceOf(Promise, Promise.cast(5), 'numbers should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast('foo'), 'strings should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(true), 'booleans should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(function () {}), 'functions should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast({}), 'objects should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(5), 'numbers should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve('foo'), 'strings should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(true), 'booleans should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(function () {}), 'functions should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve({}), 'objects should be wrapped in a promise');
 
             // falsy values
-            Assert.isInstanceOf(Promise, Promise.cast(0), 'zero should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(''), 'empty strings should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(false), 'false should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(null), 'null should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(undefined), 'undefined should be wrapped in a promise');
-            Assert.isInstanceOf(Promise, Promise.cast(), 'undefined (empty parameters) should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(0), 'zero should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(''), 'empty strings should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(false), 'false should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(null), 'null should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(undefined), 'undefined should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(), 'undefined (empty parameters) should be wrapped in a promise');
 
             // almost promises
-            Assert.isInstanceOf(Promise, Promise.cast({then: 5}), 'promise-like objects should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve({then: 5}), 'promise-like objects should be wrapped in a promise');
         }
     }));
 

@@ -213,15 +213,15 @@ in one.
 
 This method can be copied or inherited in subclasses. In that case it will
 check that the value passed to it is an instance of the correct class.
-This means that `PromiseSubclass.cast()` will always return instances of
-`PromiseSublcass`.
+This means that `PromiseSubclass.resolve()` will always return instances of
+`PromiseSubclass`.
 
-@method cast
+@method resolve
 @param {Any} Any object that may or may not be a promise
 @return {Promise}
 @static
 */
-Promise.cast = function (value) {
+Promise.resolve = function (value) {
     return Promise.isPromise(value) && value.constructor === this ? value :
         /*jshint newcap: false */
         new this(function (resolve) {
@@ -244,22 +244,6 @@ Promise.reject = function (reason) {
     return new this(function (resolve, reject) {
     /*jshint newcap: true */
         reject(reason);
-    });
-};
-
-/*
-A shorthand for creating a resolved promise.
-
-@method resolve
-@param {Any} value The value or promise that resolves the returned promise
-@return {Promise} A resolved promise
-@static
-*/
-Promise.resolve = function (value) {
-    /*jshint newcap: false */
-    return new this(function (resolve) {
-    /*jshint newcap: true */
-        resolve(value);
     });
 };
 
@@ -304,7 +288,7 @@ Promise.all = function (values) {
         }
 
         for (; i < length; i++) {
-            Promise.cast(values[i]).then(oneDone(i), reject);
+            Promise.resolve(values[i]).then(oneDone(i), reject);
         }
     });
 };
@@ -331,7 +315,7 @@ Promise.race = function (values) {
         // This abuses the fact that calling resolve/reject multiple times
         // doesn't change the state of the returned promise
         for (var i = 0, count = values.length; i < count; i++) {
-            Promise.cast(values[i]).then(resolve, reject);
+            Promise.resolve(values[i]).then(resolve, reject);
         }
     });
 };
