@@ -78,17 +78,27 @@ Y.Event.defineOutside = function (event, name) {
         },
 
         delegate: function (node, sub, notifier, filter) {
-            sub.handle = Y.one('doc').delegate(event, function (e) {
-                if (this.isOutside(node, e.target)) {
+            sub.handle = Y.one('doc').on(event, function (e) {
+                if (this.isOutside(node, e.target, filter)) {
+                    e.currentTarget = node;
                     notifier.fire(e);
                 }
-            }, filter, this);
+            }, this);
         },
 
-        isOutside: function (node, target) {
-            return target !== node && !target.ancestor(function (p) {
+        isOutside: function (node, target, filter) {
+            var parents;
+           
+            if ( !filter ) {
+                return target !== node && !target.ancestor(function (p) {
                     return p === node;
                 });
+            } else {
+                parents = node.all(filter);
+                return parents.indexOf(target) === -1 && !target.ancestor(function (p) {
+                    return parents.indexOf(p) !== -1;
+                });
+            }
         }
     };
     config.detachDelegate = config.detach;
