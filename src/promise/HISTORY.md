@@ -4,7 +4,8 @@ Promise Change History
 @VERSION@
 ------
 
-* No changes.
+* Remove `Promise.resolve` and rename `Promise.cast` to `Promise.resolve` as per
+  the last TC39 decision.
 
 3.14.1
 ------
