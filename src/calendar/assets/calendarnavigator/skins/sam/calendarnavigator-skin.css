@@ -4,6 +4,9 @@
   height: 14px;
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAOCAYAAAA1+Nx+AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAKNJREFUeNpiYCAeSAPxUiiWZqAi4ATiaiD+DMT/ofgzVIyTUsMDgfghksHo+CFUDcnAAIgP4DEYHR+A6iEIhIB4GgkGo+NpUDMwADMQFwHxBwoMh+EPULOYYYZ7APFVKhiMjkFmejBBLWFjoD5gQ+dQO4iwOloUiOdQYPgcqBkDl0zRQRQRGS2KGkVFHRB/QzL4G1SMk5qpQg6psJMjVhNAgAEAH+qPqeiPEUsAAAAASUVORK5CYII=);
   background-repeat: no-repeat;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .yui3-skin-sam .yui3-calendarnav-prevmonth:hover, .yui3-skin-sam .yui3-calendarnav-nextmonth:hover {

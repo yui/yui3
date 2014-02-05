@@ -63,8 +63,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
      * @method initializer
      */
     initializer : function () {
-        this.plug(Y.Plugin.CalendarNavigator);
-
+        this.plug(this.get('navigatorPlugin'));
         this._keyEvents = [];
         this._highlightedDateNode = null;
         this._lastSelectedDate = null;
@@ -600,6 +599,20 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                     return null;
                 }
             }
+        },
+
+        /**
+         * The plugin to use for Calendar navigation controls
+         *
+         * @attribute navigatorPlugin
+         * @type Function
+         * @default Y.Plugin.CalendarNavigator
+         */
+
+        navigatorPlugin: {
+            value: Y.Plugin.CalendarNavigator,
+            validator: Y.Lang.isFunction,
+            writeOnce: 'initOnly'
         }
     }
 });

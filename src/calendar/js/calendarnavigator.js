@@ -92,10 +92,10 @@ CalendarNavigator.CALENDARNAV_STRINGS = {
     * @protected
     * @static
     */
-CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<a class="yui3-u {prev_month_class}" role="button" aria-label="{prev_month_arialabel}" ' +
+CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<button class="yui3-u {prev_month_class}" aria-label="{prev_month_arialabel}" ' +
                                                     'tabindex="{control_tabindex}">' +
                                                     "<span>&lt;</span>" +
-                                                '</a>';
+                                                '</button>';
    /**
     * The template for the calendar navigator next month control.
     * @property NEXT_MONTH_CONTROL_TEMPLATE
@@ -104,10 +104,10 @@ CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<a class="yui3-u {prev_month_cl
     * @protected
     * @static
     */
-CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE = '<a class="yui3-u {next_month_class}" role="button" aria-label="{next_month_arialabel}" ' +
+CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE = '<button class="yui3-u {next_month_class}" aria-label="{next_month_arialabel}" ' +
                                                     'tabindex="{control_tabindex}">' +
                                                     "<span>&gt;</span>" +
-                                                '</a>';
+                                                '</button>';
 
 
 Y.extend(CalendarNavigator, Y.Plugin.Base, {
@@ -278,8 +278,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
             headerCell = host.get(CONTENT_BOX).one("." + CAL_HD);
 
         CalendarNavigator.CALENDARNAV_STRINGS.control_tabindex = host.get("tabIndex");
-        CalendarNavigator.CALENDARNAV_STRINGS.prev_month_arialabel = "Go to previous month";
-        CalendarNavigator.CALENDARNAV_STRINGS.next_month_arialabel = "Go to next month";
+        Y.mix(CalendarNavigator.CALENDARNAV_STRINGS, Y.Intl.get('calendarnavigator'));
 
         this._controls.prevMonth = this._renderPrevControls();
         this._controls.nextMonth = this._renderNextControls();
