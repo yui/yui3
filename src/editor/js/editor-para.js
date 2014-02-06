@@ -249,6 +249,17 @@
                     }
 
                     if (Y.UA.gecko) {
+                       /*
+                        * This forced FF to redraw the content on backspace.
+                        * On some occasions FF will leave a cursor residue after content has been deleted.
+                        * Dropping in the empty textnode and then removing it causes FF to redraw and
+                        * remove the "ghost cursors"
+                        */
+                        // d = e.changedNode;
+                        // t = inst.config.doc.createTextNode(' ');
+                        // d.appendChild(t);
+                        // d.removeChild(t);
+
                         this._fixGeckoOnBackspace(inst);
                     }
                     break;
