@@ -636,8 +636,7 @@ YUI.add('editor-tests', function(Y) {
         },
 
         makeEditorWithParaPlugin : function (initialContent, onReady) {
-            var _this = this,
-                needResume = false;
+            var _this = this;
 
             editor = new Y.EditorBase({
                 content: initialContent,
@@ -658,24 +657,20 @@ YUI.add('editor-tests', function(Y) {
 
             if (onReady) {
                 editor.after('ready', function () {
-                    if (needResume) {
                         _this.resume(onReady);
-                    } else {
-                        onReady();
-                    }
                 });
             }
 
-            editor.render('#editor');
-            needResume = true;
+            //force to always be async onReady call
+            setTimeout( function () {
+                editor.render('#editor');
+            }, 0);
         },
 
         'test_para_plugin <inline>': function() {
-            var inst, str, out, editorReady;
+            var inst, str, out;
 
             function onEditorReady() {
-                editorReady = true;
-
                 editor.set('content', '<br><b>Test This</b>');
 
                 inst = editor.getInstance();
@@ -708,16 +703,10 @@ YUI.add('editor-tests', function(Y) {
             }
 
             this.makeEditorWithParaPlugin('<p> content<br></p>', onEditorReady);
-
-            //will fail if onEditorReady not called within 3s
-            if (!editorReady) {
-                this.wait(3000);
-            }
+            this.wait();
         },
 
         'test para plugin gecko fix <inline>' : function () {
-            var editorReady = false;
-
             function onEditorReady() {
                 var inst = editor.frame.getInstance(),
                     container = editor.frame.get('container'),
@@ -747,15 +736,10 @@ YUI.add('editor-tests', function(Y) {
                                   'selection focusNode wrong');
                 Y.Assert.areEqual(text.length, sel.anchorOffset,
                                   'selection anchorOffset wrong');
-                editorReady = true;
             }
 
             this.makeEditorWithParaPlugin('<p> content</p>', onEditorReady);
-
-            //If editor isn't ready within 3s, fail.
-            if (!editorReady) {
-                this.wait(3000);
-            }
+            this.wait();
         },
 
         'test_double_plug_setup <inline>': function() {
