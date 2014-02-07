@@ -31,18 +31,6 @@ YUI.add('mod5-es', function (Y, NAME, __imports__, __exports__) {
 suite.add(new Y.Test.Case({
     name: 'ES Modules Compat tests',
 
-    _should: {
-        ignore: {
-            'context in module definition functions in sloppy mode': (function () {
-                return this !== Y.config.global;
-            }()),
-            'context in module definition functions in strict mode': (function () {
-                'use strict';
-                return this !== undefined;
-            }())
-        }
-    },
-
     "test legacy module": function () {
         // no need to go async in these tests since all modules are available
         Y.use('mod1-legacy');
@@ -72,40 +60,6 @@ suite.add(new Y.Test.Case({
         Assert.areSame(2, imp['mod2-es-legacy']['default'], "__imports__ should contain a reference to the exports of required es modules");
         Assert.areSame(3, imp['mod3-es-mix']['default'], "__imports__ should contain a reference to the exports of required es modules");
         Assert.isUndefined(imp['mod4-es-without-export'], "__imports__ should contain a reference to undefined if the es module exports nothing");
-    },
-
-    "context in module definition functions in sloppy mode": function () {
-        var test = this;
-
-        YUI.add('mod10-es-sloppy', function (Y, NAME, __imports__, __exports__) {
-            var that = this;
-            test.resume(function () {
-                Assert.areSame(Y.config.global, that, '`this` inside modules should point to the global object in sloppy mode');
-            });
-        }, '', {es: true});
-
-        setTimeout(function () {
-            YUI().use('mod10-es-sloppy');
-        }, 0);
-        test.wait();
-    },
-
-    "context in module definition functions in strict mode": function () {
-        'use strict';
-
-        var test = this;
-
-        YUI.add('mod10-es-strict', function (Y, NAME, __imports__, __exports__) {
-            var that = this;
-            test.resume(function () {
-                Assert.isUndefined(that, '`this` inside modules should be undefined in strict mode');
-            });
-        }, '', {es: true});
-
-        setTimeout(function () {
-            YUI().use('mod10-es-strict');
-        }, 0);
-        test.wait();
     }
 
 }));
