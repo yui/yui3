@@ -1,4 +1,10 @@
 /**
+ * The TabView module
+ *
+ * @module tabview
+ */
+
+/**
  * Provides Tab instances for use with TabView
  * @param config {Object} Object literal specifying tabview configuration properties.
  *
