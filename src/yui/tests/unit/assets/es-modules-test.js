@@ -39,6 +39,13 @@ suite.add(new Y.Test.Case({
             'context in module definition functions in strict mode': (function () {
                 'use strict';
                 return this !== undefined;
+            }()),
+            '[throwFail=true] context in module definition functions in sloppy mode': (function () {
+                return this !== Y.config.global;
+            }()),
+            '[throwFail=true] context in module definition functions in strict mode': (function () {
+                'use strict';
+                return this !== undefined;
             }())
         }
     },
@@ -74,6 +81,26 @@ suite.add(new Y.Test.Case({
         Assert.isUndefined(imp['mod4-es-without-export'], "__imports__ should contain a reference to undefined if the es module exports nothing");
     },
 
+    "context in legacy modules": function () {
+        var test = this;
+
+        YUI.add('mod11-legacy', function (Y, NAME) {
+            var that = this;
+            test.resume(function () {
+                Assert.isObject(that);
+                Assert.areNotSame(Y.config.global, that, 'Legacy module got the global object as `this` instead of the `mod` object.');
+                Assert.isFunction(that.fn);
+                Assert.areSame(NAME, that.name, 'Legacy module did not get a `mod` object in `this`.');
+            });
+        });
+
+        setTimeout(function () {
+            YUI().use('mod11-legacy');
+        }, 0);
+
+        test.wait();
+    },
+
     "context in module definition functions in sloppy mode": function () {
         var test = this;
 
@@ -104,6 +131,66 @@ suite.add(new Y.Test.Case({
 
         setTimeout(function () {
             YUI().use('mod10-es-strict');
+        }, 0);
+        test.wait();
+    },
+
+    "[throwFail=true] context in legacy modules": function () {
+        var test = this;
+
+        YUI.add('mod11-legacy', function (Y, NAME) {
+            var that = this;
+            test.resume(function () {
+                Assert.isObject(that);
+                Assert.areNotSame(Y.config.global, that, 'Legacy module got the global object as `this` instead of the `mod` object.');
+                Assert.isFunction(that.fn);
+                Assert.areSame(NAME, that.name, 'Legacy module did not get a `mod` object in `this`.');
+            });
+        });
+
+        setTimeout(function () {
+            YUI({
+                throwFail: true
+            }).use('mod11-legacy');
+        }, 0);
+
+        test.wait();
+    },
+
+    "[throwFail=true] context in module definition functions in sloppy mode": function () {
+        var test = this;
+
+        YUI.add('mod10-es-sloppy', function (Y, NAME, __imports__, __exports__) {
+            var that = this;
+            test.resume(function () {
+                Assert.areSame(Y.config.global, that, '`this` inside modules should point to the global object in sloppy mode');
+            });
+        }, '', {es: true});
+
+        setTimeout(function () {
+            YUI({
+                throwFail: true
+            }).use('mod10-es-sloppy');
+        }, 0);
+        test.wait();
+    },
+
+    "[throwFail=true] context in module definition functions in strict mode": function () {
+        'use strict';
+
+        var test = this;
+
+        YUI.add('mod10-es-strict', function (Y, NAME, __imports__, __exports__) {
+            var that = this;
+            test.resume(function () {
+                Assert.isUndefined(that, '`this` inside modules should be undefined in strict mode');
+            });
+        }, '', {es: true});
+
+        setTimeout(function () {
+            YUI({
+                throwFail: true
+            }).use('mod10-es-strict');
         }, 0);
         test.wait();
     }
