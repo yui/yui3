@@ -4612,7 +4612,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "use": [
             "history-base",
             "history-hash",
-            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -5864,7 +5863,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '2ec8e93b30f0fc6809e2fbdba577e214';
+YUI.Env[Y.version].md5 = '8e471689779fc84718f6dad481790b59';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
