@@ -1601,7 +1601,7 @@ Y.Loader.prototype = {
                 m = this.getModule(optReqs[i]);
                 // If an optional dependency does not have a test, ignore it
                 /* istanbul ignore else */
-                if (m.test && m.test(Y)) {
+                if (m && m.test && m.test(Y)) {
                     d.push(m.name);
                 }
             }
