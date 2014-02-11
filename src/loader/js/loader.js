@@ -1006,7 +1006,7 @@ Y.Loader.prototype = {
         have their own tests instead of a test associated with this module like
         conditional dependencies. This is targeted mostly at polyfills, since
         they may not be in the list of requires because they are assumed to be
-        available in the global scope.
+        available in the global scope. **Modules without a test will be ignored**.
      * @param {Function} [config.test] Test to be called when this module is
         added as an optional dependency of another module. See `optionalRequires`.
      * @param {String} [name] The module name, required if not in the module data.
@@ -1599,8 +1599,7 @@ Y.Loader.prototype = {
         if (optReqs) {
             for (i = 0, length = optReqs.length; i < length; i++) {
                 m = this.getModule(optReqs[i]);
-                // If an optional dependency does not have a test, add it to the
-                // list as if it passed
+                // If an optional dependency does not have a test, ignore it
                 /* istanbul ignore else */
                 if (m.test && m.test(Y)) {
                     d.push(m.name);
