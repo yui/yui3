@@ -4,7 +4,9 @@ Timers
 @VERSION@
 ------
 
-* No changes.
+* Import `asap.js` as the underlying implementation of `Y.soon`. This changes
+  slightly the semantics of `Y.soon` because some operations may be run in the
+  same turn of the event loop, but this should be almost unobservable.
 
 3.14.1
 ------
