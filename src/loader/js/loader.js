@@ -1002,6 +1002,13 @@ Y.Loader.prototype = {
      * @param {Object} [config.testresults] A hash of test results from `Y.Features.all()`
      * @param {Function} [config.configFn] A function to exectute when configuring this module
      * @param {Object} config.configFn.mod The module config, modifying this object will modify it's config. Returning false will delete the module's config.
+     * @param {String[]} [config.optionalRequires] List of dependencies that
+        have their own tests instead of a test associated with this module like
+        conditional dependencies. This is targeted mostly at polyfills, since
+        they may not be in the list of requires because they are assumed to be
+        available in the global scope.
+     * @param {Function} [config.test] Test to be called when this module is
+        added as an optional dependency of another module. See `optionalRequires`.
      * @param {String} [name] The module name, required if not in the module data.
      * @return {Object} the module definition or null if the object passed in did not provide all required attributes.
      */
@@ -1394,9 +1401,10 @@ Y.Loader.prototype = {
 
         //TODO add modue cache here out of scope..
 
-        var i, m, j, add, packName, lang, testresults = this.testresults,
+        var i, m, j, length, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
+            optReqs = mod.optionalRequires,
             d, go, def,
             r, old_mod,
             o, skinmod, skindef, skinpar, skinname,
@@ -1577,6 +1585,24 @@ Y.Loader.prototype = {
                 skinmod = this._addSkin(this.skin.defaultSkin, name);
                 if (!this.isCSSLoaded(skinmod, this._boot)) {
                     d.push(skinmod);
+                }
+            }
+        }
+
+        // Optional dependencies are dependencies that define their own tests
+        // For example, if a module depends on a JSON polyfill and the JSON
+        // module has a test, it will be added to the dependency list if the
+        // test passes.
+        // This feature was designed specifically to be used when transpiling
+        // ES6 modules, in order to use polyfills without having to import them
+        // since they should already be available in the global scope.
+        if (optReqs) {
+            for (i = 0, length = optReqs.length; i < length; i++) {
+                m = this.getModule(optReqs[i]);
+                // If an optional dependency does not have a test, add it to the
+                // list as if it passed
+                if (!m.test || m.test(Y)) {
+                    d.push(m.name);
                 }
             }
         }

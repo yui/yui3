@@ -735,6 +735,30 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('3three.js', out.js[0], 'Failed to load required module (3)');
             
         },
+        'test: optional dependencies': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
+                        path: 'foo-min.js',
+                        test: function () {
+                            return true;
+                        }
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
+        },
         test_css_stamp: function() {
             var test = this,
                 links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
