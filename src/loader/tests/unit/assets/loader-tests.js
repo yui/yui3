@@ -759,6 +759,26 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
             Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
         },
+        'test: optional dependencies without tests should be ignored': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
+                        path: 'foo-min.js'
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('bar', out.jsMods[0].name, 'Not included required module');
+        },
         test_css_stamp: function() {
             var test = this,
                 links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;

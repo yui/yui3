@@ -1602,7 +1602,7 @@ Y.Loader.prototype = {
                 // If an optional dependency does not have a test, add it to the
                 // list as if it passed
                 /* istanbul ignore else */
-                if (!m.test || m.test(Y)) {
+                if (m.test && m.test(Y)) {
                     d.push(m.name);
                 }
             }
