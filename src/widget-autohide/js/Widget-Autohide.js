@@ -156,32 +156,34 @@ WidgetAutohide.prototype = {
                 self = this,
                 hideOn = this.get('hideOn'),
                 i = 0,
-                o = {node: undefined, ev: undefined, keyCode: undefined};
+                node,
+                ev,
+                keyCode;
 
                 //push all events on which the widget should be hidden
                 for (; i < hideOn.length; i++) {
 
-                    o.node = hideOn[i].node;
-                    o.ev = hideOn[i].eventName;
-                    o.keyCode = hideOn[i].keyCode;
+                    node = hideOn[i].node;
+                    ev = hideOn[i].eventName;
+                    keyCode = hideOn[i].keyCode;
 
                     //no keycode or node defined
-                    if (!o.node && !o.keyCode && o.ev) {
-                        uiHandles.push(bb.on(o.ev, hide));
+                    if (!node && !keyCode && ev) {
+                        uiHandles.push(bb.on(ev, hide));
                     }
 
                     //node defined, no keycode (not a keypress)
-                    else if (o.node && !o.keyCode && o.ev) {
-                        uiHandles.push(o.node.on(o.ev, hide));
+                    else if (node && !keyCode && ev) {
+                        uiHandles.push(Y.one(node).on(ev, hide));
                     }
 
                     //node defined, keycode defined, event defined (its a key press)
-                    else if (o.node && o.keyCode && o.ev) {
-                        uiHandles.push(o.node.on(o.ev, hide, o.keyCode));
+                    else if (node && keyCode && ev) {
+                        uiHandles.push(Y.one(node).on(ev, hide, keyCode));
                     }
 
                     else {
-                        Y.log('The event with name "'+o.ev+'" could not be attached.');
+                        Y.log('The event with name "'+ev+'" could not be attached.');
                     }
 
                 }
