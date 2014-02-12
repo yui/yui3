@@ -292,7 +292,7 @@ Y_Node.one = function(node) {
         }
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
-            uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
+            uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node[UID];
             if (use_instance_map) {
                 instance = Y_Node._instances[uid]; // reuse exising instances
             } else {
@@ -301,7 +301,7 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
-                if (node.nodeType != 11) { // dont cache document fragment
+                if (node.nodeType != 11) { // don't cache document fragment
                     if (use_instance_map) {
                         Y_Node._instances[instance[UID]] = instance; // cache node
                     } else {
@@ -391,7 +391,6 @@ Y.mix(Y_Node.prototype, {
                 str += '.' + className.replace(' ', '.');
             }
 
-            // TODO: add yuid?
             str += ' ' + this[UID];
         }
         return str;
@@ -782,7 +781,7 @@ Y.mix(Y_Node.prototype, {
         this._stateProxy = null;
 
         if (use_instance_map) {
-            delete Y_Node._instances[this._yuid];
+            delete Y_Node._instances[this[UID]];
         }
     },
 
