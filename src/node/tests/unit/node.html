@@ -226,7 +226,7 @@ YUI({
         'should cache node': function() {
             var node = Y.Node.create('<div id="test-caching" />');
             node.appendTo('body');
-            Assert.areEqual(node, Y.Node._instances[node._yuid]);
+            Assert.areEqual(node, Y.Node.getDOMNode(node)._yui_instances[Y._yuid]);
             Assert.areEqual(Y.one('#test-caching'), node);
             node.remove(true);
         },
@@ -1761,7 +1761,7 @@ YUI({
 
         'should not cache document fragment': function() {
             var node = Y.Node.create('<div>foo</div><div>bar</div>');
-            Assert.isUndefined(Y.Node._instances[node._yuid]);
+            Assert.isUndefined(Y.Node.getDOMNode(node)._yui_instances);
         },
 
         'should return false if node is removed': function () {

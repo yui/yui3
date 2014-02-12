@@ -186,7 +186,11 @@
             document.getElementById('memsize').onclick = function () {
                 //memsnap();
                 //console.log(count);
-                console.log(Y.Object.keys(Y.Node._instances).length);
+                if (Y.Node._instances) {
+                    console.log(Y.Object.keys(Y.Node._instances).length);
+                } else {
+                    console.log('Nothing to track, since Y.Node._instances is not used in this browser');
+                }
             };
 		});
 	</script>
