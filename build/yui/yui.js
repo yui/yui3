@@ -796,10 +796,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;
@@ -1564,6 +1564,118 @@ or handle dependency resolution yourself.
 **/
 
 /**
+
+@property {Object} filters
+**/
+
+/**
+If `true`, YUI will use a combo handler to load multiple modules in as few
+requests as possible.
+
+The YUI CDN (which YUI uses by default) supports combo handling, but other
+servers may not. If the server from which you're loading YUI does not support
+combo handling, set this to `false`.
+
+Providing a value for the `base` config property will cause `combine` to default
+to `false` instead of `true`.
+
+@property {Boolean} combine
+@default true
+*/
+
+/**
+Array of module names that should never be dynamically loaded.
+
+@property {String[]} ignore
+**/
+
+/**
+Array of module names that should always be loaded when required, even if
+already present on the page.
+
+@property {String[]} force
+**/
+
+/**
+DOM element or id that should be used as the insertion point for dynamically
+added `<script>` and `<link>` nodes.
+
+@property {HTMLElement|String} insertBefore
+**/
+
+/**
+Object hash containing attributes to add to dynamically added `<script>` nodes.
+
+@property {Object} jsAttributes
+**/
+
+/**
+Object hash containing attributes to add to dynamically added `<link>` nodes.
+
+@property {Object} cssAttributes
+**/
+
+/**
+Timeout in milliseconds before a dynamic JS or CSS request will be considered a
+failure. If not set, no timeout will be enforced.
+
+@property {Number} timeout
+**/
+
+/**
+Callback for the 'CSSComplete' event. When dynamically loading YUI components
+with CSS, this property fires when the CSS is finished loading.
+
+This provides an opportunity to enhance the presentation of a loading page a
+little bit before the entire loading process is done.
+
+@property {Function} onCSS
+**/
+
+/**
+A hash of module definitions to add to the list of available YUI modules. These
+modules can then be dynamically loaded via the `use()` method.
+
+This is a hash in which keys are module names and values are objects containing
+module metadata.
+
+See `Loader.addModule()` for the supported module metadata fields. Also see
+`groups`, which provides a way to configure the base and combo spec for a set of
+modules.
+
+@example
+
+    modules: {
+        mymod1: {
+            requires: ['node'],
+            fullpath: '/mymod1/mymod1.js'
+        },
+
+        mymod2: {
+            requires: ['mymod1'],
+            fullpath: '/mymod2/mymod2.js'
+        },
+
+        mymod3: '/js/mymod3.js',
+        mycssmod: '/css/mycssmod.css'
+    }
+
+@property {Object} modules
+**/
+
+/**
+Aliases are dynamic groups of modules that can be used as shortcuts.
+
+@example
+
+    YUI({
+        aliases: {
+            davglass: [ 'node', 'yql', 'dd' ],
+            mine: [ 'davglass', 'autocomplete']
+        }
+    }).use('mine', function (Y) {
+        // Node, YQL, DD & AutoComplete available here.
+    });
 
 @property {Object} aliases
 **/
@@ -3538,7 +3650,7 @@ YUI.Env.parseUA = function(subUA) {
 
                 }
                 if (/Silk/.test(ua)) {
-                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    m = ua.match(/Silk\/([^\s]*)/);
                     if (m && m[1]) {
                         o.silk = numberify(m[1]);
                     }
@@ -3729,7 +3841,7 @@ YUI.Env.aliases = {
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
-    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "history": ["history-base","history-hash","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
@@ -5740,7 +5852,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2014.01.03-22-50',
+        GALLERY_VERSION = 'gallery-2014.02.05-23-53',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
@@ -7949,70 +8061,56 @@ Y.Loader.prototype = {
      * @private
      */
     _sort: function() {
+        var name, 
 
-        // create an indexed list
-        var s = YObject.keys(this.required),
-            // loaded = this.loaded,
-            //TODO Move this out of scope
-            done = {},
-            p = 0, l, a, b, j, k, moved, doneKey;
+            // Object containing module names.
+            required = this.required, 
 
-        // keep going until we make a pass without moving anything
-        for (;;) {
+            // Keep track of whether we've visited a module.
+            visited = {};
 
-            l = s.length;
-            moved = false;
+        // Will contain modules names, in the correct order, 
+        // according to dependencies.
+        this.sorted = [];
 
-            // start the loop after items that are already sorted
-            for (j = p; j < l; j++) {
+        for (name in required) {
+            if (!visited[name] && required.hasOwnProperty(name)) {
+                this._visit(name, visited);
+            }
+        }
+    },
 
-                // check the next module on the list to see if its
-                // dependencies have been met
-                a = s[j];
+    /**
+     * Recursively visits the dependencies of the module name
+     * passed in, and appends each module name to the `sorted` property.
+     * @param {String} name The name of a module.
+     * @param {Object} visited Keeps track of whether a module was visited.
+     * @method _visit
+     * @private
+     */ 
+    _visit: function (name, visited) {
+        var required, moduleInfo, dependency, dependencies, i, l;     
 
-                // check everything below current item and move if we
-                // find a requirement for the current item
-                for (k = j + 1; k < l; k++) {
-                    doneKey = a + s[k];
+        visited[name] = true;
+        required = this.required;
+        moduleInfo = this.moduleInfo[name];
 
-                    if (!done[doneKey] && this._requires(a, s[k])) {
-
-                        // extract the dependency so we can move it up
-                        b = s.splice(k, 1);
-
-                        // insert the dependency above the item that
-                        // requires it
-                        s.splice(j, 0, b[0]);
-
-                        // only swap two dependencies once to short circut
-                        // circular dependencies
-                        done[doneKey] = true;
-
-                        // keep working
-                        moved = true;
-
-                        break;
-                    }
-                }
-
-                // jump out of loop if we moved something
-                if (moved) {
-                    break;
-                // this item is sorted, move our pointer and keep going
-                } else {
-                    p++;
+        if (moduleInfo) {
+            // Recurse on each dependency of this module, 
+            // figuring out its dependencies, and so on.
+            dependencies = moduleInfo.requires;
+            for (i = 0, l = dependencies.length; i < l; ++i) {
+                dependency = dependencies[i];
+                
+                // Is this module name in the required list of modules,
+                // and have we not already visited it?
+                if (required[dependency] && !visited[dependency]) {
+                    this._visit(dependency, visited);
                 }
             }
-
-            // when we make it here and moved is false, we are
-            // finished sorting
-            if (!moved) {
-                break;
-            }
-
         }
 
-        this.sorted = s;
+        this.sorted.push(name);
     },
 
     /**
@@ -10341,7 +10439,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "use": [
             "history-base",
             "history-hash",
-            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -11593,7 +11690,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '2ec8e93b30f0fc6809e2fbdba577e214';
+YUI.Env[Y.version].md5 = '8e471689779fc84718f6dad481790b59';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

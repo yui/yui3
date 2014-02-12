@@ -136,8 +136,8 @@ suite.add(new Y.Test.Case({
 
                 Assert.areSame('/github/yui/', HistoryHash.getHash(), 'URL hash was not updated.');
                 Assert.isTrue(activeView.hasClass('user-page'), 'UserPageView is not currently active.');
-            }, 500);
-        }, 500);
+            }, 1000);
+        }, 1000);
     },
 
     'Clicking a listed repo should navigate to the repo page': function () {

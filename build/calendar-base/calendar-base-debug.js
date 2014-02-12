@@ -1204,7 +1204,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
                         } else {
                             curCell.setContent("&nbsp;");
-                            curCell.addClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
+                            curCell.removeClass(CAL_DAY).addClass(CAL_NEXTMONTH_DAY);
                         }
                         break;
                     case 1:
@@ -1284,7 +1284,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      /**
      * A rendering assist method that initializes the calendar header HTML
      * based on a given date and potentially the provided headerRenderer.
-     * @method _updateCalendarHeader
+     * @method _initCalendarHeader
      * @param {Date} baseDate The date with which to initialize the calendar header.
      * @private
      */
@@ -1506,7 +1506,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
      /**
         * A template for a single cell with a weekday name.
-        * @property CALDAY_ROW_TEMPLATE
+        * @property WEEKDAY_TEMPLATE
         * @type String
         * @protected
         * @static

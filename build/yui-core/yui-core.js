@@ -796,10 +796,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;
@@ -1564,6 +1564,118 @@ or handle dependency resolution yourself.
 **/
 
 /**
+
+@property {Object} filters
+**/
+
+/**
+If `true`, YUI will use a combo handler to load multiple modules in as few
+requests as possible.
+
+The YUI CDN (which YUI uses by default) supports combo handling, but other
+servers may not. If the server from which you're loading YUI does not support
+combo handling, set this to `false`.
+
+Providing a value for the `base` config property will cause `combine` to default
+to `false` instead of `true`.
+
+@property {Boolean} combine
+@default true
+*/
+
+/**
+Array of module names that should never be dynamically loaded.
+
+@property {String[]} ignore
+**/
+
+/**
+Array of module names that should always be loaded when required, even if
+already present on the page.
+
+@property {String[]} force
+**/
+
+/**
+DOM element or id that should be used as the insertion point for dynamically
+added `<script>` and `<link>` nodes.
+
+@property {HTMLElement|String} insertBefore
+**/
+
+/**
+Object hash containing attributes to add to dynamically added `<script>` nodes.
+
+@property {Object} jsAttributes
+**/
+
+/**
+Object hash containing attributes to add to dynamically added `<link>` nodes.
+
+@property {Object} cssAttributes
+**/
+
+/**
+Timeout in milliseconds before a dynamic JS or CSS request will be considered a
+failure. If not set, no timeout will be enforced.
+
+@property {Number} timeout
+**/
+
+/**
+Callback for the 'CSSComplete' event. When dynamically loading YUI components
+with CSS, this property fires when the CSS is finished loading.
+
+This provides an opportunity to enhance the presentation of a loading page a
+little bit before the entire loading process is done.
+
+@property {Function} onCSS
+**/
+
+/**
+A hash of module definitions to add to the list of available YUI modules. These
+modules can then be dynamically loaded via the `use()` method.
+
+This is a hash in which keys are module names and values are objects containing
+module metadata.
+
+See `Loader.addModule()` for the supported module metadata fields. Also see
+`groups`, which provides a way to configure the base and combo spec for a set of
+modules.
+
+@example
+
+    modules: {
+        mymod1: {
+            requires: ['node'],
+            fullpath: '/mymod1/mymod1.js'
+        },
+
+        mymod2: {
+            requires: ['mymod1'],
+            fullpath: '/mymod2/mymod2.js'
+        },
+
+        mymod3: '/js/mymod3.js',
+        mycssmod: '/css/mycssmod.css'
+    }
+
+@property {Object} modules
+**/
+
+/**
+Aliases are dynamic groups of modules that can be used as shortcuts.
+
+@example
+
+    YUI({
+        aliases: {
+            davglass: [ 'node', 'yql', 'dd' ],
+            mine: [ 'davglass', 'autocomplete']
+        }
+    }).use('mine', function (Y) {
+        // Node, YQL, DD & AutoComplete available here.
+    });
 
 @property {Object} aliases
 **/
@@ -3538,7 +3650,7 @@ YUI.Env.parseUA = function(subUA) {
 
                 }
                 if (/Silk/.test(ua)) {
-                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    m = ua.match(/Silk\/([^\s]*)/);
                     if (m && m[1]) {
                         o.silk = numberify(m[1]);
                     }
@@ -3729,7 +3841,7 @@ YUI.Env.aliases = {
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
-    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "history": ["history-base","history-hash","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],

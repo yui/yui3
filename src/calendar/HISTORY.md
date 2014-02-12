@@ -4,7 +4,9 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* Fix an issue when Feb 1st is Saturday Mar 2nd appears to be selectable. ([#1559][]: @shunner)
+
+[#1559]: https://github.com/yui/yui3/issues/1559
 
 3.14.1
 ------

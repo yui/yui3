@@ -176,7 +176,7 @@ var Dt = {
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
 	 *  <dl>
-	 *   <dt>format {HTML} (Optional)</dt>
+	 *   <dt>format {String} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
 	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at
@@ -238,7 +238,7 @@ var Dt = {
 	 *   </dl>
 	 *  </dd>
 	 * </dl>
-	 * @return {HTML} Formatted date for display.
+	 * @return {String} Formatted date for display.
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};

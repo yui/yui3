@@ -612,7 +612,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * it will be ignored.
     *
     * @property queue
-    * @type {Y.Uploader.Queue}
+    * @type {Uploader.Queue}
     */
     queue: null,
 
@@ -1184,7 +1184,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * Starts the upload of a specific file.
     *
     * @method upload
-    * @param file {Y.FileFlash} Reference to the instance of the file to be uploaded.
+    * @param file {FileFlash} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
     * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
@@ -1266,7 +1266,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * with width and height set to 100% of the parent.
     *
     * @property FLASH_CONTAINER
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default '<div id="{swfContainerId}" style="position:absolute; top:0px; left: 0px; margin: 0; padding: 0;
     *           border: 0; width:100%; height:100%"></div>'
@@ -1278,7 +1278,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {HTML}
+    * @type {String}
     * @static
     * @default "<button type='button' class='yui3-button' tabindex='-1'>{selectButtonLabel}</button>"
     */

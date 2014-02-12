@@ -39,10 +39,7 @@ YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "c
                     message = /fields retrieval/.test(e.error.message) ?
                         "User not found" : e.error.message;
 
-                output.setHTML(
-                    "<p>[" + when + "] Could not retrieve data: " +
-                        "<em>" + message + "</em>" +
-                    "</p>");
+                output.setHTML('The data could not be retrieved. Please <a href="?mock=true">try this example with mocked data</a> instead.');
             }
         };
 

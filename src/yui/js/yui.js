@@ -799,10 +799,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;
@@ -1791,6 +1791,25 @@ Skin configuration and customizations.
 /**
 Hash of per-component filter specifications. If specified for a given component,
 this overrides the global `filter` config.
+
+@example
+    YUI({
+        modules: {
+            'foo': './foo.js',
+            'bar': './bar.js',
+            'baz': './baz.js'
+        },
+        filters: {
+            'foo': {
+                searchExp: '.js',
+                replaceStr: '-coverage.js'
+            }
+        }
+    }).use('foo', 'bar', 'baz', function (Y) {
+        // foo-coverage.js is loaded
+        // bar.js is loaded
+        // baz.js is loaded
+    });
 
 @property {Object} filters
 **/

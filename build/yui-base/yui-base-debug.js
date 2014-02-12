@@ -799,10 +799,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;
@@ -1791,6 +1791,25 @@ Skin configuration and customizations.
 /**
 Hash of per-component filter specifications. If specified for a given component,
 this overrides the global `filter` config.
+
+@example
+    YUI({
+        modules: {
+            'foo': './foo.js',
+            'bar': './bar.js',
+            'baz': './baz.js'
+        },
+        filters: {
+            'foo': {
+                searchExp: '.js',
+                replaceStr: '-coverage.js'
+            }
+        }
+    }).use('foo', 'bar', 'baz', function (Y) {
+        // foo-coverage.js is loaded
+        // bar.js is loaded
+        // baz.js is loaded
+    });
 
 @property {Object} filters
 **/
@@ -3877,7 +3896,7 @@ YUI.Env.parseUA = function(subUA) {
 
                 }
                 if (/Silk/.test(ua)) {
-                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    m = ua.match(/Silk\/([^\s]*)/);
                     if (m && m[1]) {
                         o.silk = numberify(m[1]);
                     }
@@ -4068,7 +4087,7 @@ YUI.Env.aliases = {
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
-    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "history": ["history-base","history-hash","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
@@ -4849,12 +4868,13 @@ This object comes from the options passed to `Get.css()`, `Get.js()`, or
 **/
 
 /**
-Array of errors that have occurred during this transaction, if any.
+Array of errors that have occurred during this transaction, if any. Each error
+object has the following properties:
+`errors.error`: Error message.
+`errors.request`: Request object related to the error.
 
 @since 3.5.0
 @property {Object[]} errors
-@property {String} errors.error Error message.
-@property {Object} errors.request Request object related to the error.
 **/
 
 /**

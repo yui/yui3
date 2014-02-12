@@ -1001,7 +1001,7 @@ It defaults to the value of the [key](#property_key) property or the text
     { key: 'MfgvaPrtNum', label: 'Part Number' }
 
 @property label
-@@type {HTML}
+@type {String}
  */
 /**
 Used to create stacked headers.
@@ -1089,7 +1089,7 @@ its content.
 
 
 @property cellTemplate
-@type HTML template
+@type String
  */
 /**
 String or function used to translate the raw record data for each cell in a
@@ -1209,7 +1209,7 @@ for that cell is `undefined`, `null`, or an empty string.
     }
 
 @property emptyCellValue
-@type {String|HTML} depending on the setting of allowHTML
+@type {String} depending on the setting of allowHTML
  */
 /**
 Skips the security step of HTML escaping the value for cells

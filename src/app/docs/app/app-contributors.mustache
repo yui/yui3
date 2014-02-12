@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 .scrollable pre {
     overflow-y: auto;
     max-height: 40em;
@@ -12,13 +12,16 @@
 }
 </style>
 
+{{>app-contributors-js-mock-config}}
 
 <div class="intro">
 {{! TODO:
   * Provide more of an intro to the apps organization. Expand on this in a section after the rendered example, but before the code.
 }}
 <p>
-This example demonstrates the powerful navigation and view management features `Y.App` provides by creating an application to browse through the contributors of GitHub projects.
+This example demonstrates the powerful navigation and view management features `Y.App` provides by creating an application to browse through the contributors of GitHub projects.</p>
+
+<p><strong>Note:</strong> If the GitHub API is unavailable, you can <a href="app-contributors.html?mock=true">try this example with mock data</a>. The available users in the mock example are `yui` and `ericf`.
 </p>
 </div>
 
