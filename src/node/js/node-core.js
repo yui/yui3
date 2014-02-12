@@ -292,8 +292,8 @@ Y_Node.one = function(node) {
         }
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
-            uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node[UID];
             if (use_instance_map) {
+                uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node[UID];
                 instance = Y_Node._instances[uid]; // reuse exising instances
             } else {
                 instance = node._yui_instances && node._yui_instances[Y._yuid]; // reuse exising instances
