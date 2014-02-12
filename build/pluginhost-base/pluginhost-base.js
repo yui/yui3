@@ -36,7 +36,7 @@ YUI.add('pluginhost-base', function (Y, NAME) {
     var L = Y.Lang;
 
     function PluginHost() {
-        this._plugins = {};
+        // do not initialize this._plugins, because Y.Node's may have been created before Y.PluginHost was loaded
     }
 
     PluginHost.prototype = {
@@ -60,6 +60,8 @@ YUI.add('pluginhost-base', function (Y, NAME) {
          */
         plug: function(Plugin, config) {
             var i, ln, ns;
+
+            this._plugins = this._plugins || {};
 
             if (L.isArray(Plugin)) {
                 for (i = 0, ln = Plugin.length; i < ln; i++) {
@@ -105,7 +107,10 @@ YUI.add('pluginhost-base', function (Y, NAME) {
          */
         unplug: function(plugin) {
             var ns = plugin,
-                plugins = this._plugins;
+                plugins;
+
+            this._plugins = this._plugins || {};
+            plugins = this._plugins;
 
             if (plugin) {
                 if (L.isFunction(plugin)) {
@@ -144,7 +149,7 @@ YUI.add('pluginhost-base', function (Y, NAME) {
          * @return {Plugin} Returns a truthy value (the plugin instance) if present, or undefined if not.
          */
         hasPlugin : function(ns) {
-            return (this._plugins[ns] && this[ns]);
+            return (this._plugins && this._plugins[ns] && this[ns]);
         },
 
         /**

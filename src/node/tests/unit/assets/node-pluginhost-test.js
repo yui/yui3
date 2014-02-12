@@ -14,7 +14,7 @@ YUI.add('node-pluginhost-test', function(Y) {
             delete this._Y;
         },
 
-        'Loading node-pluginhost should update cached Node instances': function () {
+        'Loading node-pluginhost should not update cached Node instances': function () {
             var Y = this._Y,
                 someNode;
 
@@ -22,6 +22,10 @@ YUI.add('node-pluginhost-test', function(Y) {
             someNode = Y.one('div');
 
             Y.use('node-pluginhost');
+            Assert.isFalse(someNode.hasOwnProperty('_plugins'));
+
+            Y.use('shim-plugin');
+            someNode.plug(Y.Plugin.Shim);
             Assert.isTrue(someNode.hasOwnProperty('_plugins'));
         }
     }));

@@ -39,11 +39,6 @@ Y.Node.unplug = function() {
 
 Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
 
-// run PluginHost constructor on cached Node instances
-Y.Object.each(Y.Node._instances, function (node) {
-    Y.Plugin.Host.apply(node);
-});
-
 // allow batching of plug/unplug via NodeList
 // doesn't use NodeList.importMethod because we need real Nodes (not tmpNode)
 /**
