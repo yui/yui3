@@ -154,7 +154,6 @@ Y.mix(Y_Node.prototype, {
      * animates the toggling of the node using given named effect.
      * @method toggleView
      * @for Node
-     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
@@ -252,7 +251,6 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      * If the "transition" module is loaded, toggleView optionally
      * animates the toggling of the nodes using given named effect.
      * @method toggleView
-     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
