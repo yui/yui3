@@ -30,6 +30,8 @@ var DOT = '.',
     UID = '_yuid',
     EMPTY_OBJ = {},
 
+    use_instance_map = Y.UA.ie > 0, // define flag, in case other browsers need it, too
+
     _slice = Array.prototype.slice,
 
     Y_DOM = Y.DOM,
@@ -48,7 +50,7 @@ var DOT = '.',
 
         var uid = (node.nodeType !== 9) ? node.uniqueID : node[UID];
 
-        if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
+        if (use_instance_map && uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
@@ -125,14 +127,17 @@ Y_Node.SHOW_TRANSITION = 'fadeIn';
 Y_Node.HIDE_TRANSITION = 'fadeOut';
 
 /**
- * A list of Node instances that have been created
+ * A list of Node instances that have been created. Only defined in browsers
+ * that already have broken GC, since this global map also breaks GC.
  * @private
  * @type Object
  * @property _instances
  * @static
  *
  */
-Y_Node._instances = {};
+if (use_instance_map) {
+    Y_Node._instances = {};
+}
 
 /**
  * Retrieves the DOM node bound to a Node instance
@@ -289,12 +294,23 @@ Y_Node.one = function(node) {
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
             uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
-            instance = Y_Node._instances[uid]; // reuse exising instances
+            if (use_instance_map) {
+                instance = Y_Node._instances[uid]; // reuse exising instances
+            } else {
+                instance = node._yui_instances && node._yui_instances[Y._yuid]; // reuse exising instances
+            }
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
                 if (node.nodeType != 11) { // dont cache document fragment
-                    Y_Node._instances[instance[UID]] = instance; // cache node
+                    if (use_instance_map) {
+                        Y_Node._instances[instance[UID]] = instance; // cache node
+                    } else {
+                        if (!node._yui_instances) {
+                            node._yui_instances = {};
+                        }
+                        node._yui_instances[Y._yuid] = instance; // cache node
+                    }
                 }
             }
         }
@@ -746,7 +762,11 @@ Y.mix(Y_Node.prototype, {
 
         if (recursive) {
             Y.NodeList.each(this.all('*'), function(node) {
-                instance = Y_Node._instances[node[UID]];
+                if (use_instance_map) {
+                    instance = Y_Node._instances[node[UID]];
+                } else {
+                    instance = node._yui_instances && node._yui_instances[Y._yuid];
+                }
                 if (instance) {
                    instance.destroy();
                 } else { // purge in case added by other means
@@ -755,10 +775,16 @@ Y.mix(Y_Node.prototype, {
             });
         }
 
+        if (this._node._yui_instances) {
+            delete this._node._yui_instances[Y._yuid];
+        }
+
         this._node = null;
         this._stateProxy = null;
 
-        delete Y_Node._instances[this._yuid];
+        if (use_instance_map) {
+            delete Y_Node._instances[this._yuid];
+        }
     },
 
     /**
@@ -926,10 +952,17 @@ NodeList.addMethod = function(name, fn, context) {
                 args = arguments;
 
             Y.Array.each(this._nodes, function(node) {
-                var UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid',
-                    instance = Y.Node._instances[node[UID]],
+                var UID,
+                    instance,
                     ctx,
                     result;
+
+                if (Y.Node._instances) {
+                    UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid';
+                    instance = Y.Node._instances[node[UID]];
+                } else {
+                    instance = node._yui_instances && node._yui_instances[Y._yuid];
+                }
 
                 if (!instance) {
                     instance = NodeList._getTempNode(node);
@@ -1018,7 +1051,16 @@ Y.mix(NodeList.prototype, {
         var nodelist = this;
 
         Y.Array.each(this._nodes, function(node, index) {
-            var instance = Y.Node._instances[node[UID]];
+            var UID,
+                instance;
+
+            if (Y.Node._instances) {
+                UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid';
+                instance = Y.Node._instances[node[UID]];
+            } else {
+                instance = node._yui_instances && node._yui_instances[Y._yuid];
+            }
+
             if (!instance) {
                 instance = NodeList._getTempNode(node);
             }
@@ -1256,11 +1298,19 @@ NodeList.prototype.get = function(attr) {
         nodes = this._nodes,
         isNodeList = false,
         getTemp = NodeList._getTempNode,
+        UID,
         instance,
         val;
 
     if (nodes[0]) {
-        instance = Y.Node._instances[nodes[0]._yuid] || getTemp(nodes[0]);
+        if (Y.Node._instances) {
+            UID = (nodes[0].uniqueID && nodes[0].nodeType !== 9 ) ? 'uniqueID' : '_yuid';
+            instance = Y.Node._instances[nodes[0][UID]];
+        } else {
+            instance = nodes[0]._yui_instances && nodes[0]._yui_instances[Y._yuid];
+        }
+        instance = instance || getTemp(nodes[0]);
+
         val = instance._get(attr);
         if (val && val.nodeType) {
             isNodeList = true;
@@ -1268,7 +1318,12 @@ NodeList.prototype.get = function(attr) {
     }
 
     Y.Array.each(nodes, function(node) {
-        instance = Y.Node._instances[node._yuid];
+        if (Y.Node._instances) {
+            UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid';
+            instance = Y.Node._instances[node[UID]];
+        } else {
+            instance = node._yui_instances && node._yui_instances[Y._yuid];
+        }
 
         if (!instance) {
             instance = getTemp(node);

@@ -28,7 +28,7 @@ var DOT = '.',
     UID = '_yuid',
     EMPTY_OBJ = {},
 
-    use_instance_map = Y.UA.ie > 0, // define flag, in case other browsers need it, too
+    use_instance_map = 0 < Y.UA.ie && Y.UA.ie < 10, // define flag, in case other browsers need it, too
 
     _slice = Array.prototype.slice,
 
