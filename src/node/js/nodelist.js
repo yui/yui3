@@ -75,14 +75,14 @@ NodeList.addMethod = function(name, fn, context) {
                 args = arguments;
 
             Y.Array.each(this._nodes, function(node) {
-                var UID,
+                var uid,
                     instance,
                     ctx,
                     result;
 
                 if (Y.Node._instances) {
-                    UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid';
-                    instance = Y.Node._instances[node[UID]];
+                    uid = (node.uniqueID && node.nodeType !== 9 ) ? node.uniqueID : node[UID];
+                    instance = Y.Node._instances[uid];
                 } else {
                     instance = node._yui_instances && node._yui_instances[Y._yuid];
                 }
@@ -175,12 +175,12 @@ Y.mix(NodeList.prototype, {
         var nodelist = this;
 
         Y.Array.each(this._nodes, function(node, index) {
-            var UID,
+            var uid,
                 instance;
 
             if (Y.Node._instances) {
-                UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid';
-                instance = Y.Node._instances[node[UID]];
+                uid = (node.uniqueID && node.nodeType !== 9 ) ? node.uniqueID : node[UID];
+                instance = Y.Node._instances[uid];
             } else {
                 instance = node._yui_instances && node._yui_instances[Y._yuid];
             }
@@ -422,14 +422,14 @@ NodeList.prototype.get = function(attr) {
         nodes = this._nodes,
         isNodeList = false,
         getTemp = NodeList._getTempNode,
-        UID,
+        uid,
         instance,
         val;
 
     if (nodes[0]) {
         if (Y.Node._instances) {
-            UID = (nodes[0].uniqueID && nodes[0].nodeType !== 9 ) ? 'uniqueID' : '_yuid';
-            instance = Y.Node._instances[nodes[0][UID]];
+            uid = (nodes[0].uniqueID && nodes[0].nodeType !== 9 ) ? nodes[0].uniqueID : nodes[0][UID];
+            instance = Y.Node._instances[uid];
         } else {
             instance = nodes[0]._yui_instances && nodes[0]._yui_instances[Y._yuid];
         }
@@ -443,8 +443,8 @@ NodeList.prototype.get = function(attr) {
 
     Y.Array.each(nodes, function(node) {
         if (Y.Node._instances) {
-            UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid';
-            instance = Y.Node._instances[node[UID]];
+            uid = (node.uniqueID && node.nodeType !== 9 ) ? node.uniqueID : node[UID];
+            instance = Y.Node._instances[uid];
         } else {
             instance = node._yui_instances && node._yui_instances[Y._yuid];
         }
