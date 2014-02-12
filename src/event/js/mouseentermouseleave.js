@@ -124,12 +124,12 @@ Y.Event.define("mouseleave", Y.merge(config, {
     relProperty: "toElement"
 }), true);
 
-// Add MSPointerEnter/MSPointerLeave for IE10.  
-if (navigator.msPointerEnabled) {
-    Y.Event.define("MSPointerEnter", Y.merge(config, {
+// Add pointerenter/pointerleave for IE10 only  
+if (typeof navigator === 'object' && navigator.msPointerEnabled && !navigator.pointerEnabled) {
+    Y.Event.define("pointerenter", Y.merge(config, {
         proxyType: "MSPointerOver"
     }), true);
-    Y.Event.define("MSPointerLeave", Y.merge(config, {
+    Y.Event.define("pointerleave", Y.merge(config, {
         proxyType: "MSPointerOut",
         relProperty: "toElement"
     }), true);
