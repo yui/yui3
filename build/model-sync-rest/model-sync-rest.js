@@ -716,7 +716,7 @@ RESTSync.prototype = {
     @method _onSyncIOStart
     @param {String} txId The `Y.io` transaction id.
     @param {Object} details Extra details carried through from `sync()`:
-      @param {String} detials.action The sync action performed.
+      @param {String} details.action The sync action performed.
       @param {Function} [details.callback] The function to call after syncing.
       @param {String} details.url The URL of the requested resource.
     @protected

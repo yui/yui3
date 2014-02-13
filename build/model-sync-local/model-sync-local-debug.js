@@ -176,7 +176,7 @@ LocalSync.prototype = {
       * **delete**: Delete an existing model.
 
     @param {Object} [options] Sync options
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsey.
