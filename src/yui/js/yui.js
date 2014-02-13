@@ -1206,7 +1206,7 @@ with any configuration info required for the module.
 
                 Y._loading = false;
 
-                if (loader._failed) {
+                if (loader && loader._failed) {
                     response.success = false;
                     Y._notify(callback, response, data);
                     return;
