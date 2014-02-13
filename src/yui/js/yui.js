@@ -735,6 +735,20 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+
+                    if (loader) {
+                        def = loader.getModule(name);
+                        if (def) {
+                            if (typeof def._testResult === 'undefined' && def.optTest) {
+                                def._testResult = def.optTest(Y);
+                            }
+                            if (def._testResult === false) {
+                                Y.log('Failed to attach module ' + name, 'warn', 'yui');
+                                return true;
+                            }
+                        }
+                    }
+
                     /*
                         If it's a temp module, we need to redo it's requirements if it's already loaded
                         since it may have been loaded by another instance and it's dependencies might
@@ -1191,6 +1205,12 @@ with any configuration info required for the module.
                     data = response.data;
 
                 Y._loading = false;
+
+                if (loader._failed) {
+                    response.success = false;
+                    Y._notify(callback, response, data);
+                    return;
+                }
 
                 if (data) {
                     origMissing = missing;

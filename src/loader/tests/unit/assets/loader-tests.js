@@ -742,9 +742,37 @@ YUI.add('loader-tests', function(Y) {
                 ignoreRegistered: true,
                 modules: {
                     foo: {
+                        path: 'foo-min.js'
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: optional dependencies with tests': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
                         path: 'foo-min.js',
-                        test: function () {
+                        optTest: function (Y) {
+                            Assert.isInstanceOf(YUI, Y);
                             return true;
+                        }
+                    },
+                    baz: {
+                        path: 'baz-min.js',
+                        optTest: function () {
+                            return false;
                         }
                     },
                     bar: {
@@ -759,26 +787,6 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
             Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
         },
-        'test: optional dependencies without tests should be ignored': function () {
-            var loader = new Y.Loader({
-                maxURLLength: 8024,
-                combine: true,
-                ignoreRegistered: true,
-                modules: {
-                    foo: {
-                        path: 'foo-min.js'
-                    },
-                    bar: {
-                        path: 'bar-min.js',
-                        optionalRequires: ['foo']
-                    }
-                },
-                require: ['bar']
-            });
-            var out = loader.resolve(true);
-            Assert.areSame(1, out.jsMods.length, 'Not included the correct number of modules');
-            Assert.areSame('bar', out.jsMods[0].name, 'Not included required module');
-        },
         'test: optional dependencies ignore undeclared modules': function () {
             var loader = new Y.Loader({
                 maxURLLength: 8024,
@@ -787,7 +795,7 @@ YUI.add('loader-tests', function(Y) {
                 modules: {
                     bar: {
                         path: 'bar-min.js',
-                        optionalRequires: ['foo']
+                        optionalRequires: ['foobarbazasdflkj']
                     }
                 },
                 require: ['bar']
@@ -795,6 +803,73 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.areSame(1, out.jsMods.length, 'Not included the correct number of modules');
             Assert.areSame('bar', out.jsMods[0].name, 'Not included required module');
+        },
+        'test: already added module with failing test': function () {
+            YUI.add('mod121-foo', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod122-bar', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                requires: ['mod121-foo']
+            });
+
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    'mod121-foo': {
+                        optTest: function () {
+                            return false;
+                        }
+                    },
+                    'mod122-bar': {
+                        requires: ['mod121-foo']
+                    }
+                },
+                require: ['mod122-bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('mod121-foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('mod122-bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: required dependencies with tests': function () {
+            var test = this;
+
+            YUI.add('mod111-foo', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod112-bar', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                requires: ['mod111-foo']
+            });
+
+            var $Y = YUI({
+                modules: {
+                    'mod111-foo': {
+                        optTest: function () {
+                            return false;
+                        }
+                    },
+                    'mod112-bar': {
+                        requires: ['mod111-foo']
+                    }
+                }
+            });
+
+            $Y.use('mod112-bar', function (Y, result) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Assert.isUndefined(Y.foo);
+                        Assert.isFalse(result.success);
+                    });
+                });
+            });
+
+            test.wait();
         },
         test_css_stamp: function() {
             var test = this,

@@ -1460,6 +1460,12 @@ Y.Loader.prototype = {
                 hash[r[i]] = true;
                 m = this.getModule(r[i]);
                 if (m) {
+                    if (typeof m._testResult === 'undefined' && m.optTest) {
+                        m._testResult = m.optTest(Y);
+                    }
+                    if (m._testResult === false) {
+                        this._failed = true;
+                    }
                     add = this.getRequires(m);
                     intl = intl || (m.expanded_map &&
                         (INTL in m.expanded_map));
@@ -1589,19 +1595,16 @@ Y.Loader.prototype = {
             }
         }
 
-        // Optional dependencies are dependencies that define their own tests
-        // For example, if a module depends on a JSON polyfill and the JSON
-        // module has a test, it will be added to the dependency list if the
-        // test passes.
+        // Optional dependencies are dependencies that may or may not be
+        // available.
         // This feature was designed specifically to be used when transpiling
-        // ES6 modules, in order to use polyfills without having to import them
-        // since they should already be available in the global scope.
+        // ES6 modules, in order to use polyfills and regular scripts that define
+        // global variables without having to import them since they should be
+        // available in the global scope.
         if (optReqs) {
             for (i = 0, length = optReqs.length; i < length; i++) {
                 m = this.getModule(optReqs[i]);
-                // If an optional dependency does not have a test, ignore it
-                /* istanbul ignore else */
-                if (m && m.test && m.test(Y)) {
+                if (m) {
                     d.push(m.name);
                 }
             }
@@ -2432,8 +2435,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type, skipsort) {
-         Y.log('public insert() ' + (type || '') + ', ' +
-         Y.Object.keys(this.required), "info", "loader");
+        Y.log('public insert() ' + (type || '') + ', ' +
+        Y.Object.keys(this.required), "info", "loader");
+        if (this._failed && this.onEnd) {
+            this.onEnd({
+                msg: 'notregistered',
+                success: false
+            });
+            return;
+        }
         var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;
