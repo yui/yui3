@@ -4,7 +4,10 @@ Widget Modality Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed a bug where the widget would focus before it was actually rendered,
+  leading to a jump in the window position. ([#1636][]: @andrewnicols)
+
+[#1636]: https://github.com/yui/yui3/pull/1636
 
 3.14.1
 ------
