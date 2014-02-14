@@ -3,8 +3,8 @@
         "timers": {
             "jsfiles": [
                 "prologue.js",
-                "../../../node_modules/asap/queue.js",
-                "../../../node_modules/asap/asap.js",
+                "queue.js",
+                "asap.js",
                 "epilogue.js"
             ]
         }
