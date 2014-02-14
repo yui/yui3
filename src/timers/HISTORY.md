@@ -5,8 +5,9 @@ Timers
 ------
 
 * Import `asap.js` as the underlying implementation of `Y.soon`. This changes
-  slightly the semantics of `Y.soon` because some operations may be run in the
-  same turn of the event loop, but this should be almost unobservable.
+  slightly the semantics of `Y.soon`: tasks scheduled during the flushing of
+  asap's queue are pushed to the end of the queue and not scheduled to a new
+  tick.
 
 3.14.1
 ------
