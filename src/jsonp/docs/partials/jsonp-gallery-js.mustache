@@ -61,7 +61,8 @@ YUI().use("jsonp", "transition",function (Y) {
         ' {fullname} <span class="rank">({rank})</span>';
 
     gallery.failureTemplate =
-        '<p class="error">Ack, I couldn\'t reach the Gallery web service!</p>' +
+        '<p class="error">Ack, I couldn\'t reach the Gallery web service! ' +
+        'Would you like to <a href="?mock=true">try with mock data</a> or try again?</p>' +
         '<button>Try again</button>';
 
     gallery.polling = false;
