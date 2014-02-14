@@ -2,9 +2,14 @@
 #ac-input { width: 250px; }
 </style>
 
+{{>ac-yql-mock-config}}
+
 <div class="intro">
 <p>
-This example demonstrates how to provide autocomplete suggestions using a YQL query as the source. In this case, we're using a custom <a href="http://developer.yahoo.com/yql/console/?q=select%20*%20from%20search.suggest%20where%20query%3D%22yui%20autocomplete%22&amp;env=http%3A%2F%2Fpieisgood.org%2Fyql%2Ftables.env"><code>search.suggest</code> YQL table</a> to provide suggestions based on popular Yahoo! Search queries.
+This example demonstrates how to provide autocomplete suggestions using a YQL query as the source. In this case, we're using a custom <a href="http://developer.yahoo.com/yql/console/?q=select%20*%20from%20search.suggest%20where%20query%3D%22yui%20autocomplete%22&amp;env=http%3A%2F%2Fpieisgood.org%2Fyql%2Ftables.env"><code>search.suggest</code> YQL table</a> to provide suggestions based on popular Yahoo Search queries.
+</p>
+<p>
+<strong>Note:</strong> If the Yahoo Search API is unavailable, you can <a href="?mock=true">try this example with mock data</a>. Try typing in "ca" to see the results.
 </p>
 </div>
 
