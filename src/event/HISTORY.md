@@ -4,7 +4,13 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* Fixed the `event.returnValue is deprecated` warning in chrome. [#1460](https://github.com/yui/yui3/issues/1460) @zhiyelee
+* Reduced categories of certain noisy log events in the `event` module and added
+  categories for those that were missing some. ([#1605][]: @andrewnicols)
+
+* Fixed the `event.returnValue is deprecated` warning in chrome. ([#1460][]: @zhiyelee)
+
+[#1605]: https://github.com/yui/yui3/issues/1605
+[#1460]: https://github.com/yui/yui3/issues/1460
 
 3.14.1
 ------
