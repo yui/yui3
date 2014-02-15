@@ -4,10 +4,10 @@ Calendar Change History
 @VERSION@
 ------
 
-* Fix calendar to use visibility:inherit instead of visibility:visible, for compatibility with overlays.
-
+* Fix calendar to use `visibility:inherit` instead of `visibility:visible`, for compatibility with overlays. ([#1627][]: @jafl)
 * Fix an issue when Feb 1st is Saturday Mar 2nd appears to be selectable. ([#1559][]: @shunner)
 
+[#1627]: https://github.com/yui/yui3/issues/1627
 [#1559]: https://github.com/yui/yui3/issues/1559
 
 3.14.1
