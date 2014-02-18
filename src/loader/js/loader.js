@@ -2512,7 +2512,19 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             self = this, comboSep, maxURLLength,
             inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
-            type = self.loadType || 'js', addSingle;
+            type = self.loadType || 'js', addSingle,
+            ////////////////////////////////////////////////////////////
+            //                  BEGIN WF2 CHANGE                      //
+            // Justification: Compress combo url.                     //
+            ////////////////////////////////////////////////////////////
+            WF2_ALIAS_KEYS = META.WF2_ALIAS_KEYS,
+            WF2_ALIAS_VALUES = META.WF2_ALIAS_VALUES,
+            aliasIndex = 0,
+            aliasLen = WF2_ALIAS_KEYS.length;
+            ////////////////////////////////////////////////////////////
+            //                  END WF2 CHANGE                        //
+            // Justification: Compress combo url.                     //
+            ////////////////////////////////////////////////////////////
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
@@ -2645,14 +2657,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         len = urls.length;
                         tmpBase = base + urls.join(comboSep);
 
-                        ///////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////
                         //                  BEGIN WF2 CHANGE                      //
                         // Justification: Compress combo url.                     //
                         ////////////////////////////////////////////////////////////
-                        var aliasLen = WF2_ALIAS_KEYS.length,
-                            WF2_ALIAS_KEYS = META.WF2_ALIAS_KEYS,
-                            WF2_ALIAS_VALUES = META.WF2_ALIAS_VALUES,
-                            aliasIndex = 0;    
 
                         Y.log('pre-compressed url length ' + tmpBase.length +'('+(tmpBase.length / maxURLLength) +' requests )', 'info', 'loader');
                         while(tmpBase.length > maxURLLength && aliasIndex < aliasLen) {

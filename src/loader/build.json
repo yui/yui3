@@ -1,5 +1,5 @@
 {
-    "exec": ["../../../build/lib/wf2_prebuild_loader_dependencies.js"],
+    "exec": ["../../../build/lib/wf2_prebuild_loader_dependencies.js","scripts/wf2-create-alias.js"],
     "name": "loader",
     "postexec": [
         "./scripts/build_loader_tests.js"
