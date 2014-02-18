@@ -38,6 +38,18 @@ var NOT_FOUND = {},
     yArray = Y.Array,
     _queue = GLOBAL_ENV._loaderQueue,
     META = GLOBAL_ENV[VERSION],
+    ///////////////////////////////////////////////////////////
+    //                  BEGIN WF2 CHANGE                     //
+    // Justification: Compress combo url.                    //
+    ///////////////////////////////////////////////////////////
+    WF2_ALIAS_KEYS=META.WF2_ALIAS_KEYS,
+    WF2_ALIAS_VALUES=META.WF2_ALIAS_VALUES,
+    aliasLen = WF2_ALIAS_KEYS.length;
+    aliasIndex = 0,    
+    ///////////////////////////////////////////////////////////
+    //                  END WF2 CHANGE                       //
+    // Justification: Compress combo url.                    //
+    ///////////////////////////////////////////////////////////
     SKIN_PREFIX = 'skin-',
     L = Y.Lang,
     ON_PAGE = GLOBAL_ENV.mods,
@@ -2644,6 +2656,23 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         mods = resCombos[base][type + 'Mods'];
                         len = urls.length;
                         tmpBase = base + urls.join(comboSep);
+
+                        ///////////////////////////////////////////////////////////
+                        //                  BEGIN WF2 CHANGE                      //
+                        // Justification: Compress combo url.                     //
+                        ////////////////////////////////////////////////////////////
+                        Y.log('pre-compressed url length ' + tmpBase.length +'('+(tmpBase.length / maxURLLength) +' requests )', 'info', 'loader');
+                        while(tmpBase.length > maxURLLength && aliasIndex < aliasLen) {
+                          tmpBase = tmpBase.replace(new RegExp(WF2_ALIAS_VALUES[aliasIndex], 'g'),WF2_ALIAS_KEYS[aliasIndex]);
+                          aliasIndex++;
+                        }
+                        Y.log('post-compressed url length '+tmpBase.length +'('+(tmpBase.length / maxURLLength) +'requests )', 'info', 'loader');
+                        urls = tmpBase.substr(base.length,tmpBase.length).split(comboSep);
+                        ////////////////////////////////////////////////////////////
+                        //                  END WF2 CHANGE                        //
+                        // Justification: Compress combo url.                     //
+                        ////////////////////////////////////////////////////////////
+
                         baseLen = tmpBase.length;
                         if (maxURLLength <= base.length) {
                             Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
