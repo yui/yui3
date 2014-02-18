@@ -44,8 +44,6 @@ var NOT_FOUND = {},
     ///////////////////////////////////////////////////////////
     WF2_ALIAS_KEYS = META.WF2_ALIAS_KEYS,
     WF2_ALIAS_VALUES = META.WF2_ALIAS_VALUES,
-    aliasLen = WF2_ALIAS_KEYS.length,
-    aliasIndex = 0,    
     ///////////////////////////////////////////////////////////
     //                  END WF2 CHANGE                       //
     // Justification: Compress combo url.                    //
@@ -2661,6 +2659,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         //                  BEGIN WF2 CHANGE                      //
                         // Justification: Compress combo url.                     //
                         ////////////////////////////////////////////////////////////
+                        var aliasLen = WF2_ALIAS_KEYS.length,
+                        aliasIndex = 0;    
+
                         Y.log('pre-compressed url length ' + tmpBase.length +'('+(tmpBase.length / maxURLLength) +' requests )', 'info', 'loader');
                         while(tmpBase.length > maxURLLength && aliasIndex < aliasLen) {
                           tmpBase = tmpBase.replace(new RegExp(WF2_ALIAS_VALUES[aliasIndex], 'g'),WF2_ALIAS_KEYS[aliasIndex]);
