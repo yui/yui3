@@ -38,16 +38,6 @@ var NOT_FOUND = {},
     yArray = Y.Array,
     _queue = GLOBAL_ENV._loaderQueue,
     META = GLOBAL_ENV[VERSION],
-    ///////////////////////////////////////////////////////////
-    //                  BEGIN WF2 CHANGE                     //
-    // Justification: Compress combo url.                    //
-    ///////////////////////////////////////////////////////////
-    WF2_ALIAS_KEYS = META.WF2_ALIAS_KEYS,
-    WF2_ALIAS_VALUES = META.WF2_ALIAS_VALUES,
-    ///////////////////////////////////////////////////////////
-    //                  END WF2 CHANGE                       //
-    // Justification: Compress combo url.                    //
-    ///////////////////////////////////////////////////////////
     SKIN_PREFIX = 'skin-',
     L = Y.Lang,
     ON_PAGE = GLOBAL_ENV.mods,
@@ -2660,7 +2650,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         // Justification: Compress combo url.                     //
                         ////////////////////////////////////////////////////////////
                         var aliasLen = WF2_ALIAS_KEYS.length,
-                        aliasIndex = 0;    
+                            WF2_ALIAS_KEYS = META.WF2_ALIAS_KEYS,
+                            WF2_ALIAS_VALUES = META.WF2_ALIAS_VALUES,
+                            aliasIndex = 0;    
 
                         Y.log('pre-compressed url length ' + tmpBase.length +'('+(tmpBase.length / maxURLLength) +' requests )', 'info', 'loader');
                         while(tmpBase.length > maxURLLength && aliasIndex < aliasLen) {
