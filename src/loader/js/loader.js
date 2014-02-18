@@ -42,9 +42,9 @@ var NOT_FOUND = {},
     //                  BEGIN WF2 CHANGE                     //
     // Justification: Compress combo url.                    //
     ///////////////////////////////////////////////////////////
-    WF2_ALIAS_KEYS=META.WF2_ALIAS_KEYS,
-    WF2_ALIAS_VALUES=META.WF2_ALIAS_VALUES,
-    aliasLen = WF2_ALIAS_KEYS.length;
+    WF2_ALIAS_KEYS = META.WF2_ALIAS_KEYS,
+    WF2_ALIAS_VALUES = META.WF2_ALIAS_VALUES,
+    aliasLen = WF2_ALIAS_KEYS.length,
     aliasIndex = 0,    
     ///////////////////////////////////////////////////////////
     //                  END WF2 CHANGE                       //
