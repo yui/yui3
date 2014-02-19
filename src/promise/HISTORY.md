@@ -4,21 +4,15 @@ Promise Change History
 3.15.0
 ------
 
-* Remove `Promise.resolve` and rename `Promise.cast` to `Promise.resolve` as per
-  the last TC39 decision.
-
-3.14.1
-------
-
 * Deprecated `resolver.then` in favor of `resolver._addCallbacks`.
+* Added new methods following the new emerging ES6 standard for promises.
+  This includes `promise.catch`, `Promise.all`, `Promise.race`,
+  `Promise.resolve` and `Promise.reject`.
 
 3.14.0
 ------
 
 * Marked `getStatus` as deprecated.
-* Added new methods following the new emerging ES6 standard for promises.
-  This includes `promise.catch`, `Promise.all`, `Promise.race`, `Promise.cast`,
-  `Promise.resolve` and `Promise.reject`.
 
 3.13.0
 ------
