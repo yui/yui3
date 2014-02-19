@@ -4,7 +4,9 @@ YUI Loader Change History
 3.15.0
 ------
 
-* No changes.
+* Optimization of the `calculate` method, which now utilizes a topological sort (a variation of a depth first search) to generate a valid dependency order. ([#1606][]: @ezequiel)
+
+[#1606]: https://github.com/yui/yui3/pull/1606
 
 3.14.1
 ------

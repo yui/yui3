@@ -10,6 +10,10 @@ App Framework Change History
   code needs to be changed unless you want to maintain the data that is
   present in `localStorage` today. ([#1597][])
 
+* Fixed an issue where `history-hash-ie` loaded on non-IE browsers. ([#1613][]: @ezequiel)
+
+[#1613]: https://github.com/yui/yui3/pull/1613
+
 3.14.1
 ------
 
