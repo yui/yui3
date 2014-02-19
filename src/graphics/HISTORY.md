@@ -4,7 +4,8 @@ Graphics Change History
 3.15.0
 ------
 
-* No changes.
+* #1543 Parse rgba value into color string and opacity value for vml fill and stroke. 
+* #1566 Addressed issue with path chaining in canvas implementation of graphics.  
 
 3.14.1
 ------
