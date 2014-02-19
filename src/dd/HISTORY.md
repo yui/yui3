@@ -1,7 +1,7 @@
 Drag and Drop Change History
 ============================
 
-@VERSION@
+3.15.0
 ------
 
 * Fix a bug that doesn't fire `drop:hit` event. ([#1573][]: @hacklschorsch)

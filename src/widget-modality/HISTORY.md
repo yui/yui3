@@ -1,7 +1,7 @@
 Widget Modality Change History
 ==============================
 
-@VERSION@
+3.15.0
 ------
 
 * Fixed a bug where the widget would focus before it was actually rendered,

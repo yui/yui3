@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.15.0
 ------
 
 * Fix calendar to use `visibility:inherit` instead of `visibility:visible`, for compatibility with overlays. ([#1627][]: @jafl)

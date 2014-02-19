@@ -1,7 +1,7 @@
 Timers
 ======
 
-@VERSION@
+3.15.0
 ------
 
 * Import `asap.js` as the underlying implementation of `Y.soon`. This changes

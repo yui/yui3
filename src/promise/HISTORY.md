@@ -1,7 +1,7 @@
 Promise Change History
 ======================
 
-@VERSION@
+3.15.0
 ------
 
 * Remove `Promise.resolve` and rename `Promise.cast` to `Promise.resolve` as per

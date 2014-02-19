@@ -1,7 +1,7 @@
 YUI Test Change History
 =======================
 
-@VERSION@
+3.15.0
 ------
 
 * Added test.next(fn) which returns a callback that automatically

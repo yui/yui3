@@ -1,7 +1,7 @@
 Event Infrastructure Change History
 ===================================
 
-@VERSION@
+3.15.0
 ------
 
 * Reduced categories of certain noisy log events in the `event` module and added

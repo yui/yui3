@@ -1,7 +1,7 @@
 DOM Change History
 ==================
 
-@VERSION@
+3.15.0
 ------
 
 * [#1603][]: Set a node value to an empty string setting to null. [Ryuichi Okumura]

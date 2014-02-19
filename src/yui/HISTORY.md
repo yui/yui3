@@ -1,7 +1,7 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.15.0
 ------
 
 * Added `Y.require()` for importing ES6 modules. It's similar to `Y.use()` but

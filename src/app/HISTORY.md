@@ -1,7 +1,7 @@
 App Framework Change History
 ============================
 
-@VERSION@
+3.15.0
 ------
 
 * __[!]__ Refactored `ModelSync.Local` to use a different, more readable
