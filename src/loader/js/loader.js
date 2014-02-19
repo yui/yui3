@@ -2655,7 +2655,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         urls = resCombos[base][type];
                         mods = resCombos[base][type + 'Mods'];
                         len = urls.length;
-                        tmpBase = base + urls.join(comboSep);
+                        tmpBase = base + urls.join(comboSep),
+                        aliasIndex = 0;
 
                         ////////////////////////////////////////////////////////////
                         //                  BEGIN WF2 CHANGE                      //
