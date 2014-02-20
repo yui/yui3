@@ -4,7 +4,7 @@ Event Simulate Change History
 3.15.0
 ------
 
-* No changes.
+* Whitelisted W3C Pointer events for simulation.
 
 3.14.1
 ------
