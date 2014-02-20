@@ -4,7 +4,7 @@ Attribute Change History
 3.15.0
 ------
 
-* No changes.
+* Fixed an issue that caused `reset()` to fail when resetting an attribute called `'length'`.
 
 3.14.1
 ------
