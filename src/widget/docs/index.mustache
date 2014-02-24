@@ -64,8 +64,8 @@ the same `Attribute`, `Event.Provider` and `Plugin.Host` support as <a href="../
     <tr><td>`srcNode`</td><td>An existing node in the document provided by application developers when progressively enhancing existing markup to create the widget. By default, this resolves to the `contentBox`.</td></tr>
     <tr><td>`tabIndex`</td><td>The tabIndex, applied to the bounding box.</td></tr>
     <tr><td>`focused`</td><td>Flag, indicating if the widget currently has focus. `Widget` marks the bounding box with a "focused" class, but other than that the focus implementation is left to the specific widget class.</td></tr>
-    <tr><td>`disabled`</td><td>Flag, indicating if the widget is disabled. `Widget` marks the bounding box with a "disabled" class, but other than that the disabled implementation is left to the specific widget class.</td></tr>
-    <tr><td>`visible`</td><td>Flag, indicating whether or not the widget is visible. `Widget` marks the bounding box with a "hidden" class. The hidden implementation is left to the CSS delivered by the specific widget class (viz. whether or not the widget uses visibility, display or off screen positioning to actually hide the widget).</td></tr>
+    <tr><td>`disabled`</td><td>Flag, indicating if the widget is disabled. `Widget` marks the bounding box with a "disabled" class and sets the `aria-disabled` attribute to "true", but other than that the disabled implementation is left to the specific widget class.</td></tr>
+    <tr><td>`visible`</td><td>Flag, indicating whether or not the widget is visible. `Widget` marks the bounding box with a "hidden" class and sets the `aria-hidden` attribute to "true". The hidden implementation is left to the CSS delivered by the specific widget class (viz. whether or not the widget uses visibility, display or off screen positioning to actually hide the widget).</td></tr>
     <tr><td>`height`</td><td>String with units, or a number, representing the height of the widget. If a number is provided, the default unit, defined by `Widget`'s `DEF_UNIT`, property is used. The height is applied to the bounding box.</td></tr>
     <tr><td>`width`</td><td>String with units, or a number, representing the width of the widget. If a number is provided, the default unit, defined by `Widget`'s `DEF_UNIT`, property is used. The width is applied to the bounding box.</td></tr>
     <tr><td>`strings`</td><td>The collection of strings used to label elements of the widget's UI. These should ideally be packaged separately from the Widget code, as discussed in the <a href="../intl/intl-basic.html">Language Resource Bundles</a> example.</td></tr>
@@ -435,6 +435,27 @@ However, providing an IE6-compatible format requires each widget to ship with th
 Of the state-based rules above, all widgets will definitely end up providing a "yui3-[widgetname]-hidden" implementation to control visibility.
 Whether or not CSS rules for the other two states are provided is usually a function of whether or not the widget needs special UI handled for the "disabled" and "focused" states.
 </p>
+
+<h3 id="acessibility">Accessibility Considerations</h3>
+<p>Along with state being managed via CSS with proper class names, care is taken to communicate these states to assisitive technology users with ARIA. The following ARIA attributes are managed:</p>
+
+<table>
+    <tr>
+        <th>State</th>
+        <th>ARIA Attribute</th>
+        <th>CSS Class Applied</th>
+    </tr>
+    <tr>
+        <td>hidden</td>
+        <td>aria-hidden</td>
+        <td>yui3-[widgetname]-hidden</td>
+    </tr>
+    <tr>
+        <td>disabled</td>
+        <td>aria-disabled</td>
+        <td>yui3-[widgetname]-disabled</td>
+    </tr>
+</table>
 
 <h3 id="uievents">Default UI Events</h3>
 

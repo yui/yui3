@@ -48,6 +48,9 @@ var L = Y.Lang,
     CHANGE = "Change",
     LOADING = "loading",
 
+    ARIA_HIDDEN = 'aria-hidden',
+    ARIA_DISABLED = 'aria-disabled',
+
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
@@ -1027,7 +1030,9 @@ Y.extend(Widget, Y.Base, {
      * @param {boolean} val
      */
     _uiSetVisible: function(val) {
-        this.get(BOUNDING_BOX).toggleClass(this.getClassName(HIDDEN), !val);
+        var boundingBox = this.get(BOUNDING_BOX);
+        boundingBox.toggleClass(this.getClassName(HIDDEN), !val);
+        boundingBox.set(ARIA_HIDDEN, !val);
     },
 
     /**
@@ -1038,7 +1043,9 @@ Y.extend(Widget, Y.Base, {
      * @param {boolean} val
      */
     _uiSetDisabled: function(val) {
-        this.get(BOUNDING_BOX).toggleClass(this.getClassName(DISABLED), val);
+        var boundingBox = this.get(BOUNDING_BOX);
+        boundingBox.toggleClass(this.getClassName(DISABLED), val);
+        boundingBox.set(ARIA_DISABLED, val);
     },
 
     /**

@@ -360,16 +360,19 @@
 
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false by default");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-disabled'), 'aria-disabled should be false');
 
                 w.set("disabled", true);
 
                 Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
                 Y.Assert.isTrue(bb.hasClass(className), "bb should have a disabled marker");
+                Y.Assert.areEqual('true', bb.getAttribute('aria-disabled'), 'aria-disabled should be true');
 
                 w.set("disabled", false);
 
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-disabled'), 'aria-disabled should be false');
 
                 w.destroy();
             },
@@ -382,16 +385,19 @@
 
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false by default");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-disabled'), 'aria-disabled should be false');
 
                 w.disable();
 
                 Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
                 Y.Assert.isTrue(bb.hasClass(className), "bb should have a disabled marker");
+                Y.Assert.areEqual('true', bb.getAttribute('aria-disabled'), 'aria-disabled should be true');
 
                 w.enable();
 
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-disabled'), 'aria-disabled should be false');
 
                 w.destroy();
             },
@@ -462,18 +468,21 @@
 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-hidden'), 'aria-hidden should be false');
                 Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
 
                 w.set("visible", false);
 
                 Y.Assert.isFalse(w.get("visible"), "visible should be false");
                 Y.Assert.isTrue(bb.hasClass(className), "bb should have an hidden marker");
+                Y.Assert.areEqual('true', bb.getAttribute('aria-hidden'), 'aria-hidden should be true');
                 Y.Assert.areEqual("none", bb.getStyle("display"), "Default CSS should hide widget using display:none");
 
                 w.set("visible", true);
 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-hidden'), 'aria-hidden should be false');
                 Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
 
                 w.destroy();
@@ -487,18 +496,21 @@
 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-hidden'), 'aria-hidden should be false');
                 Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
 
                 w.hide();
 
                 Y.Assert.isFalse(w.get("visible"), "visible should be false");
                 Y.Assert.isTrue(bb.hasClass(className), "bb should have an hidden marker");
+                Y.Assert.areEqual('true', bb.getAttribute('aria-hidden'), 'aria-hidden should be true');
                 Y.Assert.areEqual("none", bb.getStyle("display"), "Default CSS should hide widget using display:none");
 
                 w.show();
 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
                 Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areEqual('false', bb.getAttribute('aria-hidden'), 'aria-hidden should be false');
                 Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
 
                 w.destroy();
