@@ -10,13 +10,10 @@ var fs = require('fs'),
 wf2Alias = fs.readFileSync(path.join(__dirname, '..', '..') + '/wf2-alias.json');
 
 var alias = JSON.parse(wf2Alias || '[]');
-var arr = [];
 
 //remove entries without a key or value
-alias.forEach(function(item, index) {
-  if(alias[index].key && alias[index].module) {
-    arr.push(alias[index]);
-  }
+var arr = alias.filter(function (item) {
+    return item.key && item.module;
 });
 
 //sort by length of value (longest first)
@@ -35,7 +32,7 @@ var thisLen = a.module.length,
 arr.sort(lengthComparitor);
 
 // populate key and value arrays
-arr.forEach(function(item, index) {
+arr.forEach(function(item) {
   keys.push(item.key);
   values.push(item.module);
 });
