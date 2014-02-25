@@ -12,6 +12,7 @@ var WIDGET       = 'widget',
     SYNC_UI      = 'syncUI',
     BOUNDING_BOX = 'boundingBox',
     CONTENT_BOX  = 'contentBox',
+    RENDERED     = 'rendered',
     VISIBLE      = 'visible',
     Z_INDEX      = 'zIndex',
     CHANGE       = 'Change',
@@ -334,7 +335,9 @@ var WIDGET       = 'widget',
                 if (isModal) {
                     maskNode.show();
                     Y.later(1, this, '_attachUIHandlesModal');
-                    this._focus();
+                    if (this.get(RENDERED)) {
+                        this._focus();
+                    }
                 }
 
 

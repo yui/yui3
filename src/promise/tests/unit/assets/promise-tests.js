@@ -3,7 +3,9 @@ YUI.add('promise-tests', function (Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.Test.ArrayAssert,
         Promise = Y.Promise,
-        isPromise = Promise.isPromise;
+        isPromise = Promise.isPromise,
+        wait = Y.fulfilledAfter,
+        rejectedAfter = Y.rejectedAfter;
 
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
@@ -15,15 +17,15 @@ YUI.add('promise-tests', function (Y) {
         name: 'Basic promise behavior',
 
         'calling Y.Promise as a function should return an instance of Y.Promise': function () {
-            Assert.isInstanceOf(Y.Promise, Y.Promise(function () {}), 'Y.Promise as a function should return a promise');
+            Assert.isInstanceOf(Promise, Promise(function () {}), 'Y.Promise as a function should return a promise');
         },
 
         'promise.then returns a promise': function () {
-            var promise = new Y.Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill(5);
             });
 
-            Assert.isInstanceOf(Y.Promise, promise.then(), 'promise.then returns a promise');
+            Assert.isInstanceOf(Promise, promise.then(), 'promise.then returns a promise');
         },
 
         'promise state should change only once': function () {
@@ -56,38 +58,30 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'fulfilling more than once should not change the promise value': function () {
-            var test = this;
-
-            Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill(true);
                 fulfill(5);
-            }).then(function (value) {
-                test.resume(function () {
-                    Assert.areSame(true, value, 'value should remain the same');
-                });
             });
 
-            test.wait(100);
+            this.isFulfilled(promise, function (value) {
+                Assert.areSame(true, value, 'value should remain the same');
+            });
         },
 
         'rejecting more than once should not change the rejection reason': function () {
-            var test = this;
-
-            Promise(function (fulfill, reject) {
+            var promise = new Promise(function (fulfill, reject) {
                 reject(new Error('foo'));
                 reject(new Error('bar'));
-            }).then(null, function (reason) {
-                test.resume(function () {
-                    Assert.areEqual('foo', reason.message, 'reason should remain the same');
-                });
             });
 
-            test.wait(100);
+            this.isRejected(promise, function (reason) {
+                Assert.areEqual('foo', reason.message, 'reason should remain the same');
+            });
         },
 
         'correct value for "this" inside the promise init function': function () {
             var promiseA,
-                promiseB = Y.Promise(function () {
+                promiseB = new Promise(function () {
                     promiseA = this;
 
                     Assert.isInstanceOf(Promise, this, '"this" should be a promise');
@@ -101,7 +95,7 @@ YUI.add('promise-tests', function (Y) {
 
             var foo = false;
 
-            Y.Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill();
             }).then(function () {
                 foo = true;
@@ -120,61 +114,54 @@ YUI.add('promise-tests', function (Y) {
 
         _should: {
             ignore: {
-                '|this| inside a callback must be undefined in strict mode': (function () {
+                '`this` inside a callback must be undefined in strict mode': (function () {
                     'use strict';
                     return typeof this !== 'undefined';
                 }()),
-                '|this| inside a callback must be the global object': (function () {
+                '`this` inside a callback must be the global object': (function () {
                     return typeof this === 'undefined';
                 }())
             }
         },
 
         'throwing inside a callback should turn into a rejection': function () {
-            var test = this,
-                error = new Error('Arbitrary error');
+            var error = new Error('Arbitrary error');
 
-            Y.Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                 fulfill(5);
             }).then(function (value) {
                 throw error;
-            }).then(null, function (reason) {
-                test.resume(function () {
-                    Assert.areSame(error, reason, 'thrown error should become the rejection reason');
-                });
             });
 
-            test.wait(50);
+            this.isRejected(promise, function (reason) {
+                Assert.areSame(error, reason, 'thrown error should become the rejection reason');
+            });
         },
 
         'returning a promise from a callback should link both promises': function () {
-            var test = this;
-
-            Y.Promise(function (fulfill) {
+            var promise = Promise(function (fulfill) {
                 fulfill('placeholder');
             }).then(function () {
-                return Y.Promise(function (fulfill) {
+                return new Promise(function (fulfill) {
                     fulfill(5);
-                });
-            }).then(function (value) {
-                test.resume(function () {
-                    Assert.areEqual(5, value, 'new value should be the value from the returned promise');
                 });
             });
 
-            test.wait(100);
+            this.isFulfilled(promise, function (value) {
+                Assert.areEqual(5, value, 'new value should be the value from the returned promise');
+            });
         },
 
         // This test is run only when not in strict mode
-        '|this| inside a callback must be the global object': function () {
+        '`this` inside a callback must be the global object': function () {
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
 
-            fulfilled = new Y.Promise(function (fulfill) {
+            fulfilled = new Promise(function (fulfill) {
                 fulfill('value');
             });
-            rejected = new Y.Promise(function (fulfill, reject) {
+            rejected = new Promise(function (fulfill, reject) {
                 reject('reason');
             });
 
@@ -183,27 +170,27 @@ YUI.add('promise-tests', function (Y) {
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
-                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode `this` in the success callback must be the global object');
+                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode `this` in the failure callback must be the global object');
                     });
                 });
             });
 
-            test.wait(300);
+            test.wait();
         },
 
         // This test is run only in strict mode
-        '|this| inside a callback must be undefined in strict mode': function () {
+        '`this` inside a callback must be undefined in strict mode': function () {
             'use strict';
 
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
 
-            fulfilled = new Y.Promise(function (fulfill) {
+            fulfilled = new Promise(function (fulfill) {
                 fulfill('value');
             });
-            rejected = new Y.Promise(function (fulfill, reject) {
+            rejected = new Promise(function (fulfill, reject) {
                 reject('reason');
             });
 
@@ -212,13 +199,58 @@ YUI.add('promise-tests', function (Y) {
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
-                        Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
+                        Assert.isUndefined(fulfilledThis, 'in strict mode `this` in the success callback must be undefined');
+                        Assert.isUndefined(rejectedThis, 'in strict mode `this` in the failure callback must be undefined');
                     });
                 });
             });
 
-            test.wait(300);
+            test.wait();
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'control flow with catch()',
+
+        'promises have a catch() method': function () {
+            var promise = new Promise(function () {});
+
+            Assert.isFunction(promise['catch'], 'promises should have a `catch` method');
+        },
+
+        'catch(fn) does nothing to resolved promises': function () {
+            var value = {foo:'bar'},
+                resolved = new Promise(function (resolve) {
+                    resolve(value);
+                }),
+                next;
+
+            next = resolved['catch'](function (err) {
+                return err;
+            });
+
+            Assert.isObject(next, 'catch() should return an object');
+            Assert.isTrue(Promise.isPromise(next), 'catch() should return a promise');
+
+            this.isFulfilled(next, function (val) {
+                Assert.areSame(value, val, 'promise fulfilled value should remain the same')
+            });
+        },
+
+        'catch(fn) is equivalent to then(undefined, fn)': function () {
+            var reason = new Error('some error'),
+                rejected = new Promise(function (resolve, reject) {
+                    reject(reason);
+                }),
+                next;
+
+            next = rejected['catch'](function (err) {
+                return err;
+            });
+
+            this.isFulfilled(next, function (value) {
+                Assert.areSame(reason, value, 'returning an error in catch() should cause the next promise to be fulfilled');
+            });
         }
     }));
 
@@ -276,11 +308,195 @@ YUI.add('promise-tests', function (Y) {
         }
     }));
 
+    suite.add(new Y.Test.Case({
+        name: 'Promise factories tests',
+
+        'Promise constructor has the correct methods': function () {
+            Assert.isFunction(Promise.reject, 'Promise.reject should be a function');
+            Assert.isFunction(Promise.resolve, 'Promise.resolve should be a function');
+        },
+
+        'Promise.reject() returns an rejected promise': function () {
+            var test = this,
+                value = new Error('foo'),
+                promise = Promise.reject(value);
+
+            Assert.isTrue(isPromise(promise), 'Promise.reject() should return a promise');
+
+            this.isRejected(promise, function next(result) {
+                Assert.areSame(value, result, 'Promise.reject() should respect the passed value');
+            });
+        },
+
+        'Promise.reject() should wrap fulfilled promises': function () {
+            var value = new Promise(function (resolve) {
+                    resolve('foo');
+                }),
+                promise = Promise.reject(value);
+
+            this.isRejected(promise, function (result) {
+                Assert.areSame(value, result, 'Promise.reject() should wrap fulfilled promises');
+            });
+        },
+
+        'Promise.reject() should wrap rejected promises': function () {
+            var value = new Promise(function (resolve, reject) {
+                    reject('foo');
+                }),
+                promise = Promise.reject(value);
+
+            this.isRejected(promise, function (result) {
+                Assert.areSame(value, result, 'Promise.reject() should wrap rejected promises');
+            });
+        },
+
+        'Promise.reject() should preserve the constructor when using inheritance': function () {
+            function Subpromise() {
+                Subpromise.superclass.constructor.apply(this, arguments);
+            }
+            Y.extend(Subpromise, Promise, null, {reject: Promise.reject});
+
+            var promise = Subpromise.reject('foo');
+
+            Assert.isInstanceOf(Subpromise, promise, 'rejected promise should be an instance of the subclass');
+
+            this.isRejected(promise, function (reason) {
+                Assert.areSame('foo', reason, 'subpromise should have the correct rejection reason');
+            });
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Promise.all() tests',
+
+        'Promise.all() should return a promise': function () {
+            var somePromise = new Promise(function () {});
+
+            Assert.isInstanceOf(Promise, Promise.all([5]), 'when passed a value, Promise.all() should return a promise');
+            Assert.isInstanceOf(Promise, Promise.all([new Promise(function () {})]), 'when passed a promise, Promise.all() should return a promise');
+            Assert.isInstanceOf(Promise, Promise.all([]), 'with an empty list Promise.all() should still return a promise');
+            Assert.areNotSame(somePromise, Promise.all([somePromise]), 'when passed a promise, Promise.all() should return a new promise');
+        },
+
+        'a non array argument should turn into a rejected promise': function () {
+            this.isRejected(Promise.all('foo'), function (error) {
+                Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
+            });
+        },
+
+        'order of promises should be preserved': function () {
+            var promise = Promise.all([wait(20), wait(10), wait(15)]);
+
+            this.isFulfilled(promise, function (result) {
+                ArrayAssert.itemsAreSame([20, 10, 15], result, 'order of returned values should be the same as the parameter list');
+            });
+        },
+
+        'values should be wrapped in a promise': function () {
+            var obj = {
+                    hello: 'world'
+                },
+                promise = Promise.all(['foo', 5, obj]);
+
+            this.isFulfilled(promise, function (result) {
+                ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.all() should be wrapped in promises, not ignored');
+            });
+        },
+
+        'correct handling of function parameters': function () {
+            function testFn() {}
+
+            this.isFulfilled(Promise.all([testFn]), function (values) {
+                Assert.isFunction(values[0], 'promise value should be a function');
+                Assert.areSame(testFn, values[0], 'promise value should be the passed function');
+            });
+        },
+
+        'Promise.all() should fail as fast as possible': function () {
+            var promise = Promise.all([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]);
+
+            this.isRejected(promise, function (reason) {
+                Assert.areEqual(10, reason, 'reason should be the one from the first promise to be rejected');
+            });
+        }
+
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Promise.race() tests',
+
+        'a non array argument should turn into a rejected promise': function () {
+            this.isRejected(Promise.race('foo'), function (error) {
+                Assert.isInstanceOf(TypeError, error, 'rejection reason should be a TypeError');
+            });
+        },
+
+        'Promise.race() should fulfill when passed a fulfilled promise': function () {
+            this.isFulfilled(Promise.race([wait(10)]), function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should fulfill when passed a fulfilled promise');
+            });
+        },
+
+        'Promise.race() should reject when passed a rejected promise': function () {
+            this.isRejected(Promise.race([rejectedAfter(10)]), function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should reject when passed a rejected promise');
+            });
+        },
+
+        'Promise.race() should fulfill to the value of the first promise to be fulfilled': function () {
+            var promise = Promise.race([wait(10), wait(100)]);
+
+            this.isFulfilled(promise, function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should fulfill to the value of the first promise to be fulfilled');
+            });
+        },
+
+        'Promise.race() should reject with the reason of the first promise to be rejected': function () {
+            var promise = Promise.race([rejectedAfter(10), rejectedAfter(100)]);
+
+            this.isRejected(promise, function (result) {
+                Assert.areEqual(10, result, 'Promise.race() should reject with the reason of the first promise to be rejected');
+            });
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Promise.resolve() tests',
+
+        'a promise should not be modified': function () {
+            var promise = new Promise(function () {}),
+                wrapped = Promise.resolve(promise);
+
+            Assert.isTrue(Promise.isPromise(promise), 'Promise.resolve should always return a promise');
+            Assert.areSame(promise, wrapped, 'Promise.resolve should not modify a promise');
+        },
+
+        'values should be wrapped in a promise': function () {
+            // truthy values
+            Assert.isInstanceOf(Promise, Promise.resolve(5), 'numbers should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve('foo'), 'strings should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(true), 'booleans should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(function () {}), 'functions should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve({}), 'objects should be wrapped in a promise');
+
+            // falsy values
+            Assert.isInstanceOf(Promise, Promise.resolve(0), 'zero should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(''), 'empty strings should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(false), 'false should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(null), 'null should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(undefined), 'undefined should be wrapped in a promise');
+            Assert.isInstanceOf(Promise, Promise.resolve(), 'undefined (empty parameters) should be wrapped in a promise');
+
+            // almost promises
+            Assert.isInstanceOf(Promise, Promise.resolve({then: 5}), 'promise-like objects should be wrapped in a promise');
+        }
+    }));
+
+
     Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
     requires: [
-        'promise',
-        'test'
+        'tests-promise-utils'
     ]
 });

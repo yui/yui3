@@ -856,7 +856,7 @@ YUI.add('core-tests', function(Y) {
                             patterns: {
                                 'mygroup-': {
                                     test: function(name) {
-                                        return /^mygroup-/.test(name);
+                                        return (/^mygroup-/).test(name);
                                     },
                                     configFn: function(me) {
                                         var parts = me.name.split("-"),
@@ -936,7 +936,9 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_3', myY.guid());
         },
         'test Y.config.global': function() {
+            /*jslint evil: true*/
             var global = Function('return this')();
+            /*jslint evil: false*/
             Y.Assert.areEqual(global, Y.config.global);
         }
     });

@@ -4,6 +4,11 @@ DOM Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.15.0
+------
+
 * [#1603][]: Set a node value to an empty string setting to null. [Ryuichi Okumura]
 * [#1469][]: Fix a bug with setStyle() cannot set an opacity to 1. [Ryuichi Okumura]
 

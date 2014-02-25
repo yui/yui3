@@ -584,8 +584,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
             var a = Y.Array(id), i, availHandle;
 
-            // Y.log('onAvailable registered for: ' + id);
-
             for (i=0; i<a.length; i=i+1) {
                 _avail.push({
                     id:         a[i],
@@ -754,8 +752,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             }
 
             if (!fn || !fn.call) {
-// throw new TypeError(type + " attach call failed, callback undefined");
-Y.log(type + " attach call failed, invalid callback", "error", "event");
+                Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
@@ -807,9 +804,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // Not found = defer adding the event until the element is available
                 } else {
 
-                    // Y.log(el + ' not found');
                     ret = Event.onAvailable(el, function() {
-                        // Y.log('lazy attach: ' + args);
 
                         ret.handle = Event._attach(args, conf);
 
@@ -999,7 +994,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */
         _load: function(e) {
             if (!_loadComplete) {
-                // Y.log('Load Complete', 'info', 'event');
                 _loadComplete = true;
 
                 // Just in case DOMReady did not go off for some reason
@@ -1039,7 +1033,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             Event.locked = true;
 
-            // Y.log.debug("poll");
             // keep trying until after the page is loaded.  We need to
             // check the page load state prior to trying to bind the
             // elements so that we can be certain all elements have been
@@ -1086,11 +1079,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
-                        // Y.log('avail: ' + el);
                         executeItem(el, item);
                         _avail[i] = null;
                     } else {
-                        // Y.log('NOT avail: ' + el);
                         notAvail.push(item);
                     }
                 }
