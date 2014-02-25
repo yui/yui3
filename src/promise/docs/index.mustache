@@ -62,6 +62,7 @@
 // Create a promise for a value
 var promise = new Y.Promise(function (resolve, reject) {
     var promisedValue;
+    var reasonForFailure = new Error('something bad happened');
 
     // ...do some work to assign promisedValue, most likely asynchronously
 
