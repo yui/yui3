@@ -1,10 +1,14 @@
-<style scoped>
+<style>
 /* custom styles for this example */
 #demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
 </style>
 
 <div class="intro">
-    <p>The Date module of the DataType Utility allows you to take a `String` or a `Number` (in milliseconds) value and convert it to `Date`. The `parse()` method will accept any `String` or `Number` value supported by <a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Date">JavaScript's `Date()` constructor</a>.</p>
+    <p>
+        The Date module of the DataType Utility allows you to take a `String` or a `Number` (in milliseconds) value and convert it to `Date`.
+        If no format is provided, the `parse()` method will accept any `String` or `Number` value supported by
+        <a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Date">JavaScript's `Date()` constructor</a>.
+    </p>
 </div>
 
 <div class="example yui3-skin-sam">
@@ -15,17 +19,11 @@
 
 ```
 YUI().use("datatype-date", function(Y) {
-    var date = Y.Date.parse("Jan 7, 2003");
+    var date = Y.Date.parse("Jan 7, 2003", format);
     // date is a JavaScript Date object
 });
 ```
-
-<p>Under the hood, the data value is converted to a date via the `Date()` constructor:</p>
-
-```
-YUI().use("datatype-date", function(Y) {
-    // These all return dates
-    var date = Y.Date.parse("December 17, 1995 03:24:00");
-    date = Y.Date.parse(948548583);
-});
-```
+<p>A choice of a few format specifications has been provided in the dropdown box.
+The date in the example above requires no format since it is natively understood
+by the `Date()` constructor.  Alternatively, `format` could have been given
+as `"%b %D, %Y"`</p>

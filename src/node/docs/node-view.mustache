@@ -28,7 +28,7 @@
 <h2>Checking visibility</h2>
 <p>You can detect whether a node is visible or not by checking for the hidden attribute:</p>
 ```
-    var isHidden = Y.one('#demo').hasAttribute('hidden');
+    var isHidden = Y.one('#demo').getAttribute('hidden') === 'true';
 ```
 <h2>Complete Example Source</h2>
 ```

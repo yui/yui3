@@ -54,6 +54,7 @@ YUI.add('core-tests', function(Y) {
                 'getLocation() should return the location object': (Y.UA.nodejs ? true : false),
                 'getLocation() should return `null` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)), //If there is a window object, ignore too
                 test_log_params: (typeof console == "undefined" || !console.info || Y.UA.nodejs),
+                test_log_default_category: (typeof console == "undefined" || !console.info || Y.UA.nodejs),
                 'test: domready delay': !Y.config.win,
                 'test: window.onload delay': !Y.config.win,
                 'test: contentready delay': !Y.config.win,
@@ -438,6 +439,68 @@ YUI.add('core-tests', function(Y) {
                 Y.log('This should NOT be ignored', 'error', 'logleveltest');
                 Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
             });
+
+            console.info = l;
+        },
+        test_log_default_category: function() {
+            if (typeof console == "undefined" || !console.info) {
+                return;
+            }
+            var l = console.info,
+                Assert = Y.Assert,
+                consoleFn,
+                last, lastCategory;
+
+            // Override all of the console functions so that we can check
+            // their return values.
+            consoleFn = function(str) {
+                last = str.split(':')[0];
+            };
+            console.error = function(str) {
+                lastCategory = 'error';
+                consoleFn(str);
+            };
+            console.log = function(str) {
+                lastCategory = 'log';
+                consoleFn(str);
+            };
+            console.warn = function(str) {
+                lastCategory = 'warn';
+                consoleFn(str);
+            };
+            console.debug = function(str) {
+                lastCategory = 'debug';
+                consoleFn(str);
+            };
+            console.info = function(str) {
+                lastCategory = 'info';
+                consoleFn(str);
+            };
+
+            YUI().use(function (Y) {
+                Y.applyConfig({
+                    logLevel: 'debug'
+                });
+                lastCategory = undefined;
+                Y.log('This has a valid log level', 'debug');
+                Assert.areEqual(lastCategory, 'debug', 'Failed to log at debug log category');
+                lastCategory = undefined;
+                Y.log('This has a valid log level', 'info');
+                Assert.areEqual(lastCategory, 'info', 'Failed to log at info log category');
+                lastCategory = undefined;
+                Y.log('This has a valid log level', 'warn');
+                Assert.areEqual(lastCategory, 'warn', 'Failed to log at warn log category');
+                lastCategory = undefined;
+                Y.log('This has a valid log level', 'error');
+                Assert.areEqual(lastCategory, 'error', 'Failed to log at error log category');
+                lastCategory = undefined;
+                Y.log('This has no log level and should use the default');
+                Assert.areEqual(lastCategory, 'info', 'Failed to log at default log category of info');
+                lastCategory = undefined;
+                Y.log('This has an invalid log level and should use the default', 'notice');
+                Assert.areEqual(lastCategory, 'info', 'Failed to log at default info log category');
+            });
+
             console.info = l;
         },
         test_global_apply_config: function() {
@@ -793,7 +856,7 @@ YUI.add('core-tests', function(Y) {
                             patterns: {
                                 'mygroup-': {
                                     test: function(name) {
-                                        return /^mygroup-/.test(name);
+                                        return (/^mygroup-/).test(name);
                                     },
                                     configFn: function(me) {
                                         var parts = me.name.split("-"),
@@ -873,7 +936,9 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_3', myY.guid());
         },
         'test Y.config.global': function() {
+            /*jslint evil: true*/
             var global = Function('return this')();
+            /*jslint evil: false*/
             Y.Assert.areEqual(global, Y.config.global);
         }
     });

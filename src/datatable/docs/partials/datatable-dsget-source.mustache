@@ -52,6 +52,18 @@ YUI().use("datatable", "datasource-get", "datasource-jsonschema", "datatable-dat
 
     table.render("#pizza");
 
-    table.datasource.load({ request: query });
+    table.datasource.load({
+        request: query,
+        
+        callback: { 
+            success: function (e) {
+                table.datasource.onDataReturnInitializeTable(e);
+            },
+            failure: function() {
+                Y.one('#pizza').setHTML(
+                    'The data could not be retrieved. Please <a href="?mock=true">try this example with mocked data</a> instead.');
+            }
+        }
+    });
 });
 </script>

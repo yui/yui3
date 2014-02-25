@@ -200,12 +200,6 @@ TabView.prototype.PANEL_TEMPLATE = TabView.PANEL_TEMPLATE;
 
 Y.TabView = TabView;
 /**
- * The TabView module
- *
- * @module tabview
- */
-
-/**
  * Provides Tab instances for use with TabView
  * @param config {Object} Object literal specifying tabview configuration properties.
  *

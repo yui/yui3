@@ -6,6 +6,15 @@ DOM Change History
 
 * No changes.
 
+3.15.0
+------
+
+* [#1603][]: Set a node value to an empty string setting to null. [Ryuichi Okumura]
+* [#1469][]: Fix a bug with setStyle() cannot set an opacity to 1. [Ryuichi Okumura]
+
+[#1603]: https://github.com/yui/yui3/issues/1603
+[#1469]: https://github.com/yui/yui3/issues/1469
+
 3.14.1
 ------
 

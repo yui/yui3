@@ -6,6 +6,12 @@ Charts Change History
 
 * No changes.
 
+3.15.0
+------
+
+* #1480 Address issue in which _maxSize property was not updated for single series histogram. 
+* #1632 Add labelFormat attribute to CategoryAxisBase and CategoryAxis.
+
 3.14.1
 ------
 

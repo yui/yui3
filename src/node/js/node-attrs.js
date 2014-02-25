@@ -92,6 +92,26 @@ Y_Node.ATTRS = {
 };
 
 Y.Node.importMethod(Y.DOM, [
+    /**
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
+     * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
+     * @param {string} name The attribute name
+     * @param {string} value The value to set
+     */
     'setAttribute',
+    /**
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
+     * @method getAttribute
+     * @for Node
+     * @for NodeList
+     * @param {string} name The attribute name
+     * @return {string} The attribute value
+     */
     'getAttribute'
+
 ]);

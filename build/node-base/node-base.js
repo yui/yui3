@@ -107,7 +107,7 @@ var Y_Node = Y.Node,
  * Returns a new dom node using the provided markup string.
  * @method create
  * @static
- * @param {String} html The markup used to create the element
+ * @param {String} html The markup used to create the element.
  * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
  * to escape html content.
  * @param {HTMLDocument} doc An optional document context
@@ -136,7 +136,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content before the reference node.
      * @method insert
-     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @param {Int | Node | HTMLElement | String} where The position to insert at.
@@ -185,7 +185,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content as the firstChild of the node.
      * @method prepend
-     * @param {String | Node | HTMLElement} content The content to insert
+     * @param {String | Node | HTMLElement} content The content to insert.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @chainable
@@ -197,7 +197,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content as the lastChild of the node.
      * @method append
-     * @param {String | Node | HTMLElement} content The content to insert
+     * @param {String | Node | HTMLElement} content The content to insert.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @chainable
@@ -208,7 +208,7 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * @method appendChild
-     * @param {String | HTMLElement | Node} node Node to be appended
+     * @param {String | HTMLElement | Node} node Node to be appended.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @return {Node} The appended node
@@ -220,7 +220,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * @method insertBefore
      * @param {String | HTMLElement | Node} newNode Node to be appended
-     * @param {HTMLElement | Node} refNode Node to be inserted before
+     * @param {HTMLElement | Node} refNode Node to be inserted before.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @return {Node} The inserted node
@@ -439,8 +439,28 @@ Y_Node.ATTRS = {
 };
 
 Y.Node.importMethod(Y.DOM, [
+    /**
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
+     * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
+     * @param {string} name The attribute name
+     * @param {string} value The value to set
+     */
     'setAttribute',
+    /**
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
+     * @method getAttribute
+     * @for Node
+     * @for NodeList
+     * @param {string} name The attribute name
+     * @return {string} The attribute value
+     */
     'getAttribute'
+
 ]);
 /**
  * @module node

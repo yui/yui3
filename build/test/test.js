@@ -69,7 +69,6 @@ YUITest.EventTarget.prototype = {
      * Adds a listener for a given event type.
      * @param {String} type The type of event to add a listener for.
      * @param {Function} listener The function to call when the event occurs.
-     * @return {void}
      * @method attach
      */
     attach: function(type, listener){
@@ -84,7 +83,6 @@ YUITest.EventTarget.prototype = {
      * Adds a listener for a given event type.
      * @param {String} type The type of event to add a listener for.
      * @param {Function} listener The function to call when the event occurs.
-     * @return {void}
      * @method subscribe
      * @deprecated
      */
@@ -96,7 +94,6 @@ YUITest.EventTarget.prototype = {
      * Fires an event based on the passed-in object.
      * @param {Object|String} event An object with at least a 'type' attribute
      *      or a string indicating the event name.
-     * @return {void}
      * @method fire
      */
     fire: function(event){
@@ -123,7 +120,6 @@ YUITest.EventTarget.prototype = {
      * Removes a listener for a given event type.
      * @param {String} type The type of event to remove a listener from.
      * @param {Function} listener The function to remove from the event.
-     * @return {void}
      * @method detach
      */
     detach: function(type, listener){
@@ -142,7 +138,6 @@ YUITest.EventTarget.prototype = {
      * Removes a listener for a given event type.
      * @param {String} type The type of event to remove a listener from.
      * @param {Function} listener The function to remove from the event.
-     * @return {void}
      * @method unsubscribe
      * @deprecated
      */
@@ -205,7 +200,6 @@ YUITest.TestSuite.prototype = {
     /**
      * Adds a test suite or test case to the test suite.
      * @param {Test.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
-     * @return {Void}
      * @method add
      */
     add : function (testObject) {
@@ -221,7 +215,6 @@ YUITest.TestSuite.prototype = {
 
     /**
      * Function to run before each test is executed.
-     * @return {Void}
      * @method setUp
      */
     setUp : function () {
@@ -229,7 +222,6 @@ YUITest.TestSuite.prototype = {
 
     /**
      * Function to run after each test is executed.
-     * @return {Void}
      * @method tearDown
      */
     tearDown: function () {
@@ -311,7 +303,6 @@ YUITest.TestCase.prototype = {
      * Resumes a paused test and runs the given function.
      * @param {Function} segment (Optional) The function to run.
      *      If omitted, the test automatically passes.
-     * @return {Void}
      * @method resume
      */
     resume : function (segment) {
@@ -323,9 +314,8 @@ YUITest.TestCase.prototype = {
      * continue executing the given code.
      * @param {Function} segment (Optional) The function to run after the delay.
      *      If omitted, the TestRunner will wait until resume() is called.
-     * @param {int} delay (Optional) The number of milliseconds to wait before running
+     * @param {Number} delay (Optional) The number of milliseconds to wait before running
      *      the function. If omitted, defaults to `DEFAULT_WAIT` ms (10s).
-     * @return {Void}
      * @method wait
      */
     wait : function (segment, delay){
@@ -338,6 +328,40 @@ YUITest.TestCase.prototype = {
         }
 
         throw new YUITest.Wait(segment, delay);
+    },
+
+    /**
+    Creates a callback that automatically resumes the test. Parameters as passed
+    on to the callback.
+
+    @method next
+    @param {Function} callback Callback to call after resuming the test.
+    @return {Function} wrapped callback that resumes the test.
+    @example
+    ```
+    // using test.resume()
+    Y.jsonp(uri, function (response) {
+        test.resume(function () {
+            Y.Assert.isObject(response);
+        });
+    });
+    test.wait();
+
+    // using test.next()
+    Y.jsonp(uri, test.next(function (response) {
+        Y.Assert.isObject(response);
+    }));
+    test.wait();
+    ```
+    **/
+    next: function (callback) {
+        var self = this;
+        return function () {
+            var args = arguments;
+            self.resume(function () {
+                callback.apply(this, args);
+            });
+        };
     },
 
     /**
@@ -444,7 +468,6 @@ YUITest.TestCase.prototype = {
 
     /**
      * Function to run before each test is executed.
-     * @return {Void}
      * @method setUp
      */
     setUp : function () {
@@ -453,7 +476,6 @@ YUITest.TestCase.prototype = {
 
     /**
      * Function to run after each test is executed.
-     * @return {Void}
      * @method tearDown
      */
     tearDown: function () {
@@ -764,8 +786,7 @@ YUITest.TestFormat = function(){
         /**
          * Adds a field to the form that submits the results.
          * @param {String} name The name of the field.
-         * @param {Variant} value The value of the field.
-         * @return {Void}
+         * @param {Any} value The value of the field.
          * @method addField
          */
         addField : function (name, value){
@@ -774,7 +795,6 @@ YUITest.TestFormat = function(){
 
         /**
          * Removes all previous defined fields.
-         * @return {Void}
          * @method clearFields
          */
         clearFields : function(){
@@ -784,7 +804,6 @@ YUITest.TestFormat = function(){
         /**
          * Cleans up the memory associated with the TestReporter, removing DOM elements
          * that were created.
-         * @return {Void}
          * @method destroy
          */
         destroy : function() {
@@ -802,7 +821,6 @@ YUITest.TestFormat = function(){
         /**
          * Sends the report to the server.
          * @param {Object} results The results object created by TestRunner.
-         * @return {Void}
          * @method report
          */
         report : function(results){
@@ -906,7 +924,7 @@ YUITest.TestFormat = function(){
         /**
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
-         * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
+         * @param {Any} testObject A TestSuite, TestCase, or the name of a test function.
          * @module test
  * @class TestNode
          * @constructor
@@ -916,7 +934,7 @@ YUITest.TestFormat = function(){
 
             /**
              * The TestSuite, TestCase, or test function represented by this node.
-             * @type Variant
+             * @type {Any}
              * @property testObject
              */
             this.testObject = testObject;
@@ -972,8 +990,7 @@ YUITest.TestFormat = function(){
             /**
              * Appends a new test object (TestSuite, TestCase, or test function name) as a child
              * of this node.
-             * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
-             * @return {Void}
+             * @param {Any} testObject A TestSuite, TestCase, or the name of a test function.
              * @method appendChild
              */
             appendChild : function (testObject){
@@ -1188,7 +1205,6 @@ YUITest.TestFormat = function(){
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
              * @param {Test.TestCase} testCase The test case to add.
-             * @return {Void}
              * @static
              * @private
              * @method _addTestCaseToTestTree
@@ -1213,7 +1229,6 @@ YUITest.TestFormat = function(){
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
              * @param {Test.TestSuite} testSuite The test suite to add.
-             * @return {Void}
              * @static
              * @private
              * @method _addTestSuiteToTestTree
@@ -1237,7 +1252,6 @@ YUITest.TestFormat = function(){
              * Builds the test tree based on items in the master suite. The tree is a hierarchical
              * representation of the test suites, test cases, and test functions. The resulting tree
              * is stored in _root and the pointer _cur is set to the root initially.
-             * @return {Void}
              * @static
              * @private
              * @method _buildTestTree
@@ -1266,7 +1280,6 @@ YUITest.TestFormat = function(){
              * Handles the completion of a test object's tests. Tallies test results
              * from one level up to the next.
              * @param {TestNode} node The TestNode representing the test object.
-             * @return {Void}
              * @method _handleTestObjectComplete
              * @private
              */
@@ -1616,7 +1629,6 @@ YUITest.TestFormat = function(){
              * to tell TestRunner about the error. This should never be called
              * by anyplace other than the Mock object.
              * @param {Error} error The error object.
-             * @return {Void}
              * @method _handleError
              * @private
              * @static
@@ -1637,7 +1649,6 @@ YUITest.TestFormat = function(){
              * Runs a single test based on the data provided in the node.
              * @method _runTest
              * @param {TestNode} node The TestNode representing the test to run.
-             * @return {Void}
              * @static
              * @private
              */
@@ -1709,7 +1720,6 @@ YUITest.TestFormat = function(){
              * The name assigned to the master suite of the TestRunner. This is the name
              * that is output as the root's name when results are retrieved.
              * @param {String} name The name of the result set.
-             * @return {Void}
              * @method setName
              */
             setName: function(name){
@@ -1723,7 +1733,6 @@ YUITest.TestFormat = function(){
             /**
              * Adds a test suite or test case to the list of test objects to run.
              * @param testObject Either a TestCase or a TestSuite that should be run.
-             * @return {Void}
              * @method add
              * @static
              */
@@ -1734,7 +1743,6 @@ YUITest.TestFormat = function(){
 
             /**
              * Removes all test objects from the runner.
-             * @return {Void}
              * @method clear
              * @static
              */
@@ -1840,7 +1848,6 @@ YUITest.TestFormat = function(){
              * Resumes the TestRunner after wait() was called.
              * @param {Function} segment The function to run as the rest
              *      of the haulted test.
-             * @return {Void}
              * @method resume
              * @static
              */
@@ -1858,7 +1865,6 @@ YUITest.TestFormat = function(){
              *      <code>oldMode</code> indicates the TestRunner should work in the YUI <= 2.8 way
              *      of internally managing test suites. <code>groups</code> is an array
              *      of test groups indicating which tests to run.
-             * @return {Void}
              * @method run
              * @static
              */
@@ -1915,8 +1921,8 @@ YUITest.ArrayAssert = {
      * Simple indexOf() implementation for an array. Defers to native
      * if available.
      * @param {Array} haystack The array to search.
-     * @param {Variant} needle The value to locate.
-     * @return {int} The index of the needle if found or -1 if not.
+     * @param {Any} needle The value to locate.
+     * @return {Number} The index of the needle if found or -1 if not.
      * @method _indexOf
      * @private
      */
@@ -2092,7 +2098,7 @@ YUITest.ArrayAssert = {
      * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
-     * @param {int} index The index at which the value should exist.
+     * @param {Number} index The index at which the value should exist.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method indexOf
      * @static
@@ -2159,7 +2165,6 @@ YUITest.ArrayAssert = {
      * @param {Function} comparator A function that returns true if the values are equivalent
      *      or false if not.
      * @param {String} message (Optional) The message to display if the assertion fails.
-     * @return {Void}
      * @method itemsAreEquivalent
      * @static
      */
@@ -2249,7 +2254,7 @@ YUITest.ArrayAssert = {
      * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
-     * @param {int} index The index at which the value should exist.
+     * @param {Number} index The index at which the value should exist.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method lastIndexOf
      * @static
@@ -2731,7 +2736,6 @@ YUITest.Assert = {
      * @param {String} message (Optional) The message to display if the assertion
      *      fails.
      * @method throwsError
-     * @return {void}
      * @static
      */
     throwsError: function(expectedError, method, message){
@@ -3081,7 +3085,6 @@ YUITest.Mock = function(template){
  *      An optional 'error' key defines an error type to be thrown in all cases.
  *      The "callCount" key provides an optional number of times the method is
  *      expected to be called (the default is 1).
- * @return {void}
  * @method expect
  * @static
  */
@@ -3161,7 +3164,6 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
  * Verifies that all expectations of a mock object have been met and
  * throws an assertion error if not.
  * @param {Object} mock The object to verify..
- * @return {void}
  * @method verify
  * @static
  */
@@ -3502,7 +3504,6 @@ YUITest.Results = function(name){
  * Includes results from another results object into this one.
  * @param {Test.Results} result The results object to include.
  * @method include
- * @return {void}
  */
 YUITest.Results.prototype.include = function(results){
     this.passed += results.passed;
@@ -3672,7 +3673,7 @@ YUITest.UnexpectedValue.prototype.getMessage = function(){
  * Represents a stoppage in test execution to wait for an amount of time before
  * continuing.
  * @param {Function} segment A function to run when the wait is over.
- * @param {int} delay The number of milliseconds to wait before running the code.
+ * @param {Number} delay The number of milliseconds to wait before running the code.
  * @module test
  * @class Wait
  * @namespace Test

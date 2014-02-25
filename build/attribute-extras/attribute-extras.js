@@ -105,7 +105,7 @@ YUI.add('attribute-extras', function (Y, NAME) {
                 }
                 host.set(name, host._state.get(name, INIT_VALUE));
             } else {
-                Y.each(host._state.data, function(v, n) {
+                Y.Object.each(host._state.data, function(v, n) {
                     host.reset(n);
                 });
             }

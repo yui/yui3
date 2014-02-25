@@ -1,4 +1,5 @@
 {{>subclass-css}}
+{{>github-mock-config}}
 
 <div class="intro">
     <p>
@@ -48,7 +49,7 @@ Y.extend(ArrayPromise, Y.Promise);
 <h3>Putting our Class to Action</h3>
 
 <p>
-    There are many cases in which you would want to work on asynchronous array values. Performing more than one async operation at a time and dealing with the result is one common use case. `Y.batch` waits for many operations and returns a promise representing an array with the result of all the operations, so you could wrap it in an ArrayPromise to modify all those results.
+    There are many cases in which you would want to work on asynchronous array values. Performing more than one async operation at a time and dealing with the result is one common use case. `Y.Promise.all` waits for many operations and returns a promise representing an array with the result of all the operations, so you could wrap it in an ArrayPromise to modify all those results.
 </p>
 
 <p>

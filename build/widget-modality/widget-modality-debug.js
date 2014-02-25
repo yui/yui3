@@ -12,6 +12,7 @@ var WIDGET       = 'widget',
     SYNC_UI      = 'syncUI',
     BOUNDING_BOX = 'boundingBox',
     CONTENT_BOX  = 'contentBox',
+    RENDERED     = 'rendered',
     VISIBLE      = 'visible',
     Z_INDEX      = 'zIndex',
     CHANGE       = 'Change',
@@ -334,7 +335,9 @@ var WIDGET       = 'widget',
                 if (isModal) {
                     maskNode.show();
                     Y.later(1, this, '_attachUIHandlesModal');
-                    this._focus();
+                    if (this.get(RENDERED)) {
+                        this._focus();
+                    }
                 }
 
 
@@ -377,7 +380,7 @@ var WIDGET       = 'widget',
          *
          * @method _uiSetHostZIndexModal
          * @protected
-         * @param {Number} Z-Index of the widget
+         * @param {Number} zIndex Z-Index of the widget
          */
         _uiSetHostZIndexModal : function (zIndex) {
 
@@ -536,7 +539,7 @@ var WIDGET       = 'widget',
          * Resyncs the mask in the viewport for browsers that don't support fixed positioning
          *
          * @method _resyncMask
-         * @param {Y.Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
+         * @param {Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
          * @private
          */
         _resyncMask: function (e) {
