@@ -4,6 +4,11 @@ Calendar Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.15.0
+------
+
 * Fix calendar to use `visibility:inherit` instead of `visibility:visible`, for compatibility with overlays. ([#1627][]: @jafl)
 * Fix an issue when Feb 1st is Saturday Mar 2nd appears to be selectable. ([#1559][]: @shunner)
 

@@ -4,6 +4,11 @@ YUI Test Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.15.0
+------
+
 * Added test.next(fn) which returns a callback that automatically
   resumes asynchronous tests.
 

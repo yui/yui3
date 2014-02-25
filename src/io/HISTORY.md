@@ -6,6 +6,13 @@ IO Utility Change History
 
 * No changes.
 
+3.15.0
+------
+
+* Fixed an issue in `io-upload-iframe` where an attempt to reset the attributes of the `form` element could have occured on a `form` that no longer existed on the page. ([#1465][]: @andrewnicols)
+
+[#1465]: https://github.com/yui/yui3/pull/1465/
+
 3.14.1
 ------
 

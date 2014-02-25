@@ -4,6 +4,11 @@ Widget Modality Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.15.0
+------
+
 * Fixed a bug where the widget would focus before it was actually rendered,
   leading to a jump in the window position. ([#1636][]: @andrewnicols)
 

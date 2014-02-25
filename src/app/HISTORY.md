@@ -4,11 +4,20 @@ App Framework Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.15.0
+------
+
 * __[!]__ Refactored `ModelSync.Local` to use a different, more readable
   storage system. This new storage system is backwards-incompatible with
   the old storage system. However, the API remains the same and no application
   code needs to be changed unless you want to maintain the data that is
   present in `localStorage` today. ([#1597][])
+
+* Fixed an issue where `history-hash-ie` loaded on non-IE browsers. ([#1613][]: @ezequiel)
+
+[#1613]: https://github.com/yui/yui3/pull/1613
 
 3.14.1
 ------
