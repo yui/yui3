@@ -871,6 +871,40 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        'test: correct attach order of optional dependencies': function () {
+            var test = this;
+
+            YUI.add('mod131', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod132', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                optionalRequires: ['mod111-foo']
+            });
+
+            var $Y = YUI({
+                modules: {
+                    'mod111-foo': {
+                    },
+                    'mod112-bar': {
+                        optionalRequires: ['mod111-foo']
+                    }
+                }
+            });
+
+            $Y.use('mod112-bar', function (Y, result) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Assert.areSame('hello', Y.foo);
+                        Assert.areSame('hello world', Y.bar);
+                        Assert.isTrue(result.success);
+                    });
+                });
+            });
+
+            test.wait();
+        },
         test_css_stamp: function() {
             var test = this,
                 links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
