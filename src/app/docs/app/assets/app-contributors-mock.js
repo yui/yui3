@@ -13,8 +13,8 @@ YUI.add('app-contributors-mock', function (Y) {
                     "html_url": "https://github.com/yui",
                     "name": "YUI Library",
                     "public_repos": 34,
-                    "followers": 0,
-                }
+                    "followers": 0
+                };
                 break;
             case '/users/yui/repos':
                 data = [
@@ -114,7 +114,7 @@ YUI.add('app-contributors-mock', function (Y) {
                     "html_url": "https://github.com/ericf",
                     "name": "Eric Ferraiuolo",
                     "public_repos": 47,
-                    "followers": 185,
+                    "followers": 185
                 };
                 break;
             case '/users/ericf/repos':

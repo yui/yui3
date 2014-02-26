@@ -4,6 +4,11 @@ Drag and Drop Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.15.0
+------
+
 * Fix a bug that doesn't fire `drop:hit` event. ([#1573][]: @hacklschorsch)
 * Prevent the default page action when starting a `gesturemove` event. This
   fixes browsers that select the text when dragging. ([#1557][]: @andrewnicols)

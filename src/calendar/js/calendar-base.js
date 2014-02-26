@@ -1040,7 +1040,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._renderCustomRules();
         this._renderSelectedDates();
 
-        contentBox.setStyle("visibility", "visible");
+        contentBox.setStyle("visibility", "inherit");
     },
 
 
@@ -1255,7 +1255,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._paneProperties[paneId].paneDate = newDate;
 
         // Bring the pane visibility back after all DOM changes are done
-        pane.setStyle("visibility", "visible");
+        pane.setStyle("visibility", "inherit");
 
     },
 

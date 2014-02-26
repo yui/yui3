@@ -570,8 +570,14 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             {
                 this._yDataUpdateHandle.detach();
             }
-            this._xAxisChangeHandle.detach();
-            this._yAxisChangeHandle.detach();
+            if(this._xAxisChangeHandle)
+            {
+                this._xAxisChangeHandle.detach();
+            }
+            if(this._yAxisChangeHandle)
+            {
+                this._yAxisChangeHandle.detach();
+            }
         }
     }
         /**

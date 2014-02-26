@@ -59,7 +59,7 @@ YUI.add('xdr-mock', function (Y) {
             }, {
                 "title": "Villumsen headlines a strong woman\u2019s field",
                 "link": "http:\/\/www.scoop.co.nz\/stories\/CU1312\/S00114\/villumsen-headlines-a-strong-womans-field.htm",
-                "pubDate": "Wed, 04 Dec 2013 18:25:42 -0800",
+                "pubDate": "Wed, 04 Dec 2013 18:25:42 -0800"
             }, {
                 "title": "Cycling Championships coming to Columbia County",
                 "link": "http:\/\/chronicle.augusta.com\/news\/metro\/2013-12-19\/cycling-championships-coming-columbia-county",

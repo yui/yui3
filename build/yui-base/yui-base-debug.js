@@ -4157,7 +4157,7 @@ YUI.Env.aliases = {
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
-    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "history": ["history-base","history-hash","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
@@ -6020,6 +6020,12 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = !incl[src];
             } else if (excl && (src in excl)) {
                 bail = excl[src];
+            }
+
+            // Set a default category of info if the category was not defined or was not
+            // a real category.
+            if ((typeof cat === 'undefined') || !(cat in LEVELS)) {
+                cat = 'info';
             }
 
             // Determine the current minlevel as defined in configuration

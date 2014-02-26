@@ -6,6 +6,11 @@ Rich Text Editor Change History
 
 * No changes.
 
+3.15.0
+------
+
+* No changes.
+
 3.14.1
 ------
 

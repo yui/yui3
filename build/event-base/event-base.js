@@ -583,7 +583,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
             var a = Y.Array(id), i, availHandle;
 
-
             for (i=0; i<a.length; i=i+1) {
                 _avail.push({
                     id:         a[i],
@@ -752,7 +751,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             }
 
             if (!fn || !fn.call) {
-// throw new TypeError(type + " attach call failed, callback undefined");
                 return false;
             }
 
