@@ -1380,6 +1380,20 @@ Y.Loader.prototype = {
         }
         return r;
     },
+
+    _canBeAttached: function (m) {
+        if (typeof m === 'string') {
+            m = this.getModule(m);
+        }
+        if (m && m.optTest) {
+            if (!m.hasOwnProperty('_testResult')) {
+                m._testResult = m.optTest(Y);
+            }
+            return m._testResult;
+        }
+        return true;
+    },
+
     /**
      * Returns an object containing properties for all modules required
      * in order to load the requested module
@@ -1434,6 +1448,27 @@ Y.Loader.prototype = {
             return mod.expanded;
         }
 
+        r = mod.requires;
+        for (i = 0, length = r.length; i < length; i++) {
+            if (!this._canBeAttached(r[i])) {
+                this._failed = true;
+            }
+        }
+
+        // Optional dependencies are dependencies that may or may not be
+        // available.
+        // This feature was designed specifically to be used when transpiling
+        // ES6 modules, in order to use polyfills and regular scripts that define
+        // global variables without having to import them since they should be
+        // available in the global scope.
+        if (optReqs) {
+            for (i = 0, length = optReqs.length; i < length; i++) {
+                m = this.getModule(optReqs[i]);
+                if (m && this._canBeAttached(m)) {
+                    mod.requires.push(m.name);
+                }
+            }
+        }
 
         d = [];
         hash = {};
@@ -1460,12 +1495,6 @@ Y.Loader.prototype = {
                 hash[r[i]] = true;
                 m = this.getModule(r[i]);
                 if (m) {
-                    if (typeof m._testResult === 'undefined' && m.optTest) {
-                        m._testResult = m.optTest(Y);
-                    }
-                    if (m._testResult === false) {
-                        this._failed = true;
-                    }
                     add = this.getRequires(m);
                     intl = intl || (m.expanded_map &&
                         (INTL in m.expanded_map));
@@ -1591,21 +1620,6 @@ Y.Loader.prototype = {
                 skinmod = this._addSkin(this.skin.defaultSkin, name);
                 if (!this.isCSSLoaded(skinmod, this._boot)) {
                     d.push(skinmod);
-                }
-            }
-        }
-
-        // Optional dependencies are dependencies that may or may not be
-        // available.
-        // This feature was designed specifically to be used when transpiling
-        // ES6 modules, in order to use polyfills and regular scripts that define
-        // global variables without having to import them since they should be
-        // available in the global scope.
-        if (optReqs) {
-            for (i = 0, length = optReqs.length; i < length; i++) {
-                m = this.getModule(optReqs[i]);
-                if (m) {
-                    d.push(m.name);
                 }
             }
         }
@@ -2424,6 +2438,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         Y.log('public insert() ' + (type || '') + ', ' +
         Y.Object.keys(this.required), "info", "loader");
         if (this._failed && this.onEnd) {
+            this._failed = false;
             this.onEnd({
                 msg: 'notregistered',
                 success: false

@@ -739,10 +739,7 @@ with any configuration info required for the module.
                     if (loader) {
                         def = loader.getModule(name);
                         if (def) {
-                            if (typeof def._testResult === 'undefined' && def.optTest) {
-                                def._testResult = def.optTest(Y);
-                            }
-                            if (def._testResult === false) {
+                            if (!loader._canBeAttached(def)) {
                                 Y.log('Failed to attach module ' + name, 'warn', 'yui');
                                 return true;
                             }
