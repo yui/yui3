@@ -89,14 +89,73 @@ YUI.add('general-tests', function(Y) {
         'test: next() resumes the test': function () {
             var self = this;
 
-            function async(data, callback) {
+            function async(callback) {
+                setTimeout(callback, 0);
+            }
+
+            async(self.next( function () {} ));
+
+            self.wait();
+        },
+        'test: next() passes parameters to the callback': function () {
+            var self = this;
+
+            function async(callback) {
                 setTimeout(function () {
-                    callback(data);
+                    callback('hello world');
                 }, 0);
             }
 
-            async('hello world', self.next(function (message) {
+            async(self.next(function (message) {
                 self.assert(message === 'hello world');
+            }));
+
+            self.wait();
+        },
+        'test: next() bounds the function to given context': function () {
+            var self = this, async;
+
+            async = {
+                i_am_async: true,
+                execute: function (callback) {
+                    setTimeout(callback, 0);
+                }
+            };
+
+            async.execute(self.next(function () {
+                self.assert(this.i_am_async === true);
+            }, async));
+
+            self.wait();
+        },
+        'test: next() preserves the original context of a function': function () {
+            var self = this,
+                foo,
+                bar = { hello: 'world' };
+
+            function Foo() {}
+            Y.augment(Foo, Y.EventTarget);
+
+            foo = new Foo();
+            foo.on('something', this.next(function () {
+                self.assert(this === bar);
+            }), bar);
+
+            setTimeout(function () {
+                foo.fire('something');
+            }, 0);
+
+            self.wait();
+        },
+        'test: next() bounds the function to Y.config.global if no context is given': function () {
+            var self = this;
+
+            function async(callback) {
+                setTimeout(callback, 0);
+            }
+
+            async(self.next(function () {
+                self.assert(this === Y.config.global);
             }));
 
             self.wait();

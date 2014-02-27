@@ -336,6 +336,8 @@ YUITest.TestCase.prototype = {
 
     @method next
     @param {Function} callback Callback to call after resuming the test.
+    @param {Object} [context] The value of `this` inside the callback.
+        If not given, the original context of the function will be used.
     @return {Function} wrapped callback that resumes the test.
     @example
     ```
@@ -354,12 +356,16 @@ YUITest.TestCase.prototype = {
     test.wait();
     ```
     **/
-    next: function (callback) {
+    next: function (callback, context) {
         var self = this;
+        context = arguments.length >= 2 ? arguments[1] : undefined;
         return function () {
             var args = arguments;
+            if (context === undefined) {
+                context = this;
+            }
             self.resume(function () {
-                callback.apply(this, args);
+                callback.apply(context, args);
             });
         };
     },
