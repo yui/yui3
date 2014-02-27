@@ -736,14 +736,9 @@ with any configuration info required for the module.
                         }
                     }
 
-                    if (loader) {
-                        def = loader.getModule(name);
-                        if (def) {
-                            if (!loader._canBeAttached(def)) {
-                                Y.log('Failed to attach module ' + name, 'warn', 'yui');
-                                return true;
-                            }
-                        }
+                    if (loader && !loader._canBeAttached(name)) {
+                        Y.log('Failed to attach module ' + name, 'warn', 'yui');
+                        return true;
                     }
 
                     /*
