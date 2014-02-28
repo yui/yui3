@@ -844,20 +844,20 @@ YUI.add('loader-tests', function(Y) {
             YUI.add('mod132', function (Y) {
                 Y.bar = Y.foo + ' world';
             }, '', {
-                optionalRequires: ['mod111-foo']
+                optionalRequires: ['mod131']
             });
 
             var $Y = YUI({
                 modules: {
-                    'mod111-foo': {
+                    'mod131': {
                     },
-                    'mod112-bar': {
-                        optionalRequires: ['mod111-foo']
+                    'mod132': {
+                        optionalRequires: ['mod131']
                     }
                 }
             });
 
-            $Y.use('mod112-bar', function (Y, result) {
+            $Y.use('mod132', function (Y, result) {
                 setTimeout(function () {
                     test.resume(function () {
                         Assert.areSame('hello', Y.foo);
