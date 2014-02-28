@@ -1381,6 +1381,14 @@ Y.Loader.prototype = {
         return r;
     },
 
+    /**
+    Returns `true` if the module can be attached to the YUI instance. Runs
+    the module's test if there is one and caches its result.
+
+    @method _canBeAttached
+    @param {String|Object} module Module name or module object.
+    @return {Boolean} Result of the module's test if it has one, or `true`.
+    **/
     _canBeAttached: function (m) {
         if (typeof m === 'string') {
             m = this.getModule(m);
@@ -1391,6 +1399,8 @@ Y.Loader.prototype = {
             }
             return m._testResult;
         }
+        // return `true` for modules not registered as Loader will know what
+        // to do with them later on
         return true;
     },
 
