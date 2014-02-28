@@ -1448,13 +1448,6 @@ Y.Loader.prototype = {
             return mod.expanded;
         }
 
-        r = mod.requires;
-        for (i = 0, length = r.length; i < length; i++) {
-            if (!this._canBeAttached(r[i])) {
-                this._failed = true;
-            }
-        }
-
         // Optional dependencies are dependencies that may or may not be
         // available.
         // This feature was designed specifically to be used when transpiling
@@ -2435,16 +2428,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type, skipsort) {
-        Y.log('public insert() ' + (type || '') + ', ' +
-        Y.Object.keys(this.required), "info", "loader");
-        if (this._failed && this.onEnd) {
-            this._failed = false;
-            this.onEnd({
-                msg: 'notregistered',
-                success: false
-            });
-            return;
-        }
+        Y.log('public insert() ' + (type || '') + ', ' + Y.Object.keys(this.required), "info", "loader");
         var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;

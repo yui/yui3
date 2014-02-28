@@ -835,42 +835,6 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('mod121-foo', out.jsMods[0].name, 'Not included optional dependency');
             Assert.areSame('mod122-bar', out.jsMods[1].name, 'Not included required module');
         },
-        'test: required dependencies with tests': function () {
-            var test = this;
-
-            YUI.add('mod111-foo', function (Y) {
-                Y.foo = 'hello';
-            });
-            YUI.add('mod112-bar', function (Y) {
-                Y.bar = Y.foo + ' world';
-            }, '', {
-                requires: ['mod111-foo']
-            });
-
-            var $Y = YUI({
-                modules: {
-                    'mod111-foo': {
-                        optTest: function () {
-                            return false;
-                        }
-                    },
-                    'mod112-bar': {
-                        requires: ['mod111-foo']
-                    }
-                }
-            });
-
-            $Y.use('mod112-bar', function (Y, result) {
-                setTimeout(function () {
-                    test.resume(function () {
-                        Assert.isUndefined(Y.foo);
-                        Assert.isFalse(result.success);
-                    });
-                });
-            });
-
-            test.wait();
-        },
         'test: correct attach order of optional dependencies': function () {
             var test = this;
 
