@@ -52,9 +52,10 @@ Y.mix(Y_DOM, {
     /**
      * Sets a style property for a given element.
      * @method setStyle
-     * @param {HTMLElement} An HTMLElement to apply the style to.
+     * @param {HTMLElement} node The HTMLElement to apply the style to.
      * @param {String} att The style property to set.
      * @param {String|Number} val The value.
+     * @param {Object} [style] The style node. Defaults to `node.style`.
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
@@ -85,8 +86,9 @@ Y.mix(Y_DOM, {
     /**
      * Returns the current style value for the given property.
      * @method getStyle
-     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {HTMLElement} node The HTMLElement to get the style from.
      * @param {String} att The style property to get.
+     * @param {Object} [style] The style node. Defaults to `node.style`.
      */
     getStyle: function(node, att, style) {
         style = style || node.style;
@@ -113,7 +115,7 @@ Y.mix(Y_DOM, {
     /**
      * Sets multiple style properties.
      * @method setStyles
-     * @param {HTMLElement} node An HTMLElement to apply the styles to.
+     * @param {HTMLElement} node The HTMLElement to apply the styles to.
      * @param {Object} hash An object literal of property:value pairs.
      */
     setStyles: function(node, hash) {
@@ -126,7 +128,7 @@ Y.mix(Y_DOM, {
     /**
      * Returns the computed style for the given node.
      * @method getComputedStyle
-     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {HTMLElement} node The HTMLElement to get the style from.
      * @param {String} att The style property to get.
      * @return {String} The computed value of the style property.
      */
