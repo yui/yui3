@@ -134,6 +134,9 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Appends the node to the given node.
+     * @example
+     *      // appendTo returns the node that has been created beforehand
+     *      Y.Node.create('<p></p>').appendTo('body').set('text', 'hello world!');
      * @method appendTo
      * @param {Node | HTMLElement} node The node to append to
      * @chainable
