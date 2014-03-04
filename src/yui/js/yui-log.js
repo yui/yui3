@@ -47,12 +47,27 @@ INSTANCE.log = function(msg, cat, src, silent) {
         if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
-            if (incl && !(src in incl)) {
-                bail = 1;
-            } else if (incl && (src in incl)) {
-                bail = !incl[src];
-            } else if (excl && (src in excl)) {
-                bail = excl[src];
+            if (incl) {
+                if (src in incl) {
+                    // Exact match found -g rab the log level and bail setting.
+                    bail = !incl[src];
+                    minlevel = incl[src];
+                } else if (incl['*']) {
+                    // Allow specification of differential logging.
+                    bail = !incl['*'];
+                    minlevel = incl['*'];
+                } else {
+                    // No matching log categories, bail
+                    bail = 1;
+                }
+            } else if (excl) {
+                if (src in excl) {
+                    // Exact match found - grab the log level and bail setting.
+                    bail = excl[src];
+                } else if (excl['*']) {
+                    // Allow specification of differential logging.
+                    bail = excl['*'];
+                }
             }
 
             // Set a default category of info if the category was not defined or was not
@@ -62,8 +77,10 @@ INSTANCE.log = function(msg, cat, src, silent) {
             }
 
             // Determine the current minlevel as defined in configuration
-            Y.config.logLevel = Y.config.logLevel || 'debug';
-            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+            if (typeof minlevel !== 'string') {
+                minlevel = Y.config.logLevel || 'debug';
+            }
+            minlevel = LEVELS[minlevel.toLowerCase()];
 
             if (cat in LEVELS && LEVELS[cat] < minlevel) {
                 // Skip this message if the we don't meet the defined minlevel
