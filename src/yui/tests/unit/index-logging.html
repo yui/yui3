@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html class="foo">
+<html>
 <head>
-<title>YUI Seed Tests</title>
+<title>YUI Logging Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
@@ -41,7 +41,7 @@ var YUI_config = {
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
-var TestName = 'YUI: Fetch';
+var TestName = 'YUI: Logging';
 
 YUI({
     allowRollup: false,
@@ -52,35 +52,12 @@ YUI({
             fullpath: './assets/seed-tests.js',
             requires: [ 'test']
         },
-        'core-tests': {
-            fullpath: './assets/core-tests.js',
-            requires: ['classnamemanager', 'node']
-        },
 
         'logging-test': {
-            fullpath: './assets/logging-test.js',
-            requires: [ 'test' ]
-        },
-
-        'config-test': {
-            fullpath: './assets/config-test.js'
-        },
-
-        'later-test': {
-            fullpath: './assets/later-test.js'
-        },
-
-        'browser-tests': {
-            fullpath: './assets/browser-tests.js'
-        },
-        'namespace-test': {
-            fullpath: './assets/namespace-test.js'
-        },
-        'es-modules-test': {
-            fullpath: './assets/es-modules-test.js'
+            fullpath: './assets/logging-test.js'
         }
     }
-}).use('seed-tests', 'core-tests', 'logging-test', 'config-test', 'later-test', 'namespace-test', 'es-modules-test', 'test-console', 'test', function(Y) {
+}).use('seed-tests', 'logging-test', 'test-console', function(Y) {
     new Y.Test.Console().render('#log');
 
     Y.Test.Runner.run();

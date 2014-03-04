@@ -94,9 +94,14 @@ YUI({
             requires: ['classnamemanager', 'node']
         },
 
+        'logging-test': {
+            fullpath: './assets/logging-test.js',
+            requires: [ 'test' ]
+        },
+
         'config-test': {
             fullpath: './assets/config-test.js'
-        },
+        }
 
         'later-test': {
             fullpath: './assets/later-test.js'
@@ -121,7 +126,7 @@ YUI({
         }
 
     }
-}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
+}).use('ua-tests', 'seed-tests', 'core-tests', 'logging-test', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
     Y.Test.Runner.setName(TestName);
     Y.Test.Runner.run();
