@@ -183,14 +183,23 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
 
+    /**
+    Collection of registered router middleware.
+
+    @property _middleware
+    @type Array
+    @protected
+    **/
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         var self = this;
 
-        self._html5  = self.get('html5');
-        self._params = {};
-        self._routes = [];
-        self._url    = self._getURL();
+        self._html5      = self.get('html5');
+        self._params     = {};
+        self._routes     = [];
+        self._middleware = [];
+        self._url        = self._getURL();
 
         // Necessary because setters don't run on init.
         self._setRoutes(config && config.routes ? config.routes :
@@ -676,6 +685,19 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
+    Appends a new callback function to this router's middleware stack. Router 
+    middleware will be run before route-specific middleware.
+    
+    @method use
+    @param {Function} [callback] The callback to append to the middleware stack.
+    @chainable
+    **/
+    use: function (callback) {
+      this._middleware.push(callback);
+      return this;
+    },
+
+    /**
     Saves a new browser history entry and dispatches to the first matching route
     handler, if any.
 
@@ -843,7 +865,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             } else if ((route = routes.shift())) {
                 // Make a copy of this route's `callbacks` so the original array
                 // is preserved.
-                callbacks = route.callbacks.concat();
+                callbacks = self._middleware.concat(route.callbacks.concat());
 
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
