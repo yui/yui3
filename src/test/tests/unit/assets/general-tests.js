@@ -367,6 +367,9 @@ YUI.add('general-tests', function(Y) {
             Assert.isArray([]);
             Assert.isInstanceOf(Y.Test.Case, this);
             Assert.isTypeOf(typeof 'foo', 'FooBar');
+            Assert.isNotEmpty(["element"]);
+            Assert.isNotEmpty({"element": "value"});
+            Assert.isNotEmpty("value");
             Y.assert(true);
         },
         'test: asserts fail areNotEqual': function() {
@@ -411,6 +414,15 @@ YUI.add('general-tests', function(Y) {
         'test: asserts fail isTypeOf': function() {
             Assert.isTypeOf(typeof 'string', {});
         },
+        'test: asserts fail isNotEmpty': function() {
+            Assert.isNotEmpty(null);
+            Assert.isNotEmpty(undefined);
+            Assert.isNotEmpty(0);
+            Assert.isNotEmpty(1);
+            Assert.isNotEmpty(true);
+            Assert.isNotEmpty(false);
+            Assert.isNotEmpty("");
+        },
         'test: Y.assert fail': function() {
             Y.assert(false);
         },
@@ -429,6 +441,7 @@ YUI.add('general-tests', function(Y) {
                 'test: asserts fail isArray': true,
                 'test: asserts fail isInstanceOf': true,
                 'test: asserts fail isTypeOf': true,
+                'test: asserts fail isNotEmpty': true,
                 'test: Y.assert fail': true
             }
         }
