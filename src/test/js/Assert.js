@@ -427,13 +427,13 @@ YUITest.Assert = {
 
         YUITest.Assert._increment();
 
-        if (actual == null){
+        if(!Y.Lang.isValue(actual){
             throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should not be empty."), actual);
-        } else if ( (Array.isArray(actual) || typeof actual === "string") && actual.length === 0){
+        } else if((Object.prototype.toString.call(actual) === "[object Array]" || typeof actual === "string") && actual.length === 0){
             throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should not be empty."), actual);
         }
         for(key in actual){
-            if(hasOwnProperty.call(actual, key)) {
+            if(hasOwnProperty.call(actual, key)){
                 return;
             }
         }

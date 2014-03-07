@@ -421,7 +421,10 @@ YUI.add('general-tests', function(Y) {
             Assert.isNotEmpty(1);
             Assert.isNotEmpty(true);
             Assert.isNotEmpty(false);
+            Assert.isNotEmpty(NaN);
             Assert.isNotEmpty("");
+            Assert.isNotEmpty([]);
+            Assert.isNotEmpty({});
         },
         'test: Y.assert fail': function() {
             Y.assert(false);
