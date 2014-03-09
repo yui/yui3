@@ -2133,22 +2133,29 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
-        var name, 
+        var name,
 
             // Object containing module names.
-            required = this.required, 
+            required = this.required,
 
             // Keep track of whether we've visited a module.
             visited = {};
 
-        // Will contain modules names, in the correct order, 
+        // Will contain modules names, in the correct order,
         // according to dependencies.
         this.sorted = [];
+		this._externalCSS = [];
 
         for (name in required) {
             if (!visited[name] && required.hasOwnProperty(name)) {
                 this._visit(name, visited);
             }
+        }
+
+		// External CSS modules must be inserted last,
+		// after all YUI related CSS.
+        if (this._externalCSS.length > 0) {
+        	[].push.apply(this.sorted, this._externalCSS);
         }
     },
 
@@ -2159,21 +2166,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {Object} visited Keeps track of whether a module was visited.
      * @method _visit
      * @private
-     */ 
+     */
     _visit: function (name, visited) {
-        var required, moduleInfo, dependency, dependencies, i, l;     
+        var required, module, dependency, dependencies, i, l;
 
         visited[name] = true;
         required = this.required;
-        moduleInfo = this.moduleInfo[name];
+        module = this.moduleInfo[name];
 
-        if (moduleInfo) {
-            // Recurse on each dependency of this module, 
+        if (module) {
+            // Recurse on each dependency of this module,
             // figuring out its dependencies, and so on.
-            dependencies = moduleInfo.requires;
+            dependencies = module.requires;
             for (i = 0, l = dependencies.length; i < l; ++i) {
                 dependency = dependencies[i];
-                
+
                 // Is this module name in the required list of modules,
                 // and have we not already visited it?
                 if (required[dependency] && !visited[dependency]) {
@@ -2182,7 +2189,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
 
-        this.sorted.push(name);
+		var isExternalCSS = module && module.ext && module.type === "css";
+		if (isExternalCSS) {
+			this._externalCSS.push(name);
+		} else {
+    		this.sorted.push(name);
+		}
     },
 
     /**
