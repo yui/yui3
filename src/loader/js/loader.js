@@ -1251,6 +1251,10 @@ Y.Loader.prototype = {
                         // the trigger requires the conditional mod,
                         // so it should appear before the conditional
                         // mod if we do not intersede.
+                    var moduleInfo = this.moduleInfo[trigger];
+                    if (moduleInfo) {
+						moduleInfo.requires.push(o.name);
+                    }
                 } else { // after the trigger
                     o.after = o.after || [];
                     o.after.push(trigger);
