@@ -4,7 +4,10 @@ Widget Modality Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed the positioning of the modal mask for stacked modals.
+  ([#1684][]: @moiraine)
+
+[#1684]: https://github.com/yui/yui3/pull/1684
 
 3.15.0
 ------
@@ -78,7 +81,7 @@ Widget Modality Change History
 -----
 
   * No changes.
-  
+
 3.7.3
 -----
 
