@@ -528,7 +528,7 @@ var WIDGET       = 'widget',
                 this.fire(MaskHide);
                 bb = nextElem.get(BOUNDING_BOX);
                 bbParent = bb.get('parentNode') || Y.one('body');
-                bbParent.insert(maskNode, bbParent.get('firstChild'));
+                bbParent.insert(maskNode, bb);
                 this.fire(MaskShow);
             }
 
