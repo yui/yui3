@@ -1219,6 +1219,51 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    'router middleware can be added to all routes': function () {
+      var calls  = [],
+          router = this.router = new Y.Router();
+
+      router.use(function(req, res, next) {
+        calls.push('middleware');
+        next();
+      });
+
+      router.route('/foo', function (req, res, next) {
+        calls.push('route');
+      });
+
+      router._dispatch({path: '/foo'}, {});
+
+      ArrayAssert.itemsAreSame(['middleware', 'route'], calls);
+    },
+
+    'router middleware is run before route middleware': function () {
+      var calls  = [],
+          router = this.router = new Y.Router();
+
+      router.use(function(req, res, next) {
+        calls.push('router middleware');
+        next();
+      });
+
+      function middleware(req, res, next) {
+        calls.push('route middleware');
+        next();
+      }
+
+      router.route('/foo', middleware, function (req, res, next) {
+        calls.push('route');
+      });
+
+      router._dispatch({path: '/foo'}, {});
+
+      ArrayAssert.itemsAreSame([
+        'router middleware',
+        'route middleware',
+        'route'
+      ], calls);
+    },
+
     'request object should contain captured route parameters': function () {
         var calls  = 0,
             router = this.router = new Y.Router();
