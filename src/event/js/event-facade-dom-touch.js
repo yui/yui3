@@ -31,10 +31,10 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
     var i,l, etCached, et,touchCache;
 
-    Y.log("Calling facade._touch() with e = " + e, "info", "event-touch");
+    Y.log("Calling facade._touch() with e = " + e, "debug", "event-touch");
 
     if (e.touches) {
-        Y.log("Found e.touches. Replicating on facade");
+        Y.log("Found e.touches. Replicating on facade", "info", "event-touch");
 
         /**
          * Array of individual touch events for touch points that are still in

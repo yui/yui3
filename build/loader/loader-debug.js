@@ -11,7 +11,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2014.01.22-18-38',
+        GALLERY_VERSION = 'gallery-2014.03.06-14-38',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
@@ -2245,70 +2245,56 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
+        var name, 
 
-        // create an indexed list
-        var s = YObject.keys(this.required),
-            // loaded = this.loaded,
-            //TODO Move this out of scope
-            done = {},
-            p = 0, l, a, b, j, k, moved, doneKey;
+            // Object containing module names.
+            required = this.required, 
 
-        // keep going until we make a pass without moving anything
-        for (;;) {
+            // Keep track of whether we've visited a module.
+            visited = {};
 
-            l = s.length;
-            moved = false;
+        // Will contain modules names, in the correct order, 
+        // according to dependencies.
+        this.sorted = [];
 
-            // start the loop after items that are already sorted
-            for (j = p; j < l; j++) {
+        for (name in required) {
+            if (!visited[name] && required.hasOwnProperty(name)) {
+                this._visit(name, visited);
+            }
+        }
+    },
 
-                // check the next module on the list to see if its
-                // dependencies have been met
-                a = s[j];
+    /**
+     * Recursively visits the dependencies of the module name
+     * passed in, and appends each module name to the `sorted` property.
+     * @param {String} name The name of a module.
+     * @param {Object} visited Keeps track of whether a module was visited.
+     * @method _visit
+     * @private
+     */ 
+    _visit: function (name, visited) {
+        var required, moduleInfo, dependency, dependencies, i, l;     
 
-                // check everything below current item and move if we
-                // find a requirement for the current item
-                for (k = j + 1; k < l; k++) {
-                    doneKey = a + s[k];
+        visited[name] = true;
+        required = this.required;
+        moduleInfo = this.moduleInfo[name];
 
-                    if (!done[doneKey] && this._requires(a, s[k])) {
-
-                        // extract the dependency so we can move it up
-                        b = s.splice(k, 1);
-
-                        // insert the dependency above the item that
-                        // requires it
-                        s.splice(j, 0, b[0]);
-
-                        // only swap two dependencies once to short circut
-                        // circular dependencies
-                        done[doneKey] = true;
-
-                        // keep working
-                        moved = true;
-
-                        break;
-                    }
-                }
-
-                // jump out of loop if we moved something
-                if (moved) {
-                    break;
-                // this item is sorted, move our pointer and keep going
-                } else {
-                    p++;
+        if (moduleInfo) {
+            // Recurse on each dependency of this module, 
+            // figuring out its dependencies, and so on.
+            dependencies = moduleInfo.requires;
+            for (i = 0, l = dependencies.length; i < l; ++i) {
+                dependency = dependencies[i];
+                
+                // Is this module name in the required list of modules,
+                // and have we not already visited it?
+                if (required[dependency] && !visited[dependency]) {
+                    this._visit(dependency, visited);
                 }
             }
-
-            // when we make it here and moved is false, we are
-            // finished sorting
-            if (!moved) {
-                break;
-            }
-
         }
 
-        this.sorted = s;
+        this.sorted.push(name);
     },
 
     /**
@@ -4656,7 +4642,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "use": [
             "history-base",
             "history-hash",
-            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -5908,7 +5893,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '2ec8e93b30f0fc6809e2fbdba577e214';
+YUI.Env[Y.version].md5 = '8e471689779fc84718f6dad481790b59';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

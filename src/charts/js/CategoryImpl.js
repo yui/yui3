@@ -25,6 +25,18 @@ CategoryImpl.NAME = "categoryImpl";
 
 CategoryImpl.ATTRS = {
     /**
+     * Pattern used by the `labelFunction` to format a label. The default `labelFunction` values for
+     * `CategoryAxis` and `CategoryAxisBase` do not accept a format object. This value can be used by
+     * a custom method.
+     *
+     * @attribute labelFormat
+     * @type Object
+     */
+    labelFormat: {
+        value: null
+    },
+
+    /**
      * Determines whether and offset is automatically calculated for the edges of the axis.
      *
      * @attribute calculateEdgeOffset

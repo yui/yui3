@@ -6,10 +6,16 @@ AsyncQueue Change History
 
 * No changes.
 
-3.14.1
+3.15.0
 ------
 
 * No changes.
+
+3.14.1
+------
+
+* Fixed an issue where the 'complete' event is not always fired if the queue
+  is stopped. [Maxime Réty]
 
 3.14.0
 ------

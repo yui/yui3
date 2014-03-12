@@ -675,6 +675,7 @@ with any configuration info required for the module.
             len = r.length, loader, def, go,
             c = [],
             modArgs, esCompat, reqlen,
+            condition,
             __exports__, __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
@@ -799,10 +800,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;
@@ -811,6 +812,16 @@ with any configuration info required for the module.
                         if (esCompat) {
                             // store the `exports` in case others `es` modules requires it
                             exported[name] = __exports__;
+
+                            // If an ES module is conditionally loaded and set
+                            // to be used "instead" another module, replace the
+                            // trigger module's content with the conditionally
+                            // loaded one so the values returned by require()
+                            // still makes sense
+                            condition = mod.details.condition;
+                            if (condition && condition.when === 'instead') {
+                                exported[condition.trigger] = __exports__;
+                            }
                         }
                     }
 
@@ -983,6 +994,65 @@ with any configuration info required for the module.
         }
 
         return Y;
+    },
+
+    /**
+    Sugar for loading both legacy and ES6-based YUI modules.
+
+    @method require
+    @param {String} [modules*] List of module names to import or a single
+        module name.
+    @param {Function} callback Callback that gets called once all the modules
+        were loaded. Each parameter of the callback is the export value of the
+        corresponding module in the list. If the module is a legacy YUI module,
+        the YUI instance is used instead of the module exports.
+    @example
+    ```
+    YUI().require(['es6-set'], function (Y, imports) {
+        var Set = imports.Set,
+            set = new Set();
+    });
+    ```
+    **/
+    require: function () {
+        var args = SLICE.call(arguments),
+            callback;
+
+        if (typeof args[args.length - 1] === 'function') {
+            callback = args.pop();
+
+            // only add the callback if one was provided
+            // YUI().require('foo'); is valid
+            args.push(function (Y) {
+                var i, length = args.length,
+                    exported = Y.Env._exported,
+                    __imports__ = {};
+
+                // Get only the imports requested as arguments
+                for (i = 0; i < length; i++) {
+                    if (exported.hasOwnProperty(args[i])) {
+                        __imports__[args[i]] = exported[args[i]];
+                    }
+                }
+
+                // Using `undefined` because:
+                // - Using `Y.config.global` would force the value of `this` to be
+                //   the global object even in strict mode
+                // - Using `Y` goes against the goal of moving away from a shared
+                //   object and start thinking in terms of imported and exported
+                //   objects
+                callback.call(undefined, Y, __imports__);
+            });
+        }
+        // Do not return the Y object. This makes it hard to follow this
+        // traditional pattern:
+        //   var Y = YUI().use(...);
+        // This is a good idea in the light of ES6 modules, to avoid working
+        // in the global scope.
+        // This also leaves the door open for returning a promise, once the
+        // YUI loader is based on the ES6 loader which uses
+        // loader.import(...).then(...)
+        this.use.apply(this, args);
     },
 
     /**
@@ -3896,7 +3966,7 @@ YUI.Env.parseUA = function(subUA) {
 
                 }
                 if (/Silk/.test(ua)) {
-                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    m = ua.match(/Silk\/([^\s]*)/);
                     if (m && m[1]) {
                         o.silk = numberify(m[1]);
                     }
@@ -4087,7 +4157,7 @@ YUI.Env.aliases = {
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
-    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "history": ["history-base","history-hash","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
@@ -4873,6 +4943,12 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = excl[src];
             }
 
+            // Set a default category of info if the category was not defined or was not
+            // a real category.
+            if ((typeof cat === 'undefined') || !(cat in LEVELS)) {
+                cat = 'info';
+            }
+
             // Determine the current minlevel as defined in configuration
             Y.config.logLevel = Y.config.logLevel || 'debug';
             minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
@@ -5106,7 +5182,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2014.01.22-18-38',
+        GALLERY_VERSION = 'gallery-2014.03.06-14-38',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
@@ -7340,70 +7416,56 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
+        var name, 
 
-        // create an indexed list
-        var s = YObject.keys(this.required),
-            // loaded = this.loaded,
-            //TODO Move this out of scope
-            done = {},
-            p = 0, l, a, b, j, k, moved, doneKey;
+            // Object containing module names.
+            required = this.required, 
 
-        // keep going until we make a pass without moving anything
-        for (;;) {
+            // Keep track of whether we've visited a module.
+            visited = {};
 
-            l = s.length;
-            moved = false;
+        // Will contain modules names, in the correct order, 
+        // according to dependencies.
+        this.sorted = [];
 
-            // start the loop after items that are already sorted
-            for (j = p; j < l; j++) {
+        for (name in required) {
+            if (!visited[name] && required.hasOwnProperty(name)) {
+                this._visit(name, visited);
+            }
+        }
+    },
 
-                // check the next module on the list to see if its
-                // dependencies have been met
-                a = s[j];
+    /**
+     * Recursively visits the dependencies of the module name
+     * passed in, and appends each module name to the `sorted` property.
+     * @param {String} name The name of a module.
+     * @param {Object} visited Keeps track of whether a module was visited.
+     * @method _visit
+     * @private
+     */ 
+    _visit: function (name, visited) {
+        var required, moduleInfo, dependency, dependencies, i, l;     
 
-                // check everything below current item and move if we
-                // find a requirement for the current item
-                for (k = j + 1; k < l; k++) {
-                    doneKey = a + s[k];
+        visited[name] = true;
+        required = this.required;
+        moduleInfo = this.moduleInfo[name];
 
-                    if (!done[doneKey] && this._requires(a, s[k])) {
-
-                        // extract the dependency so we can move it up
-                        b = s.splice(k, 1);
-
-                        // insert the dependency above the item that
-                        // requires it
-                        s.splice(j, 0, b[0]);
-
-                        // only swap two dependencies once to short circut
-                        // circular dependencies
-                        done[doneKey] = true;
-
-                        // keep working
-                        moved = true;
-
-                        break;
-                    }
-                }
-
-                // jump out of loop if we moved something
-                if (moved) {
-                    break;
-                // this item is sorted, move our pointer and keep going
-                } else {
-                    p++;
+        if (moduleInfo) {
+            // Recurse on each dependency of this module, 
+            // figuring out its dependencies, and so on.
+            dependencies = moduleInfo.requires;
+            for (i = 0, l = dependencies.length; i < l; ++i) {
+                dependency = dependencies[i];
+                
+                // Is this module name in the required list of modules,
+                // and have we not already visited it?
+                if (required[dependency] && !visited[dependency]) {
+                    this._visit(dependency, visited);
                 }
             }
-
-            // when we make it here and moved is false, we are
-            // finished sorting
-            if (!moved) {
-                break;
-            }
-
         }
 
-        this.sorted = s;
+        this.sorted.push(name);
     },
 
     /**
@@ -9751,7 +9813,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "use": [
             "history-base",
             "history-hash",
-            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -11003,7 +11064,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '2ec8e93b30f0fc6809e2fbdba577e214';
+YUI.Env[Y.version].md5 = '8e471689779fc84718f6dad481790b59';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

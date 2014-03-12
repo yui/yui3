@@ -67,6 +67,12 @@
         var testJSON = new Y.Test.Case({
             name: "JSON Tests",
 
+            _should: {
+              ignore: {
+                testJSONResults2: Y.UA.android < 3
+              }
+            },
+
             testJSONMeta: function() {
                 var schema = {
                         metaFields: {top:"top", nested:"second.nested"}

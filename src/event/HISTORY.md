@@ -4,7 +4,20 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* Fixed the `event.returnValue is deprecated` warning in chrome. [#1460](https://github.com/yui/yui3/issues/1460) @zhiyelee
+* No changes.
+
+3.15.0
+------
+
+* Reduced categories of certain noisy log events in the `event` module and added
+  categories for those that were missing some. ([#1605][]: @andrewnicols)
+
+* Fixed the `event.returnValue is deprecated` warning in chrome. ([#1460][]: @zhiyelee)
+
+[#1605]: https://github.com/yui/yui3/issues/1605
+[#1460]: https://github.com/yui/yui3/issues/1460
+
+* Added support for W3C Pointer events in the `tap` event. This fixes an issue in IE11 where the `type` of pointer event objects was changed from 'MSPointerDown' to 'pointerdown' to comply with their proposed W3C standard.
 
 3.14.1
 ------
