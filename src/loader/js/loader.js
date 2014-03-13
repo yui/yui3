@@ -1188,7 +1188,7 @@ Y.Loader.prototype = {
                         // mod if we do not intersede.
                     var moduleInfo = this.moduleInfo[trigger];
                     if (moduleInfo) {
-						moduleInfo.requires.push(o.name);
+                        moduleInfo.requires.push(o.name);
                     }
                 } else { // after the trigger
                     o.after = o.after || [];
