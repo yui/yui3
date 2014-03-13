@@ -111,11 +111,6 @@ Y.Loader = function(o) {
     //Catch no config passed.
     o = o || {};
 
-    // Hook to patch loader
-    if (o.doBeforeLoader) {
-        o.doBeforeLoader(self, arguments);
-    }
-
     modulekey = META.md5;
 
     /**
@@ -171,6 +166,11 @@ Y.Loader = function(o) {
      * @default {YUI} the YUI instance
      */
     self.context = Y;
+
+    // Hook that allows the patching of loader
+    if (o.doBeforeLoader) {
+        o.doBeforeLoader.apply(self, arguments);
+    }
 
     /**
      * Data that is passed to all callbacks
