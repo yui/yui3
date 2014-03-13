@@ -1634,6 +1634,7 @@ Y.Loader.prototype = {
     * Check to see if named css module is already loaded on the page
     * @method isCSSLoaded
     * @param {String} name The name of the css file
+    * @param {Boolean} skip To skip the short-circuit for ignoreRegister
     * @return Boolean
     */
     isCSSLoaded: function(name, skip) {
