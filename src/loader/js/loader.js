@@ -547,7 +547,7 @@ Y.Loader.prototype = {
                 v = this.addModule(rawMetaModules[name], name);
                 // Inspect the page for the CSS module and mark it as loaded.
                 if (v && v.type && v.type === CSS) {
-                    if (this.isCSSLoaded(v.name)) {
+                    if (this.isCSSLoaded(v.name, true)) {
                         Y.log('Found CSS module on page: ' + v.name, 'info', 'loader');
                         this.loaded[v.name] = true;
                     }
