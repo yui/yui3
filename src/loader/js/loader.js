@@ -2144,7 +2144,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         // Will contain modules names, in the correct order,
         // according to dependencies.
         this.sorted = [];
-		this._externalCSS = [];
+        this._externalCSS = [];
 
         for (name in required) {
             if (!visited[name] && required.hasOwnProperty(name)) {
@@ -2152,10 +2152,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
 
-		// External CSS modules must be inserted last,
-		// after all YUI related CSS.
+        // External CSS modules must be inserted last,
+        // after all YUI related CSS.
         if (this._externalCSS.length > 0) {
-        	[].push.apply(this.sorted, this._externalCSS);
+            [].push.apply(this.sorted, this._externalCSS);
         }
     },
 
@@ -2189,12 +2189,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
 
-		var isExternalCSS = module && module.ext && module.type === "css";
-		if (isExternalCSS) {
-			this._externalCSS.push(name);
-		} else {
-    		this.sorted.push(name);
-		}
+        var isExternalCSS = module && module.ext && module.type === "css";
+        if (isExternalCSS) {
+            this._externalCSS.push(name);
+        } else {
+            this.sorted.push(name);
+        }
     },
 
     /**
