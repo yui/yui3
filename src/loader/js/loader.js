@@ -558,8 +558,11 @@ Y.Loader.prototype = {
         return this.moduleInfo[name];
     },
     /**
-    * Populate the initial cache (moduleInfo) for raw modules with condition, the rest of
-    * the raw modules will be added to the cache when they are requested.
+    * Populate the conditions cache from raw modules, this is necessary
+    * because no other module will require a conditional module, instead
+    * the condition has to be executed and then the module is analyzed
+    * to be included in the final requirement list. Without this cache
+    * conditional modules will be simply ignored.
     * @method _populateConditionsCache
     * @private
     */
