@@ -642,8 +642,7 @@ YUI.add('loader-tests', function(Y) {
                     cond: {
                         fullpath: resolvePath('../assets/cond.js'),
                         condition: {
-                            trigger: 'yql',
-                            when: 'before'
+                            trigger: 'yql'
                         }
                     }
                 }
