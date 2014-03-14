@@ -410,7 +410,7 @@ Y.Loader = function(o) {
     self.config = o;
     self._internal = true;
 
-    // self._populateCache();
+    self._populateConditionsCache();
 
     /**
      * Set when beginning to compute the dependency tree.
@@ -558,39 +558,38 @@ Y.Loader.prototype = {
         return this.moduleInfo[name];
     },
     /**
-    * Checks the cache for modules and conditions, if they do not exist
-    * process the default metadata and populate the local moduleInfo hash.
-    * @method _populateCache
+    * Populate the initial cache (moduleInfo) for raw modules with condition, the rest of
+    * the raw modules will be added to the cache when they are requested.
+    * @method _populateConditionsCache
     * @private
     */
-    _populateCache: function() {
-        var self = this,
-            defaults = META.modules,
-            cache = GLOBAL_ENV._renderedMods,
-            i;
+    _populateConditionsCache: function() {
+        var defaults = META.modules,
+            cache = GLOBAL_ENV._conditions,
+            i, j, t, trigger;
 
-        if (cache && !self.ignoreRegistered) {
-            for (i in cache) {
-                if (cache.hasOwnProperty(i)) {
-                    self.moduleInfo[i] = Y.merge(cache[i]);
+        if (cache && !this.ignoreRegistered) {
+            for (trigger in cache) {
+                if (cache.hasOwnProperty(trigger)) {
+                    this.conditions[trigger] = Y.merge(cache[trigger]);
                 }
             }
-
-            cache = GLOBAL_ENV._conditions;
-            for (i in cache) {
-                if (cache.hasOwnProperty(i)) {
-                    self.conditions[i] = Y.merge(cache[i]);
-                }
-            }
-
         } else {
             for (i in defaults) {
-                if (defaults.hasOwnProperty(i)) {
-                    self.addModule(defaults[i], i);
+                if (defaults.hasOwnProperty(i) && defaults[i].condition) {
+                    t = Y.Array(defaults[i].condition.trigger);
+                    for (j = 0; j < t.length; j += 1) {
+                        trigger = t[j];
+                        if (YUI.Env.aliases[trigger]) {
+                            trigger = YUI.Env.aliases[trigger];
+                        }
+                        this.conditions[trigger] = this.conditions[trigger] || {};
+                        this.conditions[trigger][defaults[i].name || i] = defaults[i].condition;
+                    }
                 }
             }
+            GLOBAL_ENV._conditions = this.conditions;
         }
-
     },
     /**
     * Reset modules in the module cache to a pre-processed state so additional
@@ -1256,16 +1255,12 @@ Y.Loader.prototype = {
         }
 
         if (o.condition) {
-            t = o.condition.trigger;
-            if (YUI.Env.aliases[t]) {
-                t = YUI.Env.aliases[t];
-            }
-            if (!Y.Lang.isArray(t)) {
-                t = [t];
-            }
-
+            t = Y.Array(o.condition.trigger);
             for (i = 0; i < t.length; i++) {
                 trigger = t[i];
+                if (YUI.Env.aliases[trigger]) {
+                    trigger = YUI.Env.aliases[trigger];
+                }
                 when = o.condition.when;
                 conditions[trigger] = conditions[trigger] || {};
                 conditions[trigger][name] = o.condition;
