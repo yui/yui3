@@ -2196,7 +2196,7 @@ YUI.add('loader-tests', function(Y) {
                 modules: {
                     'attrz-css': {
                         fullpath: '../assets/attrz.css',
-                        type: 'css',
+                        type: 'css'
                     },
                     attrs: {
                         fullpath: '../assets/attrs.js',
@@ -2211,7 +2211,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(out.css[out.css.length - 1], '../assets/attrz.css', 'attrs-css should\'ve loaded last');
         }
     });
-    
+
     var name = 'Loader';
     if (typeof TestName != 'undefined') {
         name = TestName;
