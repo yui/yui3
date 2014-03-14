@@ -92,6 +92,13 @@ YUI.add('dd-tests', function(Y) {
 
     template = {
         name: 'DD Test',
+
+        _should: {
+            ignore: {
+                'test: proxy cloneNode with radio inputs': Y.UA.phantomjs
+            }
+        },
+
         setUp : function() {
         },
         
