@@ -2168,7 +2168,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _visit: function (name, visited) {
-        var required, module, dependency, dependencies, i, l;
+        var required, module, dependency, dependencies, isExternalCSS, i, l;
 
         visited[name] = true;
         required = this.required;
@@ -2189,7 +2189,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
 
-        var isExternalCSS = module && module.ext && module.type === "css";
+        isExternalCSS = module && module.ext && module.type === "css";
         if (isExternalCSS) {
             this._externalCSS.push(name);
         } else {
