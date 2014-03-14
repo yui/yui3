@@ -253,7 +253,7 @@ Y.Loader = function(o) {
      */
     self.maxURLLength = MAX_URL_LENGTH;
 
-    /** 
+    /**
      * Ignore modules registered on the YUI global
      * @property ignoreRegistered
      * @default false
