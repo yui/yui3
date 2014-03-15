@@ -531,16 +531,12 @@ Y.Loader.prototype = {
         }
 
         var rawMetaModules = META.modules,
-            globalConditions = GLOBAL_ENV._conditions,
             globalRenderedMods = GLOBAL_ENV._renderedMods,
             internal = this._internal,
             v;
 
         if (globalRenderedMods && globalRenderedMods.hasOwnProperty(name) && !this.ignoreRegistered) {
             this.moduleInfo[name] = Y.merge(globalRenderedMods[name]);
-            if (globalConditions.hasOwnProperty(name)) {
-                this.conditions[name] = Y.merge(globalConditions[name]);
-            }
         } else {
             if (rawMetaModules.hasOwnProperty(name)) {
                 this._internal = true; // making sure that modules from raw data are marked as internal
@@ -572,9 +568,9 @@ Y.Loader.prototype = {
             i, j, t, trigger;
 
         if (cache && !this.ignoreRegistered) {
-            for (trigger in cache) {
-                if (cache.hasOwnProperty(trigger)) {
-                    this.conditions[trigger] = Y.merge(cache[trigger]);
+            for (i in cache) {
+                if (cache.hasOwnProperty(i)) {
+                    this.conditions[i] = Y.merge(cache[i]);
                 }
             }
         } else {
