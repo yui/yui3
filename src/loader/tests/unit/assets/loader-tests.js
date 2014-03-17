@@ -2190,6 +2190,32 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
             test.wait();
+        },
+        'test loader patching mechanism': function() {
+            var loader,
+                hello,
+                out;
+
+            loader = new Y.Loader({
+                doBeforeLoader: function () {
+                    var resolve = this.context.Loader.prototype.resolve;
+
+                    this.context.Loader.prototype.resolve = function () {
+                        hello = 'world';
+                        return resolve.apply(this, arguments);
+                    };
+                },
+                modules:{
+                    'foobar':{
+                        fullpath: 'foo/bar.js'
+                    }
+                },
+                require: ['foobar']
+            });
+
+            out = loader.resolve(true);
+            Assert.areEqual('foo/bar.js', out.js[0], 'Failed to monkey patch resolve()');
+            Assert.areEqual(hello, 'world', 'Failed to monkey patch resolve()');
         }
     });
     
