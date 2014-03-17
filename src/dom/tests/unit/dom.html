@@ -772,49 +772,6 @@ form {
                 Assert.areEqual(node.selectedIndex, 1);
             },
 
-            testToHex: function() {
-                var rgb = 'rgb(97, 11, 11)',
-                    hex = Y.Color.toHex(rgb);
-
-                Assert.areEqual("#610B0B", hex.toUpperCase(), 'toHex(' + rgb + ')');
-
-                rgb = 'rgb(255, 255, 255)';
-                hex = Y.Color.toHex(rgb);
-
-                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
-
-                rgb = '#fff';
-                hex = Y.Color.toHex(rgb);
-
-                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
-
-                rgb = 'fff';
-                hex = Y.Color.toHex(rgb);
-
-                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
-
-                rgb = '000';
-                hex = Y.Color.toHex(rgb);
-
-                Assert.areEqual("#000000", hex.toUpperCase(), 'toHex(' + rgb + ')');
-
-                rgb = "rgb(97, 56, 11)" ;
-                hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex.toUpperCase(), "#61380B", " shoudl be #61380B");
-
-                rgb = "rgb(11, 97, 11)" ; // 0B610B
-                hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex.toUpperCase(), "#0B610B", " shoudl be #0B610B");
-
-                rgb = "rgb(56, 11, 97)" ; //380B61
-                hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex.toUpperCase(), "#380B61", " shoudl be #380B61");
-
-                rgb = "rgb(97, 11, 56)" ; //610B38
-                hex = Y.Color.toHex(rgb);
-                Assert.areSame(hex.toUpperCase(), "#610B38", " shoudl be #610B38");
-            },
-
             test_inDoc: function() {
                 var node = document.createElement('div');
                 Assert.isFalse(Y.DOM.inDoc(node), 'new off doc');
