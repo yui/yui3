@@ -76,6 +76,19 @@ Y.Env.meta = META;
         });
         var out = loader.resolve(true);
 
+ * If the Loader needs to be patched before it is used for the first time, it
+ * should be done through the `doBeforeLoader` hook. Simply make the patch
+ * available via configuration before YUI is loaded:
+
+        YUI_config = YUI_config || {};
+        YUI_config.doBeforeLoader = function (config) {
+            var resolve = this.context.Loader.prototype.resolve;
+            this.context.Loader.prototype.resolve = function () {
+                // do something here
+                return resolve.apply(this, arguments);
+            };
+        };
+
  * @constructor
  * @class Loader
  * @param {Object} config an optional set of configuration options.
