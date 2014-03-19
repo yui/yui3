@@ -14,8 +14,7 @@ YUI.add('when-tests', function (Y) {
         name: 'correct handling of different types of arguments',
 
         'a promise should not be modified': function () {
-            var test = this,
-                promise = new Promise(function (fulfill) {
+            var promise = new Promise(function (fulfill) {
                     fulfill(5);
                 }),
                 wrapped = Y.when(promise);
@@ -60,7 +59,7 @@ YUI.add('when-tests', function (Y) {
 
             Assert.areEqual('not modified', value, 'value should not be changed by a callback synchronously');
 
-            test.wait(50);
+            test.wait();
         },
 
         'errbacks should behave the same as using then()': function () {
@@ -75,7 +74,7 @@ YUI.add('when-tests', function (Y) {
                 });
             });
 
-            test.wait(50);
+            test.wait();
         }
     }));
 
@@ -83,7 +82,6 @@ YUI.add('when-tests', function (Y) {
 
 }, '@VERSION@', {
     requires: [
-        'promise',
-        'test'
+        'tests-promise-utils'
     ]
 });

@@ -1042,7 +1042,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._renderCustomRules();
         this._renderSelectedDates();
 
-        contentBox.setStyle("visibility", "visible");
+        contentBox.setStyle("visibility", "inherit");
     },
 
 
@@ -1204,7 +1204,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
                         } else {
                             curCell.setContent("&nbsp;");
-                            curCell.addClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
+                            curCell.removeClass(CAL_DAY).addClass(CAL_NEXTMONTH_DAY);
                         }
                         break;
                     case 1:
@@ -1257,7 +1257,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._paneProperties[paneId].paneDate = newDate;
 
         // Bring the pane visibility back after all DOM changes are done
-        pane.setStyle("visibility", "visible");
+        pane.setStyle("visibility", "inherit");
 
     },
 

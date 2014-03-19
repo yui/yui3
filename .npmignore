@@ -2,3 +2,4 @@
 src
 sandbox
 !build
+*-coverage.js

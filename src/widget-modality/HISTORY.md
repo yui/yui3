@@ -4,7 +4,18 @@ Widget Modality Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed the positioning of the modal mask for stacked modals.
+  ([#1684][]: @moiraine)
+
+[#1684]: https://github.com/yui/yui3/pull/1684
+
+3.15.0
+------
+
+* Fixed a bug where the widget would focus before it was actually rendered,
+  leading to a jump in the window position. ([#1636][]: @andrewnicols)
+
+[#1636]: https://github.com/yui/yui3/pull/1636
 
 3.14.1
 ------
@@ -70,7 +81,7 @@ Widget Modality Change History
 -----
 
   * No changes.
-  
+
 3.7.3
 -----
 

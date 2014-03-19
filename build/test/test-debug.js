@@ -331,6 +331,46 @@ YUITest.TestCase.prototype = {
     },
 
     /**
+    Creates a callback that automatically resumes the test. Parameters as passed
+    on to the callback.
+
+    @method next
+    @param {Function} callback Callback to call after resuming the test.
+    @param {Object} [context] The value of `this` inside the callback.
+        If not given, the original context of the function will be used.
+    @return {Function} wrapped callback that resumes the test.
+    @example
+    ```
+    // using test.resume()
+    Y.jsonp(uri, function (response) {
+        test.resume(function () {
+            Y.Assert.isObject(response);
+        });
+    });
+    test.wait();
+
+    // using test.next()
+    Y.jsonp(uri, test.next(function (response) {
+        Y.Assert.isObject(response);
+    }));
+    test.wait();
+    ```
+    **/
+    next: function (callback, context) {
+        var self = this;
+        context = arguments.length >= 2 ? arguments[1] : undefined;
+        return function () {
+            var args = arguments;
+            if (context === undefined) {
+                context = this;
+            }
+            self.resume(function () {
+                callback.apply(context, args);
+            });
+        };
+    },
+
+    /**
     Delays the current test until _condition_ returns a truthy value. If
     _condition_ fails to return a truthy value before _timeout_ milliseconds
     have passed, the test fails. Default _timeout_ is 10s.

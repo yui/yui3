@@ -2315,8 +2315,16 @@ VMLShape.ATTRS = {
 			{
 				if(fill.color === undefined || fill.color === "none")
 				{
-					fill.color = null;
+                    fill.color = null;
 				}
+                else
+                {
+                    if(fill.color.toLowerCase().indexOf("rgba") > -1)
+                    {
+                        fill.opacity = Y.Color._getAlpha(fill.color);
+                        fill.color =  Y.Color.toHex(fill.color);
+                    }
+                }
 			}
 			this._fillFlag = true;
             return fill;
@@ -2378,6 +2386,11 @@ VMLShape.ATTRS = {
 					}
 				}
 			}
+            if(tmpl.color && tmpl.color.toLowerCase().indexOf("rgba") > -1)
+            {
+               tmpl.opacity = Y.Color._getAlpha(tmpl.color);
+               tmpl.color =  Y.Color.toHex(tmpl.color);
+            }
 			stroke = tmpl;
             this._strokeFlag = true;
 			return stroke;

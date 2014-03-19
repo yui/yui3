@@ -87,8 +87,7 @@ YUI().use("json-stringify", "node", "datasource-get", "datasource-jsonschema", f
                                 "</pre>");
                 },
                 failure: function(e){
-                    Y.one("#demo_output_json")
-                        .setHTML("Could not retrieve data: " + e.error.message);
+                    Y.one("#demo_output_json").setHTML('The data could not be retrieved. Please <a href="?mock=true">try this example with mocked data</a> instead.');
                 }
             }
         });

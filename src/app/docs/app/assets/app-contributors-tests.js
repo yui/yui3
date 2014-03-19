@@ -92,8 +92,8 @@ suite.add(new Y.Test.Case({
 
                     Assert.areSame('/', HistoryHash.getHash(), 'URL hash was not updated to "/".');
                     Assert.isTrue(activeView.hasClass('home-page'), 'HomePageView is not currently active.');
-                }).until(1000);
-            }).until(1000);
+                }).until(10000);
+            }).until(10000);
         }).until(10000);
     },
 
@@ -111,7 +111,7 @@ suite.add(new Y.Test.Case({
 
                 Assert.areSame('/github/yui/', HistoryHash.getHash(), 'URL hash was not updated.');
                 Assert.isTrue(activeView.hasClass('user-page'), 'UserPageView is not currently active.');
-            }).until(1000);
+            }).until(10000);
         }).until(10000);
     },
 
@@ -136,8 +136,8 @@ suite.add(new Y.Test.Case({
 
                 Assert.areSame('/github/yui/', HistoryHash.getHash(), 'URL hash was not updated.');
                 Assert.isTrue(activeView.hasClass('user-page'), 'UserPageView is not currently active.');
-            }, 500);
-        }, 500);
+            }, 10000);
+        }, 10000);
     },
 
     'Clicking a listed repo should navigate to the repo page': function () {
@@ -157,7 +157,7 @@ suite.add(new Y.Test.Case({
 
                 Assert.areSame(Y.getLocation().toString(), repoPageURL, 'URL was not updated.');
                 Assert.isTrue(activeView.hasClass('repo-page'), 'RepoPageView is not currently active.');
-            }).until(1000);
+            }).until(10000);
         }).until(10000);
     },
 
@@ -178,7 +178,7 @@ suite.add(new Y.Test.Case({
 
                 Assert.areSame(Y.getLocation().toString(), userPageURL, 'URL was not updated.');
                 Assert.isTrue(activeView.hasClass('user-page'), 'UserPageView is not currently active.');
-            }).until(1000);
+            }).until(10000);
         }).until(10000);
     },
 
@@ -197,7 +197,7 @@ suite.add(new Y.Test.Case({
 
             Assert.areSame('/', HistoryHash.getHash(), 'URL was not updated.');
             Assert.isTrue(activeView.hasClass('home-page'), 'HomePageView is not currently active.');
-        }, 500);
+        }, 10000);
     }
 }));
 

@@ -334,6 +334,12 @@ YUI.add('calendar-tests', function(Y) {
 
                 Y.one(".calendar_col2.yui3-calendar-prevmonth-day").simulate("click");
                 Y.one(".calendar_col2.yui3-calendar-nextmonth-day").simulate("click");
+
+                this.firstcalendar.set("date", new Date(2014, 1, 1));
+                var calendarId = "#" + this.firstcalendar._calendarId;
+                var nextMonthDate = Y.one(calendarId + "_pane_0_0_30");
+
+                Y.Assert.isFalse(nextMonthDate.hasClass("yui3-calendar-day"));
             },
 
             testTwoCalendars : function () {
