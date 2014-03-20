@@ -951,7 +951,7 @@ Y.Loader.prototype = {
         var subs, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
             overrides, skinname, when, g, p,
-            conditions = this.conditions, trigger;
+            conditions = this.conditions, trigger, triggerInfo;
 
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
@@ -1186,9 +1186,9 @@ Y.Loader.prototype = {
                         // the trigger requires the conditional mod,
                         // so it should appear before the conditional
                         // mod if we do not intersede.
-                    var moduleInfo = this.moduleInfo[trigger];
-                    if (moduleInfo) {
-                        moduleInfo.requires.push(o.name);
+                    triggerInfo = this.moduleInfo[trigger];
+                    if (triggerInfo) {
+                        triggerInfo.requires.push(o.name);
                     }
                 } else { // after the trigger
                     o.after = o.after || [];
