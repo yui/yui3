@@ -23,7 +23,8 @@
 
         node.on(Y.DD.Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this), {
             minDistance: this.get('clickPixelThresh'),
-            minTime: this.get('clickTimeThresh')
+            minTime: this.get('clickTimeThresh'),
+            preventDefault: true
         });
 
         node.on('gesturemoveend', Y.bind(this._handleMouseUp, this), { standAlone: true });
@@ -45,8 +46,7 @@
         this._createPG();
         this._active = true;
         Y.one(Y.config.doc).on('gesturemove', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), {
-            standAlone: true,
-            preventDefault: true
+            standAlone: true
         });
     };
 
