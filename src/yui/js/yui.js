@@ -1673,6 +1673,47 @@ supported console.
 A hash of log sources that should be logged. If specified, only messages from
 these sources will be logged. Others will be discarded.
 
+The object key consists of:
+<ul>
+<li>An exact match for the `src` specified when calling Y.log; or</li>
+<li>The `*` source - to indicate a logLevel for all other sources.</li>
+</ul>
+
+Each object value in the hash can take either:
+<ul>
+<li>`true` - in which case, the log threshold defined in Y.config.logLevel is used;</li>
+<li>`false` - in which case, that source is excluded; or</li>
+<li>a valid logLevel.</li>
+</ul>
+
+See <a href="../classes/config.html#property_logLevel" class="crosslink">Y.config.logLevel</a> for details of the full list of log levels.
+
+If <a href="#property_logExclude" class="crosslink">logExclude</a> has also been specified, then this logInclude setting
+will take precedent and logExclude will be ignored entirely.
+
+An example configuration is shown below:
+
+    YUI_config = {
+        // The default logLevel will be warn:
+        logLevel: 'warn',
+        logInclude: {
+            // Reduce the logging threshold to debug for event-delegate:
+            'event-delegate': 'debug',
+
+            // Reduce the logging threshold to info for event-logged-at-info:
+            'event-logged-at-info': 'info',
+
+            // Reduce the logging threshold to Y.config.logLevel for event-logged-at-true:
+            'event-logged-at-true': true,
+
+            // Do not log anything for 'event-not-logged':
+            'event-not-logged': false,
+
+            // Do not log anything for everything else:
+            '*': false
+        }
+    };
+
 @property {Object} logInclude
 @type object
 **/
@@ -1680,6 +1721,33 @@ these sources will be logged. Others will be discarded.
 /**
 A hash of log sources that should be not be logged. If specified, all sources
 will be logged *except* those on this list.
+
+The object key consists of:
+<ul>
+<li>An exact match for the `src` specified when calling Y.log; or</li>
+<li>The `*` source - to indicate a setting for all other sources.</li>
+</ul>
+
+The object value must be a boolean, unlike in logInclude.
+
+If <a href="#property_logInclude" class="crosslink">logInclude</a> has been specified, then it will take precedent and
+logExclude setting will be ignored entirely.
+
+An example configuration which filters out all sources with the exception of event-delegate.
+
+    YUI_config = {
+        // The default logLevel will be warn:
+        logLevel: 'warn',
+        logExclude: {
+            // Do not exclude event-delegate:
+            'event-delegate': false,
+
+            // Exclude everything else:
+            '*': true,
+        }
+    };
+
+<em>Note: The above example can be more better achieved using logInclude, but is displayed for completeness.</em>
 
 @property {Object} logExclude
 **/
