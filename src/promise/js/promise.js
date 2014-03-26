@@ -55,6 +55,7 @@ var rejected = new Y.Promise(function (resolve, reject) {
 **/
 function Promise(fn) {
     if (!(this instanceof Promise)) {
+        Y.log('Promises should always be created with new Promise(). This will throw an error in the future', 'warn', NAME);
         return new Promise(fn);
     }
 
