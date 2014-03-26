@@ -11,7 +11,6 @@ Y.Env.evt = {
     plugins: {}
 };
 
-
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
@@ -69,7 +68,7 @@ DO = {
      * @param c The execution context for fn
      * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {string} handle for the subscription
+     * @return {EventHandle} handle for the subscription
      * @static
      */
     before: function(fn, obj, sFn, c) {
@@ -107,7 +106,7 @@ DO = {
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
      * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return {string} handle for the subscription
+     * @return {EventHandle} handle for the subscription
      * @static
      */
     after: function(fn, obj, sFn, c) {
@@ -130,7 +129,7 @@ DO = {
      * @param obj the object hosting the method to displace
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
-     * @return {string} handle for the subscription
+     * @return {EventHandle} handle for the subscription
      * @private
      * @static
      */
@@ -168,7 +167,7 @@ DO = {
      * Detach a before or after subscription.
      *
      * @method detach
-     * @param handle {string} the subscription handle
+     * @param handle {EventHandle} the subscription handle
      * @static
      */
     detach: function(handle) {
