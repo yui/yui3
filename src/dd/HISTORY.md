@@ -4,7 +4,10 @@ Drag and Drop Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1663][] DDProxy will reset radio inputs when cloneNode==true ([#1666][]: Chema Balsas)
+
+[#1666]: https://github.com/yui/yui3/pull/1666
+[#1663]: https://github.com/yui/yui3/issues/1663
 
 3.15.0
 ------

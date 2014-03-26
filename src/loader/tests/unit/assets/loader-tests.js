@@ -6,7 +6,7 @@ YUI.add('loader-tests', function(Y) {
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
 
-    
+
     var resolvePath = function(p) {
         if (Y.UA.nodejs) {
             var path = require('path');
@@ -655,7 +655,7 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
         },
         'test: conditional trigger is an array': function() {
-            
+
             var loader = new Y.Loader({
                 modules: {
                     test_one: {
@@ -706,7 +706,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
             Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
             Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
-        
+
         },
         'test: conditional array in modules not required': function() {
             var loader = new Y.Loader({
@@ -733,7 +733,7 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.areEqual(1, out.js.length, 'Wrong number of files returned (3)');
             Assert.areSame('3three.js', out.js[0], 'Failed to load required module (3)');
-            
+
         },
         test_css_stamp: function() {
             var test = this,
@@ -746,8 +746,7 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
 
-            test.wait();
-
+            test.wait(20000);
         },
         'testing duplicate CSS loading': function() {
             var test = this,
@@ -758,7 +757,7 @@ YUI.add('loader-tests', function(Y) {
                     'console-filters': 0,
                     'test-console': 0
                 };
-            
+
             Y.Array.each(links, function(item) {
                 var href = item.href;
                 if (/\/sam\/console\.css/.test(href)) {
@@ -1107,7 +1106,7 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            
+
             // `plug1/subplug2` and `plug1/lang/subplug2` depend strictly on `plug1/subplug1`.
             // So, the only requirement is that `plug1/subplug1` must come *before* both `plug1/subplug2` and `plug1/lang/subplug2`.
             Assert.areSame('plug1/lang/subplug2.js', out.js[2], 'Failed to combine plugin with module path LANG JS');
@@ -1219,7 +1218,7 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(20000);
 
         },
         'test: aliases config option': function() {
@@ -1325,7 +1324,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(loader.async, 'Failed to set default async config option');
         },
         'test: 2 loader instances with different skins': function() {
- 
+
             var groups = {
                 'foo': {
                     ext: false,
@@ -1436,8 +1435,8 @@ YUI.add('loader-tests', function(Y) {
             });
 
             loader1resolved = loader1.resolve(true);
-            loader2resolved = loader2.resolve(true); 
-        
+            loader2resolved = loader2.resolve(true);
+
             Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
             Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
         },
@@ -1569,14 +1568,14 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            
+
             Assert.areEqual(6, out.js.length, 'Failed to resolve all cascaded modules');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1').requires.sort(), ['cas1', 'cas2', 'cas3'], 'cas1');
             ArrayAssert.itemsAreEqual(getMod('cas2').requires.sort(), ['cas1', 'cas2', 'cas4'], 'cas2');
             ArrayAssert.itemsAreEqual(getMod('cas3').requires.sort(), ['cas1', 'cas2'], 'cas3');
             ArrayAssert.itemsAreEqual(getMod('cas4').requires.sort(), ['cas1', 'cas2'], 'cas4');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
             ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
 
@@ -1702,11 +1701,11 @@ YUI.add('loader-tests', function(Y) {
             // The only requirement here is that the `lang/*` versions
             // of each module must appear *after* the original version (whatever * is).
             var expected = [
-                "./root-lang-fail/root-lang-fail.js", 
-                "./root-lang-win/root-lang-win.js", 
-                "./de-lang/de-lang.js", 
-                "./root-lang-fail/lang/root-lang-fail.js", 
-                "./root-lang-win/lang/root-lang-win.js", 
+                "./root-lang-fail/root-lang-fail.js",
+                "./root-lang-win/root-lang-win.js",
+                "./de-lang/de-lang.js",
+                "./root-lang-fail/lang/root-lang-fail.js",
+                "./root-lang-win/lang/root-lang-win.js",
                 "./de-lang/lang/de-lang.js"
             ];
             ArrayAssert.itemsAreEqual(expected, other, 'Failed to resolve the proper modules');
@@ -2174,7 +2173,7 @@ YUI.add('loader-tests', function(Y) {
                     test: {
                         base: resolvePath('../assets/'),
                         patterns: {
-                            'test-': {              
+                            'test-': {
                                 configFn: function(me) {
                                     //Nothing here, used for pattern matching
                                 }
@@ -2218,7 +2217,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(hello, 'world', 'Failed to monkey patch resolve()');
         }
     });
-    
+
     var name = 'Loader';
     if (typeof TestName != 'undefined') {
         name = TestName;
