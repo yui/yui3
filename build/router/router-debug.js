@@ -1057,7 +1057,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             }
 
             keys.push(key);
-            return operator === '*' ? '(.*?)' : '([^/#?]*)';
+            return operator === '*' ? '(.*?)' : '([^/#?]+)';
         });
 
         return new RegExp('^' + path + '$');
