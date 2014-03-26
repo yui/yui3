@@ -1021,6 +1021,12 @@ routerSuite.add(new Y.Test.Case({
         Assert.isFalse(check("/:foo/bar", "/baz/quux"));
         Assert.isFalse(check("/:foo/bar", "/foo/bar?a=b"));
         Assert.isFalse(check("/:foo/bar", "/foo/bar#a"));
+
+        Assert.isTrue( check("/foo/:foo/:bar/?", "/foo/foo/bar"));
+        Assert.isTrue( check("/foo/:foo/:bar/?", "/foo/foo/bar/"));
+        Assert.isFalse(check("/foo/:foo/:bar/?", "/foo/bar"));
+        Assert.isFalse(check("/foo/:foo/:bar/?", "/foo/bar/"));
+        Assert.isFalse(check("/foo/:foo/:bar/?", "/foo/bar?a=b"));
     }
 }));
 
