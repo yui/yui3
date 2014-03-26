@@ -95,7 +95,6 @@ Y.Env.meta = META;
  * @param {Object} config.context Execution context for all callbacks
  * @param {Function} config.onSuccess Callback for the 'success' event
  * @param {Function} config.onFailure Callback for the 'failure' event
- * @param {Function} config.onCSS Callback for the 'CSSComplete' event.  When loading YUI components with CSS the CSS is loaded first, then the script.  This provides a moment you can tie into to improve the presentation of the page while the script is loading.
  * @param {Function} config.onTimeout Callback for the 'timeout' event
  * @param {Function} config.onProgress Callback executed each time a script or css file is loaded
  * @param {Object} config.modules A list of module definitions.  See <a href="#method_addModule">Loader.addModule</a> for the supported module metadata
@@ -134,16 +133,6 @@ Y.Loader = function(o) {
      * @type function
      */
     // self.onFailure = null;
-
-    /**
-     * Callback for the 'CSSComplete' event.  When loading YUI components
-     * with CSS the CSS is loaded first, then the script.  This provides
-     * a moment you can tie into to improve the presentation of the page
-     * while the script is loading.
-     * @method onCSS
-     * @type function
-     */
-    // self.onCSS = null;
 
     /**
      * Callback executed each time a script or css file is loaded
