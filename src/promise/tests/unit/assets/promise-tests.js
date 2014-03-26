@@ -18,8 +18,13 @@ YUI.add('promise-tests', function (Y) {
 
         _should: {
             ignore: {
-                '[strict mode] correct value for `this` inside the promise init function': (function () {'use strict'; return this;}()) !== void 0,
-                '[sloppy mode] correct value for `this` inside the promise init function': (function () {'use strict'; return this;}()) === void 0
+                '[strict mode] correct value for `this` inside the promise init function': (function () {
+                    'use strict';
+                    return typeof this !== 'undefined';
+                }()),
+                '[sloppy mode] correct value for `this` inside the promise init function': (function () {
+                    return typeof this === 'undefined';
+                }())
             }
         },
 
@@ -127,8 +132,18 @@ YUI.add('promise-tests', function (Y) {
             Assert.areEqual(false, foo, 'callback should not modify local variable in this turn of the event loop');
 
             test.wait();
-        }
+        },
 
+        'errors thrown inside the promise init function should turn into rejections': function () {
+            var error = new Error('foo'),
+                promise = new Promise(function () {
+                    throw error;
+                });
+
+            this.isRejected(promise, function (reason) {
+                Assert.areSame(error, reason, 'thrown error should become the rejection reason');
+            });
+        }
     }));
 
     suite.add(new Y.Test.Case({
