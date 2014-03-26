@@ -4,7 +4,9 @@ Node Change History
 @VERSION@
 ------
 
-* No changes.
+* getCell() throws an error if `shift` is not a recognized value.
+* Switched "instanceof Y.Node" to check for `_node`, to allow instances
+  from other sandboxes.
 
 3.15.0
 ------

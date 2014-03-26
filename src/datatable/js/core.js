@@ -230,7 +230,7 @@ Y.mix(Table.prototype, {
         var col, columns, i, len, cols;
 
         if (isObject(name) && !isArray(name)) {
-            if (name instanceof Y.Node) {
+            if (name && name._node) {
                 col = this.body.getColumn(name);
             } else {
                 col = name;

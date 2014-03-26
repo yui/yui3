@@ -18,7 +18,15 @@ var Lang             = Y.Lang,
     bind             = Y.bind,
     YObject          = Y.Object,
     valueRegExp      = /\{value\}/g,
-    EV_CONTENT_UPDATE = 'contentUpdate';
+    EV_CONTENT_UPDATE = 'contentUpdate',
+
+    shiftMap = {
+        above:    [-1, 0],
+        below:    [1, 0],
+        next:     [0, 1],
+        prev:     [0, -1],
+        previous: [0, -1]
+    };
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -219,20 +227,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             if (isArray(seed)) {
                 row = tbody.get('children').item(seed[0]);
                 cell = row && row.get('children').item(seed[1]);
-            } else if (Y.instanceOf(seed, Y.Node)) {
+            } else if (seed._node) {
                 cell = seed.ancestor('.' + this.getClassName('cell'), true);
             }
 
             if (cell && shift) {
                 rowIndexOffset = tbody.get('firstChild.rowIndex');
                 if (isString(shift)) {
-                    // TODO this should be a static object map
-                    switch (shift) {
-                        case 'above'   : shift = [-1, 0]; break;
-                        case 'below'   : shift = [1, 0]; break;
-                        case 'next'    : shift = [0, 1]; break;
-                        case 'previous': shift = [0, -1]; break;
+                    if (!shiftMap[shift]) {
+                        Y.error('Unrecognized shift: ' + shift, null, 'datatable-body');
                     }
+                    shift = shiftMap[shift];
                 }
 
                 if (isArray(shift)) {
@@ -300,7 +305,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 seed = tbody.one('#' + seed);
             }
 
-            if (Y.instanceOf(seed, Y.Node)) {
+            if (seed && seed._node) {
                 row = seed.ancestor(function (node) {
                     return node.get('parentNode').compareTo(tbody);
                 }, true);
@@ -578,7 +583,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      @return {Object} Returns column configuration
      */
     getColumn: function (name) {
-        if (Y.instanceOf(name, Y.Node)) {
+        if (name && name._node) {
             // get column name from node
             name = name.get('className').match(
                 new RegExp( this.getClassName('col') +'-([^ ]*)' )
