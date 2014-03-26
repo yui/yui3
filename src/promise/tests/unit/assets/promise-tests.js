@@ -16,6 +16,13 @@ YUI.add('promise-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Basic promise behavior',
 
+        _should: {
+            ignore: {
+                '[strict mode] correct value for `this` inside the promise init function': (function () {'use strict'; return this;}()) !== void 0,
+                '[sloppy mode] correct value for `this` inside the promise init function': (function () {'use strict'; return this;}()) === void 0
+            }
+        },
+
         'calling Y.Promise as a function should return an instance of Y.Promise': function () {
             Assert.isInstanceOf(Promise, Promise(function () {}), 'Y.Promise as a function should return a promise');
         },
@@ -29,32 +36,28 @@ YUI.add('promise-tests', function (Y) {
         },
 
         'promise state should change only once': function () {
-            var fulfilled = new Promise(function (fulfill, reject) {
-                    Assert.areEqual('pending', this.getStatus(), 'before fulfillment the resolver status should be "pending"');
+            var resolveA, rejectA, promiseA, resolveB, rejectB, promiseB;
 
-                    fulfill(5);
+            promiseA = new Promise(function (resolve, reject) {
+                resolveA = resolve;
+                rejectA = reject;
+            });
+            promiseB = new Promise(function (resolve, reject) {
+                resolveB = resolve;
+                rejectB = reject;
+            });
 
-                    Assert.areEqual('fulfilled', this.getStatus(), 'once fulfilled the resolver status should be "fulfilled"');
+            Assert.areEqual('pending', promiseA.getStatus(), 'before fulfillment the resolver status should be "pending"');
+            resolveA(5);
+            Assert.areEqual('fulfilled', promiseA.getStatus(), 'once fulfilled the resolver status should be "fulfilled"');
+            rejectA(new Error('reject'));
+            Assert.areEqual('fulfilled', promiseA.getStatus(), 'rejecting a fulfilled promise should not change its status');
 
-                    reject(new Error('reject'));
-
-                    Assert.areEqual('fulfilled', this.getStatus(), 'rejecting a fulfilled promise should not change its status');
-                }),
-
-                rejected = new Promise(function (fulfill, reject) {
-                    Assert.areEqual('pending', this.getStatus(), 'before rejection the resolver status should be "pending"');
-
-                    reject(new Error('reject'));
-
-                    Assert.areEqual('rejected', this.getStatus(), 'once rejected the resolver status should be "rejected"');
-
-                    fulfill(5);
-
-                    Assert.areEqual('rejected', this.getStatus(), 'fulfilling a rejected promise should not change its status');
-                });
-
-            Assert.areEqual('fulfilled', fulfilled.getStatus(), 'status of a fulfilled promise should be "fulfilled"');
-            Assert.areEqual('rejected', rejected.getStatus(), 'status of a rejected promise should be "rejected"');
+            Assert.areEqual('pending', promiseB.getStatus(), 'before rejection the resolver status should be "pending"');
+            rejectB(new Error('reject'));
+            Assert.areEqual('rejected', promiseB.getStatus(), 'once rejected the resolver status should be "rejected"');
+            resolveB(5);
+            Assert.areEqual('rejected', promiseB.getStatus(), 'fulfilling a rejected promise should not change its status');
         },
 
         'fulfilling more than once should not change the promise value': function () {
@@ -79,15 +82,34 @@ YUI.add('promise-tests', function (Y) {
             });
         },
 
-        'correct value for "this" inside the promise init function': function () {
-            var promiseA,
-                promiseB = new Promise(function () {
-                    promiseA = this;
+        '[strict mode] correct value for `this` inside the promise init function': function () {
+            'use strict';
 
-                    Assert.isInstanceOf(Promise, this, '"this" should be a promise');
+            var test = this,
+                promise = new Promise(function () {
+                    var self = this;
+                    setTimeout(function () {
+                        test.resume(function () {
+                            Assert.isUndefined(self, '`this` should be undefined');
+                        });
+                    }, 0);
                 });
 
-            Assert.areSame(promiseA, promiseB, 'the return value of Y.Promise and "this" inside the init function should be the same');
+            test.wait();
+        },
+
+        '[sloppy mode] correct value for `this` inside the promise init function': function () {
+            var test = this,
+                promise = new Promise(function () {
+                    var self = this;
+                    setTimeout(function () {
+                        test.resume(function () {
+                            Assert.areSame(Y.config.global, self, '`this` should be the global object');
+                        });
+                    }, 0);
+                });
+
+            test.wait();
         },
 
         'callbacks passed to then should be called asynchronously': function () {
