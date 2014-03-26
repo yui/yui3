@@ -114,13 +114,18 @@ YUI.add('sortable-tests', function(Y) {
         },
         'test: dragEnd event': function() {
             var oNode = sort.delegate.get(sort.get('opacityNode')),
-                opacity = oNode.getStyle('opacity');
+                opacity = oNode.getStyle('opacity'),
+                zindex = oNode.getStyle('zIndex');
 
             sort._onDragEnd();
 
             var opacity2 = oNode.getStyle('opacity');
             Assert.areSame('0.75', opacity);
             Assert.areSame('1', opacity2);
+
+            var zindex2 = oNode.getStyle('zIndex'), expected = ['', 'auto'];
+            Assert.areSame('999', zindex);
+            Y.assert(Y.Array.indexOf(expected, zindex2)>=0, "Expect z-index not to be set on moved node");
         },
         'test: DD passthru for errors': function() {
             sort.sync();

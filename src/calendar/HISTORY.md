@@ -4,7 +4,9 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1361][]: Change to use CSS instead of the image to showing of the arrow (Marc Lundgren)
+
+[#1361]: https://github.com/yui/yui3/pull/1361
 
 3.15.0
 ------
