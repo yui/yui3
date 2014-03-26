@@ -36,3 +36,19 @@
   right: 0;
   margin-right: -10px;
 }
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-prevmonth, .yui3-skin-sam [dir="rtl"] .yui3-calendarnav-prevmonth,
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-prevmonth:hover, .yui3-skin-sam [dir="rtl"] .yui3-calendarnav-prevmonth:hover {
+    left: auto;
+    right: 0;
+    border-left-color: #000000;
+    border-right-color: transparent;
+}
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-nextmonth, .yui3-skin-sam [dir="rtl"] .yui3-calendarnav-nextmonth,
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-nextmonth:hover, .yui3-skin-sam [dir="rtl"] .yui3-calendarnav-nextmonth:hover {
+    left: 0;
+    right: auto;
+    border-right-color: #000000;
+    border-left-color: transparent;
+}
