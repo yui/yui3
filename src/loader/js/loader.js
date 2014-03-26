@@ -539,7 +539,7 @@ Y.Loader.prototype = {
     * default metadata and populate the local moduleInfo hash.
     * @method getModuleInfo
     * @param {string} name of the module
-    * @private
+    * @public
     */
     getModuleInfo: function(name) {
 
