@@ -642,7 +642,7 @@ with any configuration info required for the module.
                     applied[inst.id] = true;
                     loader = inst.Env._loader;
                     if (loader) {
-                        modInfo = loader._getModuleInfo(name);
+                        modInfo = loader.getModuleInfo(name);
                         if (!modInfo || modInfo.temp) {
                             loader.addModule(details, name);
                         }
@@ -710,7 +710,7 @@ with any configuration info required for the module.
                     continue;
                 }
                 if (!mod) {
-                    modInfo = loader && loader._getModuleInfo(name);
+                    modInfo = loader && loader.getModuleInfo(name);
                     if (modInfo) {
                         mod = modInfo;
                         moot = true;
@@ -745,7 +745,7 @@ with any configuration info required for the module.
                     if (loader && cache && cache[name] && cache[name].temp) {
                         loader.getRequires(cache[name]);
                         req = [];
-                        modInfo = loader._getModuleInfo(name);
+                        modInfo = loader.getModuleInfo(name);
                         for (j in modInfo.expanded_map) {
                             if (modInfo.expanded_map.hasOwnProperty(j)) {
                                 req.push(j);

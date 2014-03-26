@@ -379,10 +379,8 @@ Y.Loader = function(o) {
     self.patterns = {};
 
     /**
-     * The library metadata
-     * @property moduleInfo
+     * Internal loader instance metadata. Use accessor `getModuleInfo()` instead.
      */
-    // self.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
     self.moduleInfo = {};
 
     self.groups = Y.merge(Y.Env.meta.groups);
@@ -539,21 +537,34 @@ Y.Loader.prototype = {
     /**
     * Gets the module info from the local moduleInfo hash, or from the
     * default metadata and populate the local moduleInfo hash.
-    * @method _getModuleInfo
+    * @method getModuleInfo
     * @param {string} name of the module
     * @private
     */
-    _getModuleInfo: function(name) {
+    getModuleInfo: function(name) {
 
-        if (this.moduleInfo[name]) {
-            return this.moduleInfo[name];
+        var m = this.moduleInfo[name],
+            rawMetaModules, globalRenderedMods, internal, v;
+
+        if (m) {
+            return m;
         }
 
-        var rawMetaModules = META.modules,
-            globalRenderedMods = GLOBAL_ENV._renderedMods,
-            internal = this._internal,
-            v;
+        rawMetaModules = META.modules;
+        globalRenderedMods = GLOBAL_ENV._renderedMods;
+        internal = this._internal;
 
+        /*
+        The logic here is:
+
+        - if the `moduleInfo[name]` is avilable,
+          then short circuit
+        - otherwise, if the module is in the globalCache (cross Y instance),
+          then port it from the global registry into `moduleInfo[name]`
+        - otherwise, if the module has raw metadata (from meta modules)
+          then add it to the global registry and to `moduleInfo[name]`
+
+        */
         if (globalRenderedMods && globalRenderedMods.hasOwnProperty(name) && !this.ignoreRegistered) {
             this.moduleInfo[name] = Y.merge(globalRenderedMods[name]);
         } else {
@@ -582,10 +593,12 @@ Y.Loader.prototype = {
     * @private
     */
     _populateConditionsCache: function() {
-        var defaults = META.modules,
+        var rawMetaModules = META.modules,
             cache = GLOBAL_ENV._conditions,
             i, j, t, trigger;
 
+        // if we have conditions in cache and cache is enabled
+        // we should port them to this loader instance
         if (cache && !this.ignoreRegistered) {
             for (i in cache) {
                 if (cache.hasOwnProperty(i)) {
@@ -593,16 +606,16 @@ Y.Loader.prototype = {
                 }
             }
         } else {
-            for (i in defaults) {
-                if (defaults.hasOwnProperty(i) && defaults[i].condition) {
-                    t = Y.Array(defaults[i].condition.trigger);
+            for (i in rawMetaModules) {
+                if (rawMetaModules.hasOwnProperty(i) && rawMetaModules[i].condition) {
+                    t = Y.Array(rawMetaModules[i].condition.trigger);
                     for (j = 0; j < t.length; j += 1) {
                         trigger = t[j];
                         if (YUI.Env.aliases[trigger]) {
                             trigger = YUI.Env.aliases[trigger];
                         }
                         this.conditions[trigger] = this.conditions[trigger] || {};
-                        this.conditions[trigger][defaults[i].name || i] = defaults[i].condition;
+                        this.conditions[trigger][rawMetaModules[i].name || i] = rawMetaModules[i].condition;
                     }
                 }
             }
@@ -619,7 +632,7 @@ Y.Loader.prototype = {
         var self = this, i, o,
             mod, name, details;
         for (i in self.moduleInfo) {
-            if (self.moduleInfo.hasOwnProperty(i)) {
+            if (self.moduleInfo.hasOwnProperty(i) && self.moduleInfo[i]) {
                 mod = self.moduleInfo[i];
                 name = mod.name;
                 details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);
@@ -640,8 +653,8 @@ Y.Loader.prototype = {
                         }
                     }
                 }
-                delete mod.langCache;
-                delete mod.skinCache;
+                mod.langCache = undefined;
+                mod.skinCache = undefined;
                 if (mod.skinnable) {
                     self._addSkin(self.skin.defaultSkin, mod.name);
                 }
@@ -693,7 +706,7 @@ Y.Loader.prototype = {
             if (ON_PAGE.hasOwnProperty(i)) {
                 v = ON_PAGE[i];
                 if (v.details) {
-                    m = self._getModuleInfo(v.name);
+                    m = self.getModuleInfo(v.name);
                     req = v.details.requires;
                     mr = m && m.requires;
 
@@ -720,9 +733,8 @@ Y.Loader.prototype = {
    _requires: function(mod1, mod2) {
 
         var i, rm, after_map, s,
-            info = this.moduleInfo,
-            m = this._getModuleInfo(mod1),
-            other = this._getModuleInfo(mod2);
+            m = this.getModuleInfo(mod1),
+            other = this.getModuleInfo(mod2);
 
         if (!m || !other) {
             return false;
@@ -745,7 +757,7 @@ Y.Loader.prototype = {
         }
 
         // check if this module requires one the other supersedes
-        s = info[mod2] && info[mod2].supersedes;
+        s = other.supersedes;
         if (s) {
             for (i = 0; i < s.length; i++) {
                 if (this._requires(mod1, s[i])) {
@@ -754,7 +766,7 @@ Y.Loader.prototype = {
             }
         }
 
-        s = info[mod1] && info[mod1].supersedes;
+        s = m.supersedes;
         if (s) {
             for (i = 0; i < s.length; i++) {
                 if (this._requires(mod2, s[i])) {
@@ -864,7 +876,7 @@ Y.Loader.prototype = {
             if (self.filterName === 'COVERAGE' && L.isArray(self.coverage) && self.coverage.length) {
                 for (i = 0; i < self.coverage.length; i++) {
                     mod = self.coverage[i];
-                    modInfo = self._getModuleInfo(mod);
+                    modInfo = self.getModuleInfo(mod);
                     if (modInfo && modInfo.use) {
                         mods = [].concat(mods, modInfo.use);
                     } else {
@@ -913,13 +925,13 @@ Y.Loader.prototype = {
     _addSkin: function(skin, mod, parent) {
         var pkg, name, nmod,
             sinf = this.skin,
-            mdef = mod && this._getModuleInfo(mod),
+            mdef = mod && this.getModuleInfo(mod),
             ext = mdef && mdef.ext;
 
         // Add a module definition for the module-specific skin css
         if (mod) {
             name = this.formatSkin(skin, mod);
-            if (!this._getModuleInfo(name)) {
+            if (!this.getModuleInfo(name)) {
                 pkg = mdef.pkg || mod;
                 nmod = {
                     skin: true,
@@ -1149,7 +1161,7 @@ Y.Loader.prototype = {
             for (j = 0; j < langs.length; j++) {
                 lang = langs[j];
                 packName = this.getLangPackName(lang, name);
-                smod = this._getModuleInfo(packName);
+                smod = this.getModuleInfo(packName);
                 if (!smod) {
                     smod = this._addLangPack(lang, o, packName);
                 }
@@ -1201,7 +1213,7 @@ Y.Loader.prototype = {
                             lang = langs[j];
                             packName = this.getLangPackName(lang, name);
                             supName = this.getLangPackName(lang, i);
-                            smod = this._getModuleInfo(packName);
+                            smod = this.getModuleInfo(packName);
 
                             if (!smod) {
                                 smod = this._addLangPack(lang, o, packName);
@@ -1228,7 +1240,7 @@ Y.Loader.prototype = {
                             packName = this.getLangPackName(ROOT_LANG, name);
                             supName = this.getLangPackName(ROOT_LANG, i);
 
-                            smod = this._getModuleInfo(packName);
+                            smod = this.getModuleInfo(packName);
 
                             if (!smod) {
                                 smod = this._addLangPack(lang, o, packName);
@@ -1315,8 +1327,8 @@ Y.Loader.prototype = {
             ret = o.configFn(o);
             if (ret === false) {
                 Y.log('Config function returned false for ' + name + ', skipping.', 'info', 'loader');
-                delete this.moduleInfo[name];
-                delete GLOBAL_ENV._renderedMods[name];
+                this.moduleInfo[name] = undefined;
+                GLOBAL_ENV._renderedMods[name] = undefined;
                 o = null;
             }
         }
@@ -1536,7 +1548,7 @@ Y.Loader.prototype = {
                 if (!hash[o[i]]) {
                     d.push(o[i]);
                     hash[o[i]] = true;
-                    m = this._getModuleInfo(o[i]);
+                    m = this.getModuleInfo(o[i]);
                     if (m) {
                         add = this.getRequires(m);
                         intl = intl || (m.expanded_map &&
@@ -1760,7 +1772,7 @@ Y.Loader.prototype = {
     _addLangPack: function(lang, m, packName) {
         var name = m.name,
             packPath, conf,
-            existing = this._getModuleInfo(packName);
+            existing = this.getModuleInfo(packName);
 
         if (!existing) {
 
@@ -1794,7 +1806,7 @@ Y.Loader.prototype = {
             }
         }
 
-        return this.moduleInfo[packName];
+        return this.getModuleInfo(packName);
     },
 
     /**
@@ -1939,7 +1951,7 @@ Y.Loader.prototype = {
         }
 
         var p, found, pname,
-            m = this._getModuleInfo(mname),
+            m = this.getModuleInfo(mname),
             patterns = this.patterns;
 
         // check the patterns library to see if we should automatically add
@@ -2201,21 +2213,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {Object} visited Keeps track of whether a module was visited.
      * @method _visit
      * @private
-     */ 
+     */
     _visit: function (name, visited) {
-        var required, moduleInfo, dependency, dependencies, i, l;     
+        var required, moduleInfo, dependency, dependencies, i, l;
 
         visited[name] = true;
         required = this.required;
-        moduleInfo = this.moduleInfo[name];
+        moduleInfo = this.getModuleInfo(name);
 
         if (moduleInfo) {
-            // Recurse on each dependency of this module, 
+            // Recurse on each dependency of this module,
             // figuring out its dependencies, and so on.
             dependencies = moduleInfo.requires;
             for (i = 0, l = dependencies.length; i < l; ++i) {
                 dependency = dependencies[i];
-                
+
                 // Is this module name in the required list of modules,
                 // and have we not already visited it?
                 if (required[dependency] && !visited[dependency]) {
@@ -2474,7 +2486,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-            groupName = group || (this._getModuleInfo(name) || {}).group || null;
+            groupName = group || (this.getModuleInfo(name) || {}).group || null;
 
         if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
             modFilter = this.groups[groupName].filter;
