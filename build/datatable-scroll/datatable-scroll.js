@@ -103,7 +103,7 @@ Y.mix(Scrollable.prototype, {
                 target = this.getRow(id);
             } else if (isString(id)) {
                 target = this._tbodyNode.one('#' + id);
-            } else if (id instanceof Y.Node &&
+            } else if (id._node &&
                     // TODO: ancestor(yScrollNode, xScrollNode)
                     id.ancestor('.yui3-datatable') === this.get('boundingBox')) {
                 target = id;
