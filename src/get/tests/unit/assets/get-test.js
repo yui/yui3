@@ -2596,7 +2596,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait();
+            this.wait(20000);
         },
 
         '`nodes` property should contain an array of injected nodes': function () {
@@ -2616,7 +2616,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait();
+            this.wait(20000);
         },
 
         '`options` property should contain transaction options': function () {
@@ -2685,7 +2685,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait();
+            this.wait(20000);
         }
 
     });
