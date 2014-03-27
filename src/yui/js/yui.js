@@ -1939,16 +1939,6 @@ failure. If not set, no timeout will be enforced.
 **/
 
 /**
-Callback for the 'CSSComplete' event. When dynamically loading YUI components
-with CSS, this property fires when the CSS is finished loading.
-
-This provides an opportunity to enhance the presentation of a loading page a
-little bit before the entire loading process is done.
-
-@property {Function} onCSS
-**/
-
-/**
 A hash of module definitions to add to the list of available YUI modules. These
 modules can then be dynamically loaded via the `use()` method.
 
