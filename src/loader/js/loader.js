@@ -572,7 +572,7 @@ Y.Loader.prototype = {
                 this._internal = true; // making sure that modules from raw data are marked as internal
                 v = this.addModule(rawMetaModules[name], name);
                 // Inspect the page for the CSS module and mark it as loaded.
-                if (v && v.type && v.type === CSS) {
+                if (v && v.type === CSS) {
                     if (this.isCSSLoaded(v.name, true)) {
                         Y.log('Found CSS module on page: ' + v.name, 'info', 'loader');
                         this.loaded[v.name] = true;
@@ -878,7 +878,7 @@ Y.Loader.prototype = {
                     mod = self.coverage[i];
                     modInfo = self.getModuleInfo(mod);
                     if (modInfo && modInfo.use) {
-                        mods = [].concat(mods, modInfo.use);
+                        mods = mods.concat(modInfo.use);
                     } else {
                         mods.push(mod);
                     }
@@ -1327,8 +1327,8 @@ Y.Loader.prototype = {
             ret = o.configFn(o);
             if (ret === false) {
                 Y.log('Config function returned false for ' + name + ', skipping.', 'info', 'loader');
-                this.moduleInfo[name] = undefined;
-                GLOBAL_ENV._renderedMods[name] = undefined;
+                delete this.moduleInfo[name];
+                delete GLOBAL_ENV._renderedMods[name];
                 o = null;
             }
         }
