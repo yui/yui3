@@ -194,7 +194,7 @@ YUI.Env.parseUA = function(subUA) {
          */
         silk: 0,
         /**
-         * Detects Ubuntu
+         * Detects Ubuntu version
          * @property ubuntu
          * @type float
          * @static
