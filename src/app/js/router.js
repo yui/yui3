@@ -317,16 +317,11 @@ Y.Router = Y.extend(Router, Y.Base, {
         // Check that there's at least one route whose param handlers also
         // accept all the param values.
         return !!YArray.filter(routes, function (route) {
-            // Try to get the param values for the route and path to see whether
-            // the param handlers accept or reject the param values. Include any
-            // route whose named param handlers accept all param values.
-            try {
-                // This will throw if a param handler rejects a param value.
-                this._getParamValues(route, routePath);
-                return true;
-            } catch (e) {
-                return false;
-            }
+            // Get the param values for the route and path to see whether the
+            // param handlers accept or reject the param values. Include any
+            // route whose named param handlers accept *all* param values. This
+            // will return `false` if a param handler rejects a param value.
+            return this._getParamValues(route, routePath);
         }, this).length;
     },
 
@@ -825,7 +820,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         var self      = this,
             routes    = self.match(req.path),
             callbacks = [],
-            routePath;
+            routePath, paramValues;
 
         self._dispatching = self._dispatched = true;
 
@@ -866,15 +861,17 @@ Y.Router = Y.extend(Router, Y.Base, {
                 callback.call(self, req, res, next);
 
             } else if ((route = routes.shift())) {
-                try {
-                    req.params = self._getParamValues(route, routePath);
-                } catch (e) {
+                paramValues = self._getParamValues(route, routePath);
+
+                if (!paramValues) {
                     // Skip this route because one of the param handlers
                     // rejected a param value in the `routePath`.
-                    Y.log(e.message, 'warn', 'Router');
                     next('route');
                     return;
                 }
+
+                // Expose the processed param values.
+                req.params = paramValues;
 
                 // Allow access to current route and the number of remaining
                 // routes for this request.
@@ -948,21 +945,23 @@ Y.Router = Y.extend(Router, Y.Base, {
     Gets the param values for the specified `route` and `path`, suitable to use
     form `req.params`.
 
-    **Note:** This method will `throw` if a named param handler rejects a param
-    value.
+    **Note:** This method will return `false` if a named param handler rejects a
+    param value.
 
     @method _getParamValues
     @param {Object} route The route to get param values for.
     @param {String} path The route path (root removed) that provides the param
         values.
-    @return {Object|Array} The collection of processed param values. Either a
-        hash of `name` -> `value` for named params processed by this router's
-        param handlers, or an array of matches for a route with unnamed params.
+    @return {Boolean|Array|Object} The collection of processed param values.
+        Either a hash of `name` -> `value` for named params processed by this
+        router's param handlers, or an array of matches for a route with unnamed
+        params. If a named param handler rejects a value, then `false` will be
+        returned.
     @protected
     @since @SINCE@
     **/
     _getParamValues: function (route, path) {
-        var matches, paramValues;
+        var matches, paramsMatch, paramValues;
 
         // Decode each of the path params so that the any URL-encoded path
         // segments are decoded in the `req.params` object.
@@ -982,15 +981,16 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         // Remove the first "match" from the param values, because it's just the
-        // `path` processed by the route's regex.
-        matches.shift();
+        // `path` processed by the route's regex, and map the values to the keys
+        // to create the name params collection.
+        paramValues = YArray.hash(route.keys, matches.slice(1));
 
         // Pass each named param value to its handler, if there is one, for
         // validation/processing. If a param value is rejected by a handler,
-        // then an error will be thrown.
-        paramValues = YArray.map(matches, function (value, i) {
-            var name         = route.keys[i],
-                paramHandler = this._params[name];
+        // then the params don't match and a falsy value is returned.
+        paramsMatch = YArray.every(route.keys, function (name) {
+            var paramHandler = this._params[name],
+                value        = paramValues[name];
 
             if (paramHandler && value && typeof value === 'string') {
                 // Check if `paramHandler` is a RegExp, because this
@@ -1001,18 +1001,24 @@ Y.Router = Y.extend(Router, Y.Base, {
                         paramHandler.call(this, value, name);
 
                 if (value !== false && YLang.isValue(value)) {
-                    return value;
+                    // Update the named param to the value from the handler.
+                    paramValues[name] = value;
+                    return true;
                 }
 
-                throw new Error('Router: Param handler "' + name +
-                        '" rejected value: "' + matches[i] + '"');
+                // Consider the param value as rejected by the handler.
+                return false;
             }
 
-            return value;
+            return true;
         }, this);
 
-        // Return hash of named params to processed values.
-        return YArray.hash(route.keys, paramValues);
+        if (paramsMatch) {
+            return paramValues;
+        }
+
+        // Signal that a param value was rejected by a named param handler.
+        return false;
     },
 
     /**
