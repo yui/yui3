@@ -282,7 +282,8 @@ Y.Router = Y.extend(Router, Y.Base, {
 
     /**
     Returns `true` if this router has at least one route that matches the
-    specified URL, `false` otherwise.
+    specified URL, `false` otherwise. This also checks that any named `param`
+    handlers also accept app param values in the `url`.
 
     This method enforces the same-origin security constraint on the specified
     `url`; any URL which is not from the same origin as the current URL will
@@ -294,7 +295,7 @@ Y.Router = Y.extend(Router, Y.Base, {
       otherwise.
     **/
     hasRoute: function (url) {
-        var path;
+        var path, routePath, routes;
 
         if (!this._hasSameOrigin(url)) {
             return false;
@@ -304,10 +305,26 @@ Y.Router = Y.extend(Router, Y.Base, {
             url = this._upgradeURL(url);
         }
 
-        // Get just the path portion of the specified `url`.
-        path = this.removeQuery(url.replace(this._regexUrlOrigin, ''));
+        // Get just the path portion of the specified `url`. The `match()`
+        // method does some special checking that the `path` is within the root.
+        path   = this.removeQuery(url.replace(this._regexUrlOrigin, ''));
+        routes = this.match(path);
 
-        return !!this.match(path).length;
+        if (!routes.length) {
+            return false;
+        }
+
+        routePath = this.removeRoot(path);
+
+        // Check that there's at least one route whose param handlers also
+        // accept all the param values.
+        return !!YArray.filter(routes, function (route) {
+            // Get the param values for the route and path to see whether the
+            // param handlers accept or reject the param values. Include any
+            // route whose named param handlers accept *all* param values. This
+            // will return `false` if a param handler rejects a param value.
+            return this._getParamValues(route, routePath);
+        }, this).length;
     },
 
     /**
@@ -803,10 +820,9 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _dispatch: function (req, res) {
         var self      = this,
-            decode    = self._decode,
             routes    = self.match(req.path),
             callbacks = [],
-            matches, paramsMatch, routePath;
+            routePath, paramValues;
 
         self._dispatching = self._dispatched = true;
 
@@ -847,69 +863,29 @@ Y.Router = Y.extend(Router, Y.Base, {
                 callback.call(self, req, res, next);
 
             } else if ((route = routes.shift())) {
-                // Make a copy of this route's `callbacks` so the original array
-                // is preserved.
-                callbacks = route.callbacks.concat();
+                paramValues = self._getParamValues(route, routePath);
 
-                // Decode each of the path matches so that the any URL-encoded
-                // path segments are decoded in the `req.params` object.
-                matches = YArray.map(route.regex.exec(routePath) || [],
-                        function (match) {
-
-                    // Decode matches, or coerce `undefined` matches to an empty
-                    // string to match expectations of working with `req.params`
-                    // in the content of route dispatching, and normalize
-                    // browser differences in their handling of regex NPCGs:
-                    // https://github.com/yui/yui3/issues/1076
-                    return (match && decode(match)) || '';
-                });
-
-                paramsMatch = true;
-
-                // Use named keys for parameter names if the route path contains
-                // named keys. Otherwise, use numerical match indices.
-                if (matches.length === route.keys.length + 1) {
-                    matches    = matches.slice(1);
-                    req.params = YArray.hash(route.keys, matches);
-
-                    paramsMatch = YArray.every(route.keys, function (key, i) {
-                        var paramHandler = self._params[key],
-                            value        = matches[i];
-
-                        if (paramHandler && value && typeof value === 'string') {
-                            // Check if `paramHandler` is a RegExp, becuase this
-                            // is true in Android 2.3 and other browsers!
-                            // `typeof /.*/ === 'function'`
-                            value = YLang.isRegExp(paramHandler) ?
-                                    paramHandler.exec(value) :
-                                    paramHandler.call(self, value, key);
-
-                            if (value !== false && YLang.isValue(value)) {
-                                req.params[key] = value;
-                                return true;
-                            }
-
-                            return false;
-                        }
-
-                        return true;
-                    });
-                } else {
-                    req.params = matches.concat();
+                if (!paramValues) {
+                    // Skip this route because one of the param handlers
+                    // rejected a param value in the `routePath`.
+                    next('route');
+                    return;
                 }
+
+                // Expose the processed param values.
+                req.params = paramValues;
 
                 // Allow access to current route and the number of remaining
                 // routes for this request.
                 req.route         = route;
                 req.pendingRoutes = routes.length;
 
-                // Execute this route's `callbacks` or skip this route because
-                // some of the param regexps don't match.
-                if (paramsMatch) {
-                    next();
-                } else {
-                    next('route');
-                }
+                // Make a copy of this route's `callbacks` so the original array
+                // is preserved.
+                callbacks = route.callbacks.concat();
+
+                // Execute this route's `callbacks`.
+                next();
             }
         }
 
@@ -965,6 +941,86 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _getParams: function () {
         return Y.merge(this._params);
+    },
+
+    /**
+    Gets the param values for the specified `route` and `path`, suitable to use
+    form `req.params`.
+
+    **Note:** This method will return `false` if a named param handler rejects a
+    param value.
+
+    @method _getParamValues
+    @param {Object} route The route to get param values for.
+    @param {String} path The route path (root removed) that provides the param
+        values.
+    @return {Boolean|Array|Object} The collection of processed param values.
+        Either a hash of `name` -> `value` for named params processed by this
+        router's param handlers, or an array of matches for a route with unnamed
+        params. If a named param handler rejects a value, then `false` will be
+        returned.
+    @protected
+    @since @SINCE@
+    **/
+    _getParamValues: function (route, path) {
+        var matches, paramsMatch, paramValues;
+
+        // Decode each of the path params so that the any URL-encoded path
+        // segments are decoded in the `req.params` object.
+        matches = YArray.map(route.regex.exec(path) || [], function (match) {
+            // Decode matches, or coerce `undefined` matches to an empty
+            // string to match expectations of working with `req.params`
+            // in the context of route dispatching, and normalize
+            // browser differences in their handling of regex NPCGs:
+            // https://github.com/yui/yui3/issues/1076
+            return (match && this._decode(match)) || '';
+        }, this);
+
+        // Simply return the array of decoded values when the route does *not*
+        // use named parameters.
+        if (matches.length - 1 !== route.keys.length) {
+            return matches;
+        }
+
+        // Remove the first "match" from the param values, because it's just the
+        // `path` processed by the route's regex, and map the values to the keys
+        // to create the name params collection.
+        paramValues = YArray.hash(route.keys, matches.slice(1));
+
+        // Pass each named param value to its handler, if there is one, for
+        // validation/processing. If a param value is rejected by a handler,
+        // then the params don't match and a falsy value is returned.
+        paramsMatch = YArray.every(route.keys, function (name) {
+            var paramHandler = this._params[name],
+                value        = paramValues[name];
+
+            if (paramHandler && value && typeof value === 'string') {
+                // Check if `paramHandler` is a RegExp, because this
+                // is true in Android 2.3 and other browsers!
+                // `typeof /.*/ === 'function'`
+                value = YLang.isRegExp(paramHandler) ?
+                        paramHandler.exec(value) :
+                        paramHandler.call(this, value, name);
+
+                if (value !== false && YLang.isValue(value)) {
+                    // Update the named param to the value from the handler.
+                    paramValues[name] = value;
+                    return true;
+                }
+
+                // Consider the param value as rejected by the handler.
+                return false;
+            }
+
+            return true;
+        }, this);
+
+        if (paramsMatch) {
+            return paramValues;
+        }
+
+        // Signal that a param value was rejected by a named param handler.
+        return false;
     },
 
     /**
