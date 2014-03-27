@@ -888,7 +888,11 @@ YUI.add('editor-selection', function (Y, NAME) {
             node = Y.Node.getDOMNode(node);
             var range = this.createRange();
             if (range.selectNode) {
-                range.selectNode(node);
+                try {
+                    range.selectNode(node);
+                } catch (err) {
+                    // Ignore selection errors like INVALID_NODE_TYPE_ERR
+                }
                 this._selection.removeAllRanges();
                 this._selection.addRange(range);
                 if (collapse) {
@@ -927,7 +931,7 @@ YUI.add('editor-selection', function (Y, NAME) {
         * @return {Node}
         */
         getCursor: function() {
-            return Y.EditorSelection.ROOT.all('#' + Y.EditorSelection.CURID);
+            return Y.EditorSelection.ROOT.all('.' + Y.EditorSelection.CURID);
         },
         /**
         * Remove the cursor placeholder from the DOM.
