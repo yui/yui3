@@ -16,18 +16,6 @@ YUI.add('promise-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Basic promise behavior',
 
-        _should: {
-            ignore: {
-                '[strict mode] correct value for `this` inside the promise init function': (function () {
-                    'use strict';
-                    return typeof this !== 'undefined';
-                }()),
-                '[sloppy mode] correct value for `this` inside the promise init function': (function () {
-                    return typeof this === 'undefined';
-                }())
-            }
-        },
-
         'calling Y.Promise as a function should return an instance of Y.Promise': function () {
             Assert.isInstanceOf(Promise, Promise(function () {}), 'Y.Promise as a function should return a promise');
         },
@@ -87,34 +75,15 @@ YUI.add('promise-tests', function (Y) {
             });
         },
 
-        '[strict mode] correct value for `this` inside the promise init function': function () {
-            'use strict';
+        'correct value for "this" inside the promise init function': function () {
+            var promiseA,
+                promiseB = new Promise(function () {
+                    promiseA = this;
 
-            var test = this,
-                promise = new Promise(function () {
-                    var self = this;
-                    setTimeout(function () {
-                        test.resume(function () {
-                            Assert.isUndefined(self, '`this` should be undefined');
-                        });
-                    }, 0);
+                    Assert.isInstanceOf(Promise, this, '"this" should be a promise');
                 });
 
-            test.wait();
-        },
-
-        '[sloppy mode] correct value for `this` inside the promise init function': function () {
-            var test = this,
-                promise = new Promise(function () {
-                    var self = this;
-                    setTimeout(function () {
-                        test.resume(function () {
-                            Assert.areSame(Y.config.global, self, '`this` should be the global object');
-                        });
-                    }, 0);
-                });
-
-            test.wait();
+            Assert.areSame(promiseA, promiseB, 'the return value of Y.Promise and "this" inside the init function should be the same');
         },
 
         'callbacks passed to then should be called asynchronously': function () {

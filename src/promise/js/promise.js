@@ -71,7 +71,7 @@ function Promise(fn) {
     this._resolver = resolver;
 
     try {
-        fn(function (value) {
+        fn.call(this, function (value) {
             resolver.resolve(value);
         }, function (reason) {
             resolver.reject(reason);
