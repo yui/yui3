@@ -194,7 +194,7 @@ YUI.Env.parseUA = function(subUA) {
          */
         silk: 0,
         /**
-         * Detects Ubuntu Touch
+         * Detects Ubuntu
          * @property ubuntu
          * @type float
          * @static
