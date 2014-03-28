@@ -9,6 +9,7 @@
                     "when": "after"
                 },
                 "requires": [
+                    "yql",
                     "jsonp",
                     "jsonp-url"
                 ]
@@ -18,14 +19,20 @@
                     "trigger": "yql",
                     "ua": "winjs",
                     "when": "after"
-                }
+                },
+                "requires": [
+                    "yql"
+                ]
             },
             "yql-nodejs": {
                 "condition": {
                     "trigger": "yql",
                     "ua": "nodejs",
                     "when": "after"
-                }
+                },
+                "requires": [
+                    "yql"
+                ]
             }
         }
     }
