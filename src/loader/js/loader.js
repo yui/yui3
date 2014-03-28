@@ -673,72 +673,7 @@ Y.Loader.prototype = {
             }
         }
     },
-    /*
-    * returns true if b is not loaded, and is required directly or by means of modules it supersedes.
-    * @private
-    * @method _requires
-    * @param {String} mod1 The first module to compare
-    * @param {String} mod2 The second module to compare
-    */
-   _requires: function(mod1, mod2) {
 
-        var i, rm, after_map, s,
-            info = this.moduleInfo,
-            m = info[mod1],
-            other = info[mod2];
-
-        if (!m || !other) {
-            return false;
-        }
-
-        rm = m.expanded_map;
-        after_map = m.after_map;
-
-        // check if this module should be sorted after the other
-        // do this first to short circut circular deps
-        if (after_map && (mod2 in after_map)) {
-            return true;
-        }
-
-        after_map = other.after_map;
-
-        // and vis-versa
-        if (after_map && (mod1 in after_map)) {
-            return false;
-        }
-
-        // check if this module requires one the other supersedes
-        s = info[mod2] && info[mod2].supersedes;
-        if (s) {
-            for (i = 0; i < s.length; i++) {
-                if (this._requires(mod1, s[i])) {
-                    return true;
-                }
-            }
-        }
-
-        s = info[mod1] && info[mod1].supersedes;
-        if (s) {
-            for (i = 0; i < s.length; i++) {
-                if (this._requires(mod2, s[i])) {
-                    return false;
-                }
-            }
-        }
-
-        // check if this module requires the other directly
-        // if (r && yArray.indexOf(r, mod2) > -1) {
-        if (rm && (mod2 in rm)) {
-            return true;
-        }
-
-        // external css files should be sorted below yui css
-        if (m.ext && m.type === CSS && !other.ext && other.type === CSS) {
-            return true;
-        }
-
-        return false;
-    },
     /**
     * Apply a new config to the Loader instance
     * @method _config
@@ -1024,7 +959,7 @@ Y.Loader.prototype = {
         var subs, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
             overrides, skinname, when, g, p,
-            conditions = this.conditions, trigger;
+            conditions = this.conditions, trigger, triggerInfo;
 
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
@@ -1259,6 +1194,10 @@ Y.Loader.prototype = {
                         // the trigger requires the conditional mod,
                         // so it should appear before the conditional
                         // mod if we do not intersede.
+                    triggerInfo = this.moduleInfo[trigger];
+                    if (triggerInfo) {
+                        triggerInfo.requires.push(o.name);
+                    }
                 } else { // after the trigger
                     o.after = o.after || [];
                     o.after.push(trigger);
@@ -2141,15 +2080,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
-        var name, 
+        var name,
 
             // Object containing module names.
-            required = this.required, 
+            required = this.required,
 
             // Keep track of whether we've visited a module.
             visited = {};
 
-        // Will contain modules names, in the correct order, 
+        // Will contain modules names, in the correct order,
         // according to dependencies.
         this.sorted = [];
 
@@ -2167,21 +2106,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {Object} visited Keeps track of whether a module was visited.
      * @method _visit
      * @private
-     */ 
+     */
     _visit: function (name, visited) {
-        var required, moduleInfo, dependency, dependencies, i, l;     
+        var required, moduleInfo, dependency, dependencies, i, l;
 
         visited[name] = true;
         required = this.required;
         moduleInfo = this.moduleInfo[name];
 
         if (moduleInfo) {
-            // Recurse on each dependency of this module, 
+            // Recurse on each dependency of this module,
             // figuring out its dependencies, and so on.
             dependencies = moduleInfo.requires;
             for (i = 0, l = dependencies.length; i < l; ++i) {
                 dependency = dependencies[i];
-                
+
                 // Is this module name in the required list of modules,
                 // and have we not already visited it?
                 if (required[dependency] && !visited[dependency]) {
