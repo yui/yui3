@@ -4,7 +4,9 @@ YUI Loader Change History
 @VERSION@
 ------
 
-* No changes.
+* Optimization of the Loader's constructor by removing _populateCache() in  in favor of an on-demand process to create internal module info based on the raw meta when the module is needed and called thru `getModuleInfo()`. ([#1581][]: @caridy)
+
+[#1581]: https://github.com/yui/yui3/pull/1581
 
 3.15.0
 ------

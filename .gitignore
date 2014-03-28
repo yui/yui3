@@ -17,3 +17,4 @@ src/out
 node_modules
 api-js/
 /*.project
+.builds
