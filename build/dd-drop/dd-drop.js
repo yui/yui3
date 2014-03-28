@@ -200,7 +200,7 @@ YUI.add('dd-drop', function (Y, NAME) {
     }
 
     function createShimNode(drop, s) {
-        var s, id;
+        var id;
         try {
             id = s.get("id");
         } catch(ex) {
