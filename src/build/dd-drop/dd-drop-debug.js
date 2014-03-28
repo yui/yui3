@@ -163,6 +163,7 @@ YUI.add('dd-drop', function (Y, NAME) {
         */
         bubbles: {
             setter: function(t) {
+                Y.log('bubbles is deprecated use bubbleTargets: HOST', 'warn', 'dd');
                 this.addTarget(t);
                 return t;
             }
@@ -193,27 +194,26 @@ YUI.add('dd-drop', function (Y, NAME) {
         var s = this.get('node');
 
         if (this.get('useShim')) {
-            createShimNode(this, s);
-        } else {
-            this.shim = s;
+            s = createShimNode(s);
         }
+        this.shim = s;
     }
 
-    function createShimNode(drop, s) {
-        var id;
+    function createShimNode(s) {
+        var s, id;
         try {
             id = s.get("id");
         } catch(ex) {
             // _stateProxy is null, TypeError thrown getting
             // _stateProxy[id]. 
             // See: http://yuilibrary.com/trac-archive/tickets/2532985.html
-            return s;
+            return;
         }
 
         s = Y.Node.create('<div id="' + s.get('id') + '_shim"></div>');
         s.setStyles({
-            height: drop.get(NODE).get(OFFSET_HEIGHT) + 'px',
-            width: drop.get(NODE).get(OFFSET_WIDTH) + 'px',
+            height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
+            width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
             backgroundColor: 'yellow',
             opacity: '.5',
             zIndex: '1',
@@ -224,10 +224,8 @@ YUI.add('dd-drop', function (Y, NAME) {
         });
         DDM._pg.appendChild(s);
 
-        s.on('mouseover', Y.bind(drop._handleOverEvent, drop));
-        s.on('mouseout', Y.bind(drop._handleOutEvent, drop));
-        drop.shim = s;
-        drop.fire("shimCreated", {drag: DDM.activeDrag });
+        s.on('mouseover', Y.bind(this._handleOverEvent, this));
+        s.on('mouseout', Y.bind(this._handleOutEvent, this));
         return s;
     }
 
