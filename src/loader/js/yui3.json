@@ -2771,10 +2771,10 @@
         "condition": {
             "name": "yql-jsonp",
             "test": "jsonp.js",
-            "trigger": "yql",
-            "when": "after"
+            "trigger": "yql"
         },
         "requires": [
+            "yql",
             "jsonp",
             "jsonp-url"
         ]
@@ -2783,17 +2783,21 @@
         "condition": {
             "name": "yql-nodejs",
             "trigger": "yql",
-            "ua": "nodejs",
-            "when": "after"
-        }
+            "ua": "nodejs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yql-winjs": {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs",
-            "when": "after"
-        }
+            "ua": "winjs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yui": {},
     "yui-base": {},
