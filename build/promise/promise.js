@@ -71,11 +71,15 @@ function Promise(fn) {
     */
     this._resolver = resolver;
 
-    fn.call(this, function (value) {
-        resolver.resolve(value);
-    }, function (reason) {
-        resolver.reject(reason);
-    });
+    try {
+        fn.call(this, function (value) {
+            resolver.resolve(value);
+        }, function (reason) {
+            resolver.reject(reason);
+        });
+    } catch (e) {
+        resolver.reject(e);
+    }
 }
 
 Y.mix(Promise.prototype, {
