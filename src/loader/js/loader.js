@@ -76,6 +76,19 @@ Y.Env.meta = META;
         });
         var out = loader.resolve(true);
 
+ * If the Loader needs to be patched before it is used for the first time, it
+ * should be done through the `doBeforeLoader` hook. Simply make the patch
+ * available via configuration before YUI is loaded:
+
+        YUI_config = YUI_config || {};
+        YUI_config.doBeforeLoader = function (config) {
+            var resolve = this.context.Loader.prototype.resolve;
+            this.context.Loader.prototype.resolve = function () {
+                // do something here
+                return resolve.apply(this, arguments);
+            };
+        };
+
  * @constructor
  * @class Loader
  * @param {Object} config an optional set of configuration options.
@@ -95,13 +108,13 @@ Y.Env.meta = META;
  * @param {Object} config.context Execution context for all callbacks
  * @param {Function} config.onSuccess Callback for the 'success' event
  * @param {Function} config.onFailure Callback for the 'failure' event
- * @param {Function} config.onCSS Callback for the 'CSSComplete' event.  When loading YUI components with CSS the CSS is loaded first, then the script.  This provides a moment you can tie into to improve the presentation of the page while the script is loading.
  * @param {Function} config.onTimeout Callback for the 'timeout' event
  * @param {Function} config.onProgress Callback executed each time a script or css file is loaded
  * @param {Object} config.modules A list of module definitions.  See <a href="#method_addModule">Loader.addModule</a> for the supported module metadata
  * @param {Object} config.groups A list of group definitions.  Each group can contain specific definitions for `base`, `comboBase`, `combine`, and accepts a list of `modules`.
  * @param {String} config.2in3 The version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.
  * @param {String} config.yui2 When using the 2in3 project, you can select the version of YUI 2 to use.  Valid values are `2.2.2`, `2.3.1`, `2.4.1`, `2.5.2`, `2.6.0`, `2.7.0`, `2.8.0`, `2.8.1` and `2.9.0` [default] -- plus all versions of YUI 2 going forward.
+ * @param {Function} config.doBeforeLoader An optional hook that allows for the patching of the loader instance. The `Y` instance is available as `this.context` and the only argument to the function is the Loader configuration object.
  */
 Y.Loader = function(o) {
 
@@ -136,16 +149,6 @@ Y.Loader = function(o) {
     // self.onFailure = null;
 
     /**
-     * Callback for the 'CSSComplete' event.  When loading YUI components
-     * with CSS the CSS is loaded first, then the script.  This provides
-     * a moment you can tie into to improve the presentation of the page
-     * while the script is loading.
-     * @method onCSS
-     * @type function
-     */
-    // self.onCSS = null;
-
-    /**
      * Callback executed each time a script or css file is loaded
      * @method onProgress
      * @type function
@@ -165,6 +168,11 @@ Y.Loader = function(o) {
      * @default {YUI} the YUI instance
      */
     self.context = Y;
+
+    // Hook that allows the patching of loader
+    if (o.doBeforeLoader) {
+        o.doBeforeLoader.apply(self, arguments);
+    }
 
     /**
      * Data that is passed to all callbacks
@@ -2133,70 +2141,56 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
+        var name, 
 
-        // create an indexed list
-        var s = YObject.keys(this.required),
-            // loaded = this.loaded,
-            //TODO Move this out of scope
-            done = {},
-            p = 0, l, a, b, j, k, moved, doneKey;
+            // Object containing module names.
+            required = this.required, 
 
-        // keep going until we make a pass without moving anything
-        for (;;) {
+            // Keep track of whether we've visited a module.
+            visited = {};
 
-            l = s.length;
-            moved = false;
+        // Will contain modules names, in the correct order, 
+        // according to dependencies.
+        this.sorted = [];
 
-            // start the loop after items that are already sorted
-            for (j = p; j < l; j++) {
+        for (name in required) {
+            if (!visited[name] && required.hasOwnProperty(name)) {
+                this._visit(name, visited);
+            }
+        }
+    },
 
-                // check the next module on the list to see if its
-                // dependencies have been met
-                a = s[j];
+    /**
+     * Recursively visits the dependencies of the module name
+     * passed in, and appends each module name to the `sorted` property.
+     * @param {String} name The name of a module.
+     * @param {Object} visited Keeps track of whether a module was visited.
+     * @method _visit
+     * @private
+     */ 
+    _visit: function (name, visited) {
+        var required, moduleInfo, dependency, dependencies, i, l;     
 
-                // check everything below current item and move if we
-                // find a requirement for the current item
-                for (k = j + 1; k < l; k++) {
-                    doneKey = a + s[k];
+        visited[name] = true;
+        required = this.required;
+        moduleInfo = this.moduleInfo[name];
 
-                    if (!done[doneKey] && this._requires(a, s[k])) {
-
-                        // extract the dependency so we can move it up
-                        b = s.splice(k, 1);
-
-                        // insert the dependency above the item that
-                        // requires it
-                        s.splice(j, 0, b[0]);
-
-                        // only swap two dependencies once to short circut
-                        // circular dependencies
-                        done[doneKey] = true;
-
-                        // keep working
-                        moved = true;
-
-                        break;
-                    }
-                }
-
-                // jump out of loop if we moved something
-                if (moved) {
-                    break;
-                // this item is sorted, move our pointer and keep going
-                } else {
-                    p++;
+        if (moduleInfo) {
+            // Recurse on each dependency of this module, 
+            // figuring out its dependencies, and so on.
+            dependencies = moduleInfo.requires;
+            for (i = 0, l = dependencies.length; i < l; ++i) {
+                dependency = dependencies[i];
+                
+                // Is this module name in the required list of modules,
+                // and have we not already visited it?
+                if (required[dependency] && !visited[dependency]) {
+                    this._visit(dependency, visited);
                 }
             }
-
-            // when we make it here and moved is false, we are
-            // finished sorting
-            if (!moved) {
-                break;
-            }
-
         }
 
-        this.sorted = s;
+        this.sorted.push(name);
     },
 
     /**
@@ -2469,7 +2463,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
-     * @param {String} [base=self.base] The base url to use
+     * @param {String} [base] The base url to use. Defaults to self.base
      * @return {string} the full url.
      * @private
      */
@@ -2480,7 +2474,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
     * @method resolve
     * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
-    * @param {Array} [sorted=loader.sorted] An override for the loader.sorted array
+    * @param {Array} [s] An override for the loader.sorted array. Defaults to
+    * `loader.sorted`.
     * @return {Object} Object hash (js and css) of two arrays of file lists
     * @example This method can be used as an off-line dep calculator
     *
@@ -2495,10 +2490,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     *        var out = loader.resolve(true);
     *
     */
-    resolve: function(calc, sorted) {
-        var self     = this,
+    resolve: function(calc, s) {
+
+        var len, i, m, url, group, groupName, j, frag,
+            comboSource, comboSources, mods, comboBase,
+            base, urls, u = [], tmpBase, baseLen, resCombos = {},
+            self = this, comboSep, maxURLLength,
+            inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
-            addSingle;
+            type = self.loadType || 'js', addSingle;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
@@ -2507,171 +2507,171 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         if (calc) {
             self.calculate();
         }
-        sorted = sorted || self.sorted;
+        s = s || self.sorted;
 
-        addSingle = function(mod) {
-            if (mod) {
-                var group = (mod.group && self.groups[mod.group]) || NOT_FOUND,
-                    url;
+        addSingle = function(m) {
+
+            if (m) {
+                group = (m.group && self.groups[m.group]) || NOT_FOUND;
 
                 //Always assume it's async
                 if (group.async === false) {
-                    mod.async = group.async;
+                    m.async = group.async;
                 }
 
-                url = (mod.fullpath) ? self._filter(mod.fullpath, mod.name) :
-                      self._url(mod.path, mod.name, group.base || mod.base);
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
 
-                if (mod.attributes || mod.async === false) {
+                if (m.attributes || m.async === false) {
                     url = {
                         url: url,
-                        async: mod.async
+                        async: m.async
                     };
-                    if (mod.attributes) {
-                        url.attributes = mod.attributes;
+                    if (m.attributes) {
+                        url.attributes = m.attributes;
                     }
                 }
-                resolved[mod.type].push(url);
-                resolved[mod.type + 'Mods'].push(mod);
+                resolved[m.type].push(url);
+                resolved[m.type + 'Mods'].push(m);
             } else {
                 Y.log('Undefined Module', 'warn', 'loader');
             }
 
         };
 
-        /*jslint vars: true */
-        var inserted     = (self.ignoreRegistered) ? {} : self.inserted,
-            comboSources = {},
-            maxURLLength,
-            comboMeta,
-            comboBase,
-            comboSep,
-            group,
-            mod,
-            len,
-            i;
-        /*jslint vars: false */
+        len = s.length;
 
-        for (i = 0, len = sorted.length; i < len; i++) {
-            mod = self.getModule(sorted[i]);
-            if (!mod || inserted[mod.name]) {
-                continue;
-            }
+        // the default combo base
+        comboBase = self.comboBase;
 
-            group = self.groups[mod.group];
+        url = comboBase;
 
-            if (group) {
-                if (!group.combine || mod.fullpath) {
+        comboSources = {};
+
+        for (i = 0; i < len; i++) {
+            comboSource = comboBase;
+            m = self.getModule(s[i]);
+            groupName = m && m.group;
+            group = self.groups[groupName];
+            if (groupName && group) {
+
+                if (!group.combine || m.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
-                    addSingle(mod);
+                    addSingle(m);
                     continue;
                 }
-                mod.combine = true;
-
-                if (typeof group.root === 'string') {
-                    mod.root = group.root;
+                m.combine = true;
+                if (group.comboBase) {
+                    comboSource = group.comboBase;
                 }
 
-                comboBase    = group.comboBase;
-                comboSep     = group.comboSep;
-                maxURLLength = group.maxURLLength;
+                if ("root" in group && L.isValue(group.root)) {
+                    m.root = group.root;
+                }
+                m.comboSep = group.comboSep || self.comboSep;
+                m.maxURLLength = group.maxURLLength || self.maxURLLength;
             } else {
                 if (!self.combine) {
                     //This is not a combo module, skip it and load it singly later.
-                    addSingle(mod);
+                    addSingle(m);
                     continue;
                 }
             }
 
-            if (!mod.combine && mod.ext) {
-                addSingle(mod);
-                continue;
-            }
-
-            comboBase = comboBase || self.comboBase;
-
-            comboSources[comboBase] = comboSources[comboBase] ||
-                { js: [], jsMods: [], css: [], cssMods: [] };
-
-            comboMeta               = comboSources[comboBase];
-            comboMeta.group         = mod.group;
-            comboMeta.comboSep      = comboSep || self.comboSep;
-            comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
-
-            comboMeta[mod.type + 'Mods'].push(mod);
+            comboSources[comboSource] = comboSources[comboSource] || [];
+            comboSources[comboSource].push(m);
         }
 
-        // TODO: Refactor the encoding logic below into its own method.
+        for (j in comboSources) {
+            if (comboSources.hasOwnProperty(j)) {
+                resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
+                url = j;
+                mods = comboSources[j];
+                len = mods.length;
 
-        /*jslint vars: true */
-        var fragSubset,
-            modules,
-            tmpBase,
-            baseLen,
-            frags,
-            frag,
-            type;
-        /*jslint vars: false */
-
-        for (comboBase in comboSources) {
-            if (comboSources.hasOwnProperty(comboBase)) {
-                comboMeta    = comboSources[comboBase];
-                comboSep     = comboMeta.comboSep;
-                maxURLLength = comboMeta.maxURLLength;
-                Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
-                for (type in comboMeta) {
-                    if (type === JS || type === CSS) {
-                        modules = comboMeta[type + 'Mods'];
-                        frags = [];
-                        for (i = 0, len = modules.length; i < len; i += 1) {
-                            mod = modules[i];
-                            frag = ((typeof mod.root === 'string') ? mod.root : self.root) + (mod.path || mod.fullpath);
-                            frags.push(
-                                self._filter(frag, mod.name)
-                            );
+                if (len) {
+                    for (i = 0; i < len; i++) {
+                        if (inserted[mods[i]]) {
+                            continue;
                         }
-                        tmpBase = comboBase + frags.join(comboSep);
-                        baseLen = tmpBase.length;
-                        if (maxURLLength <= comboBase.length) {
-                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + comboBase.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
-                            maxURLLength = MAX_URL_LENGTH;
-                        }
-
-                        if (frags.length) {
-                            if (baseLen > maxURLLength) {
-                                Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
-                                fragSubset = [];
-                                for (i = 0, len = frags.length; i < len; i++) {
-                                    fragSubset.push(frags[i]);
-                                    tmpBase = comboBase + fragSubset.join(comboSep);
-
-                                    if (tmpBase.length > maxURLLength) {
-                                        frag = fragSubset.pop();
-                                        tmpBase = comboBase + fragSubset.join(comboSep);
-                                        resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
-                                        fragSubset = [];
-                                        if (frag) {
-                                            fragSubset.push(frag);
-                                        }
-                                    }
-                                }
-                                if (fragSubset.length) {
-                                    tmpBase = comboBase + fragSubset.join(comboSep);
-                                    resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
-                                }
-                            } else {
-                                resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
+                        m = mods[i];
+                        // Do not try to combine non-yui JS unless combo def
+                        // is found
+                        if (m && (m.combine || !m.ext)) {
+                            resCombos[j].comboSep = m.comboSep;
+                            resCombos[j].group = m.group;
+                            resCombos[j].maxURLLength = m.maxURLLength;
+                            frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
+                            frag = self._filter(frag, m.name);
+                            resCombos[j][m.type].push(frag);
+                            resCombos[j][m.type + 'Mods'].push(m);
+                        } else {
+                            //Add them to the next process..
+                            if (mods[i]) {
+                                addSingle(mods[i]);
                             }
                         }
-                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(modules);
+
                     }
                 }
             }
         }
 
+
+        for (j in resCombos) {
+            if (resCombos.hasOwnProperty(j)) {
+                base = j;
+                comboSep = resCombos[base].comboSep || self.comboSep;
+                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+                Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
+                for (type in resCombos[base]) {
+                    if (type === JS || type === CSS) {
+                        urls = resCombos[base][type];
+                        mods = resCombos[base][type + 'Mods'];
+                        len = urls.length;
+                        tmpBase = base + urls.join(comboSep);
+                        baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
+
+                        if (len) {
+                            if (baseLen > maxURLLength) {
+                                Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
+                                u = [];
+                                for (s = 0; s < len; s++) {
+                                    u.push(urls[s]);
+                                    tmpBase = base + u.join(comboSep);
+
+                                    if (tmpBase.length > maxURLLength) {
+                                        m = u.pop();
+                                        tmpBase = base + u.join(comboSep);
+                                        resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                        u = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
+                                    }
+                                }
+                                if (u.length) {
+                                    tmpBase = base + u.join(comboSep);
+                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                }
+                            } else {
+                                resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                            }
+                        }
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
+                    }
+                }
+            }
+        }
+
+        resCombos = null;
+
         return resolved;
     },
-
     /**
     Shortcut to calculate, resolve and load all modules.
 
@@ -2690,7 +2690,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
     @method load
-    @param {Callback} cb Executed after all load operations are complete
+    @param {Function} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {
