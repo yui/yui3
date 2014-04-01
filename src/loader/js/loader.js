@@ -2178,7 +2178,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         if (moduleInfo) {
             // Recurse on each dependency of this module, 
             // figuring out its dependencies, and so on.
-            dependencies = moduleInfo.requires;
+            dependencies = moduleInfo.expanded || moduleInfo.requires;
+
             for (i = 0, l = dependencies.length; i < l; ++i) {
                 dependency = dependencies[i];
                 
