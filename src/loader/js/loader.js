@@ -2170,12 +2170,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      */
     _visit: function (name, visited) {
         var required, condition, moduleInfo, dependency, dependencies,
-        	trigger, isntAfter, i, l;
+            trigger, isntAfter, i, l;
 
-		visited[name] = true;
+        visited[name] = true;
         required = this.required;
         moduleInfo = this.moduleInfo[name];
-		condition = this.conditions[name] || {};
+        condition = this.conditions[name] || {};
 
         if (moduleInfo) {
             // Recurse on each dependency of this module,
@@ -2188,11 +2188,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                 // We cannot process this dependency yet if it must
                 // appear after our current module.
-				isntAfter = !trigger || (trigger.when && trigger.when !== "after");
+                isntAfter = !trigger || (trigger.when && trigger.when !== "after");
 
-				// Is this module name in the required list of modules,
+                // Is this module name in the required list of modules,
                 // and have we not already visited it?
-				if (required[dependency] && !visited[dependency] && isntAfter) {
+                if (required[dependency] && !visited[dependency] && isntAfter) {
                     this._visit(dependency, visited);
                 }
             }
