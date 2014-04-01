@@ -7129,15 +7129,15 @@ Y.Loader.prototype = {
      * @private
      */
     _sort: function() {
-        var name, 
+        var name,
 
             // Object containing module names.
-            required = this.required, 
+            required = this.required,
 
             // Keep track of whether we've visited a module.
             visited = {};
 
-        // Will contain modules names, in the correct order, 
+        // Will contain modules names, in the correct order,
         // according to dependencies.
         this.sorted = [];
 
@@ -7155,24 +7155,32 @@ Y.Loader.prototype = {
      * @param {Object} visited Keeps track of whether a module was visited.
      * @method _visit
      * @private
-     */ 
+     */
     _visit: function (name, visited) {
-        var required, moduleInfo, dependency, dependencies, i, l;     
+        var required, condition, moduleInfo, dependency, dependencies,
+            trigger, isAfter, i, l;
 
         visited[name] = true;
         required = this.required;
         moduleInfo = this.moduleInfo[name];
+        condition = this.conditions[name] || {};
 
         if (moduleInfo) {
-            // Recurse on each dependency of this module, 
+            // Recurse on each dependency of this module,
             // figuring out its dependencies, and so on.
-            dependencies = moduleInfo.requires;
+            dependencies = moduleInfo.expanded || moduleInfo.requires;
+
             for (i = 0, l = dependencies.length; i < l; ++i) {
                 dependency = dependencies[i];
-                
+                trigger = condition[dependency];
+
+                // We cannot process this dependency yet if it must
+                // appear after our current module.
+                isAfter = trigger && (!trigger.when || trigger.when === "after");
+
                 // Is this module name in the required list of modules,
                 // and have we not already visited it?
-                if (required[dependency] && !visited[dependency]) {
+                if (required[dependency] && !visited[dependency] && !isAfter) {
                     this._visit(dependency, visited);
                 }
             }
