@@ -1070,10 +1070,8 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            // The order of `out.js`'s elements do not matter in this case,
-            // as both modules do not depend on one another.
-            Assert.areSame('sub1/lang/subsub2.js', out.js[1], 'Failed to combine submodule with module path for LANG JS');
-            Assert.areSame('sub1/subsub2.js', out.js[0], 'Failed to combine submodule with module path JS');
+            Assert.areSame('sub1/lang/subsub2.js', out.js[0], 'Failed to combine submodule with module path for LANG JS');
+            Assert.areSame('sub1/subsub2.js', out.js[1], 'Failed to combine submodule with module path JS');
             Assert.areSame('sub1/assets/skins/sam/subsub2.css', out.css[0], 'Failed to combine submodule with module path CSS');
             Assert.areEqual(1, out.css.length, 'Failed to skin submodule');
         },
@@ -1107,12 +1105,10 @@ YUI.add('loader-tests', function(Y) {
 
             var out = loader.resolve(true);
 
-            // `plug1/subplug2` and `plug1/lang/subplug2` depend strictly on `plug1/subplug1`.
-            // So, the only requirement is that `plug1/subplug1` must come *before* both `plug1/subplug2` and `plug1/lang/subplug2`.
-            Assert.areSame('plug1/lang/subplug2.js', out.js[2], 'Failed to combine plugin with module path LANG JS');
-            Assert.areSame('plug1/lang/subplug1.js', out.js[3], 'Failed to combine plugin with module path LANG JS');
-            Assert.areSame('plug1/subplug1.js', out.js[0], 'Failed to combine plugin with module path JS');
-            Assert.areSame('plug1/subplug2.js', out.js[1], 'Failed to combine plugin with module path JS');
+            Assert.areSame('plug1/lang/subplug2.js', out.js[0], 'Failed to combine plugin with module path LANG JS');
+            Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
+            Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
+            Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
@@ -1595,9 +1591,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['my-module']
             });
             var out = loader.resolve(true);
-            // The only requirement here is `lang` must come *after* `mod`.
-            var mod = out.js[0];
-            var lang = out.js[4];
+            var mod = out.js[7];
+            var lang = out.js[6];
             Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
             Assert.areEqual('scripts/my-module/lang/my-module_fr.js', lang, 'Failed to resolve local lang file');
         },
@@ -1620,9 +1615,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['my-module-group']
             });
             var out = loader.resolve(true);
-            // The only requirement here is `lang` must come *after* `mod`.
-            var mod = out.js[0];
-            var lang = out.js[4];
+            var mod = out.js[7];
+            var lang = out.js[6];
             Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
             Assert.areEqual('scripts/my-module-group/lang/my-module-group_fr.js', lang, 'Failed to resolve local lang file');
         },
@@ -1698,15 +1692,13 @@ YUI.add('loader-tests', function(Y) {
             });
 
             Assert.areEqual(6, other.length, 'Failed to resolve all modules and languages');
-            // The only requirement here is that the `lang/*` versions
-            // of each module must appear *after* the original version (whatever * is).
             var expected = [
-                "./root-lang-fail/root-lang-fail.js",
-                "./root-lang-win/root-lang-win.js",
-                "./de-lang/de-lang.js",
                 "./root-lang-fail/lang/root-lang-fail.js",
+                "./root-lang-fail/root-lang-fail.js",
                 "./root-lang-win/lang/root-lang-win.js",
-                "./de-lang/lang/de-lang.js"
+                "./root-lang-win/root-lang-win.js",
+                "./de-lang/lang/de-lang.js",
+                "./de-lang/de-lang.js"
             ];
             ArrayAssert.itemsAreEqual(expected, other, 'Failed to resolve the proper modules');
 
