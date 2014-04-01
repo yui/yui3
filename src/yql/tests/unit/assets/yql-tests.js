@@ -12,6 +12,9 @@ YUI.add('yql-tests', function(Y) {
     if (Y.UA.winjs || Y.UA.nodejs) {
         //Auto set live when in WinJS and Node (for testing)
         live = true;
+
+        // Bypass SSL cert validation
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
     
     //If live, then don't do the mock, use a real YQL query
