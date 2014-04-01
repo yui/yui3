@@ -2141,15 +2141,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
-        var name, 
+        var name,
 
             // Object containing module names.
-            required = this.required, 
+            required = this.required,
 
             // Keep track of whether we've visited a module.
             visited = {};
 
-        // Will contain modules names, in the correct order, 
+        // Will contain modules names, in the correct order,
         // according to dependencies.
         this.sorted = [];
 
@@ -2167,18 +2167,18 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {Object} visited Keeps track of whether a module was visited.
      * @method _visit
      * @private
-     */ 
+     */
     _visit: function (name, visited) {
         var required, condition, moduleInfo, dependency, dependencies,
         	trigger, isntAfter, i, l;
 
-        visited[name] = true;
+		visited[name] = true;
         required = this.required;
         moduleInfo = this.moduleInfo[name];
 		condition = this.conditions[name] || {};
 
         if (moduleInfo) {
-            // Recurse on each dependency of this module, 
+            // Recurse on each dependency of this module,
             // figuring out its dependencies, and so on.
             dependencies = moduleInfo.expanded || moduleInfo.requires;
 
