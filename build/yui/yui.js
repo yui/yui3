@@ -5760,9 +5760,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = excl[src];
             }
 
-            // Set a default category of info if the category was not defined or was not
-            // a real category.
-            if ((typeof cat === 'undefined') || !(cat in LEVELS)) {
+            // Set a default category of info if the category was not defined.
+            if ((typeof cat === 'undefined')) {
                 cat = 'info';
             }
 
