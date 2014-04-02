@@ -1,7 +1,7 @@
 YQL Change History
 ==================
 
-@VERSION@
+3.16.0
 ------
 
 * Fixed an issue where `yql-jsonp`, `yql-nodejs`, and `yql-winjs` were missing `yql`

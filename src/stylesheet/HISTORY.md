@@ -1,7 +1,7 @@
 StyleSheet Change History
 =========================
 
-@VERSION@
+3.16.0
 ------
 
 * No changes.

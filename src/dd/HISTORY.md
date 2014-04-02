@@ -1,7 +1,7 @@
 Drag and Drop Change History
 ============================
 
-@VERSION@
+3.16.0
 ------
 
 * [#1721][] Move preventDefault to gesturemovestart (Andrew Nicols)

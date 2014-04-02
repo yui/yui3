@@ -1,7 +1,7 @@
 Widget Modality Change History
 ==============================
 
-@VERSION@
+3.16.0
 ------
 
 * Fixed the positioning of the modal mask for stacked modals.

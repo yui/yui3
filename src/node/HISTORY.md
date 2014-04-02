@@ -1,7 +1,7 @@
 Node Change History
 ===================
 
-@VERSION@
+3.16.0
 ------
 
 * getCell() throws an error if `shift` is not a recognized value.

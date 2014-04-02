@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.16.0
 ------
 
 * [#1685][]: Can't change month in RTL mode / arrow wrongly displayed in RTL mode ([#1719][] [#1724][]: Andrew Nicols)

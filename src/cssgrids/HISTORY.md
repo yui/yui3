@@ -1,7 +1,7 @@
 CSS Grids Change History
 ========================
 
-@VERSION@
+3.16.0
 ------
 
 * Import Grids from Pure 0.4.2. You can now use non-reduced fraction class names when laying out a grid. This means that we have rules for classes such as `.pure-u-12-24` as well as `.pure-u-1-2`.
