@@ -496,9 +496,6 @@ YUI.add('core-tests', function(Y) {
                 lastCategory = undefined;
                 Y.log('This has no log level and should use the default');
                 Assert.areEqual(lastCategory, 'info', 'Failed to log at default log category of info');
-                lastCategory = undefined;
-                Y.log('This has an invalid log level and should use the default', 'notice');
-                Assert.areEqual(lastCategory, 'info', 'Failed to log at default info log category');
             });
 
             console.info = l;
