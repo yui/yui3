@@ -4,27 +4,35 @@ Tree Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed: Moving a node to another tree fails when that node has children.
+  ([#1689][]: @rgrove)
+
+[#1689]: https://github.com/yui/yui3/issues/1689
+
 
 3.15.0
 ------
 
 * No changes.
 
+
 3.14.1
 ------
 
 * No changes.
+
 
 3.14.0
 ------
 
 * No changes.
 
+
 3.13.0
 ------
 
 * No changes.
+
 
 3.12.0
 ------
