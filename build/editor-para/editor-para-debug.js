@@ -306,8 +306,16 @@ YUI.add('editor-para', function (Y, NAME) {
 
             //We only expect injected BR behavior when last Node is text
             node = node.get('previousSibling');
-            if (node.get('nodeType') === Node.TEXT_NODE) {
-                sel.selectNode(node, true, node.get('length'));
+            if (node.get('nodeType') !== Node.TEXT_NODE) {
+                return;
+            }
+
+            offset = node.get('length');
+
+            // the cursor's position is strictly
+            // at the offset when this bug occurs
+            if (sel.getEditorOffset() === offset) {
+                sel.selectNode(node, true, offset);
             }
         },
 
