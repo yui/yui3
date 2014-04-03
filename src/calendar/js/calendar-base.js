@@ -409,7 +409,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateToSelection : function (oDate, index) {
-        oDate.setHours(12);
+        oDate = this._normalizeTime(oDate);
 
         if (this._canBeSelected(oDate)) {
 
