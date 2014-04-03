@@ -12,7 +12,7 @@ Widget Modality Change History
 * Fixed an issue where Widget-Modality did not function correctly when a modal widget
   and its mask were subsequently cloned by something else. ([#1175][]: @jinty)
 
-[#1175]: https://github.com/yui/yui3/pull/1684
+[#1175]: https://github.com/yui/yui3/pull/1175
 
 3.15.0
 ------
