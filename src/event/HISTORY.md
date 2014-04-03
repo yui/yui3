@@ -4,7 +4,9 @@ Event Infrastructure Change History
 3.16.0
 ------
 
-* No changes.
+* Added the spacebar key mapping to ensure correct ARIA and WCAG compliance. ([#1642][]: @andrewnicols)
+
+[#1642]: https://github.com/yui/yui3/issues/1642
 
 3.15.0
 ------

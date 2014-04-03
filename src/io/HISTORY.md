@@ -4,7 +4,9 @@ IO Utility Change History
 3.16.0
 ------
 
-* No changes.
+* Removed the unnecessary `src` attribute which caused an extra request to be made to the current page URL when the `iframe` was included on the page. ([#1646][]: @goodforenergy)
+
+[#1646]: https://github.com/yui/yui3/pull/1646
 
 3.15.0
 ------

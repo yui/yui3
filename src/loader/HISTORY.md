@@ -8,6 +8,16 @@ YUI Loader Change History
 
 [#1581]: https://github.com/yui/yui3/pull/1581
 
+* Removal of  `onCSS` documentation, as it was never implemented. ([#1743][]: @ezequiel)
+
+* Fixed an issue where a module's `lang` packs were not being included before the module itself. ([#1743][]: @ezequiel)
+
+* Fixed an issue where conditionally loading a module using `before` did not work. ([#1743][]: @ezequiel)
+
+* Fixed an issue where a `CSS` module could not require a `js` module. ([#1743][]: @ezequiel)
+
+[#1743]: https://github.com/yui/yui3/pull/1743
+
 3.15.0
 ------
 
