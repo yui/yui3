@@ -489,6 +489,39 @@ treeSuite.add(new Y.Test.Case({
         Assert.areSame(this.tree, node.tree, "node's tree reference should point to the new tree");
     },
 
+    "insertNode() should adopt an entire node hierarchy if it exists in another tree": function () {
+        var otherTree;
+
+        otherTree = new Y.Tree({
+            nodes: [
+                {id: 'node1', label: 'Node 1', children: [
+                    {id: 'node1.1', label: 'Node 1.1'},
+                    {id: 'node1.2', label: 'Node 1.2'}
+                ]},
+                {id: 'node2', label: 'Node 2'}
+            ]
+        });
+
+        var node = otherTree.children[0];
+
+        this.tree.insertNode(this.tree.rootNode, node, {index: 0});
+
+        Assert.areSame(node, this.tree.children[0], 'parent should be in the new tree');
+        Assert.areSame(this.tree, node.tree, "parent's tree reference should point to the new tree");
+        Assert.areSame(this.tree.rootNode, node.parent, 'parent should have the right parent');
+        Assert.areSame(2, node.children.length, 'parent should have two children');
+
+        Assert.areSame('node1.1', node.children[0].id, 'first child should have the right id');
+        Assert.areSame('node1.2', node.children[1].id, 'second child should have the right id');
+        Assert.areSame(node, node.children[0].parent, 'first child should have the right parent');
+        Assert.areSame(node, node.children[1].parent, 'second child should have the right parent');
+        Assert.areSame(this.tree, node.children[0].tree, 'first child should be in the new tree');
+        Assert.areSame(this.tree, node.children[1].tree, 'second child should be in the new tree');
+
+        Assert.areSame(0, node.indexOf(node.children[0]), 'parent index should contain child 0');
+        Assert.areSame(1, node.indexOf(node.children[1]), 'parent index should contain child 1');
+    },
+
     'insertNode() should remove the inserted node from its current parent if necessary': function () {
         var node      = this.tree.children[0],
             newParent = this.tree.children[1];

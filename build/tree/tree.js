@@ -684,17 +684,27 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @protected
     **/
     _adoptNode: function (node, options) {
-        var oldTree = node.tree;
+        var oldTree = node.tree,
+            child;
 
         if (oldTree === this) {
             return;
         }
 
         for (var i = 0, len = node.children.length; i < len; i++) {
-            this._adoptNode(node.children[i], {silent: true});
+            child = node.children[i];
+
+            child.parent = null; // Prevents the child from being removed from
+                                 // its parent during the adoption.
+
+            this._adoptNode(child, {silent: true});
+            child.parent = node;
         }
 
-        oldTree.removeNode(node, options);
+        if (node.parent) {
+            oldTree.removeNode(node, options);
+        }
+
         delete oldTree._nodeMap[node.id];
 
         // If this node isn't an instance of this tree's composed _nodeClass,
@@ -707,6 +717,8 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         }
 
         node.tree = this;
+        node._isIndexStale = true;
+
         this._nodeMap[node.id] = node;
     },
 
