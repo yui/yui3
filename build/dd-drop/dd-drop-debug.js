@@ -71,8 +71,13 @@ YUI.add('dd-drop', function (Y, NAME) {
 
 
         //DD init speed up.
+        // (GS) Causes errors.
+        // (GS) See: http://yuilibrary.com/trac-archive/tickets/2532985.html
+        // (GS) However, changing from async to sync 
+        // (GS) will cause change propagation, so leave it alone 
+        // (GS) until further investigation and thorough testing.
         Y.on('domready', Y.bind(function() {
-            Y.later(100, this, this._createShim);
+            Y.later(100, this, Drop_createShim);
         }, this));
         DDM._regTarget(this);
 
@@ -177,6 +182,55 @@ YUI.add('dd-drop', function (Y, NAME) {
             }
         }
     };
+
+    function Drop_createShim() {
+       //No playground, defer
+        if (!DDM._pg) {
+            Y.later(10, this, Drop_createShim);
+            return;
+        }
+        if (this.shim) return;
+
+        var s = this.get('node');
+
+        if (this.get('useShim')) {
+            createShimNode(this, s);
+        } else {
+            this.shim = s;
+        }
+    }
+
+    function createShimNode(drop, s) {
+        var s, id;
+        try {
+            id = s.get("id");
+        } catch(ex) {
+            // _stateProxy is null, TypeError thrown getting
+            // _stateProxy[id]. 
+            // See: http://yuilibrary.com/trac-archive/tickets/2532985.html
+            return s;
+        }
+
+        s = Y.Node.create('<div id="' + s.get('id') + '_shim"></div>');
+        s.setStyles({
+            height: drop.get(NODE).get(OFFSET_HEIGHT) + 'px',
+            width: drop.get(NODE).get(OFFSET_WIDTH) + 'px',
+            backgroundColor: 'yellow',
+            opacity: '.5',
+            zIndex: '1',
+            overflow: 'hidden',
+            top: '-900px',
+            left: '-900px',
+            position:  'absolute'
+        });
+        DDM._pg.appendChild(s);
+
+        s.on('mouseover', Y.bind(drop._handleOverEvent, drop));
+        s.on('mouseout', Y.bind(drop._handleOutEvent, drop));
+        drop.shim = s;
+        drop.fire("shimCreated", {drag: DDM.activeDrag });
+        return s;
+    }
 
     Y.extend(Drop, Y.Base, {
         /**
@@ -435,46 +489,7 @@ YUI.add('dd-drop', function (Y, NAME) {
                 left: xy[0]
             };
         },
-        /**
-        * Creates the Target shim and adds it to the DDM's playground..
-        * @private
-        * @method _createShim
-        */
-        _createShim: function() {
-            //No playground, defer
-            if (!DDM._pg) {
-                Y.later(10, this, this._createShim);
-                return;
-            }
-            //Shim already here, cancel
-            if (this.shim) {
-                return;
-            }
-            var s = this.get('node');
 
-            if (this.get('useShim')) {
-                s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
-                s.setStyles({
-                    height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
-                    width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
-                    backgroundColor: 'yellow',
-                    opacity: '.5',
-                    zIndex: '1',
-                    overflow: 'hidden',
-                    top: '-900px',
-                    left: '-900px',
-                    position:  'absolute'
-                });
-
-                DDM._pg.appendChild(s);
-
-                s.on('mouseover', Y.bind(this._handleOverEvent, this));
-                s.on('mouseout', Y.bind(this._handleOutEvent, this));
-            }
-
-
-            this.shim = s;
-        },
         /**
         * This handles the over target call made from this object or from the DDM
         * @private
