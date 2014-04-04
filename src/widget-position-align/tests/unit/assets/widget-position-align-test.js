@@ -36,7 +36,7 @@ suite.add(new Y.Test.Case({
                 node  : 'body',
                 points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
             };
-        
+
         widget.align();
         Assert.isNull(widget.get('align'));
 
@@ -78,6 +78,22 @@ suite.add(new Y.Test.Case({
         widget.align(null, [null, null]);
         widget.align(null, []);
         widget.align(null);
+    },
+
+    'Value returned from _getAlignedXY() before alignment should be the same of get(\'xy\') after alignment': function () {
+        var widget = new this.TestWidget( { render: true } ),
+            align  = {
+                node  : 'body',
+                points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
+            };
+
+        var beforeAlignment = widget._getAlignedXY(align.node, align.points);
+
+        widget.align(align.node, align.points);
+
+        var afterAlignment = widget.get('xy');
+
+        Y.Test.ArrayAssert.itemsAreEqual(beforeAlignment, afterAlignment);
     },
 
     'align() should be chainable': function () {
