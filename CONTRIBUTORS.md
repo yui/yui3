@@ -11,6 +11,7 @@ Committers
 ==========
 
 * [@allenrabinovich](https://github.com/allenrabinovich)
+* [@andrewnicols](https://github.com/andrewnicols)
 * [@apipkin](https://github.com/apipkin)
 * [@clarle](https://github.com/clarle)
 * [@derek](https://github.com/derek)
