@@ -19,7 +19,7 @@
         "parserlib": "~0.2.2",
         "grunt": "~0.4.1",
         "grunt-cli": "~0.1.7",
-        "grunt-yui-contrib": "~0.0.17",
+        "grunt-yui-contrib": "~0.0.20",
         "grunt-lib-contrib": "~0.5.3",
         "grunt-contrib-compress": "0.4.10",
         "grunt-css-selectors": "~0.1.2",
