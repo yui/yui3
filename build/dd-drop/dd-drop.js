@@ -1,4 +1,4 @@
-YUI.add('dd-drop', function (Y, NAME) {
+YUI.add('dd-drop', function (Y, NAME){
 
 
     /**
