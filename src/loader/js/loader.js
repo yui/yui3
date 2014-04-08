@@ -573,7 +573,7 @@ Y.Loader.prototype = {
         return this.moduleInfo[name];
     },
     /**
-    * Expand the names are aliases to other modules.
+    * Expand the names that are aliases to other modules.
     * @method _expandAliases
     * @param {string[]} list a module name or a list of names to be expanded
     * @private
@@ -586,7 +586,7 @@ Y.Loader.prototype = {
         list = Y.Array(list);
         for (i = 0; i < list.length; i += 1) {
             name = list[i];
-            expanded.push.apply(expanded, aliases[name] ? Y.Array(aliases[name]) : [name]);
+            expanded.push.apply(expanded, aliases[name] ? aliases[name] : [name]);
         }
         return expanded;
     },
