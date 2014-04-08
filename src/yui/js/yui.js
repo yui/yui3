@@ -641,7 +641,7 @@ with any configuration info required for the module.
                 if (!applied[inst.id]) {
                     applied[inst.id] = true;
                     loader = inst.Env._loader;
-                    if (loader) {
+                    if (loader && loader.getModuleInfo) {
                         modInfo = loader.getModuleInfo(name);
                         if (!modInfo || modInfo.temp) {
                             loader.addModule(details, name);
