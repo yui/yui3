@@ -95,7 +95,7 @@ YUI.add('dd-tests', function(Y) {
 
         _should: {
             ignore: {
-                'test: proxy cloneNode with radio inputs': Y.UA.phantomjs
+                'test: proxy cloneNode with radio inputs': Y.UA.phantomjs || (Y.UA.android && Y.UA.android < 4.4)
             }
         },
 
