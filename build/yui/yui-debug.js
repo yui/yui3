@@ -195,6 +195,12 @@ available.
                 el.detachEvent('on' + type, fn);
             }
         },
+        handleReady = function() {
+            YUI.Env.DOMReady = true;
+            if (hasWin) {
+                remove(doc, 'DOMContentLoaded', handleReady);
+            }        
+        },
         handleLoad = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
@@ -348,6 +354,7 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _exported: {},
                 _missed: [],
                 _yidx: 0,
                 _uidx: 0,
@@ -355,15 +362,15 @@ proto = {
                 _loaded: {},
                 // serviced: {},
                 // Regex in English:
-                // I'll start at the \b(simpleyui).
-                // 1. Look in the test string for "simpleyui" or "yui" or
+                // I'll start at the \b(yui).
+                // 1. Look in the test string for "yui" or
                 //    "yui-base" or "yui-davglass" or "yui-foobar" that comes after a word break.  That is, it
-                //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
+                //    can't match "foyui" or "i_heart_yui". This can be anywhere in the string.
                 // 2. After #1 must come a forward slash followed by the string matched in #1, so
-                //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
+                //    "yui-base/yui-base" or "yui-pants/yui-pants".
                 // 3. The second occurence of the #1 token can optionally be followed by "-debug" or "-min",
                 //    so "yui/yui-min", "yui/yui-debug", "yui-base/yui-base-debug". NOT "yui/yui-tshirt".
-                // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
+                // 4. This is followed by ".js", so "yui/yui.js".
                 // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
                 //    then capture the junk between the LAST "&" and the string in 1-4.  So
                 //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-davglass/yui-davglass.js"
@@ -375,13 +382,13 @@ proto = {
                 //   *               in fact, find as many sets of characters followed by a & as you can
                 //   ([^&]*)         capture the stuff after the last & in \1
                 // )?                but it's ok if all this ?junk&more_junk stuff isn't even there
-                // \b(simpleyui|     after a word break find either the string "simpleyui" or
-                //    yui(?:-\w+)?   the string "yui" optionally followed by a -, then more characters
-                // )                 and store the simpleyui or yui-* string in \2
-                // \/\2              then comes a / followed by the simpleyui or yui-* string in \2
+                // \b(               after a word break find either the string
+                //    yui(?:-\w+)?   "yui" optionally followed by a -, then more characters
+                // )                 and store the yui-* string in \2
+                // \/\2              then comes a / followed by the yui-* string in \2
                 // (?:-(min|debug))? optionally followed by "-min" or "-debug"
                 // .js               and ending in ".js"
-                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
                 parseBasePath: function(src, pattern) {
                     var match = src.match(pattern),
                         path, filter;
@@ -664,8 +671,11 @@ with any configuration info required for the module.
             cache = YUI.Env._renderedMods,
             loader = Y.Env._loader,
             done = Y.Env._attached,
+            exported = Y.Env._exported,
             len = r.length, loader, def, go,
-            c = [];
+            c = [],
+            modArgs, esCompat, reqlen,
+            __exports__, __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
         //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
@@ -742,6 +752,7 @@ with any configuration info required for the module.
 
                     details = mod.details;
                     req = details.requires;
+                    esCompat = details.es;
                     use = details.use;
                     after = details.after;
                     //Force Intl load if there is a language (Loader logic) @todo fix this shit
@@ -751,7 +762,8 @@ with any configuration info required for the module.
                     }
 
                     if (req) {
-                        for (j = 0; j < req.length; j++) {
+                        reqlen = req.length;
+                        for (j = 0; j < reqlen; j++) {
                             if (!done[req[j]]) {
                                 if (!Y._attach(req)) {
                                     return false;
@@ -773,15 +785,32 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                            if (Y.config.throwFail) {
-                                mod.fn(Y, name);
-                            } else {
-                                try {
-                                    mod.fn(Y, name);
-                                } catch (e) {
-                                    Y.error('Attach error: ' + name, e, name);
+                        modArgs = [Y, name];
+                        if (esCompat) {
+                            __imports__ = {};
+                            __exports__ = {};
+                            // passing `exports` and `imports` onto the module function
+                            modArgs.push(__imports__, __exports__);
+                            if (req) {
+                                reqlen = req.length;
+                                for (j = 0; j < reqlen; j++) {
+                                    __imports__[req[j]] = exported.hasOwnProperty(req[j]) ? exported[req[j]] : Y;
+                                }
+                            }
+                        }
+                        if (Y.config.throwFail) {
+                            __exports__ = mod.fn.apply(mod, modArgs);
+                        } else {
+                            try {
+                                __exports__ = mod.fn.apply(mod, modArgs);
+                            } catch (e) {
+                                Y.error('Attach error: ' + name, e, name);
                                 return false;
                             }
+                        }
+                        if (esCompat) {
+                            // store the `exports` in case others `es` modules requires it
+                            exported[name] = __exports__;
                         }
                     }
 
@@ -1479,11 +1508,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     YUI._init();
 
     if (hasWin) {
+        add(doc, 'DOMContentLoaded', handleReady);
+
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
         add(window, 'load', handleLoad);
     } else {
+        handleReady();
         handleLoad();
     }
 
@@ -1520,6 +1552,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
         YUI._getLoadHook = null;
     }
 
+    YUI.Env[VERSION] = {};
 }());
 
 
@@ -1975,6 +2008,22 @@ supported native console. This function is executed with the YUI instance as its
 **/
 
 /**
+The minimum log level to log messages for. Log levels are defined
+incrementally. Messages greater than or equal to the level specified will
+be shown. All others will be discarded. The order of log levels in
+increasing priority is:
+
+    debug
+    info
+    warn
+    error
+
+@property {String} logLevel
+@default 'debug'
+@since 3.10.0
+**/
+
+/**
 Callback to execute when `Y.error()` is called. It receives the error message
 and a JavaScript error object if one was provided.
 
@@ -2059,8 +2108,8 @@ relying on ES5 functionality, even when ES5 functionality is available.
 
 /**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
-@property delayUntil
-@type String|Object
+
+@property {Object|String} delayUntil
 @since 3.6.0
 @example
 
@@ -2084,8 +2133,6 @@ Or you can delay until a node is available (with `available` or `contentready`):
         // available in the DOM.
     });
 
-@property {Object|String} delayUntil
-@since 3.6.0
 **/
 YUI.add('yui-base', function (Y, NAME) {
 
@@ -2126,9 +2173,15 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-TRIMREGEX       = /^\s+|\s+$/g,
-NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+
+WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
+WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
+TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
+TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
+TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
+
+NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -2269,6 +2322,17 @@ L.isObject = function(o, failfn) {
 };
 
 /**
+ * Determines whether or not the provided value is a regexp.
+ * @method isRegExp
+ * @static
+ * @param value The value or object to test.
+ * @return {boolean} true if value is a regexp.
+ */
+L.isRegExp = function(value) {
+    return L.type(value) === 'regexp';
+};
+
+/**
  * Determines whether or not the provided item is a string.
  * @method isString
  * @static
@@ -2328,9 +2392,15 @@ L.now = Date.now || function () {
 };
 
 /**
- * Lightweight version of <code>Y.substitute</code>. Uses the same template
- * structure as <code>Y.substitute</code>, but doesn't support recursion,
- * auto-object coersion, or formats.
+ * Performs `{placeholder}` substitution on a string. The object passed as the 
+ * second parameter provides values to replace the `{placeholder}`s.
+ * `{placeholder}` token names must match property names of the object. For example,
+ * 
+ *`var greeting = Y.Lang.sub("Hello, {who}!", { who: "World" });`
+ *
+ * `{placeholder}` tokens that are undefined on the object map will be left 
+ * in tact (leaving unsightly `{placeholder}`'s in the output string). 
+ *
  * @method sub
  * @param {string} s String to be modified.
  * @param {object} o Object containing replacement values.
@@ -2352,7 +2422,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = STRING_PROTO.trim ? function(s) {
+L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -2369,10 +2439,10 @@ L.trim = STRING_PROTO.trim ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
+L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(/^\s+/, '');
+    return s.replace(TRIM_LEFT_REGEX, '');
 };
 
 /**
@@ -2382,10 +2452,10 @@ L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = STRING_PROTO.trimRight ? function (s) {
+L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(/\s+$/, '');
+    return s.replace(TRIM_RIGHT_REGEX, '');
 };
 
 /**
@@ -2487,16 +2557,34 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with strings, whereas `unique` may be used with other types (but is slower).
-Using `dedupe()` with non-string values may result in unexpected behavior.
+with arrays consisting entirely of strings or entirely of numbers, whereas
+`unique` may be used with other value types (but is slower).
+
+Using `dedupe()` with values other than strings or numbers, or with arrays
+containing a mix of strings and numbers, may result in unexpected behavior.
 
 @method dedupe
-@param {String[]} array Array of strings to dedupe.
-@return {Array} Deduped copy of _array_.
+@param {String[]|Number[]} array Array of strings or numbers to dedupe.
+@return {Array} Copy of _array_ containing no duplicate values.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = function (array) {
+YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
+    var hash    = Object.create(null),
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hash[item]) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
+} : function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -2839,7 +2927,7 @@ Y.cached = function (source, cache, refetch) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-        
+
         /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -3138,7 +3226,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50.
+ * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -3182,7 +3270,9 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available.
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be
+ * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
  *
@@ -3194,7 +3284,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -3801,17 +3891,25 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-            if (m && m[1] && m[2]) {
-                o.chrome = numberify(m[2]); // Chrome
-                o.safari = 0; //Reset safari back to 0
-                if (m[1] === 'CrMo') {
-                    o.mobile = 'chrome';
-                }
+            m = ua.match(/OPR\/(\d+\.\d+)/);
+
+            if (m && m[1]) {
+                // Opera 15+ with Blink (pretends to be both Chrome and Safari)
+                o.opera = numberify(m[1]);
             } else {
-                m = ua.match(/AdobeAIR\/([^\s]*)/);
-                if (m) {
-                    o.air = m[0]; // Adobe AIR 1.0 or better
+                m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+
+                if (m && m[1] && m[2]) {
+                    o.chrome = numberify(m[2]); // Chrome
+                    o.safari = 0; //Reset safari back to 0
+                    if (m[1] === 'CrMo') {
+                        o.mobile = 'chrome';
+                    }
+                } else {
+                    m = ua.match(/AdobeAIR\/([^\s]*)/);
+                    if (m) {
+                        o.air = m[0]; // Adobe AIR 1.0 or better
+                    }
                 }
             }
         }
@@ -3841,16 +3939,21 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE\s([^;]*)/);
-                if (m && m[1]) {
-                    o.ie = numberify(m[1]);
+                m = ua.match(/MSIE ([^;]*)|Trident.*; rv:([0-9.]+)/);
+
+                if (m && (m[1] || m[2])) {
+                    o.ie = numberify(m[1] || m[2]);
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
+
                     if (m) {
                         o.gecko = 1; // Gecko detected, look for revision
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -3938,7 +4041,7 @@ Y.UA.compareVersions = function (a, b) {
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "anim-shape-transform": ["anim-shape"],
-    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","model-sync-local","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
@@ -5797,9 +5900,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -5814,14 +5917,14 @@ var INSTANCE = Y,
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
+ *                        categories are "info", "warn", "error", "debug".
  *                        Custom categories can be used as well. (opt).
  * @param  {String}  src  The source of the the message (opt).
  * @param  {boolean} silent If true, the log event won't fire.
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -5839,6 +5942,15 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = !incl[src];
             } else if (excl && (src in excl)) {
                 bail = excl[src];
+            }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
             }
         }
         if (!bail) {
@@ -5881,7 +5993,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
+ *                        categories are "info", "warn", "error", "debug".
  *                        Custom categories can be used as well. (opt).
  * @param  {String}  src  The source of the the message (opt).
  * @param  {boolean} silent If true, the log event won't fire.
@@ -5911,7 +6023,7 @@ var NO_ARGS = [];
  * single time unless periodic is set to true.
  * @for YUI
  * @method later
- * @param when {int} the number of milliseconds to wait until the fn
+ * @param when {Number} the number of milliseconds to wait until the fn
  * is executed.
  * @param o the context object.
  * @param fn {Function|String} the function to execute or the name of
@@ -5979,98 +6091,110 @@ YUI.add('loader-base', function (Y, NAME) {
  * @submodule loader-base
  */
 
-if (!YUI.Env[Y.version]) {
-
-    (function() {
-        var VERSION = Y.version,
-            BUILD = '/build/',
-            ROOT = VERSION + BUILD,
-            CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.02.27-21-03',
-            TNT = '2in3',
-            TNT_VERSION = '4',
-            YUI2_VERSION = '2.9.0',
-            COMBO_BASE = CDN_BASE + 'combo?',
-            META = { version: VERSION,
-                              root: ROOT,
-                              base: Y.Env.base,
-                              comboBase: COMBO_BASE,
-                              skin: { defaultSkin: 'sam',
-                                           base: 'assets/skins/',
-                                           path: 'skin.css',
-                                           after: ['cssreset',
-                                                          'cssfonts',
-                                                          'cssgrids',
-                                                          'cssbase',
-                                                          'cssreset-context',
-                                                          'cssfonts-context']},
-                              groups: {},
-                              patterns: {} },
-            groups = META.groups,
-            yui2Update = function(tnt, yui2, config) {
-
-                var root = TNT + '.' +
-                        (tnt || TNT_VERSION) + '/' +
-                        (yui2 || YUI2_VERSION) + BUILD,
-                    base = (config && config.base) ? config.base : CDN_BASE,
-                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
-
-                groups.yui2.base = base + root;
-                groups.yui2.root = root;
-                groups.yui2.comboBase = combo;
-            },
-            galleryUpdate = function(tag, config) {
-                var root = (tag || GALLERY_VERSION) + BUILD,
-                    base = (config && config.base) ? config.base : CDN_BASE,
-                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
-
-                groups.gallery.base = base + root;
-                groups.gallery.root = root;
-                groups.gallery.comboBase = combo;
-            };
-
-
-        groups[VERSION] = {};
-
-        groups.gallery = {
-            ext: false,
-            combine: true,
+(function() {
+    var VERSION = Y.version,
+        BUILD = '/build/',
+        ROOT = VERSION + '/',
+        CDN_BASE = Y.Env.base,
+        GALLERY_VERSION = 'gallery-2013.12.12-21-06',
+        TNT = '2in3',
+        TNT_VERSION = '4',
+        YUI2_VERSION = '2.9.0',
+        COMBO_BASE = CDN_BASE + 'combo?',
+        META = {
+            version: VERSION,
+            root: ROOT,
+            base: Y.Env.base,
             comboBase: COMBO_BASE,
-            update: galleryUpdate,
-            patterns: { 'gallery-': { },
-                        'lang/gallery-': {},
-                        'gallerycss-': { type: 'css' } }
+            skin: {
+                defaultSkin: 'sam',
+                base: 'assets/skins/',
+                path: 'skin.css',
+                after: [
+                    'cssreset',
+                    'cssfonts',
+                    'cssgrids',
+                    'cssbase',
+                    'cssreset-context',
+                    'cssfonts-context'
+                ]
+            },
+            groups: {},
+            patterns: {}
+        },
+        groups = META.groups,
+        yui2Update = function(tnt, yui2, config) {
+            var root = TNT + '.' +
+                    (tnt || TNT_VERSION) + '/' +
+                    (yui2 || YUI2_VERSION) + BUILD,
+                base = (config && config.base) ? config.base : CDN_BASE,
+                combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+            groups.yui2.base = base + root;
+            groups.yui2.root = root;
+            groups.yui2.comboBase = combo;
+        },
+        galleryUpdate = function(tag, config) {
+            var root = (tag || GALLERY_VERSION) + BUILD,
+                base = (config && config.base) ? config.base : CDN_BASE,
+                combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+            groups.gallery.base = base + root;
+            groups.gallery.root = root;
+            groups.gallery.comboBase = combo;
         };
 
-        groups.yui2 = {
-            combine: true,
-            ext: false,
-            comboBase: COMBO_BASE,
-            update: yui2Update,
-            patterns: {
-                'yui2-': {
-                    configFn: function(me) {
-                        if (/-skin|reset|fonts|grids|base/.test(me.name)) {
-                            me.type = 'css';
-                            me.path = me.path.replace(/\.js/, '.css');
-                            // this makes skins in builds earlier than
-                            // 2.6.0 work as long as combine is false
-                            me.path = me.path.replace(/\/yui2-skin/,
-                                             '/assets/skins/sam/yui2-skin');
-                        }
+
+    groups[VERSION] = {};
+
+    groups.gallery = {
+        ext: false,
+        combine: true,
+        comboBase: COMBO_BASE,
+        update: galleryUpdate,
+        patterns: {
+            'gallery-': {},
+            'lang/gallery-': {},
+            'gallerycss-': {
+                type: 'css'
+            }
+        }
+    };
+
+    groups.yui2 = {
+        combine: true,
+        ext: false,
+        comboBase: COMBO_BASE,
+        update: yui2Update,
+        patterns: {
+            'yui2-': {
+                configFn: function(me) {
+                    if (/-skin|reset|fonts|grids|base/.test(me.name)) {
+                        me.type = 'css';
+                        me.path = me.path.replace(/\.js/, '.css');
+                        // this makes skins in builds earlier than
+                        // 2.6.0 work as long as combine is false
+                        me.path = me.path.replace(/\/yui2-skin/,
+                                            '/assets/skins/sam/yui2-skin');
                     }
                 }
             }
-        };
+        }
+    };
 
-        galleryUpdate();
-        yui2Update();
+    galleryUpdate();
+    yui2Update();
 
-        YUI.Env[VERSION] = META;
-    }());
-}
+    if (YUI.Env[VERSION]) {
+        Y.mix(META, YUI.Env[VERSION], false, [
+            'modules',
+            'groups',
+            'skin'
+        ], 0, true);
+    }
 
-
+    YUI.Env[VERSION] = META;
+}());
 /*jslint forin: true, maxlen: 350 */
 
 /**
@@ -7065,9 +7189,10 @@ Y.Loader.prototype = {
      * @param {Object} [config.submodules] Hash of submodules
      * @param {String} [config.group] The group the module belongs to -- this is set automatically when it is added as part of a group configuration.
      * @param {Array} [config.lang] Array of BCP 47 language tags of languages for which this module has localized resource bundles, e.g., `["en-GB", "zh-Hans-CN"]`
-     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met.  This is an object with up to three fields:
+     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met. This is an object with up to four fields:
      * @param {String} [config.condition.trigger] The name of a module that can trigger the auto-load
      * @param {Function} [config.condition.test] A function that returns true when the module is to be loaded.
+     * @param {String} [config.condition.ua] The UA name of <a href="UA.html">Y.UA</a> object that returns true when the module is to be loaded. e.g., `"ie"`, `"nodejs"`.
      * @param {String} [config.condition.when] Specifies the load order of the conditional module
      *  with regard to the position of the trigger module.
      *  This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.
@@ -8982,6 +9107,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -9155,7 +9281,9 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "lang": [
             "en",
-            "es"
+            "es",
+            "hu",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -9335,7 +9463,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
     "button-group": {
@@ -9377,20 +9506,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
-        "lang": [
-            "de",
-            "en",
-            "es",
-            "es-AR",
-            "fr",
-            "it",
-            "ja",
-            "nb-NO",
-            "nl",
-            "pt-BR",
-            "ru",
-            "zh-HANT-TW"
-        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -9404,12 +9519,17 @@ Y.mix(YUI.Env[Y.version].modules, {
             "es",
             "es-AR",
             "fr",
+            "hu",
             "it",
             "ja",
             "nb-NO",
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
@@ -9517,6 +9637,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "es",
+            "hu",
+            "it",
             "ja"
         ],
         "requires": [
@@ -9531,6 +9653,14 @@ Y.mix(YUI.Env[Y.version].modules, {
             "console"
         ],
         "skinnable": true
+    },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
     },
     "controller": {
         "use": [
@@ -9580,22 +9710,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -9605,8 +9732,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -9788,6 +9914,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
+    "datatable-foot": {
+        "requires": [
+            "datatable-core",
+            "view"
+        ]
+    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -9803,11 +9935,25 @@ Y.mix(YUI.Env[Y.version].modules, {
             "classnamemanager"
         ]
     },
+    "datatable-highlight": {
+        "requires": [
+            "datatable-base",
+            "event-hover"
+        ],
+        "skinnable": true
+    },
+    "datatable-keynav": {
+        "requires": [
+            "datatable-base"
+        ]
+    },
     "datatable-message": {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "hu",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -9817,6 +9963,25 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-mutable": {
         "requires": [
             "datatable-base"
+        ]
+    },
+    "datatable-paginator": {
+        "lang": [
+            "en",
+            "fr"
+        ],
+        "requires": [
+            "model",
+            "view",
+            "paginator-core",
+            "datatable-foot",
+            "datatable-paginator-templates"
+        ],
+        "skinnable": true
+    },
+    "datatable-paginator-templates": {
+        "requires": [
+            "template"
         ]
     },
     "datatable-scroll": {
@@ -9831,7 +9996,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "datatable-base"
@@ -9907,6 +10073,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "fr-FR",
             "hi",
             "hi-IN",
+            "hu",
             "id",
             "id-ID",
             "it",
@@ -9958,7 +10125,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",
@@ -10061,7 +10232,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "dial": {
         "lang": [
             "en",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "widget",
@@ -10094,11 +10266,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "features"
         ]
     },
-    "dom-deprecated": {
-        "requires": [
-            "dom-base"
-        ]
-    },
     "dom-screen": {
         "requires": [
             "dom-base",
@@ -10107,7 +10274,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -10180,6 +10348,12 @@ Y.mix(YUI.Env[Y.version].modules, {
     "editor-br": {
         "requires": [
             "editor-base"
+        ]
+    },
+    "editor-inline": {
+        "requires": [
+            "editor-base",
+            "content-editable"
         ]
     },
     "editor-lists": {
@@ -10412,6 +10586,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -10812,6 +10987,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "model"
         ]
     },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
+        ]
+    },
     "model-sync-rest": {
         "requires": [
             "model",
@@ -10832,18 +11013,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
         "requires": [
             "dom-core",
             "selector"
-        ]
-    },
-    "node-deprecated": {
-        "requires": [
-            "node-base"
         ]
     },
     "node-event-delegate": {
@@ -10912,11 +11089,12 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "node-scroll-info": {
         "requires": [
+            "array-extras",
             "base-build",
-            "dom-screen",
             "event-resize",
             "node-pluginhost",
-            "plugin"
+            "plugin",
+            "selector"
         ]
     },
     "node-style": {
@@ -10940,6 +11118,21 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-position-constrain"
         ],
         "skinnable": true
+    },
+    "paginator": {
+        "requires": [
+            "paginator-core"
+        ]
+    },
+    "paginator-core": {
+        "requires": [
+            "base"
+        ]
+    },
+    "paginator-url": {
+        "requires": [
+            "paginator"
+        ]
     },
     "panel": {
         "requires": [
@@ -11006,11 +11199,6 @@ Y.mix(YUI.Env[Y.version].modules, {
     "pluginhost-config": {
         "requires": [
             "pluginhost-base"
-        ]
-    },
-    "profiler": {
-        "requires": [
-            "yui-base"
         ]
     },
     "promise": {
@@ -11455,8 +11643,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -11582,6 +11769,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "tree"
         ]
     },
+    "tree-sortable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
@@ -11590,13 +11782,13 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "uploader-flash": {
         "requires": [
-            "swf",
+            "swfdetect",
+            "escape",
             "widget",
             "base",
             "cssbutton",
             "node",
             "event-custom",
-            "file-flash",
             "uploader-queue"
         ]
     },
@@ -11683,11 +11875,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "widget-htmlparser": {
-        "requires": [
-            "widget-base"
-        ]
-    },
-    "widget-locale": {
         "requires": [
             "widget-base"
         ]
@@ -11804,7 +11991,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '660f328e92276f36e9abfafb02169183';
+YUI.Env[Y.version].md5 = '7becfe88413f127e331d461de8ec774c';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

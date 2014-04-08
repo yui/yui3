@@ -1,6 +1,59 @@
 AutoComplete Change History
 ===========================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Fixed: List doesn't close when it loses focus after scrolling.
+  ([#981][]: @rgrove)
+
+[#981]: https://github.com/yui/yui3/issues/981
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* Added Hungarian language support
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Add italian language files to the components. [albertosantini]
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

@@ -1,0 +1,36 @@
+{
+    "name"       : "promise",
+    "displayName": "Promise",
+    "description": "Promises allow you to chain asynchronous operations, write synchronous looking code and handle errors throughout the process.",
+    "author"     : ["lsmith", "juandopazo"],
+
+    "tags": [
+        "utility", "beta", "promise", "async"
+    ],
+
+    "use": ["promise"],
+
+    "examples": [
+        {
+            "name"       : "basic-example",
+            "displayName": "Wrapping async transactions with promises",
+	        "description": "Wrapping async transactions with promises",
+	        "modules": ["promise", "jsonp"],
+	        "useModules": ["promise", "jsonp"]
+        },
+        {
+            "name": "subclass-example",
+	        "displayName": "Subclassing Y.Promise",
+	        "description": "Extend Y.Promise to create classes that encapsulate standard transaction logic in descriptive method names",
+	        "modules": ["promise", "jsonp"],
+	        "useModules": ["promise", "jsonp"]
+        },
+        {
+            "name"       : "plugin-example",
+            "displayName": "Creating a Node Plugin that chains transitions",
+            "description": "Extend the Promise class to create your own Node plugin that chains transitions",
+            "modules": ["promise", "transition", "node-pluginhost"],
+            "useModules": ["promise", "transition", "node-pluginhost"]
+        }
+    ]
+}

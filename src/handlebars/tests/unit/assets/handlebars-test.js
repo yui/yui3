@@ -6,7 +6,7 @@ var Assert = Y.Assert,
     suite;
 
 suite = new Y.Test.Suite({
-    name: 'Handlebars',
+    name: 'Handlebars'
 });
 
 // -- Sanity -------------------------------------------------------------------
@@ -192,6 +192,19 @@ suite.add(new Y.Test.Case({
             expectedOutput = "123";
 
         Assert.areSame(expectedOutput, H.render('{{#each .}}{{.}}{{/each}}', data));
+    },
+
+    'Nested blocks should be rendered correctly with the correct scope': function () {
+        var template =
+                '{{#with this}}{{#with this}}FOO{{/with}}{{/with}}' +
+                '{{#with this}}{{#with this}}BAR{{/with}}{{/with}}';
+
+        // NOTE: As of v1.0.11, a context object must not be empty for the body
+        // of a `{{#with}}` statement to be executed.
+        // See: https://github.com/wycats/handlebars.js/issues/518
+        //
+        // Assert.areSame('FOOBAR', H.render(template));
+        Assert.areSame('FOOBAR', H.render(template, {}));
     }
 }));
 

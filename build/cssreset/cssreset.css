@@ -105,12 +105,7 @@ select {
 	font-family:inherit;
 	font-size:inherit;
 	font-weight:inherit;
-}
-/*to enable resizing for IE*/
-input,
-textarea,
-select {
-	*font-size:100%;
+	*font-size:100%; /*to enable resizing for IE*/
 }
 /*because legend doesn't inherit in IE */
 legend {

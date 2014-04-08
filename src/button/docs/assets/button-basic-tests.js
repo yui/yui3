@@ -2,7 +2,7 @@ YUI.add('button-basic-tests', function(Y){
 
     var SELECTED_CLASS = 'yui3-button-selected',
         WRONG_TEXT = ' has the wrong text.',
-        SELECTED_TEXT = 'this pressed  button :)',
+        SELECTED_TEXT = 'this pressed button :)',
         UNSELECTED_TEXT = 'this depressed button :(',
         IS_SELECTED = ' is selected.',
         IS_NOT_SELECTED = ' is not selected.';

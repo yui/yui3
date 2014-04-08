@@ -10,6 +10,7 @@
             "regex": "",
             "jsfiles": [
                 "yui-handlebars-copyright.js",
+                "yui-handlebars-base-before.js",
                 "handlebars-base.js",
                 "handlebars-utils.js",
                 "handlebars-runtime.js",

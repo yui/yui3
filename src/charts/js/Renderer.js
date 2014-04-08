@@ -12,20 +12,7 @@
  * @module charts
  * @submodule axis-base
  */
-
-var CONFIG = Y.config,
-    WINDOW = CONFIG.win,
-    DOCUMENT = CONFIG.doc,
-    Y_Lang = Y.Lang,
-    IS_STRING = Y_Lang.isString,
-    Y_DOM = Y.DOM,
-    LeftAxisLayout,
-    RightAxisLayout,
-    BottomAxisLayout,
-    TopAxisLayout,
-    _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
-
+var Y_Lang = Y.Lang;
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
@@ -109,7 +96,7 @@ Renderer.prototype = {
             b = {};
         }
         var newstyles = Y.merge(b, {});
-        Y.Object.each(a, function(value, key, a)
+        Y.Object.each(a, function(value, key)
         {
             if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isFunction(value) && !Y_Lang.isArray(value))
             {
@@ -121,6 +108,36 @@ Renderer.prototype = {
             }
         }, this);
         return newstyles;
+    },
+
+    /**
+     * Copies an object literal.
+     *
+     * @method _copyObject
+     * @param {Object} obj Object literal to be copied.
+     * @return Object
+     * @private
+     */
+    _copyObject: function(obj) {
+        var newObj = {},
+            key,
+            val;
+        for(key in obj)
+        {
+            if(obj.hasOwnProperty(key))
+            {
+                val = obj[key];
+                if(typeof val === "object" && !Y_Lang.isArray(val))
+                {
+                    newObj[key] = this._copyObject(val);
+                }
+                else
+                {
+                    newObj[key] = val;
+                }
+            }
+        }
+        return newObj;
     },
 
     /**

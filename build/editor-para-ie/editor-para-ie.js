@@ -19,6 +19,15 @@ YUI.add('editor-para-ie', function (Y, NAME) {
 
     Y.extend(EditorParaIE, Y.Plugin.EditorParaBase, {
         /**
+        * Resolves the ROOT editor element.
+        * @method _getRoot
+        * @private
+        */
+        _getRoot: function() {
+            return this.get(HOST).getInstance().EditorSelection.ROOT;
+        },
+
+        /**
         * nodeChange handler to handle fixing an empty document.
         * @private
         * @method _onNodeChange

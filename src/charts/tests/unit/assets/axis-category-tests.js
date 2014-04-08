@@ -1,20 +1,72 @@
 YUI.add('axis-category-tests', function(Y) {
     Y.CategoryAxisTest = function() {
         Y.CategoryAxisTest.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(Y.CategoryAxisTest, Y.ChartTestTemplate, {
         setUp: function() {
-            this.axis = new Y.CategoryAxis({
-                dataProvider: this.dataProvider,
-                keys: this.dataKeys,
-                position: this.position   
-            });
+            var position = this.position,
+                cfg = {
+                    dataProvider: this.dataProvider,
+                    keys: this.dataKeys,
+                    position: position
+                };
+            if(position === "right" || position === "left") {
+                cfg.height = this.height;
+            } else {
+                cfg.width = this.width;
+            }
+            this.axis = new Y.CategoryAxis(cfg);
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
-        
+
+        _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, multiplier, direction, data)
+        {
+            var points = [],
+                values = [],
+                labelValue,
+                labelIndex,
+                i,
+                len = labelValues.length,
+                staticCoord,
+                dynamicCoord,
+                constantVal,
+                newPoint,
+                rawVal;
+            if(direction === "vertical")
+            {
+                staticCoord = "x";
+                dynamicCoord = "y";
+            }
+            else
+            {
+                staticCoord = "y";
+                dynamicCoord = "x";
+            }
+            constantVal = startPoint[staticCoord];
+            for(i = 0; i < len; i = i + 1)
+            {
+                labelValue = labelValues[i];
+                labelIndex = Y.Array.indexOf(data, labelValue);
+                if(Y.Lang.isNumber(labelIndex) && labelIndex > -1)
+                {
+                    rawVal = labelIndex ? (labelIndex * multiplier) : 0;
+                    newPoint = {};
+                    newPoint[staticCoord] = constantVal;
+                    newPoint[dynamicCoord] = rawVal + edgeOffset;
+                    points.push(newPoint);
+                    values.push(labelValue);
+                }
+            }
+            return {
+                points: points,
+                values: values
+            };
+        },
+
         "test: getMajorUnitDistance()" : function() {
             var position = this.position,
                 vertical = position === "left" || position === "right",
@@ -28,10 +80,10 @@ YUI.add('axis-category-tests', function(Y) {
                 }
             });
             Y.Assert.areEqual(
-                distance, 
+                distance,
                 this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit),
                 "The getMajorUnitDistance method should return " + distance + "."
-            ); 
+            );
             this.axis.set("styles", {
                 majorUnit: {
                     determinant: "distance",
@@ -39,17 +91,17 @@ YUI.add('axis-category-tests', function(Y) {
                 }
             });
             Y.Assert.areEqual(
-                distance, 
+                distance,
                 this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit),
                 "The getMajorUnitDistance method should return " + distance + "."
             );
             this.axis.set("styles", {
                 majorUnit: {
-                    determinant: "random"   
+                    determinant: "random"
                 }
             });
             Y.Assert.isUndefined(
-                this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit), 
+                this.axis.getMajorUnitDistance(8, length, this.axis.get("styles").majorUnit),
                 "An invalid majorUnit.determinant should result in the getMajorUnitDistance method returning undefined."
             );
         },
@@ -77,17 +129,9 @@ YUI.add('axis-category-tests', function(Y) {
                 testLabel,
                 position = this.position,
                 direction = position === "left" || position === "right" ? "vertical" : "horizontal";
-           
-            if(direction && direction == "vertical")
-            {
-                testLabel = data[len - (index + 1)];
-            }
-            else
-            {
                 testLabel = data[index];
-            }
-            
-            Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len, direction), "The label's value should be " + testLabel + ".");
+
+            Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len), "The label's value should be " + testLabel + ".");
         },
 
         "test: get(labels)" : function() {
@@ -97,17 +141,13 @@ YUI.add('axis-category-tests', function(Y) {
                 len,
                 label,
                 date,
-                mydiv = Y.Node.create('<div style="width: 400px; height: 400px;">'),
+                mydiv = Y.Node.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
                 position = this.position,
                 direction = position === "left" || position === "right" ? "vertical" : "horizontal";
-                
+
             Y.one('body').append(mydiv);
             axis.render(mydiv);
             labels = axis.get("labels");
-            //category labels on a vertical axis are reversed
-            if(direction === "vertical") {
-                labels.reverse();
-            }
             len = plainOldDataProvider.length;
             for(i = 0; i < len; i = i + 1) {
                 label = labels[i];
@@ -116,10 +156,99 @@ YUI.add('axis-category-tests', function(Y) {
             }
             axis.destroy(true);
             mydiv.destroy(true);
+        },
+
+        "test: _getLabelData()" : function() {
+            var axis = this.axis,
+                labelValues = [
+                    "01/02/2009",
+                    "01/07/2009",
+                    "01/12/2009",
+                    "01/17/2009",
+                    "01/22/2009"
+                ],
+                len,
+                i,
+                layoutLength = axis.getLength(),
+                data = axis.get("data"),
+                startPoint = axis.getFirstPoint(axis._layout.getLineStart.apply(axis)),
+                edgeOffset = 0,
+                multiplier = (layoutLength - (edgeOffset * 2))/(axis.getTotalMajorUnits() - 1),
+                position = this.position,
+                direction = position === "left" || position === "right" ? "vertical" : "horizontal",
+                axisLabelValues,
+                testLabelValues,
+                axisPoint,
+                testPoint,
+                assertFn = function() {
+                    var min = axis.get("minimum"),
+                        max = axis.get("maximum"),
+                        staticCoord,
+                        dynamicCoord,
+                        constantVal;
+                    if(direction === "vertical") {
+                        staticCoord = "x";
+                        dynamicCoord = "y";
+                    } else {
+                        staticCoord = "y";
+                        dynamicCoord = "x";
+                    }
+                    constantVal = startPoint[staticCoord];
+                    axisLabelData = axis._getLabelData.apply(axis, [
+                        constantVal,
+                        staticCoord,
+                        dynamicCoord,
+                        min,
+                        max,
+                        edgeOffset,
+                        layoutLength - edgeOffset - edgeOffset,
+                        len,
+                        labelValues
+                    ]);
+                    testLabelData = this._getDataFromLabelValues(
+                        startPoint,
+                        labelValues,
+                        edgeOffset,
+                        multiplier,
+                        direction,
+                        data
+                    );
+                    testPoints = testLabelData.points;
+                    testValues = testLabelData.values;
+                    axisPoints = axisLabelData.points;
+                    axisValues = axisLabelData.values;
+                    len = testPoints.length;
+                    for(i = 0; i < len; i = i + 1) {
+                        testPoint = testPoints[i];
+                        axisPoint = axisPoints[i];
+                        testValue = testValues[i];
+                        axisValue = axisPoints[i];
+                        if(testPoint) {
+                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + ".");
+                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + ".");
+                        } else {
+                            Y.Assert.isNull(axisPoint, "There should not be a value for the axis point.");
+                        }
+                    }
+                };
+            len =  labelValues.length;
+            assertFn.apply(this);
+            //hit the branch
+            labelValues[3] = "2/11/2012";
+            assertFn.apply(this);
+            //use labels that include the first (to hit another branch)
+            labelValues = ["01/01/2009", "01/11/2009", "01/21/2009"];
+            assertFn.apply(this);
+            
+            //add a label that's not in the axis (to hit an else branch)
+            labelValues.push("nonexistent");
+            len =  labelValues.length;
+            assertFn.apply(this);
         }
     });
-    
+
     var suite = new Y.Test.Suite("Charts: CategoryAxis"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},
@@ -148,6 +277,7 @@ YUI.add('axis-category-tests', function(Y) {
         dataProvider: plainOldDataProvider,
         dataKeys: ["date"],
         position: "left",
+        height: 400,
         name: "CategoryAxis Tests"
     }));
 
@@ -155,6 +285,7 @@ YUI.add('axis-category-tests', function(Y) {
         dataProvider: plainOldDataProvider,
         dataKeys: ["date"],
         position: "top",
+        width: 700,
         name: "CategoryAxis Tests"
     }));
 
@@ -162,6 +293,7 @@ YUI.add('axis-category-tests', function(Y) {
         dataProvider: plainOldDataProvider,
         dataKeys: ["date"],
         position: "right",
+        height: 400,
         name: "CategoryAxis Tests"
     }));
 
@@ -169,6 +301,7 @@ YUI.add('axis-category-tests', function(Y) {
         dataProvider: plainOldDataProvider,
         dataKeys: ["date"],
         position: "bottom",
+        width: 700,
         name: "CategoryAxis Tests"
     }));
 

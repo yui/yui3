@@ -24,11 +24,10 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
      * @method _getLabelByIndex
      * @param {Number} i Index of the label.
      * @param {Number} l Total number of labels.
-     * @param {String} direction The direction of the axis. (vertical or horizontal)
      * @return String
      * @private
      */
-    _getLabelByIndex: function(i, l, direction)
+    _getLabelByIndex: function(i, l)
     {
         var min = this.get("minimum"),
             max = this.get("maximum"),
@@ -36,15 +35,54 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
             label;
             l -= 1;
         increm = ((max - min)/l) * i;
-        if(direction && direction == "vertical")
-        {
-            label = max - increm;
-        }
-        else
-        {
-            label = min + increm;
-        }
+        label = min + increm;
         return label;
+    },
+
+    /**
+     * Returns an object literal containing and array of label values and an array of points.
+     *
+     * @method _getLabelData
+     * @param {Object} startPoint An object containing x and y values.
+     * @param {Number} edgeOffset Distance to offset coordinates.
+     * @param {Number} layoutLength Distance that the axis spans.
+     * @param {Number} count Number of labels.
+     * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @param {Array} Array containing values for axis labels.
+     * @return Array
+     * @private
+     */
+    _getLabelData: function(constantVal, staticCoord, dynamicCoord, min, max, edgeOffset, layoutLength, count, dataValues)
+    {
+        var dataValue,
+            i,
+            points = [],
+            values = [],
+            point,
+            offset = edgeOffset;
+        dataValues = dataValues || this._getDataValuesByCount(count, min, max);
+        for(i = 0; i < count; i = i + 1)
+        {
+            dataValue = this._getNumber(dataValues[i]);
+            if(dataValue <= max && dataValue >= min)
+            {
+                point = {};
+                point[staticCoord] = constantVal;
+                point[dynamicCoord] = this._getCoordFromValue(
+                    min,
+                    max,
+                    layoutLength,
+                    dataValue,
+                    offset
+                );
+                points.push(point);
+                values.push(dataValue);
+            }
+        }
+        return {
+            points: points,
+            values: values
+        };
     }
 });
 

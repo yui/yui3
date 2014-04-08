@@ -2,7 +2,7 @@ YUI.add('axis-category-base-tests', function(Y) {
     Y.CategoryAxisBaseTest = function() {
         Y.CategoryAxisBaseTest.superclass.constructor.apply(this, arguments);
         this.prepValues();
-    }
+    };
     Y.extend(Y.CategoryAxisBaseTest, Y.ChartTestTemplate, {
         prepValues : function() {
             this.dataMaximum = this.dataProvider.length - 1;
@@ -17,7 +17,9 @@ YUI.add('axis-category-base-tests', function(Y) {
 
         tearDown: function() {
             this.axis = null;
+            Y.Event.purgeElement(DOC, false);
         },
+
 
         "test: get('type')" : function() {
             Y.Assert.isInstanceOf(Y.CategoryAxisBase, this.axis, "The axis should be and instanceof CategoryAxisBase.");
@@ -126,7 +128,7 @@ YUI.add('axis-category-base-tests', function(Y) {
         "test: get('dataMaximum')" : function() {
             var dataMaximum;
             this.axis.set("keys", this.keys);
-            dataMaximum = this.axis.get("dataMaximum")
+            dataMaximum = this.axis.get("dataMaximum");
             Y.Assert.isTrue(dataMaximum >= this.dataMaximum, "The value for the attribute dataMaximum (" + dataMaximum + ") should be greater than or equal to " + this.dataMaximum + ".");
         },
 
@@ -181,7 +183,7 @@ YUI.add('axis-category-base-tests', function(Y) {
         "test: getEdgeOffset()" : function() {
             var len = 100,
                 count = this.dataProvider.length,
-                offset = len/count;
+                offset = (len/count)/2;
             Y.Assert.areEqual(offset, this.axis.getEdgeOffset(count, len), "The edgeOffset should be " + offset + ".");
         },
 
@@ -207,10 +209,33 @@ YUI.add('axis-category-base-tests', function(Y) {
                     'The axis.getKeyValueAt("date", ' + i + ') method should return a value of ' + this.dateValues[i] + '.'
                 );
             }
+        },
+
+        "test: _getCoordFromValue()" : function() {
+            var axis = this.axis,
+                min = 0,
+                max = 10,
+                dataValue = 4,
+                length = 400,
+                offset = 5,
+                testResult = ((dataValue - min) * (length/(max.valueOf() - min.valueOf()))) + offset,
+                result;
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, dataValue, offset]
+            );
+            Y.Assert.isNumber(result, "The value should be a number.");
+            Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, null, offset]
+            );
+            Y.Assert.isNaN(result, "The value should not be a number.");
         }
     });
     
     var suite = new Y.Test.Suite("Charts: CategoryAxisBase"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},

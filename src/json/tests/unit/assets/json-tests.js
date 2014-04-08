@@ -498,7 +498,7 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['json-parse', 'test']});
+}, '@VERSION@' ,{requires:['json-parse-shim', 'test']});
 YUI.add('json-stringify-tests', function(Y) {
 
 // Automated tests should only cover js API.  Use a manual test for native API
@@ -1029,7 +1029,7 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['json-stringify', 'test']});
+}, '@VERSION@' ,{requires:['json-stringify-shim', 'test']});
 
 
 YUI.add('json-tests', function(Y){}, '@VERSION@' ,{use:['json-parse-tests', 'json-stringify-tests']});

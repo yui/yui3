@@ -195,7 +195,7 @@ Y.mix(Message.prototype, {
         this._initMessageStrings();
 
         if (this.get('showMessages')) {
-            this.after('renderBody', Y.bind('_initMessageNode', this));
+            this.after('table:renderBody', Y.bind('_initMessageNode', this));
         }
 
         this.after(Y.bind('_bindMessageUI', this), this, 'bindUI');
@@ -287,4 +287,4 @@ if (Y.Lang.isFunction(Y.DataTable)) {
 }
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "hu", "it"], "skinnable": true});

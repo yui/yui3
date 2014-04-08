@@ -33,7 +33,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         }
 
         var isNumber = Y_Lang.isNumber,
-            style = Y.clone(this.get("styles").marker),
+            style = this._copyObject(this.get("styles").marker),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -41,7 +41,6 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
-            type = this.get("type"),
             seriesCollection = this.get("seriesTypeCollection"),
             ratio,
             order = this.get("order"),
@@ -213,7 +212,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                 marker = this._markers[i],
                 styles = this.get("styles").marker,
                 h = styles.height,
-                markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]),
+                markerStyles = state === "off" || !styles[state] ? this._copyObject(styles) : this._copyObject(styles[state]),
                 fillColor,
                 borderColor;
             markerStyles.y = (ycoords[i] - h/2);

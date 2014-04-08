@@ -1,6 +1,63 @@
 AsyncQueue Change History
 =========================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* Fixed an issue that triggered an extra execution of a callback.
+  [Ticket #2528602] [Ticket #2531758] [Ticket #2531844]
+
+* Fixed a bug in which the until condition of a callback was evaluated
+  prematurely when the previous callback paused the queue.
+
+* Fixed a bug in which the 'complete' event would not be fired if stop was
+  called from inside a callback.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

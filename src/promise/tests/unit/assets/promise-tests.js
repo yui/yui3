@@ -118,6 +118,18 @@ YUI.add('promise-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Behavior of the then() callbacks',
 
+        _should: {
+            ignore: {
+                '|this| inside a callback must be undefined in strict mode': (function () {
+                    'use strict';
+                    return typeof this !== 'undefined';
+                }()),
+                '|this| inside a callback must be the global object': (function () {
+                    return typeof this === 'undefined';
+                }())
+            }
+        },
+
         'throwing inside a callback should turn into a rejection': function () {
             var test = this,
                 error = new Error('Arbitrary error');
@@ -150,12 +162,74 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(50);
+            test.wait(100);
+        },
+
+        // This test is run only when not in strict mode
+        '|this| inside a callback must be the global object': function () {
+            var test = this,
+                fulfilled, rejected,
+                fulfilledThis, rejectedThis;
+
+            fulfilled = new Y.Promise(function (fulfill) {
+                fulfill('value');
+            });
+            rejected = new Y.Promise(function (fulfill, reject) {
+                reject('reason');
+            });
+
+            fulfilled.then(function () {
+                fulfilledThis = this;
+                rejected.then(null, function () {
+                    rejectedThis = this;
+                    test.resume(function () {
+                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
+                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                    });
+                });
+            });
+
+            test.wait(300);
+        },
+
+        // This test is run only in strict mode
+        '|this| inside a callback must be undefined in strict mode': function () {
+            'use strict';
+
+            var test = this,
+                fulfilled, rejected,
+                fulfilledThis, rejectedThis;
+
+            fulfilled = new Y.Promise(function (fulfill) {
+                fulfill('value');
+            });
+            rejected = new Y.Promise(function (fulfill, reject) {
+                reject('reason');
+            });
+
+            fulfilled.then(function () {
+                fulfilledThis = this;
+                rejected.then(null, function () {
+                    rejectedThis = this;
+                    test.resume(function () {
+                        Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
+                        Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
+                    });
+                });
+            });
+
+            test.wait(300);
         }
     }));
 
     suite.add(new Y.Test.Case({
         name: 'Promise detection with Promise.isPromise',
+
+        _should: {
+            ignore: {
+                'detect object with getters that throw': !Object.create
+            }
+        },
 
         'detecting YUI promises': function () {
             Assert.isTrue(isPromise(new Promise(function () {})), 'a YUI promise should be identified as a promise');
@@ -187,6 +261,18 @@ YUI.add('promise-tests', function (Y) {
             Assert.isFalse(isPromise({
                 then: 5
             }), 'almost promises should not be identified as promises');
+        },
+
+        'detect object with getters that throw': function () {
+            var nonPromise = Object.create(null, {
+                then: {
+                    get: function () {
+                        throw new Error('isPromise did not catch an exception thrown by the getter of the `then` property');
+                    }
+                }
+            });
+
+            Assert.isFalse(isPromise(nonPromise), 'an object with a `then` property that throws should not be identified as a promise');
         }
     }));
 

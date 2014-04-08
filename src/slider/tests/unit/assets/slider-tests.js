@@ -518,7 +518,8 @@ suite.add( new Y.Test.Case({
                 width    : '300px',
                 clickableRail: true
             }),
-            railRegion, where, fired;
+            railRegion, fake_event, fired,
+            noop = function() {};
 
         slider.on('railMouseDown', function () {
             fired = true;
@@ -527,18 +528,20 @@ suite.add( new Y.Test.Case({
         slider.render('#testbed');
 
         railRegion = slider.rail.get('region');
-        where = {
+        fake_event = {
             clientX: railRegion.left + Math.floor(railRegion.width / 2),
-            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+            clientY: railRegion.top + Math.floor(railRegion.height / 2),
+            pageX: railRegion.left + Math.floor(railRegion.width / 2),
+            pageY: railRegion.top + Math.floor(railRegion.height / 2),
+            halt: noop
         };
+
 
         slider.on('railMouseDown', function (e) {
             fired = true;
         });
 
-        slider.rail.simulate('mousedown', where);
-        slider.rail.simulate('mouseup', where);
-        slider.rail.simulate('click', where);
+        slider._onRailMouseDown(fake_event);
 
         Y.Assert.isTrue(fired, "railMouseDown didn't fire for clickableRail: true");
 
@@ -559,9 +562,7 @@ suite.add( new Y.Test.Case({
 
         slider.render('#testbed');
 
-        slider.rail.simulate('mousedown', where);
-        slider.rail.simulate('mouseup', where);
-        slider.rail.simulate('click', where);
+        slider._onRailMouseDown(fake_event);
 
         Y.Assert.isFalse(fired, "railMouseDown fired for clickableRail: false");
 
@@ -599,6 +600,27 @@ suite.add( new Y.Test.Case({
 
         slider.set('value', 0);
 
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting value to anything non-numeric shouldn't work": function() {
+        var slider = new Y.Slider();
+
+        slider.set('value', "wat");
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', NaN);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', null);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', undefined);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', []);
         Y.Assert.areSame(0, slider.get('value'));
 
         slider.destroy();
@@ -688,7 +710,8 @@ suite.add( new Y.Test.Case({
                 max   : 100,
                 value : 50
             }),
-            position, fired, railRegion, where;
+            position, fired, railRegion, fake_event,
+            noop = function() {};
 
         function thumbPosition() {
             return parseInt(slider.thumb.getStyle('left'), 10);
@@ -697,9 +720,12 @@ suite.add( new Y.Test.Case({
         slider.render( "#testbed" );
 
         railRegion = slider.rail.get('region');
-        where = {
+        fake_event = {
             clientX: railRegion.left + Math.floor(railRegion.width / 2),
-            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+            clientY: railRegion.top + Math.floor(railRegion.height / 2),
+            pageX: railRegion.left + Math.floor(railRegion.width / 2),
+            pageY: railRegion.top + Math.floor(railRegion.height / 2),
+            halt: noop
         };
 
         Y.Assert.areNotSame(0, thumbPosition());
@@ -708,16 +734,14 @@ suite.add( new Y.Test.Case({
 
         Y.Assert.areSame(0, thumbPosition());
 
-        slider.on('railMouseDown', function (e) {
+        slider.on('railMouseDown', function (fake_event) {
             fired = true;
         });
 
-        slider.rail.simulate('mousedown', where);
-        slider.rail.simulate('mouseup', where);
-        slider.rail.simulate('click', where);
+        slider._onRailMouseDown(fake_event);
 
-        Y.Assert.isTrue(fired);
-        Y.Assert.isTrue( (thumbPosition() > 0) );
+        Y.Assert.isTrue(fired, "Failed to fire: railMouseDown");
+        Y.Assert.isTrue( (thumbPosition() > 0), "Failed to find thumPosition > 0" );
     }
 }));
 

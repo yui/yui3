@@ -63,7 +63,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         {
             this._axes = {};
         }
-        var i, pos, axis, dh, config, axisClass,
+        var i, pos, axis, dh, config, AxisClass,
             type = this.get("type"),
             w = this.get("width"),
             h = this.get("height"),
@@ -83,8 +83,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             if(hash.hasOwnProperty(i))
             {
                 dh = hash[i];
-                pos = type == "pie" ? "none" : dh.position;
-                axisClass = this._getAxisClass(dh.type);
+                pos = type === "pie" ? "none" : dh.position;
+                AxisClass = this._getAxisClass(dh.type);
                 config = {dataProvider:this.get("dataProvider")};
                 if(dh.hasOwnProperty("roundingUnit"))
                 {
@@ -95,7 +95,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 config.height = h;
                 config.position = pos;
                 config.styles = dh.styles;
-                axis = new axisClass(config);
+                axis = new AxisClass(config);
                 axis.on("axisRendered", Y.bind(this._itemRendered, this));
                 this._axes[i] = axis;
             }
@@ -262,7 +262,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      * @param {Object} e Event object.
      * @private
      */
-    _sizeChanged: function(e)
+    _sizeChanged: function()
     {
         this._redraw();
     },
@@ -307,11 +307,10 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      *  </dl>
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
-     * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
      * @return {HTML}
      * @private
      */
-    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)
     {
         var msg = DOCUMENT.createElement("div"),
             total = series.getTotalValues(),
@@ -342,7 +341,6 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             valueItem,
             seriesIndex = 0,
             itemIndex = this._itemIndex,
-            seriesCollection = this.get("seriesCollection"),
             len,
             total,
             pct,
@@ -366,8 +364,13 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         pct = Math.round((valueItem.value / total) * 10000)/100;
         if(categoryItem && valueItem)
         {
-            msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
-            msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", ";
+            msg += categoryItem.displayName +
+                ": " +
+                categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) +
+                ", ";
+            msg += valueItem.displayName +
+                ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) +
+                ", ";
             msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,";
         }
         else
@@ -376,6 +379,55 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         }
         msg += (itemIndex + 1) + " of " + len + ". ";
         return msg;
+    },
+
+    /**
+     * Destructor implementation for the PieChart class.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var series,
+            axis,
+            tooltip = this.get("tooltip"),
+            tooltipNode = tooltip.node,
+            graph = this.get("graph"),
+            axesCollection = this._axesCollection,
+            seriesCollection = this.get("seriesCollection");
+        while(seriesCollection.length > 0)
+        {
+            series = seriesCollection.shift();
+            series.destroy(true);
+        }
+        while(axesCollection.length > 0)
+        {
+            axis = axesCollection.shift();
+            if(axis instanceof Y.Axis)
+            {
+                axis.destroy(true);
+            }
+        }
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
+        if(graph)
+        {
+            graph.destroy(true);
+        }
+        if(tooltipNode)
+        {
+            tooltipNode.empty();
+            tooltipNode.remove(true);
+        }
     }
 }, {
     ATTRS: {
@@ -392,8 +444,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             {
                 if(this._description)
                 {
-                    this._description.setContent("");
-                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                    this._description.set("text", val);
                 }
                 return val;
             }
@@ -425,6 +476,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
          * @type Array
          */
         seriesCollection: {
+            lazyAdd: false,
+
             getter: function()
             {
                 return this._getSeriesCollection();

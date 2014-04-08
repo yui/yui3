@@ -15,7 +15,7 @@
         `extend` or `augment` your classes with `EventTarget` directly.
     </p>
 
-    <p><strong>DEPRECATION NOTE:</strong> The `subscribers` and `afters` properties which
+    <p class="deprecated"><strong>DEPRECATION NOTE:</strong> The `subscribers` and `afters` properties which
        used to sit on `CustomEvent` object instances have been deprecated and 
        removed for performance reasons as of the 3.7.0 release.
     </p>
@@ -629,7 +629,7 @@ rootNode.add( new LeafNode("Leafy") ); // Node NOT added
 rootNode.add( new LeafNode("James Bond") ); // Node added without event bubbling
 ```
 
-<h3>Broadcasting Events to Y or Between YUI instances</h3>
+<h3 id="broadcast">Broadcasting Events to Y or Between YUI instances</h3>
 
 <p>
     Event broadcasting is very similar to bubbling, but with some important
@@ -874,11 +874,14 @@ YUI().use('node', 'event-custom', function (OtherY) {
     <tr>
         <td>`broadcast`</td>
         <td>
-            Notify the YUI instance (`broadcast: 1`) or the YUI instance
-            <em>and</em> `Y.Global` with the event.
-            <a href="#broadcast">Details above</a>.
+            <a href="#broadcast">Details above</a>. Fire the event from:
+            <ul>
+                <li>`0` - Only the EventTarget instance</li>
+                <li>`1` - The EventTarget and the YUI instance (`Y`)</li>
+                <li>`2` - The EventTarget, `Y`, and `Y.Global`</li>
+            </ul>
         </td>
-        <td>0 (instance only)</td>
+        <td>0</td>
         <td>YES</td>
     </tr>
     <tr>

@@ -8,7 +8,7 @@
  * @class SVGCircle
  * @constructor
  */
- SVGCircle = function(cfg)
+ SVGCircle = function()
  {
     SVGCircle.superclass.constructor.apply(this, arguments);
  };

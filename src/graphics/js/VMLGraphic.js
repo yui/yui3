@@ -267,9 +267,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value)
+	set: function()
 	{
 		var host = this,
+            attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
                 autoSize: true,
@@ -335,7 +336,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             xy;
         if(node)
         {
-            xy = Y.one(node).getXY();
+            xy = Y.DOM.getXY(node);
             xy[0] += x;
             xy[1] += y;
         }
@@ -352,7 +353,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @method initializer
      * @private
      */
-    initializer: function(config) {
+    initializer: function() {
         var render = this.get("render"),
             visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
@@ -380,11 +381,21 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var parentNode = Y.one(render),
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._node);
+        var parentNode = render || DOCUMENT.body,
+            node = this._node,
+            w,
+            h;
+        if(render instanceof Y.Node)
+        {
+            parentNode = render._node;
+        }
+        else if(Y.Lang.isString(render))
+        {
+            parentNode = Y.Selector.query(render, DOCUMENT.body, true);
+        }
+        w = this.get("width") || parseInt(Y.DOM.getComputedStyle(parentNode, "width"), 10);
+        h = this.get("height") || parseInt(Y.DOM.getComputedStyle(parentNode, "height"), 10);
+        parentNode.appendChild(node);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
@@ -398,8 +409,16 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     destroy: function()
     {
-        this.clear();
-        Y.one(this._node).remove(true);
+        this.removeAllShapes();
+        if(this._node)
+        {
+            this._removeChildren(this._node);
+            if(this._node.parentNode)
+            {
+                this._node.parentNode.removeChild(this._node);
+            }
+            this._node = null;
+        }
     },
 
     /**
@@ -416,8 +435,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         shape._appendStrokeAndFill();
         return shape;
@@ -434,7 +453,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
-        if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic")
+        if(this.get("autoDraw") || this.get("autoSize") === "sizeContentToGraphic")
         {
             parentNode.appendChild(node);
         }
@@ -589,7 +608,11 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @private
      */
     _createGraphic: function() {
-        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
+        var group = DOCUMENT.createElement(
+            '<group xmlns="urn:schemas-microsft.com:vml"' +
+            ' style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;"' +
+            '/>'
+        );
         return group;
     },
 
@@ -604,7 +627,13 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     _createGraphicNode: function(type)
     {
-        return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
+        return DOCUMENT.createElement(
+            '<' +
+            type +
+            ' xmlns="urn:schemas-microsft.com:vml"' +
+            ' style="behavior:url(#default#VML);display:inline-block;zoom:1;"' +
+            '/>'
+        );
 
     },
 
@@ -724,8 +753,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var autoSize = this.get("autoSize"),
             preserveAspectRatio,
             node = this.parentNode,
-            nodeWidth = parseFloat(node.getComputedStyle("width")),
-            nodeHeight = parseFloat(node.getComputedStyle("height")),
+            nodeWidth = parseFloat(Y.DOM.getComputedStyle(node, "width")),
+            nodeHeight = parseFloat(Y.DOM.getComputedStyle(node, "height")),
             xCoordOrigin = 0,
             yCoordOrigin = 0,
             box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
@@ -744,10 +773,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         this._node.style.visibility = "hidden";
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 preserveAspectRatio = this.get("preserveAspectRatio");
-                if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
+                if(preserveAspectRatio === "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
                 {
                     xCoordOrigin = left;
                     yCoordOrigin = top;

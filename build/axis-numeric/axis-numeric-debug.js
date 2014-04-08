@@ -6,7 +6,7 @@ YUI.add('axis-numeric', function (Y, NAME) {
  * @module charts
  * @submodule axis-numeric
  */
-Y_Lang = Y.Lang;
+var Y_Lang = Y.Lang;
 /**
  * NumericAxis draws a numeric axis.
  *
@@ -28,11 +28,9 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
      * @return String
      * @private
      */
-    _getLabelByIndex: function()
+    _getLabelByIndex: function(i, l)
     {
-        var i = arguments[0],
-            l = arguments[1],
-            min = this.get("minimum"),
+        var min = this.get("minimum"),
             max = this.get("maximum"),
             increm = (max - min)/(l-1),
             label,
@@ -50,13 +48,61 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
         else
         {
             label = (i * increm);
-            if(roundingMethod == "niceNumber")
+            if(roundingMethod === "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }
             label += min;
         }
         return parseFloat(label);
+    },
+
+    /**
+     * Returns an object literal containing and array of label values and an array of points.
+     *
+     * @method _getLabelData
+     * @param {Object} startPoint An object containing x and y values.
+     * @param {Number} edgeOffset Distance to offset coordinates.
+     * @param {Number} layoutLength Distance that the axis spans.
+     * @param {Number} count Number of labels.
+     * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @param {Array} Array containing values for axis labels.
+     * @return Array
+     * @private
+     */
+    _getLabelData: function(constantVal, staticCoord, dynamicCoord, min, max, edgeOffset, layoutLength, count, dataValues)
+    {
+        var dataValue,
+            i,
+            points = [],
+            values = [],
+            point,
+            isVertical = staticCoord === "x",
+            offset = isVertical ? layoutLength + edgeOffset : edgeOffset;
+        dataValues = dataValues || this._getDataValuesByCount(count, min, max);
+        for(i = 0; i < count; i = i + 1)
+        {
+            dataValue = parseFloat(dataValues[i]);
+            if(dataValue <= max && dataValue >= min)
+            {
+                point = {};
+                point[staticCoord] = constantVal;
+                point[dynamicCoord] = this._getCoordFromValue(
+                    min,
+                    max,
+                    layoutLength,
+                    dataValue,
+                    offset,
+                    isVertical
+                );
+                points.push(point);
+                values.push(dataValue);
+            }
+        }
+        return {
+            points: points,
+            values: values
+        };
     },
 
     /**
@@ -80,7 +126,8 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
         roundingMethod = this.get("roundingMethod");
         min = this._actualMinimum;
         max = this._actualMaximum;
-        if(Y_Lang.isNumber(roundingMethod) && ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
+        if(Y_Lang.isNumber(roundingMethod) &&
+            ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
         {
             return true;
         }

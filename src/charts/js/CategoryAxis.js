@@ -4,6 +4,7 @@
  * @module charts
  * @submodule axis-category
  */
+var Y_Lang = Y.Lang;
 /**
  * CategoryAxis draws a category axis for a chart.
  *
@@ -50,24 +51,64 @@ Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
      *
      * @method _getLabelByIndex
      * @param {Number} i Index of the label.
-     * @param {Number} l Total number of labels.
-     * @param {String} direction The direction of the axis. (vertical or horizontal)
      * @return String
      * @private
      */
-    _getLabelByIndex: function(i, l, direction)
+    _getLabelByIndex: function(i)
     {
         var label,
             data = this.get("data");
-        if(direction && direction == "vertical")
-        {
-            label = data[l - (i + 1)];
-        }
-        else
-        {
-            label = data[i];
-        }
+        label = data[i];
         return label;
+    },
+
+    /**
+     * Returns an object literal containing and array of label values and an array of points.
+     *
+     * @method _getLabelData
+     * @param {Object} startPoint An object containing x and y values.
+     * @param {Number} edgeOffset Distance to offset coordinates.
+     * @param {Number} layoutLength Distance that the axis spans.
+     * @param {Number} count Number of labels.
+     * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @param {Array} Array containing values for axis labels.
+     * @return Array
+     * @private
+     */
+    _getLabelData: function(constantVal, staticCoord, dynamicCoord, min, max, edgeOffset, layoutLength, count, dataValues)
+    {
+        var labelValue,
+            i,
+            points = [],
+            values = [],
+            point,
+            labelIndex,
+            data = this.get("data"),
+            offset = edgeOffset;
+        dataValues = dataValues || data;
+        for(i = 0; i < count; i = i + 1)
+        {
+            labelValue = dataValues[i];
+            labelIndex = Y.Array.indexOf(data, labelValue);
+            if(Y_Lang.isNumber(labelIndex) && labelIndex > -1)
+            {
+                point = {};
+                point[staticCoord] = constantVal;
+                point[dynamicCoord] = this._getCoordFromValue(
+                    min,
+                    max,
+                    layoutLength,
+                    labelIndex,
+                    offset
+                );
+                points.push(point);
+                values.push(labelValue);
+            }
+        }
+        return {
+            points: points,
+            values: values
+        };
     }
 });
 

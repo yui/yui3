@@ -726,6 +726,18 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame('bar', model.get('bar'));
     },
 
+    'setAttrs() should not modify the passed-in `options` object': function () {
+        var model   = new this.TestModel(),
+            options = {foo: 'foo'};
+
+        ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(options));
+
+        model.setAttrs({bar: 'bar'}, options);
+
+        Assert.areSame('bar', model.get('bar'));
+        ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(options));
+    },
+
     'sync() should just call the supplied callback by default': function () {
         var calls = 0,
             model = new this.TestModel();

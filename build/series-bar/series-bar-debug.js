@@ -60,7 +60,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     {
         if(this._markers && this._markers[i])
         {
-            var styles = Y.clone(this.get("styles").marker),
+            var styles = this._copyObject(this.get("styles").marker),
                 markerStyles,
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
@@ -68,7 +68,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 marker = this._markers[i],
                 markers,
                 seriesCollection = this.get("seriesTypeCollection"),
-                seriesLen = seriesCollection.length,
+                seriesLen = seriesCollection ? seriesCollection.length : 0,
                 seriesStyles,
                 seriesSize = 0,
                 offset = 0,
@@ -77,7 +77,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 ys = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state];
+            markerStyles = state === "off" || !styles[state] ? styles : styles[state];
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);

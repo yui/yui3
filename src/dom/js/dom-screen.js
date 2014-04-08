@@ -31,7 +31,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 if (Y.UA.ie) {
     if (Y.config.doc[COMPAT_MODE] !== 'BackCompat') {
-        SCROLL_NODE = DOCUMENT_ELEMENT; 
+        SCROLL_NODE = DOCUMENT_ELEMENT;
     } else {
         SCROLL_NODE = 'body';
     }
@@ -39,7 +39,7 @@ if (Y.UA.ie) {
 
 Y.mix(Y_DOM, {
     /**
-     * Returns the inner height of the viewport (exludes scrollbar). 
+     * Returns the inner height of the viewport (exludes scrollbar).
      * @method winHeight
      * @return {Number} The current height of the viewport.
      */
@@ -50,7 +50,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Returns the inner width of the viewport (exludes scrollbar). 
+     * Returns the inner width of the viewport (exludes scrollbar).
      * @method winWidth
      * @return {Number} The current width of the viewport.
      */
@@ -61,7 +61,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Document height 
+     * Document height
      * @method docHeight
      * @return {Number} The current height of the document.
      */
@@ -72,7 +72,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Document width 
+     * Document width
      * @method docWidth
      * @return {Number} The current width of the document.
      */
@@ -83,7 +83,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Amount page has been scroll horizontally 
+     * Amount page has been scroll horizontally
      * @method docScrollX
      * @return {Number} The current amount the screen is scrolled horizontally.
      */
@@ -95,7 +95,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Amount page has been scroll vertically 
+     * Amount page has been scroll vertically
      * @method docScrollY
      * @return {Number} The current amount the screen is scrolled vertically.
      */
@@ -107,7 +107,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Gets the current position of an element based on page coordinates. 
+     * Gets the current position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getXY
@@ -143,7 +143,7 @@ Y.mix(Y_DOM, {
 
                     // inline inDoc check for perf
                     if (rootNode.contains) {
-                        inDoc = rootNode.contains(node); 
+                        inDoc = rootNode.contains(node);
                     } else {
                         inDoc = Y.DOM.contains(rootNode, node);
                     }
@@ -172,20 +172,20 @@ Y.mix(Y_DOM, {
                         if (offX || offY) {
                                 xy[0] -= offX;
                                 xy[1] -= offY;
-                            
+
                         }
                         if ((scrollTop || scrollLeft)) {
                             if (!Y.UA.ios || (Y.UA.ios >= 4.2)) {
                                 xy[0] += scrollLeft;
                                 xy[1] += scrollTop;
                             }
-                            
+
                         }
                     } else {
-                        xy = Y_DOM._getOffset(node);       
+                        xy = Y_DOM._getOffset(node);
                     }
                 }
-                return xy;                   
+                return xy;
             };
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
@@ -226,7 +226,7 @@ Y.mix(Y_DOM, {
                                 if (Y.UA.gecko && (Y_DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
                                         xy = Y_DOM._calcBorders(parentNode, xy);
                                 }
-                                
+
 
                                 if (scrollTop || scrollLeft) {
                                     xy[0] -= scrollLeft;
@@ -246,7 +246,7 @@ Y.mix(Y_DOM, {
                     }
                 }
 
-                return xy;                
+                return xy;
             };
         }
     }(),// NOTE: Executing for loadtime branching
@@ -264,7 +264,7 @@ Y.mix(Y_DOM, {
             body     = doc.getElementsByTagName('body')[0],
             // 0.1 because cached doesn't support falsy refetch values
             width    = 0.1;
-            
+
         if (body) {
             testNode.style.cssText = "position:absolute;visibility:hidden;overflow:scroll;width:20px;";
             testNode.appendChild(doc.createElement('p')).style.height = '1px';
@@ -278,7 +278,7 @@ Y.mix(Y_DOM, {
     }, null, 0.1),
 
     /**
-     * Gets the current X position of an element based on page coordinates. 
+     * Gets the current X position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getX
@@ -291,7 +291,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Gets the current Y position of an element based on page coordinates. 
+     * Gets the current Y position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getY
@@ -321,7 +321,7 @@ Y.mix(Y_DOM, {
         if (node && xy) {
             pos = Y_DOM.getStyle(node, POSITION);
 
-            delta = Y_DOM._getOffset(node);       
+            delta = Y_DOM._getOffset(node);
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
@@ -339,10 +339,10 @@ Y.mix(Y_DOM, {
             if (!noRetry) {
                 newXY = Y_DOM.getXY(node);
                 if (newXY[0] !== xy[0] || newXY[1] !== xy[1]) {
-                    Y_DOM.setXY(node, xy, true); 
+                    Y_DOM.setXY(node, xy, true);
                 }
             }
-          
+
             Y.log('setXY setting position to ' + xy, 'info', 'dom-screen');
         } else {
             Y.log('setXY failed to set ' + node + ' to ' + xy, 'info', 'dom-screen');
@@ -408,7 +408,7 @@ Y.mix(Y_DOM, {
 
         if ( mode && !Y.UA.opera ) { // IE, Gecko
             if (mode != 'CSS1Compat') { // Quirks
-                root = doc.body; 
+                root = doc.body;
             }
             h = root.clientHeight;
             w = root.clientWidth;

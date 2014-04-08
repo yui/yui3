@@ -6,6 +6,7 @@ YUI.add('axis-category-base', function (Y, NAME) {
  * @module charts
  * @submodule axis-category-base
  */
+var Y_Lang = Y.Lang;
 
 /**
  * CategoryImpl contains logic for managing category data. CategoryImpl is used by the following classes:
@@ -34,7 +35,7 @@ CategoryImpl.ATTRS = {
     calculateEdgeOffset: {
         value: true
     }
-        
+
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
      * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
@@ -54,10 +55,9 @@ CategoryImpl.prototype = {
      *
      * @method formatLabel
      * @param {Object} value
-     * @param {Object} format Pattern used to format the value.
      * @return String
      */
-    formatLabel: function(val, format)
+    formatLabel: function(val)
     {
         return val;
     },
@@ -159,9 +159,42 @@ CategoryImpl.prototype = {
      * @param {Number} len Length of the axis.
      * @return Number
      */
-    getTotalMajorUnits: function(majorUnit, len)
+    getTotalMajorUnits: function()
     {
         return this.get("data").length;
+    },
+
+    /**
+     * Returns a coordinate corresponding to a data values.
+     *
+     * @method _getCoordFromValue
+     * @param {Number} min The minimum for the axis.
+     * @param {Number} max The maximum for the axis.
+     * @param {length} length The distance that the axis spans.
+     * @param {Number} dataValue A value used to ascertain the coordinate.
+     * @param {Number} offset Value in which to offset the coordinates.
+     * @param {Boolean} reverse Indicates whether the coordinates should start from
+     * the end of an axis. Only used in the numeric implementation.
+     * @return Number
+     * @private
+     */
+    _getCoordFromValue: function(min, max, length, dataValue, offset)
+    {
+        var range,
+            multiplier,
+            valuecoord;
+        if(Y_Lang.isNumber(dataValue))
+        {
+            range = max - min;
+            multiplier = length/range;
+            valuecoord = (dataValue - min) * multiplier;
+            valuecoord = offset + valuecoord;
+        }
+        else
+        {
+            valuecoord = NaN;
+        }
+        return valuecoord;
     },
 
     /**

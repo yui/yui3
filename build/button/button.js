@@ -7,9 +7,10 @@ YUI.add('button', function (Y, NAME) {
  * @since 3.5.0
  */
 
-var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
-    ARIA_STATES = Y.ButtonCore.ARIA_STATES,
-    ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
+var ButtonCore = Y.ButtonCore,
+    CLASS_NAMES = ButtonCore.CLASS_NAMES,
+    ARIA_STATES = ButtonCore.ARIA_STATES,
+    ARIA_ROLES = ButtonCore.ARIA_ROLES;
 
 /**
  * Creates a Button
@@ -27,6 +28,8 @@ function Button() {
 /* Button extends Widget */
 Y.extend(Button, Y.Widget,  {
 
+    // Y.Button prototype properties
+
     /**
      * Bounding box template that will contain the Button's DOM subtree.
      *
@@ -34,7 +37,7 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default <button/>
      */
-    BOUNDING_TEMPLATE : Y.ButtonCore.prototype.TEMPLATE,
+    BOUNDING_TEMPLATE : ButtonCore.prototype.TEMPLATE,
 
     /**
      * Content box template
@@ -43,68 +46,10 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default null
      */
-    CONTENT_TEMPLATE  : null,
-
-    /**
-     * @method initializer
-     * @description Internal init() handler.
-     * @param config {Object} Config object.
-     * @private
-     */
-    initializer: function(config) {
-        // ButtonCore requires this
-        this._host = this.get('boundingBox');
-
-        // A workaround until there's a better way to handle setting Node attributes
-        // via HTML parsing in classes that extend Widget
-        if (config.disabled) {
-            this.set('disabled', config.disabled);
-        }
-    },
-
-    /**
-     * bindUI implementation
-     *
-     * @description Hooks up events for the widget
-     * @method bindUI
-     */
-    bindUI: function() {
-        var button = this;
-        button.after('labelChange', button._afterLabelChange);
-        button.after('disabledChange', button._afterDisabledChange);
-    },
-
-    /**
-     * @method syncUI
-     * @description Updates button attributes
-     */
-    syncUI: function() {
-        var button = this;
-        Y.ButtonCore.prototype._uiSetLabel.call(button, button.get('label'));
-        Y.ButtonCore.prototype._uiSetDisabled.call(button, button.get('disabled'));
-    },
-
-    /**
-     * @method _afterLabelChange
-     * @private
-     */
-    _afterLabelChange: function(e) {
-        Y.ButtonCore.prototype._uiSetLabel.call(this, e.newVal);
-    },
-
-    /**
-     * @method _afterDisabledChange
-     * @private
-     */
-    _afterDisabledChange: function(e) {
-        // Unable to use `this._uiSetDisabled` because that points
-        // to `Y.Widget.prototype._uiSetDisabled`.
-        // This works for now.
-        // @TODO Investigate most appropriate solution.
-        Y.ButtonCore.prototype._uiSetDisabled.call(this, e.newVal);
-    }
+    CONTENT_TEMPLATE : null
 
 }, {
+
     // Y.Button static properties
 
     /**
@@ -117,7 +62,7 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    NAME: 'button',
+    NAME: ButtonCore.NAME,
 
     /**
      * Static property used to define the default attribute configuration of
@@ -128,18 +73,29 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    ATTRS: {
+    ATTRS: ButtonCore.ATTRS,
 
-        /**
-         * The text of the button (the `value` or `text` property)
-         *
-         * @attribute label
-         * @type String
-         */
-        label: {
-            value: Y.ButtonCore.ATTRS.label.value
-        }
-    },
+    /**
+     * The text of the button's label
+     *
+     * @attribute label
+     * @type String
+     */
+
+    /**
+     * The HTML of the button's label
+     *
+     * This attribute accepts HTML and inserts it into the DOM **without**
+     * sanitization.  This attribute should only be used with HTML that has
+     * either been escaped (using `Y.Escape.html`), or sanitized according to
+     * the requirements of your application.
+     *
+     * If all you need is support for text labels, please use the `label`
+     * attribute instead.
+     *
+     * @attribute labelHTML
+     * @type HTML
+     */
 
     /**
      * @property HTML_PARSER
@@ -148,14 +104,8 @@ Y.extend(Button, Y.Widget,  {
      * @static
      */
     HTML_PARSER: {
-        label: function(node) {
-            this._host = node; // TODO: remove
-            return this._getLabel();
-        },
-
-        disabled: function(node) {
-            return node.getDOMNode().disabled;
-        }
+        labelHTML: ButtonCore._getHTMLFromNode,
+        disabled: ButtonCore._getDisabledFromNode
     },
 
     /**
@@ -168,7 +118,7 @@ Y.extend(Button, Y.Widget,  {
     CLASS_NAMES: CLASS_NAMES
 });
 
-Y.mix(Button.prototype, Y.ButtonCore.prototype);
+Y.mix(Button.prototype, ButtonCore.prototype);
 
 /**
  * Creates a ToggleButton
@@ -203,7 +153,7 @@ Y.extend(ToggleButton, Button,  {
      * @default
      */
     selectedAttrName: '',
-    
+
     /**
      *
      * @method initializer
@@ -213,15 +163,15 @@ Y.extend(ToggleButton, Button,  {
             type = button.get('type'),
             selectedAttrName = (type === "checkbox" ? 'checked' : 'pressed'),
             selectedState = config[selectedAttrName] || false;
-        
+
         // Create the checked/pressed attribute
         button.addAttr(selectedAttrName, {
             value: selectedState
         });
-        
+
         button.selectedAttrName = selectedAttrName;
     },
-    
+
     /**
      *
      * @method destructor
@@ -229,7 +179,7 @@ Y.extend(ToggleButton, Button,  {
     destructor: function () {
         delete this.selectedAttrName;
     },
-    
+
     /**
      * @method bindUI
      * @description Hooks up events for the widget
@@ -237,9 +187,9 @@ Y.extend(ToggleButton, Button,  {
     bindUI: function() {
          var button = this,
              cb = button.get('contentBox');
-        
+
         ToggleButton.superclass.bindUI.call(button);
-        
+
         cb.on(button.trigger, button.toggle, button);
         button.after(button.selectedAttrName + 'Change', button._afterSelectedChange);
     },
@@ -257,11 +207,11 @@ Y.extend(ToggleButton, Button,  {
             selectedAttrName = button.selectedAttrName;
 
         ToggleButton.superclass.syncUI.call(button);
-        
+
         cb.set('role', role);
         button._uiSetSelected(button.get(selectedAttrName));
     },
-    
+
     /**
      * @method _afterSelectedChange
      * @private
@@ -269,7 +219,7 @@ Y.extend(ToggleButton, Button,  {
     _afterSelectedChange: function(e){
         this._uiSetSelected(e.newVal);
     },
-    
+
     /**
      * @method _uiSetSelected
      * @private
@@ -280,11 +230,11 @@ Y.extend(ToggleButton, Button,  {
             STATES = ToggleButton.ARIA_STATES,
             type = button.get('type'),
             ariaState = (type === 'checkbox' ? STATES.CHECKED : STATES.PRESSED);
-        
+
         cb.toggleClass(Button.CLASS_NAMES.SELECTED, value);
         cb.set(ariaState, value);
     },
-    
+
     /**
      * @method toggle
      * @description Toggles the selected/pressed/checked state of a ToggleButton
@@ -296,7 +246,7 @@ Y.extend(ToggleButton, Button,  {
     }
 
 }, {
-    
+
     /**
      * The identity of the widget.
      *
@@ -308,7 +258,7 @@ Y.extend(ToggleButton, Button,  {
      * @static
      */
     NAME: 'toggleButton',
-    
+
     /**
      * Static property used to define the default attribute configuration of
      * the Widget.
@@ -331,7 +281,7 @@ Y.extend(ToggleButton, Button,  {
             writeOnce: 'initOnly'
         }
     },
-    
+
     /**
      * @property HTML_PARSER
      * @type {Object}
@@ -346,7 +296,7 @@ Y.extend(ToggleButton, Button,  {
             return node.hasClass(CLASS_NAMES.SELECTED);
         }
     },
-    
+
     /**
      * @property ARIA_STATES
      * @type {Object}
@@ -371,7 +321,7 @@ Y.extend(ToggleButton, Button,  {
      * @static
      */
     CLASS_NAMES: CLASS_NAMES
-    
+
 });
 
 // Export

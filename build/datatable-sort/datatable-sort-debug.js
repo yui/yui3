@@ -555,9 +555,8 @@ Y.mix(Sortable.prototype, {
     **/
     _onUITriggerSort: function (e) {
         var id = e.currentTarget.getAttribute('data-yui3-col-id'),
-            sortBy = e.shiftKey ? this.get('sortBy') : [{}],
             column = id && this.getColumn(id),
-            i, len;
+            sortBy, i, len;
 
         if (e.type === 'keydown' && e.keyCode !== 32) {
             return;
@@ -569,6 +568,8 @@ Y.mix(Sortable.prototype, {
 
         if (column) {
             if (e.shiftKey) {
+                sortBy = this.get('sortBy') || [];
+
                 for (i = 0, len = sortBy.length; i < len; ++i) {
                     if (id === sortBy[i]  || Math.abs(sortBy[i][id]) === 1) {
                         if (!isObject(sortBy[i])) {
@@ -584,6 +585,8 @@ Y.mix(Sortable.prototype, {
                     sortBy.push(column._id);
                 }
             } else {
+                sortBy = [{}];
+
                 sortBy[0][id] = -(column.sortDir||0) || 1;
             }
 
@@ -844,10 +847,16 @@ Y.mix(Sortable.prototype, {
                 }
 
                 title = sub(this.getString(
-                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), {
+                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), // get string
+                    {
+                        title:  col.title || '',
+                        key:    col.key || '',
+                        abbr:   col.abbr || '',
+                        label:  col.label || '',
                         column: col.abbr || col.label ||
                                 col.key  || ('column ' + i)
-                });
+                    }
+                );
 
                 node.setAttribute('title', title);
                 // To combat VoiceOver from reading the sort title as the
@@ -889,8 +898,82 @@ Y.mix(Sortable.prototype, {
 }, true);
 
 Y.DataTable.Sortable = Sortable;
+/**
+Used when the instance's `sortable` attribute is set to
+"auto" (the default) to determine which columns will support
+user sorting by clicking on the header.
+
+If the instance's `key` attribute is not set, this
+configuration is ignored.
+
+    { key: 'lastLogin', sortable: true }
+
+@property sortable
+@type Boolean
+@for DataTable.Column
+ */
+/**
+When the instance's `caseSensitive` attribute is set to
+`true` the sort order is case sensitive (relevant to string columns only).
+
+Case sensitive sort is marginally more efficient and should be considered
+for large data sets when case insensitive sort is not required.
+
+    { key: 'lastLogin', sortable: true, caseSensitive: true }
+
+@property caseSensitive
+@type Boolean
+@for DataTable.Column
+ */
+/**
+Allows a column to be sorted using a custom algorithm.  The
+function receives three parameters, the first two being the
+two record Models to compare, and the third being a boolean
+`true` if the sort order should be descending.
+
+The function should return `1` to sort `a` above `b`, `-1`
+to sort `a` below `b`, and `0` if they are equal.  Keep in
+mind that the order should be reversed when `desc` is
+`true`.
+
+The `desc` parameter is provided to allow `sortFn`s to
+always sort certain values above or below others, such as
+always sorting `null`s on top.
+
+    {
+      label: 'Name',
+      sortFn: function (a, b, desc) {
+        var an = a.get('lname') + b.get('fname'),
+            bn = a.get('lname') + b.get('fname'),
+            order = (an > bn) ? 1 : -(an < bn);
+
+        return desc ? -order : order;
+      },
+      formatter: function (o) {
+        return o.data.lname + ', ' + o.data.fname;
+      }
+    }
+
+@property sortFn
+@type Function
+@for DataTable.Column
+*/
+/**
+(__read-only__) If a column is sorted, this
+will be set to `1` for ascending order or `-1` for
+descending.  This configuration is public for inspection,
+but can't be used during DataTable instantiation to set the
+sort direction of the column.  Use the table's
+[sortBy](DataTable.html#attr_sortBy)
+attribute for that.
+
+@property sortDir
+@type {Number}
+@readOnly
+@for DataTable.Column
+*/
 
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "hu"], "skinnable": true});

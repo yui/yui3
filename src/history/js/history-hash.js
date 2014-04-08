@@ -143,7 +143,7 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      * @final
      */
-    _REGEX_HASH: /([^\?#&]+)=([^&]+)/g,
+    _REGEX_HASH: /([^\?#&=]+)=?([^&=]*)/g,
 
     // -- Public Static Methods ------------------------------------------------
 
@@ -254,6 +254,7 @@ Y.extend(HistoryHash, HistoryBase, {
         var decode = HistoryHash.decode,
             i,
             len,
+            match,
             matches,
             param,
             params = {},
@@ -273,8 +274,15 @@ Y.extend(HistoryHash, HistoryBase, {
         matches = hash.match(HistoryHash._REGEX_HASH) || [];
 
         for (i = 0, len = matches.length; i < len; ++i) {
-            param = matches[i].split('=');
-            params[decode(param[0])] = decode(param[1]);
+            match = matches[i];
+
+            param = match.split('=');
+
+            if (param.length > 1) {
+                params[decode(param[0])] = decode(param[1]);
+            } else {
+                params[decode(match)] = '';
+            }
         }
 
         return params;

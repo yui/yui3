@@ -6,7 +6,7 @@
                 "requires": [
                     "yui-base"
                 ]
-            }, 
+            },
             "pluginhost-config": {
                 "requires": [
                     "pluginhost-base"

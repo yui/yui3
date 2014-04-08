@@ -88,7 +88,7 @@ YUI.add('general-tests', function(Y) {
         },
         _should: {
             error: {
-                'test: resume without wait': true,
+                'test: resume without wait': true
             },
             fail: {
                 'test: wait without function': true
@@ -96,6 +96,141 @@ YUI.add('general-tests', function(Y) {
         }
     }));
 
+    suite.add(new Y.Test.Case({
+        name: 'waitFor',
+
+        _should: {
+            fail: {
+                'waitFor() without params should fail': true,
+                'waitFor(nonFn, fn) should fail': true,
+                'waitFor(fn, nonFn) should fail': true,
+                'waitFor(falseFn, fn) should fail': true,
+                'waitFor(trueFn, failFn) should fail': true,
+                'waitFor(falseFn, yfn, smallTimeout) should fail before default wait time': true
+            }
+        },
+
+        'waitFor() without params should fail': function () {
+            this.waitFor();
+        },
+
+        'waitFor(nonFn, fn) should fail': function () {
+            this.waitFor('boom', function () {});
+        },
+
+        'waitFor(fn, nonFn) should fail': function () {
+            this.waitFor(function () {}, 'boom');
+        },
+
+        '`this` in waitFor(HERE, fn) should be the TestCase': function () {
+            var self = this,
+                conditionThis;
+
+            self.waitFor(function () {
+                conditionThis = this;
+                return true;
+            }, function () {
+                self.assert(self === conditionThis);
+            });
+        },
+
+        '`this` in waitFor(fn, HERE) should be the TestCase': function () {
+            var self = this;
+
+            self.waitFor(function () { return true; }, function () {
+                self.assert(self === this);
+            });
+        },
+
+        'waitFor(falseFn, fn) should fail': function () {
+            this.waitFor(function () { return false; }, function () {
+                this.assert(true);
+            });
+        },
+
+        'waitFor(trueFn, failFn) should fail': function () {
+            this.waitFor(function () { return true; }, function () {
+                this.fail('failure === success!');
+            });
+        },
+
+        'waitFor(xfn, yfn) should call xfn multiple times until it returns true': function () {
+            var remaining = 3;
+
+            this.waitFor(function () {
+                return !(--remaining);
+            }, function () {
+                this.assert(remaining === 0, 'waitFor() conditional function called ' + remaining + ' fewer times than expected');
+            });
+        },
+
+        // FIXME: This is an unreliable test because if the process is so busy
+        // that it can't free up a tick to call teh condition before the
+        // default 10s is up, the test will fail, which is an indicator of
+        // success. So, false positive. I can't think of a better way to test
+        // this, though, and it seems pretty unlikely to end up "failing" in
+        // that way, so here it is.
+        'waitFor(falseFn, yfn, smallTimeout) should fail before default wait time': function () {
+            var tooLate = (+new Date()) + 2000,
+                called;
+
+            this.waitFor(function () {
+                if (called && (+new Date()) > tooLate) {
+                    // Pass === fail
+                    this.assert('condition called well past specified timeout');
+                }
+
+                // Hack to avoid race condition with busy event loop not
+                // freeing up a tick before the full 10s wait timeout. The
+                // hope is that if the process isn't so bogged down that it
+                // can call the condition once, it can call it multiple times.
+                called = true;
+
+                return false;
+            }, function () {
+                // Pass === fail
+                this.assert('segment should not have been called');
+            }, 300);
+        },
+
+        // FIXME: This is a textbook race condition. It may fail due to process
+        // load interfering with event loop fidelity. If you can think of a
+        // better way to test it, please do so. Otherwise, if you think this
+        // shouldn't even be here, please comment it out so there's a history
+        // of the issue being avoided.
+        'waitFor(xfn, fn, null, smallIncrement) should call xfn more frequently than default increment': function () {
+            var firstPass = 0,
+                secondPass = 0,
+                milestoneReached;
+
+            setTimeout(function () {
+                milestoneReached = true;
+            }, 1000);
+
+            this.waitFor(function () {
+                firstPass++;
+
+                return milestoneReached;
+            }, function () {
+                milestoneReached = false;
+
+                setTimeout(function () {
+                    milestoneReached = true;
+                }, 1000);
+
+                this.waitFor(function () {
+                    secondPass++;
+
+                    return milestoneReached;
+                }, function () {
+                    // TODO: can this be refined in a reasonable way? This is
+                    // pretty arbitrary
+                    this.assert(firstPass > (secondPass * 1.5));
+                }, null, 200);
+            }, null, 20);
+        }
+
+    }));
 
     suite.add(new Y.Test.Case({
         name: 'Suite/Case Tests',
@@ -337,19 +472,27 @@ YUI.add('general-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Reporter',
         'test: report': function() {
-            var url = "http://foobar.com/";
-            var reporter = new Y.Test.Reporter(url, Y.Test.Format.JSON);
+            var url = "http://foobar.com/",
+                reporter = new Y.Test.Reporter(url, Y.Test.Format.JSON),
+                form,
+                foo,
+                results,
+                json;
             reporter.addField('foo', 'bar');
 
-
-            var json = Y.Test.Format.JSON(simpleReport);
+            json = Y.Test.Format.JSON(simpleReport);
             reporter.report(simpleReport, false);
-
+            
             Assert.isNotNull(reporter._form);
             Assert.areEqual(url, reporter.url);
-            Assert.areEqual(json, reporter._form.results.value);
-            Assert.areEqual('bar', reporter._form.foo.value);
-
+            
+            form = Y.one(reporter._form);
+            foo = form.one('input[name=foo]');
+            results = form.one('input[name=results]');
+            
+            Assert.areEqual("bar", foo.get('value'));
+            Assert.areEqual(json, results.get('value'));
+            
             reporter.clearFields();
 
             reporter.destroy();

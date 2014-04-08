@@ -13,6 +13,31 @@ var L            = Y.Lang,
     hasOwn   = OP.hasOwnProperty,
     toString = OP.toString;
 
+/**
+Calls the specified _action_ method on _o_ if it exists. Otherwise, if _o_ is an
+array, calls the _action_ method on `Y.Array`, or if _o_ is an object, calls the
+_action_ method on `Y.Object`.
+
+If _o_ is an array-like object, it will be coerced to an array.
+
+This is intended to be used with array/object iteration methods that share
+signatures, such as `each()`, `some()`, etc.
+
+@method dispatch
+@param {Object} o Array or object to dispatch to.
+@param {Function} f Iteration callback.
+    @param {Mixed} f.value Value being iterated.
+    @param {Mixed} f.key Current object key or array index.
+    @param {Mixed} f.object Object or array being iterated.
+@param {Object} c `this` object to bind the iteration callback to.
+@param {Boolean} proto If `true`, prototype properties of objects will be
+    iterated.
+@param {String} action Function name to be dispatched on _o_. For example:
+    'some', 'each', etc.
+@private
+@return {Mixed} Returns the value returned by the chosen iteration action, which
+    varies.
+**/
 function dispatch(o, f, c, proto, action) {
     if (o && o[action] && o !== Y) {
         return o[action].call(o, f, c);
@@ -231,56 +256,66 @@ Y.some = function(o, f, c, proto) {
 };
 
 /**
- * Deep object/array copy.  Function clones are actually
- * wrappers around the original function.
- * Array-like objects are treated as arrays.
- * Primitives are returned untouched.  Optionally, a
- * function can be provided to handle other data types,
- * filter keys, validate values, etc.
- *
- * NOTE: Cloning a non-trivial object is a reasonably heavy operation, due to
- * the need to recurrsively iterate down non-primitive properties. Clone
- * should be used only when a deep clone down to leaf level properties
- * is explicitly required.
- *
- * In many cases (for example, when trying to isolate objects used as 
- * hashes for configuration properties), a shallow copy, using Y.merge is 
- * normally sufficient. If more than one level of isolation is required, 
- * Y.merge can be used selectively at each level which needs to be 
- * isolated from the original without going all the way to leaf properties.
- *
- * @method clone
- * @param {object} o what to clone.
- * @param {boolean} safe if true, objects will not have prototype
- * items from the source.  If false, they will.  In this case, the
- * original is initially protected, but the clone is not completely
- * immune from changes to the source object prototype.  Also, cloned
- * prototype items that are deleted from the clone will result
- * in the value of the source prototype being exposed.  If operating
- * on a non-safe clone, items should be nulled out rather than deleted.
- * @param {function} f optional function to apply to each item in a
- * collection; it will be executed prior to applying the value to
- * the new object.  Return false to prevent the copy.
- * @param {object} c optional execution context for f.
- * @param {object} owner Owner object passed when clone is iterating
- * an object.  Used to set up context for cloned functions.
- * @param {object} cloned hash of previously cloned objects to avoid
- * multiple clones.
- * @return {Array|Object} the cloned object.
- */
+Deep object/array copy. Function clones are actually wrappers around the
+original function. Array-like objects are treated as arrays. Primitives are
+returned untouched. Optionally, a function can be provided to handle other data
+types, filter keys, validate values, etc.
+
+**Note:** Cloning a non-trivial object is a reasonably heavy operation, due to
+the need to recursively iterate down non-primitive properties. Clone should be
+used only when a deep clone down to leaf level properties is explicitly
+required. This method will also
+
+In many cases (for example, when trying to isolate objects used as hashes for
+configuration properties), a shallow copy, using `Y.merge()` is normally
+sufficient. If more than one level of isolation is required, `Y.merge()` can be
+used selectively at each level which needs to be isolated from the original
+without going all the way to leaf properties.
+
+@method clone
+@param {object} o what to clone.
+@param {boolean} safe if true, objects will not have prototype items from the
+    source. If false, they will. In this case, the original is initially
+    protected, but the clone is not completely immune from changes to the source
+    object prototype. Also, cloned prototype items that are deleted from the
+    clone will result in the value of the source prototype being exposed. If
+    operating on a non-safe clone, items should be nulled out rather than
+    deleted.
+@param {function} f optional function to apply to each item in a collection; it
+    will be executed prior to applying the value to the new object.
+    Return false to prevent the copy.
+@param {object} c optional execution context for f.
+@param {object} owner Owner object passed when clone is iterating an object.
+    Used to set up context for cloned functions.
+@param {object} cloned hash of previously cloned objects to avoid multiple
+    clones.
+@return {Array|Object} the cloned object.
+**/
 Y.clone = function(o, safe, f, c, owner, cloned) {
+    var o2, marked, stamp;
 
-    if (!L.isObject(o)) {
+    // Does not attempt to clone:
+    //
+    // * Non-typeof-object values, "primitive" values don't need cloning.
+    //
+    // * YUI instances, cloning complex object like YUI instances is not
+    //   advised, this is like cloning the world.
+    //
+    // * DOM nodes (#2528250), common host objects like DOM nodes cannot be
+    //   "subclassed" in Firefox and old versions of IE. Trying to use
+    //   `Object.create()` or `Y.extend()` on a DOM node will throw an error in
+    //   these browsers.
+    //
+    // Instad, the passed-in `o` will be return as-is when it matches one of the
+    // above criteria.
+    if (!L.isObject(o) ||
+            Y.instanceOf(o, YUI) ||
+            (o.addEventListener || o.attachEvent)) {
+
         return o;
     }
 
-    // @todo cloning YUI instances doesn't currently work
-    if (Y.instanceOf(o, YUI)) {
-        return o;
-    }
-
-    var o2, marked = cloned || {}, stamp,
-        yeach = Y.each;
+    marked = cloned || {};
 
     switch (L.type(o)) {
         case 'date':
@@ -311,23 +346,20 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
             marked[stamp] = o;
     }
 
-    // #2528250 don't try to clone element properties
-    if (!o.addEventListener && !o.attachEvent) {
-        yeach(o, function(v, k) {
-if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
-                if (k !== CLONE_MARKER) {
-                    if (k == 'prototype') {
-                        // skip the prototype
-                    // } else if (o[k] === o) {
-                    //     this[k] = this;
-                    } else {
-                        this[k] =
-                            Y.clone(v, safe, f, c, owner || o, marked);
-                    }
+    Y.each(o, function(v, k) {
+        if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
+            if (k !== CLONE_MARKER) {
+                if (k == 'prototype') {
+                    // skip the prototype
+                // } else if (o[k] === o) {
+                //     this[k] = this;
+                } else {
+                    this[k] =
+                        Y.clone(v, safe, f, c, owner || o, marked);
                 }
             }
-        }, o2);
-    }
+        }
+    }, o2);
 
     if (!cloned) {
         Y.Object.each(marked, function(v, k) {
@@ -344,7 +376,6 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
 
     return o2;
 };
-
 
 /**
  * Returns a function that will execute the supplied function in the

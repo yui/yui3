@@ -1,6 +1,66 @@
 History Change History
 ======================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+---------
+
+* Fixed a possible exception in `HistoryHTML5._init()` in IE10.
+  [Ariel Schiavoni]
+
+* Added a workaround for a `replaceState` bug in Chrome/WebKit.
+  ([#1159][]: @roblund)
+
+* Fixed issue with `parseHash` not parsing blank values in hash string.
+  ([#1116][]: @blzaugg)
+
+[#1116]: https://github.com/yui/yui3/issues/1116
+[#1159]: https://github.com/yui/yui3/issues/1159
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

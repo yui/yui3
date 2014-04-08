@@ -1,6 +1,61 @@
 Charts Change History
 =====================
 
+3.14.1
+------
+
+* #1475 Address issue in which _maxSize property was not updated for single series histogram causing the column/bar to disappear
+on mouseover.  
+
+3.14.0
+------
+
+* #1402 Remove Y.Clone.
+* #1393 Address issue in which Candlestick series does not render nicely when there are large amounts of data.
+* #1392 Address issue in which histograms threw errors when groupMarkers is set to true and there is missing data.
+* #1391 Address issue in which histograms did not always size and space properly when used outside of charts app.
+* #1390 Address issue in which histograms threw error when used independently from the larger chart app.
+* #1382 Address issue in which first/last values were removed from axis when hideFirstMajorUnit/hideLastMajorUnit were set to true.
+* #1381 Added ability to offset labels in Axis.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* #716 Added logarithmic scaling.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+  * #743 Addressed issue in which styles don't map correctly to a legend when series are styled using a global style object. 
+  * #706 Addressed issue in which the legend did not honor specified series marker style for shape. 
+
+3.10.0
+------
+
+  * #2533184 Addressed issue in which Axis.getEdgeOffset was returning an incorrect value.
+  * #2533130 Added hideFirstMajorUnit and hideLastMajorUnit attributes to axis classes allowing for suppression of rendering the first/last label and tick on an axis.
+  * #2533128 Add ability for axis to generate labels and their position from an array of values.  
+
+3.9.1
+-----
+
+  * #2533120 Removed all lint warnings.
+
 3.9.0
 -----
 

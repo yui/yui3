@@ -3,7 +3,8 @@
     "builds": {
         "node-style": {
             "jsfiles": [
-                "node-style.js"
+                "node-style.js",
+                "node-view.js"
             ]
         },
         "node-event-simulate": {
@@ -37,11 +38,6 @@
                 "node-event-delegate.js"
             ]
         },
-        "node-deprecated": {
-            "jsfiles": [
-                "node-deprecated.js"
-            ]
-        },
         "node-core": {
             "jsfiles": [
                 "node-core.js",
@@ -57,7 +53,6 @@
                 "node-attrs.js",
                 "node-event.js",
                 "node-size.js",
-                "node-view.js",
                 "node-ie.js",
                 "node-data.js"
             ]

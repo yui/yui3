@@ -1,3 +1,7 @@
+    /*For log lines*/
+    /*jshint maxlen:200*/
+
+
     /**
      * The attribute module provides an augmentable Attribute implementation, which
      * adds configurable attributes and attribute change events to the class being
@@ -18,8 +22,7 @@
     var EventTarget = Y.EventTarget,
 
         CHANGE = "Change",
-        BROADCAST = "broadcast",
-        PUBLISHED = "published";
+        BROADCAST = "broadcast";
 
     /**
      * Provides an augmentable implementation of attribute change events for
@@ -125,47 +128,58 @@
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
+         * @param {Object} [cfg] The attribute config stored in State, if already available.
          */
-        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
+        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts, cfg) {
             var host = this,
-                eventName = attrName + CHANGE,
+                eventName = this._getFullType(attrName + CHANGE),
                 state = host._state,
                 facade,
                 broadcast,
-                evtCfg;
+                e;
 
-            if (!state.get(attrName, PUBLISHED)) {
-
-                evtCfg = {
-                    queuable:false,
-                    defaultTargetOnly: true,
-                    defaultFn:host._defAttrChangeFn,
-                    silent:true
-                };
-
-                broadcast = state.get(attrName, BROADCAST);
-                if (broadcast !== undefined) {
-                    evtCfg.broadcast = broadcast;
-                }
-
-                host.publish(eventName, evtCfg);
-
-                state.add(attrName, PUBLISHED, true);
+            if (!cfg) {
+                cfg = state.data[attrName] || {};
             }
 
-            facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
+            if (!cfg.published) {
+
+                // PERF: Using lower level _publish() for
+                // critical path performance
+                e = host._publish(eventName);
+
+                e.emitFacade = true;
+                e.defaultTargetOnly = true;
+                e.defaultFn = host._defAttrChangeFn;
+
+                broadcast = cfg.broadcast;
+                if (broadcast !== undefined) {
+                    e.broadcast = broadcast;
+                }
+
+                cfg.published = true;
+            }
+
+            if (opts) {
+                facade = Y.merge(opts);
+                facade._attrOpts = opts;
+            } else {
+                facade = host._ATTR_E_FACADE;
+            }
 
             // Not using the single object signature for fire({type:..., newVal:...}), since
             // we don't want to override type. Changed to the fire(type, {newVal:...}) signature.
 
-            // facade.type = eventName;
             facade.attrName = attrName;
             facade.subAttrName = subAttrName;
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            // host.fire(facade);
-            host.fire(eventName, facade);
+            if (host._hasPotentialSubscribers(eventName)) {
+                host.fire(eventName, facade);
+            } else {
+                this._setAttrVal(attrName, subAttrName, currVal, newVal, opts, cfg);
+            }
         },
 
         /**
@@ -174,16 +188,28 @@
          * @private
          * @method _defAttrChangeFn
          * @param {EventFacade} e The event object for attribute change events.
+         * @param {boolean} eventFastPath Whether or not we're using this as a fast path in the case of no listeners or not
          */
-        _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.opts)) {
-                /*jshint maxlen:200*/
+        _defAttrChangeFn : function(e, eventFastPath) {
+
+            var opts = e._attrOpts;
+            if (opts) {
+                delete e._attrOpts;
+            }
+
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, opts)) {
+
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
-                /*jshint maxlen:150*/
-                // Prevent "after" listeners from being invoked since nothing changed.
-                e.stopImmediatePropagation();
+
+                if (!eventFastPath) {
+                    // Prevent "after" listeners from being invoked since nothing changed.
+                    e.stopImmediatePropagation();
+                }
+
             } else {
-                e.newVal = this.get(e.attrName);
+                if (!eventFastPath) {
+                    e.newVal = this.get(e.attrName);
+                }
             }
         }
     };

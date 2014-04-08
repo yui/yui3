@@ -1,5 +1,6 @@
 YUI.add('series-marker-tests', function(Y) {
-    var MockMarkerSeries = Y.Base.create("mockMarkerSeries", Y.MarkerSeries, [], {
+    var DOC = Y.config.doc,
+        MockMarkerSeries = Y.Base.create("mockMarkerSeries", Y.MarkerSeries, [], {
             _markersDrawn: false,
 
             drawPlots: function() {
@@ -16,7 +17,8 @@ YUI.add('series-marker-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {

@@ -8,7 +8,7 @@
  * @class SVGEllipse
  * @constructor
  */
-SVGEllipse = function(cfg)
+SVGEllipse = function()
 {
 	SVGEllipse.superclass.constructor.apply(this, arguments);
 };

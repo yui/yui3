@@ -1,6 +1,58 @@
 Get Utility Change History
 ==========================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Preserve `global` as `this` when executing a yui module in nodejs ([#1360][])
+
+[#1360]: https://github.com/yui/yui3/pull/1360
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

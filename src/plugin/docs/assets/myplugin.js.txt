@@ -94,7 +94,7 @@
              * We only need to clean up anything we change on the host
              *             
              * It does not need to invoke the superclass destructor. 
-             * destroy() will call initializer() for all classes in the hierarchy.
+             * destroy() will call destructor() for all classes in the hierarchy.
              */
         },
 

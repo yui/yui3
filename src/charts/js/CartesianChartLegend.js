@@ -4,8 +4,7 @@
  * @module charts
  * @submodule charts-legend
  */
-var DOCUMENT = Y.config.doc,
-TOP = "top",
+var TOP = "top",
 RIGHT = "right",
 BOTTOM = "bottom",
 LEFT = "left",
@@ -18,6 +17,7 @@ POSITION = "position",
 _X = "x",
 _Y = "y",
 PX = "px",
+PieChartLegend,
 LEGEND = {
     setter: function(val)
     {
@@ -66,10 +66,9 @@ HorizontalLegendLayout = {
      * @param {Number} horizontalGap The horizontal distance between items in a legend.
      * @param {Number} verticalGap The vertical distance between items in a legend.
      * @param {String} hAlign The horizontal alignment of the legend.
-     * @param {String} vAlign The vertical alignment of the legend.
      * @protected
      */
-    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign, vAlign)
+    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign)
     {
         var i = 0,
             rowIterator = 0,
@@ -224,11 +223,10 @@ VerticalLegendLayout = {
      * @param {Number} padding The left, top, right and bottom padding properties for the legend.
      * @param {Number} horizontalGap The horizontal distance between items in a legend.
      * @param {Number} verticalGap The vertical distance between items in a legend.
-     * @param {String} hAlign The horizontal alignment of the legend.
      * @param {String} vAlign The vertical alignment of the legend.
      * @protected
      */
-    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign, vAlign)
+    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, vAlign)
     {
         var i = 0,
             columnIterator = 0,
@@ -687,10 +685,10 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
         {
             gap = legend.get("styles").gap;
             position = legend.get(POSITION);
-            if(position != EXTERNAL)
+            if(position !== EXTERNAL)
             {
                 direction = legend.get("direction");
-                dimension = direction == HORIZONTAL ? HEIGHT : WIDTH;
+                dimension = direction === HORIZONTAL ? HEIGHT : WIDTH;
                 size = legend.get(dimension);
                 box[position] = size + gap;
                 switch(position)

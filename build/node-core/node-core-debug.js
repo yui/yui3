@@ -207,7 +207,7 @@ Y_Node.addMethod = function(name, fn, context) {
             }
             args.unshift(node._node);
 
-            ret = fn.apply(node, args);
+            ret = fn.apply(context || node, args);
 
             if (ret) { // scrub truthy
                 ret = Y_Node.scrubVal(ret, node);
@@ -522,10 +522,15 @@ Y.mix(Y_Node.prototype, {
      */
     inDoc: function(doc) {
         var node = this._node;
-        doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
-        if (doc.documentElement) {
-            return Y_DOM.contains(doc.documentElement, node);
+
+        if (node) {
+            doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
+            if (doc.documentElement) {
+                return Y_DOM.contains(doc.documentElement, node);
+            }
         }
+
+        return false;
     },
 
     getById: function(id) {
@@ -615,13 +620,13 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a single Node instance, the first element matching the given 
+     * Retrieves a single Node instance, the first element matching the given
      * CSS selector.
      * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * @return {Node | null} A Node instance for the matching HTMLElement or null
      * if no match found.
      */
     one: function(selector) {
@@ -636,10 +641,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test
@@ -1188,18 +1198,18 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-     /** 
-      * Called on each Node instance. Nulls internal node references, 
+     /**
+      * Called on each Node instance. Nulls internal node references,
       * removes any plugins and event listeners
       * @method destroy
-      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * @param {Boolean} recursivePurge (optional) Whether or not to
       * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-     /** 
-      * Called on each Node instance. Removes and destroys all of the nodes 
+     /**
+      * Called on each Node instance. Removes and destroys all of the nodes
       * within the node
       * @method empty
       * @chainable
@@ -1207,7 +1217,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'empty',
 
-     /** 
+     /**
       * Called on each Node instance. Removes the node from its parent.
       * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
@@ -1218,7 +1228,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'remove',
 
-     /** 
+     /**
       * Called on each Node instance. Sets an attribute on the Node instance.
       * Unless pre-configured (via Node.ATTRS), set hands
       * off to the underlying DOM node.  Only valid
@@ -1300,7 +1310,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
@@ -1312,7 +1322,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.

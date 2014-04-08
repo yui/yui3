@@ -1,6 +1,141 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* Made `addTarget` and `removeTarget` chainable.
+
+3.12.0
+------
+
+* Fixed regression introduced in 3.10.0, where `EventTarget.detach('cat|*')` 
+  would throw an exception, when the EventTarget was configured with a prefix.
+
+3.11.0
+------
+
+* Fixed issue with fireOnce subscribers not receiving the facade,
+  if subscription came in after the fire, and the initial fire had
+  no listeners (the bug was introduced in 3.10.0, with the no listener 
+  perf. optimizations).
+
+  The subscribers in the broken code would have received the raw payload 
+  instead (e.g. {opts:foo}).
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* Fixed issue with facade carrying stale data for the "no subscriber" case.
+
+* Fixed regression where `once()` and `onceAfter()` subscriptions using the
+  `*` prefix threw a TypeError [#676]. `target.once('*:fooChange', callback)`
+
+* Fixed exception with fire(type, null) with emitFacade:true.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Significant performance improvements in common CustomEvent operations.
+
+  There are improvements across the board, but the work was largely aimed at events
+  with no listeners (to facilate speeding up `new Base()` which publishes/fires 2
+  events [init, initializedChange], which usually don't have listeners).
+
+  For example, on Chrome:
+
+      `fire() with 0 listeners` is 6 times faster
+      `fire() with 2 listeners` is 2-3 times faster (w, w/o payload)
+      `publish()` is 2 times faster
+      `publish() compared to _publish()` is 5 times faster (see below)
+      `EventTarget construction + publish + fire with 0 listeners` is 3 times faster
+
+  Major performance related changes are listed below.
+
+  Commit messages have detailed descriptions of incremental changes, and the
+  benefits introduced.
+
+* Moved more properties to the `CustomEvent` prototype, to improve publish costs
+
+* Instantiate `_subscribers`, `_afters` arrays lazily to reduce publish costs for the
+  no listener case. Same thing was also done for less commonly used features, like the
+  `targets` map.
+
+* Reduce `new EventTarget` costs, by removing default properties which just match the
+  `CustomEvent` defaults. It reduces the number of properties we need to iterate each time
+  we mix values while publishing.
+
+* Removed unrequired `Y.stamp` on _yuievt. It wasn't being used in the library code base
+
+* Changed `Y.stamp` calls to `Y.guid` where it was being used to set up `id` properties.
+  There didn't seem to be a need to add the `_yuid` property and it added overhead.
+
+* Provide a fast-track for `fire` with no potential subscribers (no local subscribers, no
+  bubble targets, and no broadcast), by jumping to the default function directly (if
+  configured) or just doing nothing, if no default function.
+
+* Made `*` support close to zero cost for folks who aren't using it, by only trying to look
+  for siblings if someone had subscribed using `*`.
+
+* Reduced `isObject` checks, by combining facade creation and argument manipulation
+  into `_getFacade()`.
+
+* Improved `fireComplex` times, by creating lesser used queues lazily (`es.queue`, `es.afterQueue`).
+
+* Avoid `slice` and related arguments iteration costs for common `fire` signatures,
+  (`fire("foo")`, `fire("foo", {})`) by working with arguments directly for these cases.
+
+  Since `fire` is open-ended in terms of it's number of args, anything besides the above
+  signatures still use `slice`.
+
+* `fire(...)` now delegates to `_fire(array)` to avoid repeated conversion of `arguments` to
+   arrays, across the calling stack from `eventTarget.fire()` to `customEvent.fire()`.
+
+* Avoid `_monitor()` hops, but checking for whether or not monitoring is enabled outside
+  of the function.
+
+* Removed `Y.cached` wrapper around `_getType()`. This was an interesting one. The work
+  we do to generate the key for the cache, turned out to be more than what `_getType()` costs
+  if we just re-run it.
+
+* Added a fast-path *currently private* `_publish()` for low-level, critical path
+  implementations, such as Attribute and Base.
+
+  `_publish()` doesn't provide any API sugar (e.g. type to fulltype conversation), and
+  leaves the `CustomEvent` configuration to the caller to avoid iteration and mixing costs.
+
+  The assumption is that low-level callers know about the event system architecture, and
+  know what they're doing. That's why its private for now, but its 5x faster than `publish()`
+  for a comparable event configuration. `publish()` leverages `_publish()`, also ends up being
+  faster after this change, but not by such a big factor.
+
+* Revert EventTarget back to lazily creating `targets`.
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

@@ -239,6 +239,23 @@ lazyModelListSuite.add(new Y.Test.Case({
         Assert.areSame('baz', models[1].get('foo'));
     },
 
+    'revive() should preserve clientIds': function () {
+        this.list.add({foo: 'bar', clientId: 'model-foo'});
+
+        var model = this.list.revive(0);
+
+        Assert.areSame('model-foo', model.get('clientId'), 'revived model should have the same clientId as the original object');
+    },
+
+    'Changing an attribute on a revived model should update the original object': function () {
+        this.list.add({foo: 'bar'});
+
+        var model = this.list.revive(0);
+        model.set('foo', 'baz');
+
+        Assert.areSame('baz', this.list.item(0).foo, 'original object should have the new value');
+    },
+
     '_isInList() should indicate whether an item is in the list': function () {
         var item = {foo: 'bar'};
 

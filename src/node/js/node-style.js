@@ -10,8 +10,8 @@ Y.mix(Y.Node.prototype, {
      * Sets a style property of the node.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method setStyle
-     * @param {String} attr The style attribute to set. 
-     * @param {String|Number} val The value. 
+     * @param {String} attr The style attribute to set.
+     * @param {String|Number} val The value.
      * @chainable
      */
     setStyle: function(attr, val) {
@@ -23,7 +23,7 @@ Y.mix(Y.Node.prototype, {
      * Sets multiple style properties on the node.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method setStyles
-     * @param {Object} hash An object literal of property:value pairs. 
+     * @param {Object} hash An object literal of property:value pairs.
      * @chainable
      */
     setStyles: function(hash) {
@@ -36,7 +36,7 @@ Y.mix(Y.Node.prototype, {
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method getStyle
      * @for Node
-     * @param {String} attr The style attribute to retrieve. 
+     * @param {String} attr The style attribute to retrieve.
      * @return {String} The current value of the style property for the element.
      */
 
@@ -48,7 +48,7 @@ Y.mix(Y.Node.prototype, {
      * Returns the computed value for the given style property.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method getComputedStyle
-     * @param {String} attr The style attribute to retrieve. 
+     * @param {String} attr The style attribute to retrieve.
      * @return {String} The computed value of the style property for the element.
      */
      getComputedStyle: function(attr) {
@@ -62,7 +62,7 @@ Y.mix(Y.Node.prototype, {
  * @method getStyle
  * @for NodeList
  * @see Node.getStyle
- * @param {String} attr The style attribute to retrieve. 
+ * @param {String} attr The style attribute to retrieve.
  * @return {Array} The current values of the style property for the element.
  */
 
@@ -71,7 +71,7 @@ Y.mix(Y.Node.prototype, {
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method getComputedStyle
  * @see Node.getComputedStyle
- * @param {String} attr The style attribute to retrieve. 
+ * @param {String} attr The style attribute to retrieve.
  * @return {Array} The computed values for each node.
  */
 
@@ -80,8 +80,8 @@ Y.mix(Y.Node.prototype, {
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method setStyle
  * @see Node.setStyle
- * @param {String} attr The style attribute to set. 
- * @param {String|Number} val The value. 
+ * @param {String} attr The style attribute to set.
+ * @param {String|Number} val The value.
  * @chainable
  */
 
@@ -90,7 +90,7 @@ Y.mix(Y.Node.prototype, {
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method setStyles
  * @see Node.setStyles
- * @param {Object} hash An object literal of property:value pairs. 
+ * @param {Object} hash An object literal of property:value pairs.
  * @chainable
  */
 

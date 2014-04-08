@@ -41,7 +41,7 @@ YUI.add('base-observable', function (Y, NAME) {
          * @method _initAttribute
          * @private
          */
-        _initAttribute: function(cfg) {
+        _initAttribute: function() {
             BaseCore.prototype._initAttribute.apply(this, arguments);
             AttributeObservable.call(this);
 
@@ -60,6 +60,7 @@ YUI.add('base-observable', function (Y, NAME) {
          * @return {Base} A reference to this object
          */
         init: function(config) {
+
             /**
              * <p>
              * Lifecycle event for the init phase, fired prior to initialization.
@@ -77,16 +78,33 @@ YUI.add('base-observable', function (Y, NAME) {
              * @param {EventFacade} e Event object, with a cfg property which
              * refers to the configuration object passed to the constructor.
              */
-            this.publish(INIT, {
-                queuable:false,
-                fireOnce:true,
-                defaultTargetOnly:true,
-                defaultFn:this._defInitFn
-            });
+
+            // PERF: Using lower level _publish() for
+            // critical path performance
+
+            var type = this._getFullType(INIT),
+                e = this._publish(type);
+
+            e.emitFacade = true;
+            e.fireOnce = true;
+            e.defaultTargetOnly = true;
+            e.defaultFn = this._defInitFn;
 
             this._preInitEventCfg(config);
 
-            this.fire(INIT, {cfg: config});
+            if (e._hasPotentialSubscribers()) {
+                this.fire(type, {cfg: config});
+            } else {
+
+                this._baseInit(config);
+
+                // HACK. Major hack actually. But really fast for no-listeners.
+                // Since it's fireOnce, subscribers may come along later, so since we're
+                // bypassing the event stack the first time, we need to tell the published
+                // event that it's been "fired". Could extract it into a CE method?
+                e.fired = true;
+                e.firedWith = [{cfg:config}];
+            }
 
             return this;
         },
@@ -115,6 +133,7 @@ YUI.add('base-observable', function (Y, NAME) {
 
             if (userTargets || _BUBBLETARGETS in this) {
                 target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+
                 if (L.isArray(target)) {
                     for (i = 0, l = target.length; i < l; i++) {
                         this.addTarget(target[i]);
@@ -160,7 +179,6 @@ YUI.add('base-observable', function (Y, NAME) {
              * @param {EventFacade} e Event object
              */
             this.publish(DESTROY, {
-                queuable:false,
                 fireOnce:true,
                 defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn

@@ -59,7 +59,7 @@ function Promise(fn) {
 
     /**
     A reference to the resolver object that handles this promise
-    
+
     @property _resolver
     @type Object
     @private
@@ -101,8 +101,10 @@ Y.mix(Promise.prototype, {
 
     @method getStatus
     @return {String}
+    @deprecated
     **/
     getStatus: function () {
+        Y.log('promise.getStatus() will be removed in the future', 'warn', NAME);
         return this._resolver.getStatus();
     }
 });
@@ -119,10 +121,16 @@ method.
 @static
 **/
 Promise.isPromise = function (obj) {
-    // We test promises by form to be able to identify other implementations
-    // as promises. This is important for cross compatibility and in particular
-    // Y.when which should take any kind of promise
-    return !!obj && typeof obj.then === 'function';
+    var then;
+    // We test promises by structure to be able to identify other
+    // implementations' promises. This is important for cross compatibility and
+    // In particular Y.when which should recognize any kind of promise
+    // Use try...catch when retrieving obj.then. Return false if it throws
+    // See Promises/A+ 1.1
+    try {
+        then = obj.then;
+    } catch (_) {}
+    return typeof then === 'function';
 };
 
 Y.Promise = Promise;
