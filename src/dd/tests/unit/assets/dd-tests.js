@@ -100,10 +100,13 @@ YUI.add('dd-tests', function(Y) {
         },
 
         setUp : function() {
-        },
+       },
         
         tearDown : function() {
+            // Tests seem to be affected by cleanup.
+            // Y.all(".yui3-dd-shim, .yui3-dd-proxy").remove(true);
         },
+
         test_shim: function() {
             var s = Y.DD.DDM._pg;
             Y.Assert.isNull(s, 'Shim: Node Instance');
@@ -138,6 +141,7 @@ YUI.add('dd-tests', function(Y) {
             });
         },
         test_drag_setup: function() {
+            // (GS) Assignment to undeclared identifier?
             dd = new Y.DD.Drag({ node: '#drag', bubbles: Y.DD.DDM });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
@@ -222,22 +226,40 @@ YUI.add('dd-tests', function(Y) {
             Y.DD.DDM._docMove = _docMove;
             Y.DD.DDM._move = _move;
         },
+        
         test_drop_overs: function() {
-            dd.target._createShim();
-            dd.target._handleOverEvent();
-            var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
-            Y.Assert.areSame(999, zIndex, 'Failed to change zIndex of shim');
+            drop = new Y.DD.Drop({ node: '#drop', useShim: true, bubbles: Y.DD.DDM });
 
-            dd.target._handleOutEvent();
-            var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
-            Y.Assert.areSame(1, zIndex, 'Failed to change zIndex of shim');
-            
-            dd.target.overTarget = true;
-            Y.DD.DDM.activeDrag = dd.target;
-            dd.target._handleOut(true);
+            // (GS):-
+            //  Avoid boxed-into-a-corner situation of needing to call
+            // calling "_private" methods. 
+            // 
+            // TODO: 
+            // Make those methods truly private, and not part of the 
+            // object's public interface, and listen to the shimCreated 
+            // event, which is fired when the shim is asynchronously created. 
+            // If & when shim creation becomes sync, consider deprecating 
+            // this event. 
+            drop.on("drop:shimCreated", function() {
+                var shim = drop.shim,
+                    shimElement = document.getElementById(shim.get("id"));
+                Y.Event.simulate(shimElement, "mouseover");
+                var zIndex = parseInt(shim.getStyle('zIndex'), 0);
 
+                // (GS) Why test for arbitrary implementation
+                // details such as exactly 999? 
+                Y.Assert.areSame(999, zIndex, 'Failed to change zIndex of shim');
 
+                Y.Event.simulate(shimElement, "mouseout");
+                var zIndex = parseInt(shim.getStyle('zIndex'), 0);
+                Y.Assert.areSame(1, zIndex, 'Failed to change zIndex of shim');
+                
+                dd.target.overTarget = true;
+                Y.DD.DDM.activeDrag = dd.target;
+                dd.target._handleOut(true);
+            });
         },
+
         test_drag_handles: function() {
             Y.Assert.isNull(dd._handles, 'Drag has handles already');
             dd.addHandle('foo');
@@ -820,12 +842,30 @@ YUI.add('dd-tests', function(Y) {
 
                 Y.Assert.isTrue(radioInput.get('checked'));
             }, 100);
+        },
+
+        'test _createShim typerror with destroyed node' : function() {
+            var wrap = Y.one('#wrap');
+            var divs = wrap.all("div");
+            divs.each(function (div) {
+                div.plug(Y.Plugin.Drop);
+            });
+
+            // TypeError: node is null. (node = _stateProxy)
+            // Y.DD.Drop._createShim can get called after 
+            // Drop destruction.
+            // http://yuilibrary.com/trac-archive/tickets/2532985.html
+            wrap.empty();
         }
     };
     
     var suite = new Y.Test.Suite('DragDrop');
     
     suite.add(new Y.Test.Case(template));
+    suite.tearDown = function() {
+        Y.all(".yui3-dd-shim, .yui3-dd-proxy").remove(true);
+    };
+
     Y.Test.Runner.add(suite);
 });
 
