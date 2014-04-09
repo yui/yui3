@@ -27,19 +27,10 @@ var re_tag = /<([a-z]+)/i,
     selectedIndex;
 
 Y.mix(Y.DOM, {
-    _fragClones: {},
-
     _create: function(html, doc, tag) {
-        tag = tag || 'div';
-
-        var frag = Y_DOM._fragClones[tag];
-        if (frag) {
-            frag = frag.cloneNode(false);
-        } else {
-            frag = Y_DOM._fragClones[tag] = doc.createElement(tag);
-        }
-        frag.innerHTML = html;
-        return frag;
+        var element = doc.createElement(tag || 'div');
+        element.innerHTML = html;
+        return element;
     },
 
     _children: function(node, tag) {
