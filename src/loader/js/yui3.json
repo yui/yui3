@@ -19,7 +19,8 @@
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style"
+            "node-style",
+            "color-base"
         ]
     },
     "anim-color": {
@@ -1222,8 +1223,7 @@
     },
     "dom-style": {
         "requires": [
-            "dom-base",
-            "color-base"
+            "dom-base"
         ]
     },
     "dom-style-ie": {
@@ -1233,7 +1233,8 @@
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style"
+            "dom-style",
+            "color-base"
         ]
     },
     "dump": {
@@ -1539,7 +1540,8 @@
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-canvas-default": {
@@ -1578,7 +1580,8 @@
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-vml-default": {

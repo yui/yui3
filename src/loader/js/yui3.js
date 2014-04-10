@@ -29,7 +29,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style"
+            "node-style",
+            "color-base"
         ]
     },
     "anim-color": {
@@ -1254,8 +1255,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base",
-            "color-base"
+            "dom-base"
         ]
     },
     "dom-style-ie": {
@@ -1290,7 +1290,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style"
+            "dom-style",
+            "color-base"
         ]
     },
     "dump": {
@@ -1605,7 +1606,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-canvas-default": {
@@ -1668,7 +1670,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-vml-default": {
@@ -2974,4 +2977,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e61397b06e7b9d3e4298ee7a7a4ea6a1';
+YUI.Env[Y.version].md5 = '45357bb11eddf7fd0a89c0b756599df2';
