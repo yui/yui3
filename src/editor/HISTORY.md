@@ -1,10 +1,12 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.16.0
 ------
 
-* No changes.
+* Fixed an issue where the `yui-cursor` selector was used as an `id` instead of a `class`. ([#1648][]: @alaaibrahim)
+
+[#1648]: https://github.com/yui/yui3/pull/1648
 
 3.15.0
 ------

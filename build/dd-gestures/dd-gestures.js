@@ -23,8 +23,7 @@ YUI.add('dd-gestures', function (Y, NAME) {
 
         node.on(Y.DD.Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this), {
             minDistance: this.get('clickPixelThresh'),
-            minTime: this.get('clickTimeThresh'),
-            preventDefault: true
+            minTime: this.get('clickTimeThresh')
         });
 
         node.on('gesturemoveend', Y.bind(this._handleMouseUp, this), { standAlone: true });

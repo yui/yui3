@@ -4676,9 +4676,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = excl[src];
             }
 
-            // Set a default category of info if the category was not defined or was not
-            // a real category.
-            if ((typeof cat === 'undefined') || !(cat in LEVELS)) {
+            // Set a default category of info if the category was not defined.
+            if ((typeof cat === 'undefined')) {
                 cat = 'info';
             }
 
@@ -5588,6 +5587,24 @@ Y.Loader.prototype = {
         return this.moduleInfo[name];
     },
     /**
+    * Expand the names that are aliases to other modules.
+    * @method _expandAliases
+    * @param {string[]} list a module name or a list of names to be expanded
+    * @private
+    * @return {array}
+    */
+    _expandAliases: function(list) {
+        var expanded = [],
+            aliases = YUI.Env.aliases,
+            i, name;
+        list = Y.Array(list);
+        for (i = 0; i < list.length; i += 1) {
+            name = list[i];
+            expanded.push.apply(expanded, aliases[name] ? aliases[name] : [name]);
+        }
+        return expanded;
+    },
+    /**
     * Populate the conditions cache from raw modules, this is necessary
     * because no other module will require a conditional module, instead
     * the condition has to be executed and then the module is analyzed
@@ -5612,12 +5629,9 @@ Y.Loader.prototype = {
         } else {
             for (i in rawMetaModules) {
                 if (rawMetaModules.hasOwnProperty(i) && rawMetaModules[i].condition) {
-                    t = Y.Array(rawMetaModules[i].condition.trigger);
+                    t = this._expandAliases(rawMetaModules[i].condition.trigger);
                     for (j = 0; j < t.length; j += 1) {
                         trigger = t[j];
-                        if (YUI.Env.aliases[trigger]) {
-                            trigger = YUI.Env.aliases[trigger];
-                        }
                         this.conditions[trigger] = this.conditions[trigger] || {};
                         this.conditions[trigger][rawMetaModules[i].name || i] = rawMetaModules[i].condition;
                     }
@@ -6284,12 +6298,9 @@ Y.Loader.prototype = {
         }
 
         if (o.condition) {
-            t = Y.Array(o.condition.trigger);
+            t = this._expandAliases(o.condition.trigger);
             for (i = 0; i < t.length; i++) {
                 trigger = t[i];
-                if (YUI.Env.aliases[trigger]) {
-                    trigger = YUI.Env.aliases[trigger];
-                }
                 when = o.condition.when;
                 conditions[trigger] = conditions[trigger] || {};
                 conditions[trigger][name] = o.condition;
@@ -7863,7 +7874,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style"
+            "node-style",
+            "color-base"
         ]
     },
     "anim-color": {
@@ -9088,8 +9100,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base",
-            "color-base"
+            "dom-base"
         ]
     },
     "dom-style-ie": {
@@ -9124,7 +9135,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style"
+            "dom-style",
+            "color-base"
         ]
     },
     "dump": {
@@ -9439,7 +9451,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-canvas-default": {
@@ -9502,7 +9515,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-vml-default": {
@@ -10808,7 +10822,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e61397b06e7b9d3e4298ee7a7a4ea6a1';
+YUI.Env[Y.version].md5 = '45357bb11eddf7fd0a89c0b756599df2';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
