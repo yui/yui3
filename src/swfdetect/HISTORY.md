@@ -1,6 +1,11 @@
 SWFDetect Utility Change History
 ================================
 
+@VERSION@
+------
+
+* No changes.
+
 3.16.0
 ------
 
