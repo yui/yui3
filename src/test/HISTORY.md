@@ -1,10 +1,11 @@
 YUI Test Change History
 =======================
 
-@VERSION@
+3.16.0
 ------
 
-* No changes.
+* `test.next` now takes an optional argument to change the value
+  of `this` inside the callback.
 
 3.15.0
 ------

@@ -708,6 +708,38 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
 
         },
+        'test: conditional module with alias trigger': function() {
+
+            var loader = new Y.Loader({
+                modules: {
+                    test2_one: {
+                        fullpath: '2one.js'
+                    },
+                    test2_two: {
+                        fullpath: '2two.js'
+                    },
+                    test2_three: {
+                        fullpath: '2three.js'
+                    },
+                    cond2_array: {
+                        fullpath: '2cond_array.js',
+                        condition: {
+                            trigger: ['test2_alias']
+                        }
+                    }
+                },
+                aliases: {
+                    test2_alias: ['test2_one', 'test2_two']
+                },
+                require: ['test2_two']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
+            Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
+            Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
+
+        },
         'test: conditional array in modules not required': function() {
             var loader = new Y.Loader({
                 modules: {

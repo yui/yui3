@@ -958,7 +958,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         params. If a named param handler rejects a value, then `false` will be
         returned.
     @protected
-    @since @SINCE@
+    @since 3.16.0
     **/
     _getParamValues: function (route, path) {
         var matches, paramsMatch, paramValues;

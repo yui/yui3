@@ -1,10 +1,10 @@
 DOM Change History
 ==================
 
-@VERSION@
+3.16.0
 ------
 
-* No changes.
+* Optimize dom-style.js. Remove unnecessary anonymous function, unused variables. Use "Number()" instead of "new Number()". [Ryuichi Okumura]
 
 3.15.0
 ------

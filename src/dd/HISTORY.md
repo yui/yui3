@@ -1,11 +1,16 @@
 Drag and Drop Change History
 ============================
 
-@VERSION@
+3.16.0
 ------
 
+* [#1721][] Move preventDefault to gesturemovestart (Andrew Nicols)
+* [#1761][] Prevent default on gesturemovestart after movement has started. (Andrew Nicols)
 * [#1663][] DDProxy will reset radio inputs when cloneNode==true ([#1666][]: Chema Balsas)
+* Remove name attribute radio inputs inside cloned nodes by dd-proxy. [Chema Balsas]
 
+[#1721]: https://github.com/yui/yui3/pull/1721
+[#1761]: https://github.com/yui/yui3/pull/1761
 [#1666]: https://github.com/yui/yui3/pull/1666
 [#1663]: https://github.com/yui/yui3/issues/1663
 

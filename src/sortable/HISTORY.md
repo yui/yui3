@@ -1,7 +1,7 @@
 Sortable Utility Change History
 ===============================
 
-@VERSION@
+3.16.0
 ------
 
 * [#1486][]: Fix a issue that zIndex of 999 is kept on dragged item (Paul B.)
