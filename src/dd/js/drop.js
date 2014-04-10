@@ -199,7 +199,7 @@
     }
 
     function createShimNode(drop, s) {
-        var s, id;
+        var id, node;
         try {
             id = s.get("id");
         } catch(ex) {
@@ -209,10 +209,11 @@
             return s;
         }
 
-        s = Y.Node.create('<div id="' + s.get('id') + '_shim"></div>');
+        s = Y.Node.create('<div id="' + id + '_shim"></div>');
+        node = drop.get(NODE);
         s.setStyles({
-            height: drop.get(NODE).get(OFFSET_HEIGHT) + 'px',
-            width: drop.get(NODE).get(OFFSET_WIDTH) + 'px',
+            height: node.get(OFFSET_HEIGHT) + 'px',
+            width: node.get(OFFSET_WIDTH) + 'px',
             backgroundColor: 'yellow',
             opacity: '.5',
             zIndex: '1',
