@@ -1,6 +1,5 @@
 YUI.add('dom-style', function (Y, NAME) {
 
-(function(Y) {
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -19,9 +18,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     GET_COMPUTED_STYLE = 'getComputedStyle',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
 
-    WINDOW = Y.config.win,
     DOCUMENT = Y.config.doc,
-    UNDEFINED = undefined,
 
     Y_DOM = Y.DOM,
 
@@ -66,7 +63,7 @@ Y.mix(Y_DOM, {
         if (style) {
             if (val === null || val === '') { // normalize unsetting
                 val = '';
-            } else if (!isNaN(new Number(val)) && re_unit.test(att)) { // number values may need a unit
+            } else if (!isNaN(Number(val)) && re_unit.test(att)) { // number values may need a unit
                 val += Y_DOM.DEFAULT_UNIT;
             }
 
@@ -150,9 +147,9 @@ Y.mix(Y_DOM, {
 });
 
 // normalize reserved word float alternatives ("cssFloat" or "styleFloat")
-if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
+if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== undefined) {
     Y_DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
-} else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
+} else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== undefined) {
     Y_DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
@@ -246,7 +243,7 @@ Y_DOM.CUSTOM_STYLES.transform = {
         style[TRANSFORM] = val;
     },
 
-    get: function(node, style) {
+    get: function(node) {
         return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
     }
 };
@@ -256,13 +253,10 @@ Y_DOM.CUSTOM_STYLES.transformOrigin = {
         style[TRANSFORMORIGIN] = val;
     },
 
-    get: function(node, style) {
+    get: function(node) {
         return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
     }
 };
-
-
-})(Y);
 
 
 }, '@VERSION@', {"requires": ["dom-base", "color-base"]});

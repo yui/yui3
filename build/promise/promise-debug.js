@@ -57,6 +57,7 @@ var rejected = new Y.Promise(function (resolve, reject) {
 **/
 function Promise(fn) {
     if (!(this instanceof Promise)) {
+        Y.log('Promises should always be created with new Promise(). This will throw an error in the future', 'warn', NAME);
         return new Promise(fn);
     }
 
@@ -71,11 +72,15 @@ function Promise(fn) {
     */
     this._resolver = resolver;
 
-    fn.call(this, function (value) {
-        resolver.resolve(value);
-    }, function (reason) {
-        resolver.reject(reason);
-    });
+    try {
+        fn.call(this, function (value) {
+            resolver.resolve(value);
+        }, function (reason) {
+            resolver.reject(reason);
+        });
+    } catch (e) {
+        resolver.reject(e);
+    }
 }
 
 Y.mix(Promise.prototype, {

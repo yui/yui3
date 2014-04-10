@@ -1,10 +1,13 @@
 Node Change History
 ===================
 
-@VERSION@
+3.16.0
 ------
 
-* No changes.
+* getCell() throws an error if `shift` is not a recognized value.
+* Switched "instanceof Y.Node" to check for `_node`, to allow instances
+  from other sandboxes.
+* Clarified Node vs NodeList method docs. (@solmsted)
 
 3.15.0
 ------

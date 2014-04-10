@@ -62,7 +62,7 @@ suite.add({
 
         loader.resolve(true);
     },
-    
+
     'loader resolve application modules': function () {
         var loader = new Y.Loader({
             combine: true,
@@ -73,12 +73,23 @@ suite.add({
 
         loader.resolve(true);
     },
-    
+
     'caculate dependecies': function () {
         var loader = new Y.Loader({
             require: ['app', 'charts']
         });
 
         loader.calculate();
+    },
+
+    'loader constructor with global cache': function () {
+        new Y.Loader({});
+    },
+
+    'loader constructor without cache': function () {
+        YUI.Env._renderedMods = undefined;
+        YUI.Env._conditions = undefined;
+        new Y.Loader({});
     }
+
 });

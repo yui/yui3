@@ -1,10 +1,10 @@
 Promise Change History
 ======================
 
-@VERSION@
+3.16.0
 ------
 
-* No changes.
+* Errors thrown inside the promise initialization function reject the promise.
 
 3.15.0
 ------

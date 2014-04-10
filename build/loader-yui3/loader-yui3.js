@@ -2930,10 +2930,10 @@ Y.mix(YUI.Env[Y.version].modules, {
     */
     return (!Y.UA.nodejs && !Y.UA.winjs);
 },
-            "trigger": "yql",
-            "when": "after"
+            "trigger": "yql"
         },
         "requires": [
+            "yql",
             "jsonp",
             "jsonp-url"
         ]
@@ -2942,17 +2942,21 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "yql-nodejs",
             "trigger": "yql",
-            "ua": "nodejs",
-            "when": "after"
-        }
+            "ua": "nodejs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yql-winjs": {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs",
-            "when": "after"
-        }
+            "ua": "winjs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yui": {},
     "yui-base": {},
@@ -2972,7 +2976,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '8e471689779fc84718f6dad481790b59';
+YUI.Env[Y.version].md5 = 'e61397b06e7b9d3e4298ee7a7a4ea6a1';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
