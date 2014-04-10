@@ -1,6 +1,11 @@
 Rich Text Editor Change History
 ===============================
 
+@VERSION@
+------
+
+* No changes.
+
 3.16.0
 ------
 
