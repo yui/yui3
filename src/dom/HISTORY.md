@@ -4,7 +4,9 @@ DOM Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1709][]: Move out of color-base module (@okuryu)
+
+[#1709]: https://github.com/yui/yui3/pull/1709
 
 3.15.0
 ------
