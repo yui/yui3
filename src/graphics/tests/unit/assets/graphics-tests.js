@@ -1366,4 +1366,4 @@ suite.add(transformTests);
 
 Y.Test.Runner.add( suite );
 
-}, '@VERSION@' ,{requires:['graphics', 'test']});
+}, '@VERSION@' ,{requires:['graphics', 'color-base', 'test']});
