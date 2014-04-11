@@ -12,10 +12,10 @@
 
 <p>
 Modules in EcmaScript 6 are based on two main keywords: `import` and `export`.
-This contrasts to YUI modules because the export side is composed of a series
-of exports instead of additions made to a common object, the `Y` object. Modules
-also introduce the concept of "default" exports as the main entry point to a
-module.
+This contrasts to YUI modules because in ES6 the export side is composed of a
+series of exports instead of additions made to a common object, the `Y` object.
+Modules also introduce the concept of "default" exports as the main entry point
+to a module.
 </p>
 
 <h3>Export declarations</h3>
@@ -27,7 +27,7 @@ module.
 <ul>
     <li>A variable declaration, ie: `export var foo = bar`.</li>
     <li>A function declaration, ie: `export function foo() {}`.</li>
-    <li>A list of naed exports wrapped in curly brackets. Each export may be
+    <li>A list of named exports wrapped in curly brackets. Each export may be
     bound with a new name using `as`. For example: `export { foo as bar, baz }`.
     </li>
 </ul>
@@ -81,7 +81,7 @@ export function countPixels() {
 <h2>Pros and cons of using ES6 modules</h2>
 
 <p>
-Authoring code using the ES6 module systax brings several new advantages and
+Authoring code using the ES6 module syntax brings several new advantages and
 disadvantages:
 </p>
 
@@ -91,21 +91,22 @@ disadvantages:
     into the process you already have to get your application running.</li>
     <li>It allows you to write your code in one format and transpile it to
     different module formats including CommonJS, AMD and YUI modules.</li>
-    <li><a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">Sourcemaps</a> allow you to debug usig the new syntax, so the difference between
-    all the different underlying module systems is hidden by the developer
-    tools.</li>
+    <li><a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">
+    Sourcemaps</a> allow you to debug using the new syntax, so the difference
+    between all the different underlying module systems is hidden by the
+    developer tools.</li>
     <li>ES6 modules use special syntax for exporting members of the module and
-    other modules have mirror syntax for importing those exports. The colection
+    other modules have mirror syntax for importing those exports. The collection
     of exports is then not a mutable object. This allows tools to more easily
-    analyze which exports of a module are actually being used ir oder to do
-    analytics on the code or to remove unused parts of the aplication.</li>
+    analyze which exports of a module are actually being used in order to do
+    analytics on the code or to remove unused parts of the application.</li>
 </ul>
 
 <h2>Using transpiled modules in a YUI application</h2>
 
 <p>
 YUI 3.15.0 supports loading ES6 modules transpiled to YUI modules that look
-slightly different from tranditional YUI modules. Instead of adding properties
+slightly different from traditional YUI modules. Instead of adding properties
 to the <code>Y</code> object, the return value of the module factory function
 is stored as the module exports.
 </p>
@@ -137,7 +138,7 @@ YUI.add("pixel-counter", function(Y, NAME, __imports__, __exports__) {
 
 <p>
 Imports are received inside an object as a parameter of the factory function.
-For conveniency, an object for storing the exports is also created, but the
+As a convenience, an object for storing the exports is also created, but the
 actual exports of the module are the ones in the value returned by the factory
 function.
 </p>
@@ -145,9 +146,11 @@ function.
 <h3>Using the ES6 module transpiler</h3>
 
 <p>
-The `es6-module-transpiler` is <a href="https://www.npmjs.org/package/es6-module-transpiler">a Node application</a> that parses modules written using the ES6 module syntax
-and compiles them to other JavaScript source files using Node's module system,
-AMD modules or YUI modules.
+The `es6-module-transpiler` is
+<a href="https://www.npmjs.org/package/es6-module-transpiler">a Node
+application</a> that parses modules written using the ES6 module syntax and
+compiles them to other JavaScript source files using Node's module system, AMD
+modules or YUI modules.
 </p>
 
 <p>
