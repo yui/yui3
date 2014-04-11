@@ -247,6 +247,20 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,11,5)).hasClass("yui3-calendar-day-selected"));
             },
 
+            testMaxDatesSelection: function() {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2014,3,1),
+                    maximumDate: new Date (2014,3,3)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();
+                this.firstcalendar.selectDates(new Date(2014, 3, 3, 14, 10, 10));
+
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2014, 3, 3)).hasClass("yui3-calendar-day-selected"));
+            },
+
             testRules : function () {
                 var myRules = {
                    "2011": "fullyear",
