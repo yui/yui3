@@ -4,7 +4,9 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1752][]: Y.Calendar.selectDates fails when passed the maximumDate with minutes/seconds (@mairatma)
+
+[#1752]: https://github.com/yui/yui3/pull/1752
 
 3.16.0
 ------
