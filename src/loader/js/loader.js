@@ -2649,18 +2649,38 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             comboMeta[mod.type + 'Mods'].push(mod);
         }
+        //only encode if we have something to encode
+        if(sorted && sorted.length) {
+            resolved = this._encodeComboSources(comboSources, resolved); 
+        }
+        return resolved;
+    },
 
-        // TODO: Refactor the encoding logic below into its own method.
-
-        /*jslint vars: true */
+    /**
+     * Encodes combo sources and appends them to an object hash of arrays from `loader.resolve`.
+     *
+     * @method _encodeComboSources
+     * @param {Object} comboSources An object containing relevant data about modules.
+     * @param {Object} resolved The object hash of arrays in which to attach the encoded combo sources.
+     * @return Object
+     * @private  
+     */
+    _encodeComboSources: function(comboSources, resolved) {
         var fragSubset,
             modules,
             tmpBase,
             baseLen,
             frags,
             frag,
-            type;
-        /*jslint vars: false */
+            type,
+            mod,
+            maxURLLength,
+            comboBase,
+            comboMeta,
+            comboSep,
+            i,
+            len,
+            self = this;
 
         for (comboBase in comboSources) {
             if (comboSources.hasOwnProperty(comboBase)) {
@@ -2717,10 +2737,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
         }
-
         return resolved;
     },
-
+    
     /**
     Shortcut to calculate, resolve and load all modules.
 
