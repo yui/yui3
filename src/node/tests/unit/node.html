@@ -1734,7 +1734,6 @@ YUI({
         },
 
         'should accept document Node instance': function() {
-            Y.DOM._fragClones = {};
             var node = Y.Node.create('<div/>', Y.one(document));
             Assert.areEqual('DIV', node.get('tagName'));
         },
