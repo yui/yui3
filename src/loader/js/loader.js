@@ -2599,7 +2599,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         /*jslint vars: true */
         var inserted     = (self.ignoreRegistered) ? {} : self.inserted,
-            comboSources = {},
+            comboSources,
             maxURLLength,
             comboMeta,
             comboBase,
@@ -2647,7 +2647,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
 
             comboBase = comboBase || self.comboBase;
-
+            comboSources = comboSources || {};
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
 
@@ -2657,12 +2657,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
 
             comboMeta[mod.type + 'Mods'].push(mod);
+            if (mod.type === JS || mod.type === CSS) {
+                resolved[mod.type + 'Mods'].push(mod);
+            }
         }
         //only encode if we have something to encode
-        if(sorted && sorted.length) {
-            resolved = this._encodeComboSources.apply(self, [comboSources, resolved]);
+        if(comboSources) {
             if(Y.config.customComboBase) {
                 resolved = this._pathogenEncodeComboSources(comboSources, resolved);
+            } else {
+                resolved = this._encodeComboSources(comboSources, resolved);
             }
         }
         return resolved;
@@ -2744,7 +2748,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
                             }
                         }
-                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(modules);
                     }
                 }
             }
@@ -2767,14 +2770,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             maxURLLength,
             resolvedMods,
             comboUrls,
-            singles,
             urlKey,
             modKey,
             group,
-            type,
-            url,
-            len,
-            i;
+            type;
 
         // Check to see if anything needs to be combined.
         if (!combine) {
@@ -2798,7 +2797,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             this.pathogenSeen = this.pathogenSeen || {};
 
             if (this.shouldFallback(resolved)) {
-                return resolved;
+                return this._encodeComboSources(comboSources, resolved);
             }
         }
 
@@ -2812,23 +2811,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     continue;
                 }
 
-                singles = [];
                 urlKey  = type;
                 modKey  = type + 'Mods';
 
                 resolved[urlKey] = resolvedUrls = resolved[urlKey] || [];
                 resolved[modKey] = resolvedMods = resolved[modKey] || [];
-
-                for (i = 0, len = resolvedUrls.length; i < len; i += 1) {
-                    url = resolvedUrls[i];
-                    if (
-                        typeof url === 'object' ||
-                        (typeof url === 'string' && url.indexOf('/combo?') === -1)
-                    ) {
-                        singles.push(url);
-                    }
-                }
-
+                
                 // Generate custom combo urls.
                 comboUrls = this.customResolve(resolvedMods, type);
 
@@ -2838,8 +2826,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     Y.log('Custom encoding resulted in ' + comboUrls.length + ' URLs', 'info', NAME);
                     Y.log(JSON.stringify(comboUrls, null, 4), 'info', NAME);
                 }
-
-                resolved[type] = [].concat(comboUrls, singles);
+                resolved[type] = resolved[type].concat(comboUrls);
             }
         }
 
