@@ -764,14 +764,14 @@ YUI.add('loader-tests', function(Y) {
                 modules: {
                     foo: {
                         path: 'foo-min.js',
-                        optTest: function (Y) {
+                        test: function (Y) {
                             Assert.isInstanceOf(YUI, Y);
                             return true;
                         }
                     },
                     baz: {
                         path: 'baz-min.js',
-                        optTest: function () {
+                        test: function () {
                             return false;
                         }
                     },
@@ -804,6 +804,43 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame(1, out.jsMods.length, 'Not included the correct number of modules');
             Assert.areSame('bar', out.jsMods[0].name, 'Not included required module');
         },
+        'test: optional dependencies and patterns': function () {
+            var test = this;
+            YUI.add('a-mod-with-opt-dep', function () {}, '', {
+                optionalRequires: ['foo']
+            });
+
+            YUI({
+                groups: {
+                    patternDepIntegration: {
+                        base: '../assets/',
+                        filter: 'raw',
+                        patterns: {
+                            "part1-": {
+                                configFn: function (me) {
+                                    //change from default format of part1-mod1/part1-mod1.js to just part1-mod1.js
+                                    me.path = me.path.replace(/part1-[^\/]+\//, "");
+                                }
+                            }
+                        }
+                    }
+                },
+                modules: {
+                    'a-mod-with-opt-dep': {
+                        path: 'a-mod-with-opt-dep-min.js',
+                        optionalRequires: ['part1-mod']
+                    }
+                }
+            }).use('a-mod-with-opt-dep', function (Y) {
+                setTimeout(function () {
+                    test.resume(function () {
+
+                    });
+                }, 0);
+            });
+
+            test.wait();
+        },
         'test: already added module with failing test': function () {
             YUI.add('mod121-foo', function (Y) {
                 Y.foo = 'hello';
@@ -820,7 +857,7 @@ YUI.add('loader-tests', function(Y) {
                 ignoreRegistered: true,
                 modules: {
                     'mod121-foo': {
-                        optTest: function () {
+                        test: function () {
                             return false;
                         }
                     },

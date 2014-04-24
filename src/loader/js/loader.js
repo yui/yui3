@@ -1393,9 +1393,9 @@ Y.Loader.prototype = {
         if (typeof m === 'string') {
             m = this.getModule(m);
         }
-        if (m && m.optTest) {
+        if (m && m.test) {
             if (!m.hasOwnProperty('_testResult')) {
-                m._testResult = m.optTest(Y);
+                m._testResult = m.test(Y);
             }
             return m._testResult;
         }
