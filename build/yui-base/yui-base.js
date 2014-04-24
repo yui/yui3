@@ -626,7 +626,7 @@ with any configuration info required for the module.
             },
             //Instance hash so we don't apply it to the same instance twice
             applied = {},
-            loader, inst,
+            loader, inst, modInfo,
             i, versions = env.versions;
 
         env.mods[name] = mod;
@@ -640,7 +640,8 @@ with any configuration info required for the module.
                     applied[inst.id] = true;
                     loader = inst.Env._loader;
                     if (loader) {
-                        if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
+                        modInfo = loader.getModuleInfo(name);
+                        if (!modInfo || modInfo.temp) {
                             loader.addModule(details, name);
                         }
                     }
@@ -672,7 +673,7 @@ with any configuration info required for the module.
             exported = Y.Env._exported,
             len = r.length, loader, def, go,
             c = [],
-            modArgs, esCompat, reqlen,
+            modArgs, esCompat, reqlen, modInfo,
             condition,
             __exports__, __imports__;
 
@@ -707,8 +708,9 @@ with any configuration info required for the module.
                     continue;
                 }
                 if (!mod) {
-                    if (loader && loader.moduleInfo[name]) {
-                        mod = loader.moduleInfo[name];
+                    modInfo = loader && loader.getModuleInfo(name);
+                    if (modInfo) {
+                        mod = modInfo;
                         moot = true;
                     }
 
@@ -740,8 +742,9 @@ with any configuration info required for the module.
                     if (loader && cache && cache[name] && cache[name].temp) {
                         loader.getRequires(cache[name]);
                         req = [];
-                        for (j in loader.moduleInfo[name].expanded_map) {
-                            if (loader.moduleInfo[name].expanded_map.hasOwnProperty(j)) {
+                        modInfo = loader.getModuleInfo(name);
+                        for (j in modInfo.expanded_map) {
+                            if (modInfo.expanded_map.hasOwnProperty(j)) {
                                 req.push(j);
                             }
                         }
@@ -1690,16 +1693,6 @@ Timeout in milliseconds before a dynamic JS or CSS request will be considered a
 failure. If not set, no timeout will be enforced.
 
 @property {Number} timeout
-**/
-
-/**
-Callback for the 'CSSComplete' event. When dynamically loading YUI components
-with CSS, this property fires when the CSS is finished loading.
-
-This provides an opportunity to enhance the presentation of a loading page a
-little bit before the entire loading process is done.
-
-@property {Function} onCSS
 **/
 
 /**
@@ -5592,22 +5585,19 @@ add('load', '20', {
     */
     return (!Y.UA.nodejs && !Y.UA.winjs);
 },
-    "trigger": "yql",
-    "when": "after"
+    "trigger": "yql"
 });
 // yql-nodejs
 add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
-    "ua": "nodejs",
-    "when": "after"
+    "ua": "nodejs"
 });
 // yql-winjs
 add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
-    "ua": "winjs",
-    "when": "after"
+    "ua": "winjs"
 });
 
 }, '@VERSION@', {"requires": ["yui-base"]});
@@ -5758,9 +5748,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = excl[src];
             }
 
-            // Set a default category of info if the category was not defined or was not
-            // a real category.
-            if ((typeof cat === 'undefined') || !(cat in LEVELS)) {
+            // Set a default category of info if the category was not defined.
+            if ((typeof cat === 'undefined')) {
                 cat = 'info';
             }
 

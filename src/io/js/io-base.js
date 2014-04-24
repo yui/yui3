@@ -612,6 +612,12 @@ IO.prototype = {
     *     object keys are the header names and the values are the header
     *     values.</dd>
     *
+    *   <dt>username</dt>
+    *     <dd>Username to use in a HTTP authentication.</dd>
+    *
+    *   <dt>password</dt>
+    *     <dd>Password to use in a HTTP authentication.</dd>
+    *
     *   <dt>timeout</dt>
     *     <dd>Millisecond threshold for the transaction before being
     *     automatically aborted.</dd>

@@ -3750,4 +3750,4 @@ Y.VMLGraphic = VMLGraphic;
 
 
 
-}, '@VERSION@', {"requires": ["graphics"]});
+}, '@VERSION@', {"requires": ["graphics", "color-base"]});

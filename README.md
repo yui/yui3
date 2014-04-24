@@ -87,7 +87,7 @@ The YUI source tree includes the following directories:
 
 ## Initial Setup
 
-   1. Fork the project on GitHub (http://www.github.com/yui/yui3).
+   1. Fork the project on GitHub (https://github.com/yui/yui3).
    1. Clone the fork to your local environment for development.
 
 ## Do Good Stuff

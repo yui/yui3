@@ -6,6 +6,11 @@ Widget Stack Change History
 
 * No changes.
 
+3.16.0
+------
+
+* No changes.
+
 3.15.0
 ------
 

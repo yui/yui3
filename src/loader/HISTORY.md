@@ -23,6 +23,27 @@ YUI Loader Change History
   }).use('bar', ...);
 ```
 
+3.16.0
+------
+
+* regresion: expanding trigger with aliases. ([#1768][]: @caridy)
+
+[#1768]: https://github.com/yui/yui3/pull/1581
+
+* Optimization of the Loader's constructor by removing _populateCache() in  in favor of an on-demand process to create internal module info based on the raw meta when the module is needed and called thru `getModuleInfo()`. ([#1581][]: @caridy)
+
+[#1581]: https://github.com/yui/yui3/pull/1581
+
+* Removal of  `onCSS` documentation, as it was never implemented. ([#1743][]: @ezequiel)
+
+* Fixed an issue where a module's `lang` packs were not being included before the module itself. ([#1743][]: @ezequiel)
+
+* Fixed an issue where conditionally loading a module using `before` did not work. ([#1743][]: @ezequiel)
+
+* Fixed an issue where a `CSS` module could not require a `js` module. ([#1743][]: @ezequiel)
+
+[#1743]: https://github.com/yui/yui3/pull/1743
+
 3.15.0
 ------
 

@@ -901,7 +901,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		menu.setXY(aXY);
 
-		if (UA.ie < 8) {
+		if (UA.ie && UA.ie < 8) {
 
 			if (UA.ie === 6 && !menu.hasIFrameShim) {
 

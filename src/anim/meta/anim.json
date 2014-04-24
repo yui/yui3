@@ -14,7 +14,8 @@
             "anim-base": {
                 "requires": [
                     "base-base",
-                    "node-style"
+                    "node-style",
+                    "color-base"
                 ]
             },
             "anim-color": {

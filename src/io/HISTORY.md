@@ -6,6 +6,16 @@ IO Utility Change History
 
 * No changes.
 
+3.16.0
+------
+
+* Removed the unnecessary `src` attribute which caused an extra request to be made to the current page URL when the `iframe` was included on the page. ([#1646][]: @goodforenergy)
+
+* Document usage of username/password in Y.io config. ([#1572][]: @customcommander)
+
+[#1646]: https://github.com/yui/yui3/pull/1646
+[#1572]: https://github.com/yui/yui3/pull/1572
+
 3.15.0
 ------
 

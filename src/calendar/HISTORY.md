@@ -4,7 +4,20 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1752][]: Y.Calendar.selectDates fails when passed the maximumDate with minutes/seconds (@mairatma)
+
+[#1752]: https://github.com/yui/yui3/pull/1752
+
+3.16.0
+------
+
+* [#1685][]: Can't change month in RTL mode / arrow wrongly displayed in RTL mode ([#1719][] [#1724][]: Andrew Nicols)
+* [#1361][]: Change to use CSS instead of the image to showing of the arrow (Marc Lundgren)
+
+[#1724]: https://github.com/yui/yui3/pull/1724
+[#1719]: https://github.com/yui/yui3/pull/1719
+[#1685]: https://github.com/yui/yui3/issues/1685
+[#1361]: https://github.com/yui/yui3/pull/1361
 
 3.15.0
 ------

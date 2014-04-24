@@ -26,4 +26,4 @@ Y.YQLRequest.prototype._send = function (url, o) {
 
 
 
-}, '@VERSION@', {"requires": ["jsonp", "jsonp-url"]});
+}, '@VERSION@', {"requires": ["yql", "jsonp", "jsonp-url"]});

@@ -17,7 +17,8 @@
             },
             "dom-style-ie": {
                 "requires": [
-                    "dom-style"
+                    "dom-style",
+                    "color-base"
                 ],
                 "condition": {
                    "trigger": "dom-style",
@@ -55,8 +56,7 @@
             },
             "dom-style": {
                 "requires": [
-                    "dom-base",
-                    "color-base"
+                    "dom-base"
                 ]
             },
             "selector-native": {
