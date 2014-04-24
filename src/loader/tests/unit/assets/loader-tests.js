@@ -603,6 +603,7 @@ YUI.add('loader-tests', function(Y) {
                 }
             }).use('mod', function(Y) {
                 test.resume(function() {
+                    Assert.isUndefined(Y.Env._loader.getModule('mod').test, 'Patterns should not carry on a `test` function');
                     Assert.isTrue(Y.MOD, 'Pattern module failed to load');
                 });
             });
