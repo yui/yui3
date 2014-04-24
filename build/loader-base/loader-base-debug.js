@@ -2101,7 +2101,7 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
-                    m = this.addModule(Y.merge(found), mname);
+                    m = this.addModule(Y.merge(found, {test: void 0}), mname);
                     if (found.configFn) {
                         m.configFn = found.configFn;
                     }

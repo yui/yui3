@@ -2080,7 +2080,7 @@ Y.Loader.prototype = {
                     p.action.call(this, mname, pname);
                 } else {
                     // ext true or false?
-                    m = this.addModule(Y.merge(found), mname);
+                    m = this.addModule(Y.merge(found, {test: void 0}), mname);
                     if (found.configFn) {
                         m.configFn = found.configFn;
                     }
