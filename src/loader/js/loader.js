@@ -2664,9 +2664,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         //only encode if we have something to encode
         if(comboSources) {
             if(Y.config.customComboBase) {
-                resolved = this._pathogenEncodeComboSources(comboSources, resolved);
+                resolved = this._pathogenEncodeComboSources(resolved);
             } else {
-                resolved = this._encodeComboSources(comboSources, resolved);
+                resolved = this._encodeComboSources(resolved, comboSources);
             }
         }
         return resolved;
@@ -2676,12 +2676,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * Encodes combo sources and appends them to an object hash of arrays from `loader.resolve`.
      *
      * @method _encodeComboSources
-     * @param {Object} comboSources An object containing relevant data about modules.
      * @param {Object} resolved The object hash of arrays in which to attach the encoded combo sources.
+     * @param {Object} comboSources An object containing relevant data about modules.
      * @return Object
      * @private
      */
-    _encodeComboSources: function(comboSources, resolved) {
+    _encodeComboSources: function(resolved, comboSources) {
         var fragSubset,
             modules,
             tmpBase,
@@ -2756,15 +2756,14 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     },
 
     /**
-     * Encodes combo sources and appends them to an object hash of arrays from `loader.resolve`.
+     * Encodes combo urls based on modules  and appends them to an object hash of arrays from `loader.resolve`.
      *
      * @method _pathogenEncodeComboSources
-     * @param {Object} comboSources An object containing relevant data about modules.
      * @param {Object} resolved The object hash of arrays in which to attach the encoded combo sources.
      * @return Object
      * @private
      */
-    _pathogenEncodeComboSources: function (comboSources, resolved) {
+    _pathogenEncodeComboSources: function (resolved) {
         var combine = this.combine,
             resolvedUrls,
             maxURLLength,
@@ -2790,15 +2789,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         // Add the pathogen namespace to the combo base.
         if (Y.config.customComboBase) {
             customComboBase = Y.config.customComboBase + NAMESPACE;
-        }
-
-        // Fallback to the default combo url if we need to.
-        if (Y.config.customComboFallback) {
-            this.pathogenSeen = this.pathogenSeen || {};
-
-            if (this.shouldFallback(resolved)) {
-                return this._encodeComboSources(comboSources, resolved);
-            }
         }
 
         if (customComboBase && combine) {
@@ -2956,14 +2946,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             source[key] = source[key] || [];
             source[key].push(name);
-
-            // If fallback feature is enabled, record the full module name as seen
-            if (Y.config.customComboFallback) {
-                if (mod.group === 'gallery') {
-                    name = 'gallery-' + name;
-                }
-                this.pathogenSeen[name] = true;
-            }
         }
         return source;
     },
@@ -3065,42 +3047,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         return sorted;
-    },
-
-    /**
-    Determines whether or not we should fallback to default combo urls by checking
-    to see if Loader re-requests any module that we've already seen.
-    @method shouldFallback
-    @param {Object} resolved Resolved module metadata by original `resolve`.
-    @return {Boolean} Whether or not to fallback.
-    **/
-    shouldFallback: function (resolved) {
-        var modules,
-            name,
-            type,
-            i,
-            len;
-
-        if (this.fallbackMode) {
-            return this.fallbackMode;
-        }
-
-        for (type in TYPES) {
-            if (TYPES.hasOwnProperty(type)) {
-                modules = resolved[type + 'Mods'];
-                for (i = 0, len = modules.length; i < len; i += 1) {
-                    name = modules[i].name;
-
-                    if (this.pathogenSeen[name]) {
-                        Y.log('Detected a request for a module that we have already seen: ' + name, 'warn', NAME);
-                        Y.log('Falling back to default combo urls', 'warn', NAME);
-
-                        this.fallbackMode = true;
-                        return this.fallbackMode;
-                    }
-                }
-            }
-        }
     },
 
     /**
