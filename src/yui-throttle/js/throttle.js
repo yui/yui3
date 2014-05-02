@@ -19,13 +19,31 @@ to the `Y` object and is <a href="../classes/YUI.html#method_throttle">documente
 /*! Based on work by Simon Willison: http://gist.github.com/292562 */
 /**
  * Throttles a call to a method based on the time between calls.
+ *
+ * On the first call to the throttled function the time is recorded,
+ * and the wrapped function is then executed.
+ * Subsequent calls to the throttled function will be ignored until
+ * the throttle time has expired.
+ *
+ * The following example will result in precisely one call to the `doSomething` function:
+ *
+ *     var throttledFn = Y.throttle(doSomething);
+ *     throttledFn(); // This call with result in doSomething being executed.
+ *     throttledFn(); // This call will be ignored.
+ *
+ *
  * @method throttle
  * @for YUI
  * @param fn {function} The function call to throttle.
- * @param ms {Number} The number of milliseconds to throttle the method call.
- * Can set globally with Y.config.throttleTime or by call. Passing a -1 will
- * disable the throttle. Defaults to 150.
- * @return {function} Returns a wrapped function that calls fn throttled.
+ * @param [ms=150] {Number} The number of milliseconds to throttle the method call.
+ * Passing a value of `-1` will disable the throttle.
+ * A default value can be set globally in `Y.config.throttleTime`.
+ * If no value is passed, and no global setting was specified in
+ * `Y.config.throttleTime`, then a default value of 150 milliseconds
+ * is used.
+ *
+ * @return {function} Returns a wrapped function that calls the
+ * function specified in `fn` with throttling applied.
  * @since 3.1.0
  */
 Y.throttle = function(fn, ms) {
@@ -37,7 +55,7 @@ Y.throttle = function(fn, ms) {
         };
     }
 
-    var last = Y.Lang.now();
+    var last = 0;
 
     return function() {
         var now = Y.Lang.now();

@@ -4,7 +4,8 @@ YUI Throttle Change History
 @VERSION@
 ------
 
-* No changes.
+* Switched throttle() to be able to call the function it throttles within
+  the first period after it is setup (@dobedobedoh).
 
 3.16.0
 ------
