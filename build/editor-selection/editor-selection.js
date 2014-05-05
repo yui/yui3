@@ -709,7 +709,11 @@ YUI.add('editor-selection', function (Y, NAME) {
                         inHTML.set('id', '');
                         inHTML.replace(newNode);
                         if (range.moveToElementText) {
-                            range.moveToElementText(Y.Node.getDOMNode(newNode));
+                            var DomEl = Y.Node.getDOMNode(newNode);
+                            if(DomEl)
+                            {
+                                range.moveToElementText(DomEl);
+                            }
                         }
                         range.collapse(false);
                         range.select();
