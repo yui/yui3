@@ -738,6 +738,12 @@ with any configuration info required for the module.
                         }
                     }
 
+                    // Optional dependencies normally work by modifying the
+                    // dependency list of a module. If the dependency's test
+                    // passes it is added to the list. If not, it's not loaded.
+                    // This following check ensures that optional dependencies
+                    // are not attached when they were already loaded into the
+                    // page (when bundling for example)
                     if (loader && !loader._canBeAttached(name)) {
                         Y.log('Failed to attach module ' + name, 'warn', 'yui');
                         return true;
