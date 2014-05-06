@@ -1,0 +1,37 @@
+    /* This takes a hex value and generates a numeric string
+    *  in the format "01.23.45"
+    *  Each pair of digits represents the Hue, Saturation, or Brightness
+    *  of the color in a range of 00 to 99 (always 2 digits).
+    *  These strings sort in a more visually logical way for colors.
+    *  The sequence of digits can be changed to sort in different ways.
+    *  such as hh.ss.bb for sorting first by hue, then saturation,
+    *  or bb.hh.ss for sorting first by brightness, then hue, then saturation.
+    *  The dots are only for human readability
+    */
+    function getColorNum(hex, sortType) {
+            // An array of color property values
+            // [hue, saturation, lightness]
+        var HSL = Y.Color.toArray(Y.Color.toHSL(hex)),
+            hNum, // hue
+            sNum, // saturation
+            // get the computed brightness from the hex value
+            bNum = Y.Color.getBrightness(hex).toString();
+        
+        // isolate hue part from HSL. converted to 2 digits
+        hNum = Math.floor((HSL[0] * 10) / 36.01).toString();
+        hNum = (hNum.length < 2) ? ('0' + hNum) : hNum;
+
+        // isolate sat part from HSL. converted to 2 digits
+        sNum = Math.floor((HSL[1] * 10) / 10.01).toString();
+        sNum = (sNum.length < 2) ? ('0' + sNum) : sNum;
+
+        // assure brightness is 2 digits
+        bNum = (bNum.length < 2) ? ('0' + bNum) : bNum;
+        bNum = (bNum === "100") ? "99" : bNum;
+
+        if (sortType === "hbs") {
+            return hNum + '.' + bNum + '.' + sNum; // hue.bright.sat
+        } else if (sortType === "bhs") {
+            return bNum + '.' + hNum + '.' + sNum; // bright.hue.sat
+        }
+    }
