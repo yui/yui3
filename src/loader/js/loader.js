@@ -1442,13 +1442,11 @@ Y.Loader.prototype = {
     the module's test if there is one and caches its result.
 
     @method _canBeAttached
-    @param {String|Object} module Module name or module object.
+    @param {String} module Name of the module to check.
     @return {Boolean} Result of the module's test if it has one, or `true`.
     **/
     _canBeAttached: function (m) {
-        if (typeof m === 'string') {
-            m = this.getModule(m);
-        }
+        m = this.getModule(m);
         if (m && m.test) {
             if (!m.hasOwnProperty('_testResult')) {
                 m._testResult = m.test(Y);
@@ -1521,9 +1519,8 @@ Y.Loader.prototype = {
         // available in the global scope.
         if (optReqs) {
             for (i = 0, length = optReqs.length; i < length; i++) {
-                m = this.getModule(optReqs[i]);
-                if (m && this._canBeAttached(m)) {
-                    mod.requires.push(m.name);
+                if (this._canBeAttached(optReqs[i])) {
+                    mod.requires.push(optReqs[i]);
                 }
             }
         }
