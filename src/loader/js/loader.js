@@ -1067,7 +1067,8 @@ Y.Loader.prototype = {
         have their own tests instead of a test associated with this module like
         conditional dependencies. This is targeted mostly at polyfills, since
         they may not be in the list of requires because they are assumed to be
-        available in the global scope. **Modules without a test will be ignored**.
+        available in the global scope.**Modules without a test will not be
+        loaded, but those that are already available will be used**.
      * @param {Function} [config.test] Test to be called when this module is
         added as an optional dependency of another module. See `optionalRequires`.
      * @param {String} [name] The module name, required if not in the module data.
