@@ -1,15 +1,13 @@
 YUI.add('datatable-colorsort-tests', function(Y) {
 
     var suite = new Y.Test.Suite('datatable-colorsort example test suite'),
-        Assert = Y.Assert;
-            var tableSelector = '#cTable ',
-                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
-                tableDataSelector = tableSelector + '.yui3-datatable-data ',
-                th = Y.all(tableHeaderSelector + 'th'),
-                td = Y.all(tableDataSelector + 'td'),
-                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
-                cap = Y.one(tableSelector + 'caption');
-
+        Assert = Y.Assert,
+        tableSelector = '#cTable ',
+        tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
+        tableDataSelector = tableSelector + '.yui3-datatable-data ',
+        th = Y.all(tableHeaderSelector + 'th'),
+        td = Y.all(tableDataSelector + 'td'),
+        tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr');
 
     suite.add(new Y.Test.Case({
         name: 'Example tests',
@@ -20,15 +18,8 @@ YUI.add('datatable-colorsort-tests', function(Y) {
             Assert.isTrue((tr.item(2).hasClass('yui3-datatable-odd')), ' - Failed to assign odd row class');
             Assert.isTrue((th.item(1).one('div').hasClass('yui3-datatable-sort-liner')), ' - Failed to find sort-linear class in 2nd col');
             Assert.isTrue((th.item(1).one('div span').hasClass('yui3-datatable-sort-indicator')), ' - Failed to include span with double arrows');
-// alert(th.item(0).one('div').getHTML());
-// alert(th.item(0).one('div span').getContent());
-// alert(th.item(0).one('div span').getStyle('backgroundImage'));
-// alert(th.item(0).one('div .yui3-datatable-sort-indicator').getStyle('backgroundPosition'));
-//    IE8 returns undefined for ....getStyle('backgroundPosition'), so I removed that arrow test
-//            Assert.areEqual('0px 0px', th.item(0).one('div span').getComputedStyle('backgroundPosition'), ' - Failed to include span with arrow pointing up');
             Assert.isTrue((th.item(2).one('div').hasClass('yui3-datatable-sort-liner')), ' - Failed to sort-linear class 3rd col');
             Assert.areEqual('Sort by Hex', th.item(2).getAttribute('title'), ' - Failed to assign title to sortable th');
-            //Assert.areEqual('Table with simple column sorting', cap.getHTML(), ' - Wrong or no caption');
         },
         'test click to sort': function() {
             Assert.areEqual('thistle', td.item(1).getHTML(), ' - Wrong text in col 2 row 1 before sort');
@@ -37,16 +28,12 @@ YUI.add('datatable-colorsort-tests', function(Y) {
             td = Y.all(tableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('indianred', td.item(1).getHTML(), ' - Wrong text in col 2 row 1 after sort');
             Assert.areEqual('Reverse sort by Hue', th.item(3).getAttribute('title'), ' - Failed to assign "reverse sort..." title to sortable th');
-
-
             ////////// second click
             th.item(3).simulate('click');
             td = Y.all(tableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('thistle', td.item(1).getHTML(), ' - Wrong text in col 2 row 1 after sort');
-//            Assert.areEqual('0px -20px', th.item(0).one('div span').getComputedStyle('backgroundPosition'), ' - Failed to include span with arrow pointing up');
         }
     }));
-
 
     /* sortable data types test */
 
@@ -56,9 +43,6 @@ YUI.add('datatable-colorsort-tests', function(Y) {
         th = Y.all(tableSelector + 'th'),
         tds = Y.all(tableSelector + 'td'),
         trs = Y.all(tableSelector + 'tr');
-
-
-
 
     suiteFilter.add(new Y.Test.Case({
         name: 'Example sortable tests',
@@ -82,9 +66,6 @@ YUI.add('datatable-colorsort-tests', function(Y) {
             th.item(3).simulate('click');
         }
     }));
-
-
-
 
     Y.Test.Runner.add(suite);
     Y.Test.Runner.add(suiteFilter);

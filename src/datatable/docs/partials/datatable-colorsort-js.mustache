@@ -138,7 +138,7 @@ YUI().use('datatable-sort', 'color-harmony', function (Y) {
               // Color the background-color from hex value in each row
               formatter: function(o) {
                 return '<div class="swatch" style="' +
-                'background-color: #' + o.data.hex + ';' +
+                'background-color: #' + Y.Escape.html(o.data.hex) + ';' +
                 '"></div>';
               },
               sortable: false,
