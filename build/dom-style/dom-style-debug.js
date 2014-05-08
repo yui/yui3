@@ -22,13 +22,14 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     Y_DOM = Y.DOM,
 
-    TRANSFORM = 'transform',
-    TRANSFORMORIGIN = 'transformOrigin',
+    TRANSFORM,
+    TRANSFORMORIGIN,
     VENDOR_TRANSFORM = [
         'WebkitTransform',
         'MozTransform',
         'OTransform',
-        'msTransform'
+        'msTransform',
+        'transform'
     ],
 
     re_color = /color$/i,
