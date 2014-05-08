@@ -2808,7 +2808,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 resolved[modKey] = resolvedMods = resolved[modKey] || [];
                 
                 // Generate custom combo urls.
-                comboUrls = this.customResolve(resolvedMods, type);
+                comboUrls = this._customResolve(resolvedMods, type);
 
                 if (window.JSON) {
                     Y.log('Default encoding resulted in ' + resolved[type].length + ' URLs', 'info', NAME);
@@ -2826,14 +2826,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     Build each combo url from the bottom up. There's probably room for optimization
     here, but let's keep it simple for now.
-    @method customResolve
+    @method _customResolve
     @param {Array} modules A list of module meta.
     @param {String} type Either `js` or `css`.
     @return {String} Combo url.
+    @private
     */
-    customResolve: function (modules, type) {
-        var source = this.aggregateGroups(modules),
-            groups = this.sortAggregatedGroups(source),
+    _customResolve: function (modules, type) {
+        var source = this._aggregateGroups(modules),
+            groups = this._sortAggregatedGroups(source),
             comboUrls = [],
             comboTail,
             filter,
@@ -2850,10 +2851,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             comboTail = comboTail + '.' + type;
         }
 
-        url = this.buildCombo(groups, customComboBase, comboTail);
+        url = this._buildCombo(groups, customComboBase, comboTail);
         while (url) {
             comboUrls.push(url);
-            url = this.buildCombo(groups, customComboBase, comboTail);
+            url = this._buildCombo(groups, customComboBase, comboTail);
         }
 
         return comboUrls;
@@ -2862,11 +2863,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     Aggregate modules into groups with unique keys. The key is "$name+$version" for
     core and gallery groups, and just "$root" for all other groups.
-    @method aggregateGroups
+    @method _aggregateGroups
     @param {Array} modules A list of module meta.
     @return {Object} Aggregated groups of module meta.
+    @private
     */
-    aggregateGroups: function (modules) {
+    _aggregateGroups: function (modules) {
         var source = {},
             galleryMatch,
             meta,
@@ -2953,13 +2955,14 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     Build each combo url from the bottom up. There's probably room for optimization
     here, but let's keep it simple for now.
-    @method buildCombo
+    @method _buildCombo
     @param {Array} groups Grouped module meta.
     @param {String} comboBase The base of the combo url.
     @param {String} comboTail The tail of the combo url (e.g. .debug.js).
     @return {String} A combo url.
+    @private
     */
-    buildCombo: function (groups, comboBase, comboTail) {
+    _buildCombo: function (groups, comboBase, comboTail) {
         var comboUrl = comboBase,
             currLen  = comboBase.length + comboTail.length,
             currDelim,
@@ -3017,11 +3020,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     Sort the aggregated groups, and the modules within them. Minimizes cache misses
     in Yahoo's infrastructure by encoding predictable combo urls across browsers
     since iterating over an object does not guarantee order.
-    @method sortAggregatedGroups
+    @method _sortAggregatedGroups
     @param {Object} groups Aggregated groups.
     @return {Array} Sorted groups.
+    @private
     **/
-    sortAggregatedGroups: function (groups) {
+    _sortAggregatedGroups: function (groups) {
         var sorted = [],
             key,
             len,
