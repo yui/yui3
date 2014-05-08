@@ -1064,13 +1064,13 @@ Y.Loader.prototype = {
      * @param {Function} [config.configFn] A function to exectute when configuring this module
      * @param {Object} config.configFn.mod The module config, modifying this object will modify it's config. Returning false will delete the module's config.
      * @param {String[]} [config.optionalRequires] List of dependencies that
-        have their own tests instead of a test associated with this module like
-        conditional dependencies. This is targeted mostly at polyfills, since
-        they may not be in the list of requires because they are assumed to be
-        available in the global scope.**Modules without a test will not be
-        loaded, but those that are already available will be used**.
+        may optionally be loaded by this loader. This is targeted mostly at
+        polyfills, since they should not be in the list of requires because
+        polyfills are assumed to be available in the global scope.
      * @param {Function} [config.test] Test to be called when this module is
-        added as an optional dependency of another module. See `optionalRequires`.
+        added as an optional dependency of another module. If the test function
+        returns `false`, the module will be ignored and will not be attached to
+        this YUI instance.
      * @param {String} [name] The module name, required if not in the module data.
      * @return {Object} the module definition or null if the object passed in did not provide all required attributes.
      */
