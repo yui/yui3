@@ -22,13 +22,14 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     Y_DOM = Y.DOM,
 
-    TRANSFORM = 'transform',
-    TRANSFORMORIGIN = 'transformOrigin',
+    TRANSFORM,
+    TRANSFORMORIGIN,
     VENDOR_TRANSFORM = [
         'WebkitTransform',
         'MozTransform',
         'OTransform',
-        'msTransform'
+        'msTransform',
+        'transform'
     ],
 
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
@@ -222,25 +223,27 @@ Y.DOM._getOffset = function(node) {
 
 };
 
-Y_DOM.CUSTOM_STYLES.transform = {
-    set: function(node, val, style) {
-        style[TRANSFORM] = val;
-    },
+if (TRANSFORM) {
+    Y_DOM.CUSTOM_STYLES.transform = {
+        set: function(node, val, style) {
+            style[TRANSFORM] = val;
+        },
 
-    get: function(node) {
-        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
-    }
-};
+        get: function(node) {
+            return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
+        }
+    };
 
-Y_DOM.CUSTOM_STYLES.transformOrigin = {
-    set: function(node, val, style) {
-        style[TRANSFORMORIGIN] = val;
-    },
+    Y_DOM.CUSTOM_STYLES.transformOrigin = {
+        set: function(node, val, style) {
+            style[TRANSFORMORIGIN] = val;
+        },
 
-    get: function(node) {
-        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
-    }
-};
+        get: function(node) {
+            return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
+        }
+    };
+}
 
 
 }, '@VERSION@', {"requires": ["dom-base"]});

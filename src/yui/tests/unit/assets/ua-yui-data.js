@@ -608,6 +608,16 @@ Y.UAData["YUI Internal"] = [
                         "os": "android",
                         "mobile": "ffos"
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (Linux; Ubuntu 14.04 like Android 4.4) WebKit/537.36 Chromium/35.0.1870.2 Mobile",
+                "data": {
+                        "webkit": 537.36,
+                        "chrome": 35.0187,
+                        "mobile": "Ubuntu",
+                        "ubuntu": 14.04,
+                        "os": "linux"
+                }
         }
 ];
 });
