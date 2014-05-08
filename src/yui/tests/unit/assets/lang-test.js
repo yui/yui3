@@ -185,27 +185,41 @@ suite.add(new Y.Test.Case({
     name: 'Lang.sub tests',
 
     'should replace placeholders': function () {
-        Assert.areSame(
-            'foo foo bar bar {baz} false 0',
-            Lang.sub('foo {foo} bar {bar} {baz} {moo} {zoo}', {foo: 'foo', bar: 'bar', moo: false, zoo: 0}),
-            'should replace placeholders'
-        );
+
+        var obj = {
+                foo: 'foo',
+                bar: 'bar',
+                moo: false,
+                zoo: 0,
+                loo: ''
+            };
+
+        // smoke test: single & multiple replacements of one or more occurences
+        Assert.areSame('foo'      , Lang.sub('{foo}'          , obj) );
+        Assert.areSame('foobar'   , Lang.sub('{foo}{bar}'     , obj) );
+        Assert.areSame('foobarfoo', Lang.sub('{foo}{bar}{foo}', obj) );
+
+        // falsy values tests: should be picked up
+        Assert.areSame('false', Lang.sub('{moo}', obj) );
+        Assert.areSame('0'    , Lang.sub('{zoo}', obj) );
+        Assert.areSame(''     , Lang.sub('{loo}', obj) );
+    },
+
+    'should leave unresolved placeholders': function () {
+        Assert.areSame('{xxx}{yyy}', Lang.sub('{xxx}{yyy}', {}) );
+    },
+
+    'should leave non placeholders intact': function () {
+        Assert.areSame("\txxx  foo  xxx\r\n", Lang.sub("\txxx  {foo}  xxx\r\n", { foo:'foo' }) );
     },
 
     'whitespace inside a placeholder is ignored': function () {
-        Assert.areSame(
-            'foo foo bar {bar}',
-            Lang.sub('foo { foo } bar {bar}', {foo: 'foo'}),
-            'whitespace inside a placeholder is ignored'
-        );
+        Assert.areSame('foo', Lang.sub('{  foo  }', { foo: 'foo' }) );
     },
 
     'anything after a pipe inside a placeholder is ignored': function () {
-        Assert.areSame(
-            'foo foo bar {bar}',
-            Lang.sub('foo {foo|moo} bar {bar}', {foo: 'foo'}),
-            'anything after a pipe inside a placeholder is ignored'
-        );
+        Assert.areSame('foo', Lang.sub('{foo|moo}'    , { foo: 'foo' }) );
+        Assert.areSame('foo', Lang.sub('{ foo | moo }', { foo: 'foo' }) );
     }
 }));
 
