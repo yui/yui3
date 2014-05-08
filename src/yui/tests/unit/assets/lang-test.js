@@ -177,21 +177,30 @@ suite.add(new Y.Test.Case({
         if (Date.now) {
             Assert.areSame(Date.now, Lang.now, 'Lang.now() should be native Date.now() when available');
         }
-    },
+    }
+}));
 
-    test_sub: function () {
+suite.add(new Y.Test.Case({
+
+    name: 'Lang.sub tests',
+
+    'should replace placeholders': function () {
         Assert.areSame(
             'foo foo bar bar {baz} false 0',
             Lang.sub('foo {foo} bar {bar} {baz} {moo} {zoo}', {foo: 'foo', bar: 'bar', moo: false, zoo: 0}),
             'should replace placeholders'
         );
+    },
 
+    'whitespace inside a placeholder is ignored': function () {
         Assert.areSame(
             'foo foo bar {bar}',
             Lang.sub('foo { foo } bar {bar}', {foo: 'foo'}),
             'whitespace inside a placeholder is ignored'
         );
+    },
 
+    'anything after a pipe inside a placeholder is ignored': function () {
         Assert.areSame(
             'foo foo bar {bar}',
             Lang.sub('foo {foo|moo} bar {bar}', {foo: 'foo'}),
