@@ -5275,7 +5275,7 @@ Y.mix(Y.namespace('Features'), {
         return (result.length) ? result.join(';') : '';
     },
     /**
-    * Run a sepecific test and return a Boolean response.
+    * Run a specific test and return a Boolean response.
     *
     *   ```
     *   Y.Features.test("load", "1");
