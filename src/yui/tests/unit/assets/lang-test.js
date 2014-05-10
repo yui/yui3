@@ -220,6 +220,28 @@ suite.add(new Y.Test.Case({
     'anything after a pipe inside a placeholder is ignored': function () {
         Assert.areSame('foo', Lang.sub('{foo|moo}'    , { foo: 'foo' }) );
         Assert.areSame('foo', Lang.sub('{ foo | moo }', { foo: 'foo' }) );
+    },
+
+    'should replace nested placeholders': function () {
+        Assert.areSame('123', Lang.sub('{a}{b.c}{d.e.f}', {
+            a: 1,
+            b: { c: 2 },
+            d: { e: { f: 3 } }
+        }));
+    },
+
+    'should resolve nested placeholders at the closest level': function () {
+        Assert.areSame('21', Lang.sub('{c.d.e}{a.b}', {
+            'a.b': 1,
+            'a': { 'b': 'no' },
+            'c': { 'd.e': 2, 'd': { 'e': 'nono'}}
+        }));
+    },
+
+    'if a nested placeholder cannot be resolved, it is left intact': function () {
+        Assert.areSame('{foo.bar.baz}', Lang.sub('{foo.bar.baz}', {}) );
+        Assert.areSame('{foo.bar.baz}', Lang.sub('{foo.bar.baz}', { foo: {} }) );
+        Assert.areSame('{foo.bar.baz}', Lang.sub('{foo.bar.baz}', { foo: { bar: {} } }) );
     }
 }));
 
