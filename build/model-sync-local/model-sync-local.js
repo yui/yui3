@@ -267,7 +267,7 @@ LocalSync.prototype = {
 
         LocalSync._data[hash.id] = hash;
         if (this.storage) {
-            this.storage.setItem(hash.id, hash);
+            this.storage.setItem(hash.id, Y.JSON.stringify(hash));
         }
 
         LocalSync._store[this.root].push(hash.id);
