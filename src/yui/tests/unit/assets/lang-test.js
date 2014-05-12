@@ -177,26 +177,71 @@ suite.add(new Y.Test.Case({
         if (Date.now) {
             Assert.areSame(Date.now, Lang.now, 'Lang.now() should be native Date.now() when available');
         }
+    }
+}));
+
+suite.add(new Y.Test.Case({
+
+    name: 'Lang.sub tests',
+
+    'should replace placeholders': function () {
+
+        var obj = {
+                foo: 'foo',
+                bar: 'bar',
+                moo: false,
+                zoo: 0,
+                loo: ''
+            };
+
+        // smoke test: single & multiple replacements of one or more occurences
+        Assert.areSame('foo'      , Lang.sub('{foo}'          , obj) );
+        Assert.areSame('foobar'   , Lang.sub('{foo}{bar}'     , obj) );
+        Assert.areSame('foobarfoo', Lang.sub('{foo}{bar}{foo}', obj) );
+
+        // falsy values tests: should be picked up
+        Assert.areSame('false', Lang.sub('{moo}', obj) );
+        Assert.areSame('0'    , Lang.sub('{zoo}', obj) );
+        Assert.areSame(''     , Lang.sub('{loo}', obj) );
     },
 
-    test_sub: function () {
-        Assert.areSame(
-            'foo foo bar bar {baz} false 0',
-            Lang.sub('foo {foo} bar {bar} {baz} {moo} {zoo}', {foo: 'foo', bar: 'bar', moo: false, zoo: 0}),
-            'should replace placeholders'
-        );
+    'should leave unresolved placeholders': function () {
+        Assert.areSame('{xxx}{yyy}', Lang.sub('{xxx}{yyy}', {}) );
+    },
 
-        Assert.areSame(
-            'foo foo bar {bar}',
-            Lang.sub('foo { foo } bar {bar}', {foo: 'foo'}),
-            'whitespace inside a placeholder is ignored'
-        );
+    'should leave non placeholders intact': function () {
+        Assert.areSame("\txxx  foo  xxx\r\n", Lang.sub("\txxx  {foo}  xxx\r\n", { foo:'foo' }) );
+    },
 
-        Assert.areSame(
-            'foo foo bar {bar}',
-            Lang.sub('foo {foo|moo} bar {bar}', {foo: 'foo'}),
-            'anything after a pipe inside a placeholder is ignored'
-        );
+    'whitespace inside a placeholder is ignored': function () {
+        Assert.areSame('foo', Lang.sub('{  foo  }', { foo: 'foo' }) );
+    },
+
+    'anything after a pipe inside a placeholder is ignored': function () {
+        Assert.areSame('foo', Lang.sub('{foo|moo}'    , { foo: 'foo' }) );
+        Assert.areSame('foo', Lang.sub('{ foo | moo }', { foo: 'foo' }) );
+    },
+
+    'should replace nested placeholders': function () {
+        Assert.areSame('123', Lang.sub('{a}{b.c}{d.e.f}', {
+            a: 1,
+            b: { c: 2 },
+            d: { e: { f: 3 } }
+        }));
+    },
+
+    'should resolve nested placeholders at the closest level': function () {
+        Assert.areSame('21', Lang.sub('{c.d.e}{a.b}', {
+            'a.b': 1,
+            'a': { 'b': 'no' },
+            'c': { 'd.e': 2, 'd': { 'e': 'nono'}}
+        }));
+    },
+
+    'if a nested placeholder cannot be resolved, it is left intact': function () {
+        Assert.areSame('{foo.bar.baz}', Lang.sub('{foo.bar.baz}', {}) );
+        Assert.areSame('{foo.bar.baz}', Lang.sub('{foo.bar.baz}', { foo: {} }) );
+        Assert.areSame('{foo.bar.baz}', Lang.sub('{foo.bar.baz}', { foo: { bar: {} } }) );
     }
 }));
 
