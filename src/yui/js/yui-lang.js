@@ -266,8 +266,40 @@ L.now = Date.now || function () {
  * @since 3.2.0
  */
 L.sub = function(s, o) {
+
+    /**
+    Finds the value of `key` in given object.
+    If the key has a 'dot' notation e.g. 'foo.bar.baz', the function will
+    try to resolve this path if it doesn't exist as a property
+    @example
+        value({ 'a.b': 1, a: { b: 2 } }, 'a.b'); // 1
+        value({ a: { b: 2 } }          , 'a.b'); // 2
+    @param {Object} obj A key/value pairs object
+    @param {String} key
+    @return {Any}
+    @private
+    **/
+    function value(obj, key) {
+
+        var subkey;
+
+        if ( typeof obj[key] !== 'undefined' ) {
+            return obj[key];
+        }
+
+        key    = key.split('.');         // given 'a.b.c'
+        subkey = key.slice(1).join('.'); // 'b.c'
+        key    = key[0];                 // 'a'
+
+        // special case for null as typeof returns object and we don't want that.
+        if ( subkey && typeof obj[key] === 'object' && obj[key] !== null ) {
+            return value(obj[key], subkey);
+        }
+    }
+
     return s.replace ? s.replace(SUBREGEX, function (match, key) {
-        return L.isUndefined(o[key]) ? match : o[key];
+        var val = key.indexOf('.')>-1 ? value(o, key) : o[key];
+        return typeof val === 'undefined' ? match : val;
     }) : s;
 };
 
