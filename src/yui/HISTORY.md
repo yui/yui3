@@ -4,7 +4,10 @@ YUI Core Change History
 @VERSION@
 ------
 
-* No changes.
+* `Y.Lang.sub()` now supports nested object paths in placeholders, such as
+  "{foo.bar.baz}". ([#1814][]: @customcommander)
+
+[#1814]: https://github.com/yui/yui3/pull/1814
 
 3.16.0
 ------
