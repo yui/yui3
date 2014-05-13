@@ -18,9 +18,13 @@ YUI({
         'mousewheel-tests': {
             fullpath: './assets/mousewheel-tests.js',
             requires: [ 'event-mousewheel', 'test-console', 'test' ]
+        },
+        'wheel-tests': {
+            fullpath: './assets/wheel-tests.js',
+            requires: ['mousewheel-tests']
         }
     }
-}).use('mousewheel-tests', function(Y) {
+}).use('wheel-tests', function(Y) {
     
     (new Y.Test.Console()).render('#log');
     Y.Test.Runner.setName('Event: Mousewheel');

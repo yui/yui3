@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Wheel Event Tests</title>
+    <link rel="stylesheet" type="text/css" href="../../../../build/cssnormalize/cssnormalize-min.css">
+</head>
+<body class="yui3-skin-sam">
+    <h1>Wheel Event Tests</h1>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script type="text/javascript">
+YUI({
+    filter: 'raw'
+}).use('event', 'console', function (Y) {
+    new Y.Console().render();
+
+    Y.on('wheel', function (e) {
+        Y.log('wheel event - deltaY = ' + e.deltaY, 'info', 'event-mousewheel');
+    });
+});
+    </script>
+</body>
+</html>

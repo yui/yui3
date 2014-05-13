@@ -53,7 +53,7 @@
             },
             "event-mousewheel": {
                 "requires": [
-                    "node-base"
+                    "event-synthetic"
                 ]
             },
             "event-resize": {
