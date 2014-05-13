@@ -49,7 +49,7 @@
          *              tabindex, wmode.</code> event from the thumb</dd>
          *        </dl>
          */
-Y.log("The swf module is deprecated as of v3.13.0. YUI has no plans for providing a utility for embedding Flash into HTML pages.", "warn"); 
+Y.message("The swf module is deprecated as of v3.13.0. YUI has no plans for providing a utility for embedding Flash into HTML pages.", "warn"); 
 function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
 
     this._id = Y.guid("yuiswf");

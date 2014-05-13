@@ -502,7 +502,7 @@ Y.CustomEvent.prototype = {
      * @deprecated use on.
      */
     subscribe: function(fn, context) {
-        Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
+        Y.message('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
