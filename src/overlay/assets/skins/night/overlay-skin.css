@@ -4,7 +4,9 @@
 	color:#fff;
 }
 
-.yui3-skin-night .yui3-overlay-content ul, ol, li {
+.yui3-skin-night .yui3-overlay-content ul,
+.yui3-skin-night .yui3-overlay-content ol,
+.yui3-skin-night .yui3-overlay-content li {
     margin: 0;
     padding: 0;
 	list-style:none;
