@@ -186,6 +186,23 @@
 
 define(GESTURE_MOVE_START, {
 
+    publishConfig: {
+        preventedFn: function (e) {
+            var sub = e.target.once('click', function (click) {
+                click.preventDefault();
+            });
+
+            // Make sure to detach the subscription during the next event loop
+            // so this doesn't `preventDefault()` on the wrong click event.
+            setTimeout(function () {
+                sub.detach();
+            //Setting this to `0` causes the detachment to occur before the click
+            //comes in on Android 4.0.3-4.0.4. 100ms seems to be a reliable number here
+            //that works across the board.
+            }, 100);
+        }
+    },
+
     on: function (node, subscriber, ce) {
 
         //Set -ms-touch-action on IE10 and set preventDefault to true
@@ -247,7 +264,6 @@ define(GESTURE_MOVE_START, {
     },
 
     _onStart : function(e, node, subscriber, ce, delegate) {
-
         if (delegate) {
             node = e[CURRENT_TARGET];
         }
@@ -264,56 +280,111 @@ define(GESTURE_MOVE_START, {
         if (e.touches) {
             if (e.touches.length === 1) {
                 _normTouchFacade(e, e.touches[0], params);
-            } else {
+                subscriber.preventMouse = true;
+            }
+            else {
                 fireStart = false;
             }
-        } else {
+        }
+
+        else {
+            subscriber.preventMouse = false;
             fireStart = (button === undefined) || (button === e.button);
         }
+
+        //Store the click/touchstart pageX/pageY values.
+        startXY = [e.pageX, e.pageY];
 
         Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance, "event-gestures");
 
         if (fireStart) {
-
+            //If preventDefault = true, preventDefault();
             _prevent(e, preventDefault);
 
-            if (minTime === 0 || minDistance === 0) {
+
+            //If no Mintime or minDistance is set, just call _start()
+            if (minTime === 0 && minDistance === 0) {
                 Y.log("gesturemovestart: No minTime or minDistance. Firing immediately", "event-gestures");
-                this._start(e, node, ce, params);
-
-            } else {
-
-                startXY = [e.pageX, e.pageY];
-
-                if (minTime > 0) {
-
-                    Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
-                    Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
-
-                    params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
-
-                    params._hme = root.on(EVENT[END], Y.bind(function() {
-                        this._cancel(params);
-                    }, this));
-                }
-
-                if (minDistance > 0) {
-
-                    Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
-                    Y.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
-
-                    params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
-                        if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
-                            Y.log("gesturemovestart: minDistance hit.", "event-gestures");
-                            this._start(e, node, ce, params);
-                        }
-                    }, this));
-                }
+                this._start(e, node, subscriber, ce, params);
             }
+
+            //If there is a minDistance, set up a move listener, and call _start() inside it.
+            else if (minTime === 0 && minDistance > 0) {
+
+                Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
+                Y.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
+
+                params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                    //Doing a check for params._hm here because this function will
+                    //still execute if params._hm is null
+
+                    //Normalizing the DOMEventFacade because this could be a TouchEvent
+                    //or a MouseEvent
+                    if (params._hm &&em.touches && em.touches.length === 1) {
+                        _normTouchFacade(em, em.touches[0], params);
+                    }
+
+                    if ((Math.abs(em.pageX - startXY[0]) > minDistance ||
+                        Math.abs(em.pageY - startXY[1]) > minDistance) && params._hm) {
+                        Y.log("gesturemovestart: minDistance hit.", "event-gestures");
+                        this._start(e, node, subscriber, ce, params);
+                    }
+                }, this));
+
+                //Since we are subscribing to move, we want to detach that subscription
+                //on end. Using once() so it detaches itself.
+                params._hme = root.once(EVENT[END], Y.bind(function() {
+                    this._cancel(params);
+                }, this));
+
+            }
+
+            //If there is a minTime specified, fire _start() inside a Y.later() call
+            else if (minTime > 0 && minDistance === 0) {
+                Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
+                Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
+
+                params._ht = Y.later(minTime, this, this._start, [e, node, subscriber, ce, params]);
+
+                params._hme = root.once(EVENT[END], Y.bind(function() {
+                    this._cancel(params);
+                }, this));
+            }
+
+            //If both minTime and minDistance is specified, set up a Y.later() call within
+            //a move listener.
+            else if (minTime > 0 && minDistance > 0) {
+                Y.log("gesturemovestart: minTime and minDistance specified. Setup timer.", "event-gestures");
+                Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
+
+                params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                    if (params._hm && em.touches && em.touches.length === 1) {
+                        _normTouchFacade(em, em.touches[0], params);
+                    }
+                    if ((Math.abs(em.pageX - startXY[0]) > minDistance ||
+                        Math.abs(em.pageY - startXY[1]) > minDistance) && params._hm) {
+
+                        //need to do a check to see if this exists, so that multiple Y.later
+                        //calls are not made
+                        if (!params._ht) {
+                            Y.log("gesturemovestart: minDistance hit.", "event-gestures");
+                            Y.log("Firing gesturemovestart after minTime has passed");
+                            params._ht = Y.later(minTime, this, this._start, [e, node, subscriber, ce, params]);
+                        }
+                    }
+                }, this));
+
+                //on mouseup/touchend, detach all listeners
+                params._hme = root.once(EVENT[END], Y.bind(function() {
+                    this._cancel(params);
+                }, this));
+            }
+
         }
     },
 
     _cancel : function(params) {
+        Y.log('Detaching event listeners');
         if (params._ht) {
             params._ht.cancel();
             params._ht = null;
@@ -328,18 +399,30 @@ define(GESTURE_MOVE_START, {
         }
     },
 
-    _start : function(e, node, ce, params) {
-
+    _start : function(e, node, subscriber, ce, params) {
+        //If any params are set (so that it's just not a direct call to _start()),
+        //detach those event listeners
         if (params) {
             this._cancel(params);
         }
 
-        e.type = GESTURE_MOVE_START;
+        //If this is a touchEvent, or if it's a mouse event without a prior touchEvent,
+        //or if it's an MSPointer event, fire gesturemovestart
+        if ((e.touches) ||
+            (e.type.indexOf('mouse') !== -1 && !subscriber.preventMouse) ||
+            e.type.indexOf('MSPointer') !== -1) {
+            e.type = GESTURE_MOVE_START;
+            Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
+            node.setData(_MOVE_START, e);
+            ce.fire(e);
+        }
 
-        Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
+        //If it is a mouse event that did not fire a gesturemovestart, because there was
+        //a prior touch event, reset preventMouse.
+        if (e.type.indexOf('mouse') !== -1 && subscriber.preventMouse) {
+            subscriber.preventMouse = false;
+        }
 
-        node.setData(_MOVE_START, e);
-        ce.fire(e);
     },
 
     MIN_TIME : 0,
@@ -443,15 +526,18 @@ define(GESTURE_MOVE, {
         }
 
         var fireMove = subscriber._extra.standAlone || node.getData(_MOVE_START),
-            preventDefault = subscriber._extra.preventDefault;
+            preventDefault = subscriber._extra.preventDefault,
+            preventMouse = subscriber.preventMouse || false;
 
         Y.log("onMove initial fireMove check:" + fireMove,"event-gestures");
 
         if (fireMove) {
 
+            //If it's a touch event, set a flag to prevent an upcoming mouse event (if it occurs)
             if (e.touches) {
                 if (e.touches.length === 1) {
                     _normTouchFacade(e, e.touches[0]);
+                    subscriber.preventMouse = true;
                 } else {
                     fireMove = false;
                 }
@@ -461,12 +547,34 @@ define(GESTURE_MOVE, {
 
                 _prevent(e, preventDefault);
 
-                Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
+                if (e.touches) {
+                    this._move(e, node, subscriber, ce);
+                }
+                //Only call _move() if preventMouse is `false`
+                //ie: not when touch events have already called _move()
+                else if (e.type.indexOf('mouse') !== -1 && !preventMouse) {
+                    this._move(e, node, subscriber, ce);
+                }
 
-                e.type = GESTURE_MOVE;
-                ce.fire(e);
+                //If a mouse event comes in after a touch event, it will go in here and
+                //reset preventMouse to `false`.
+                //If a mouse event comes in without a prior touch event, preventMouse will be
+                //false in any case, so this block doesn't do anything.
+                else if (e.type.indexOf('mouse') !== -1 && preventMouse) {
+                    subscriber.preventMouse = false;
+                }
+
+                else if (e.type.indexOf('MSPointer') !== -1) {
+                    this._move(e, node, subscriber, ce);
+                }
             }
         }
+    },
+
+    _move: function (e, node, subscriber, ce) {
+        Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
+        e.type = GESTURE_MOVE;
+        ce.fire(e);
     },
 
     PREVENT_DEFAULT : false
@@ -567,14 +675,18 @@ define(GESTURE_MOVE_END, {
         }
 
         var fireMoveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
-            preventDefault = subscriber._extra.preventDefault;
+            preventDefault = subscriber._extra.preventDefault,
+            preventMouse = subscriber.preventMouse || false;
 
         if (fireMoveEnd) {
 
             if (e.changedTouches) {
                 if (e.changedTouches.length === 1) {
                     _normTouchFacade(e, e.changedTouches[0]);
-                } else {
+                    subscriber.preventMouse = true;
+                }
+
+                else {
                     fireMoveEnd = false;
                 }
             }
@@ -583,13 +695,36 @@ define(GESTURE_MOVE_END, {
 
                 _prevent(e, preventDefault);
 
-                e.type = GESTURE_MOVE_END;
-                ce.fire(e);
+                if (e.changedTouches) {
+                    this._end(e, node, subscriber, ce);
+                }
+                //Only call _end() if preventMouse is `false`
+                //ie: not when touch events have not already called _end()
+                else if (e.type.indexOf('mouse') !== -1 && !preventMouse) {
+                    this._end(e, node, subscriber, ce);
+                }
 
-                node.clearData(_MOVE_START);
-                node.clearData(_MOVE);
+                //If a mouse event comes in after a touch event, it will go in here and
+                //reset preventMouse to `false`.
+                //If a mouse event comes in without a prior touch event, preventMouse will be
+                //false in any case, so this block doesn't do anything.
+                else if (e.type.indexOf('mouse') !== -1 && preventMouse) {
+                    subscriber.preventMouse = false;
+                }
+
+                else if (e.type.indexOf('MSPointer') !== -1) {
+                    this._end(e, node, subscriber, ce);
+                }
             }
         }
+    },
+
+    _end: function (e, node, subscriber, ce) {
+        e.type = GESTURE_MOVE_END;
+        ce.fire(e);
+
+        node.clearData(_MOVE_START);
+        node.clearData(_MOVE);
     },
 
     PREVENT_DEFAULT : false
