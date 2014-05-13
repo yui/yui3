@@ -62,8 +62,7 @@ Y.mix(Message.prototype, {
     @since 3.5.0
     **/
     hideMessage: function () {
-        this.get('boundingBox').removeClass(
-            this.getClassName('message', 'visible'));
+        this.get('boundingBox').removeClass(this._messageVisibleClass);
 
         return this;
     },
@@ -82,18 +81,14 @@ Y.mix(Message.prototype, {
     showMessage: function (message) {
         var content = this.getString(message) || message;
 
-        if (!this._messageNode) {
-            this._initMessageNode();
-        }
+        this._initMessageNode();
 
         if (this.get('showMessages')) {
             if (content) {
-                this._messageNode.one(
-                    '.' + this.getClassName('message', 'content'))
+                this._messageNode.one('.' + this._messageContentClass)
                     .setHTML(content);
 
-                this.get('boundingBox').addClass(
-                    this.getClassName('message','visible'));
+                this.get('boundingBox').addClass(this._messageVisibleClass);
             } else {
                 // TODO: is this right?
                 // If no message provided, remove the message node.
@@ -119,8 +114,7 @@ Y.mix(Message.prototype, {
         var contentNode;
 
         if (this._messageNode) {
-            contentNode = this._messageNode.one(
-                '.' + this.getClassName('message', 'content'));
+            contentNode = this._messageNode.one('.' + this._messageContentClass);
 
             if (contentNode) {
                 // FIXME: This needs to become a class extension plus a view or
@@ -155,8 +149,7 @@ Y.mix(Message.prototype, {
         if (e.newVal) {
             this._uiSetMessage(e);
         } else if (this._messageNode) {
-            this.get('boundingBox').removeClass(
-                this.getClassName('message', 'visible'));
+            this.get('boundingBox').removeClass(this._messageVisibleClass);
 
             this._messageNode.remove().destroy(true);
             this._messageNode = null;
@@ -190,6 +183,8 @@ Y.mix(Message.prototype, {
     @since 3.5.0
     **/
     initializer: function () {
+        this._messageContentClass = this.getClassName('message', 'content');
+        this._messageVisibleClass = this.getClassName('message', 'visible');
         this._initMessageStrings();
 
         if (this.get('showMessages')) {
@@ -213,7 +208,7 @@ Y.mix(Message.prototype, {
             this._messageNode = Y.Node.create(
                 Y.Lang.sub(this.MESSAGE_TEMPLATE, {
                     className: this.getClassName('message'),
-                    contentClass: this.getClassName('message', 'content'),
+                    contentClass: this._messageContentClass,
                     colspan: this._displayColumns.length || 1
                 }));
 
