@@ -82,6 +82,8 @@ JSONPRequest.prototype = {
          */
         this._timeouts = {};
 
+        this._failures = {};
+
         // Accept a function, an object, or nothing
         callback = (isFunction(callback)) ?
             { on: { success: callback } } :
