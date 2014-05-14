@@ -4,7 +4,9 @@ MenuNav Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1772][] Correct check for IE UserAgent to make sure that the browser is IE. (Andrew Nicols)
+
+[#1772]: https://github.com/yui/yui3/pull/1772
 
 3.16.0
 ------

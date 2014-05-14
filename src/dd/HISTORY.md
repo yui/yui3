@@ -4,7 +4,9 @@ Drag and Drop Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1778][] Filter mousedown events to check that they belong to a valid drop target. (Andrew Nicols)
+
+[#1778]: https://github.com/yui/yui3/pull/1778
 
 3.16.0
 ------
