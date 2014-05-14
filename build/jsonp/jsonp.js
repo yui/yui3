@@ -143,6 +143,9 @@ JSONPRequest.prototype = {
         if (self._timeouts[proxy] === undefined) {
             self._timeouts[proxy] = 0;
         }
+        if (self._failures[proxy] === undefined) {
+            self._failures[proxy] = 0;
+        }
         self._requests[proxy]++;
 
 
@@ -153,7 +156,7 @@ JSONPRequest.prototype = {
             return self;
         }
 
-        function wrap(fn, isTimeout) {
+        function wrap(fn, isTimeout, isFailure) {
             return (isFunction(fn)) ?
                 function (data) {
                     var execute = true,
@@ -166,16 +169,27 @@ JSONPRequest.prototype = {
                         if (isTimeout) {
                             ++self._timeouts[proxy];
                             --self._requests[proxy];
+                        } else if (isFailure) {
+                            ++self._failures[proxy];
+                            if (self._timeouts[proxy] > 0) {
+                                --self._timeouts[proxy];
+                            } else {
+                                --self._requests[proxy];
+                            }
                         } else {
                             if (!self._requests[proxy]) {
                                 execute = false;
-                                counter = '_timeouts';
+                                if (self._timeouts[proxy] > 0) {
+                                    counter = '_timeouts';
+                                } else if (self._failures[proxy] > 0) {
+                                    counter = '_failures';
+                                }
                             }
                             --self[counter][proxy];
                         }
                     //}
 
-                    if (!self._requests[proxy] && !self._timeouts[proxy]) {
+                    if (!self._requests[proxy] && !self._timeouts[proxy] && !self._failures[proxy]) {
                         delete YUI.Env.JSONP[proxy];
                     }
 
@@ -194,8 +208,8 @@ JSONPRequest.prototype = {
         //  be made non-blocking by just calling execute() on the transaction.
         // https://github.com/yui/yui3/pull/393#issuecomment-11961608
         Y.Get.js(url, {
-            onFailure : wrap(config.on.failure),
-            onTimeout : wrap(config.on.timeout, true),
+            onFailure : wrap(config.on.failure, false, true),
+            onTimeout : wrap(config.on.timeout, true, false),
             timeout   : config.timeout,
             charset   : config.charset,
             attributes: config.attributes,

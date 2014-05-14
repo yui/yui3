@@ -4,7 +4,7 @@ JSONP Change History
 @VERSION@
 ------
 
-* No changes.
+* Resolve "Uncaught TypeError: undefined is not a function" error when both *timeout* and *failure* are defined. Fixes #1817 [stanleyhlng] 
 
 3.16.0
 ------
