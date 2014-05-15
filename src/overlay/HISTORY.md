@@ -4,7 +4,9 @@ Overlay Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1812][]: Fix the night skin style for ol and li elements (@okuryu)
+
+[#1812]: https://github.com/yui/yui3/pull/1812
 
 3.16.0
 ------
