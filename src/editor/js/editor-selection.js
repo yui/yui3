@@ -957,7 +957,6 @@
             var cur = this.getCursor();
             if (cur) {
                 if (keep) {
-                    cur.removeAttribute('id');
                     cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {
                     cur.remove();
