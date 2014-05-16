@@ -226,7 +226,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageNodes = paginator._getPageNodes(),
             gestureAxis;
 
-        if (gesture) {
+        // Only look at the last gesture if we're not scrolling to a specific index.
+        if (gesture && !this._scrollingToIndex) {
             gestureAxis = gesture.axis;
 
             // Null the opposite axis so it won't be modified by host.scrollTo
@@ -599,11 +600,19 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Makes sure the viewport nodes are visible
         paginator._showNodes(pageNode);
 
+        // Set the flag to indicate that we're scrolling to a specific index,
+        // so _beforeHostScrollTo will not try to adjust the coordinates according
+        // to the last gesture.
+        paginator._scrollingToIndex = true;
+
         // Scroll to the offset
         host.set(scrollAxis, scrollOffset, {
             duration: duration,
             easing: easing
         });
+
+        // Reset the flag to the original value.
+        paginator._scrollingToIndex = false;
     },
 
     /**
