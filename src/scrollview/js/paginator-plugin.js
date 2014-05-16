@@ -349,8 +349,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             canScroll = paginatorAxis[flickAxis],
             rtl = host.rtl;
 
-        // Store the flick data in the this._host._gesture object so it knows this was a flick
         if (gesture) {
+            // The gesture axis is not the flick axis, so do nothing
+            if (gesture.axis !== flickAxis) {
+                return new Y.Do.Prevent();
+            }
+
+            // Store the flick data in the this._host._gesture object so it knows this was a flick
             gesture.flick = flick;
         }
 

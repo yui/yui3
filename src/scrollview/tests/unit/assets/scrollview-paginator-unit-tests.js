@@ -258,6 +258,18 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             Y.Assert.isInstanceOf(Y.Do.Prevent, response);
         },
 
+        "Flicks on the opposite axis should be prevented": function() {
+            var Test = this,
+                scrollview = this.scrollview,
+                paginator = scrollview.pages,
+                mockEvent = this.mockEvent,
+                response;
+
+            scrollview._gesture = {axis: 'y'};
+            response = paginator._beforeHostFlick(mockEvent);
+            Y.Assert.isInstanceOf(Y.Do.Prevent, response);
+        },
+
         "Flick right should advance the page" : function () {
             var Test = this,
                 scrollview = this.scrollview,
@@ -265,7 +277,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                 mockEvent = this.mockEvent,
                 response;
 
-            scrollview._gesture = true;
+            scrollview._gesture = {axis: 'x'};
 
             response = paginator._beforeHostFlick(mockEvent);
             Y.Assert.areEqual(1, paginator.get('index'));
