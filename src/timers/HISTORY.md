@@ -1,6 +1,11 @@
 Timers
 ======
 
+@VERSION@
+------
+
+* No changes.
+
 3.17.0
 ------
 
