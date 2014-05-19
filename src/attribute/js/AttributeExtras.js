@@ -42,8 +42,20 @@
          * <p>
          * The properties which can be modified through this interface are limited
          * to the following subset of attributes, which can be safely modified
-         * after a value has already been set on the attribute: readOnly, writeOnce,
-         * broadcast and getter.
+         * after a value has already been set on the attribute:
+         * </p>
+         * <dl>
+         *  <dt>readOnly;</dt>
+         *  <dt>writeOnce;</dt>
+         *  <dt>broadcast; and</dt>
+         *  <dt>getter.</dt>
+         * </dl>
+         * <p>
+         * Note: New attributes cannot be added using this interface. New attributes must be
+         * added using {{#crossLink "AttributeCore/addAttr:method"}}addAttr{{/crossLink}}, or an
+         * appropriate manner for a class which utilises Attributes (e.g. the
+         * {{#crossLink "Base/ATTRS:property"}}ATTRS{{/crossLink}} property in
+         * {{#crossLink "Base"}}Base{{/crossLink}}).
          * </p>
          * @method modifyAttr
          * @param {String} name The name of the attribute whose configuration is to be updated.
@@ -70,10 +82,9 @@
                         }
                     }
                 }
+            } else {
+                Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');
             }
-            /*jshint maxlen:200*/
-            if (!host.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
-            /*jshint maxlen:150 */
         },
 
         /**

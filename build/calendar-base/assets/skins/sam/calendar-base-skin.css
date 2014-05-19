@@ -73,8 +73,20 @@
    margin-right:1em;
 }
 
+[dir="rtl"] .yui3-skin-sam .yui3-calendar-left-grid,
+.yui3-skin-sam [dir="rtl"] .yui3-calendar-left-grid {
+    margin-right: auto;
+    margin-left: 1em;
+}
+
 .yui3-skin-sam .yui3-calendar-right-grid {
    margin-left:1em;
+}
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendar-right-grid,
+.yui3-skin-sam [dir="rtl"] .yui3-calendar-right-grid {
+    margin-left: auto;
+    margin-right: 1em;
 }
 
 .yui3-skin-sam .yui3-calendar-day-highlighted {

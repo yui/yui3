@@ -734,6 +734,17 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+
+                    // Optional dependencies normally work by modifying the
+                    // dependency list of a module. If the dependency's test
+                    // passes it is added to the list. If not, it's not loaded.
+                    // This following check ensures that optional dependencies
+                    // are not attached when they were already loaded into the
+                    // page (when bundling for example)
+                    if (loader && !loader._canBeAttached(name)) {
+                        return true;
+                    }
+
                     /*
                         If it's a temp module, we need to redo it's requirements if it's already loaded
                         since it may have been loaded by another instance and it's dependencies might
@@ -6101,6 +6112,14 @@ Y.Loader.prototype = {
      * @param {Object} [config.testresults] A hash of test results from `Y.Features.all()`
      * @param {Function} [config.configFn] A function to exectute when configuring this module
      * @param {Object} config.configFn.mod The module config, modifying this object will modify it's config. Returning false will delete the module's config.
+     * @param {String[]} [config.optionalRequires] List of dependencies that
+        may optionally be loaded by this loader. This is targeted mostly at
+        polyfills, since they should not be in the list of requires because
+        polyfills are assumed to be available in the global scope.
+     * @param {Function} [config.test] Test to be called when this module is
+        added as an optional dependency of another module. If the test function
+        returns `false`, the module will be ignored and will not be attached to
+        this YUI instance.
      * @param {String} [name] The module name, required if not in the module data.
      * @return {Object} the module definition or null if the object passed in did not provide all required attributes.
      */
@@ -6462,6 +6481,28 @@ Y.Loader.prototype = {
         }
         return r;
     },
+
+    /**
+    Returns `true` if the module can be attached to the YUI instance. Runs
+    the module's test if there is one and caches its result.
+
+    @method _canBeAttached
+    @param {String} module Name of the module to check.
+    @return {Boolean} Result of the module's test if it has one, or `true`.
+    **/
+    _canBeAttached: function (m) {
+        m = this.getModule(m);
+        if (m && m.test) {
+            if (!m.hasOwnProperty('_testResult')) {
+                m._testResult = m.test(Y);
+            }
+            return m._testResult;
+        }
+        // return `true` for modules not registered as Loader will know what
+        // to do with them later on
+        return true;
+    },
+
     /**
      * Returns an object containing properties for all modules required
      * in order to load the requested module
@@ -6483,9 +6524,10 @@ Y.Loader.prototype = {
 
         //TODO add modue cache here out of scope..
 
-        var i, m, j, add, packName, lang, testresults = this.testresults,
+        var i, m, j, length, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
+            optReqs = mod.optionalRequires,
             d, go, def,
             r, old_mod,
             o, skinmod, skindef, skinpar, skinname,
@@ -6513,6 +6555,19 @@ Y.Loader.prototype = {
             return mod.expanded;
         }
 
+        // Optional dependencies are dependencies that may or may not be
+        // available.
+        // This feature was designed specifically to be used when transpiling
+        // ES6 modules, in order to use polyfills and regular scripts that define
+        // global variables without having to import them since they should be
+        // available in the global scope.
+        if (optReqs) {
+            for (i = 0, length = optReqs.length; i < length; i++) {
+                if (this._canBeAttached(optReqs[i])) {
+                    mod.requires.push(optReqs[i]);
+                }
+            }
+        }
 
         d = [];
         hash = {};
@@ -7009,11 +7064,13 @@ Y.Loader.prototype = {
                     p.action.call(this, mname, pname);
                 } else {
                     // ext true or false?
-                    m = this.addModule(Y.merge(found, {test: void 0}), mname);
+                    m = this.addModule(Y.merge(found, {
+                        test: void 0,
+                        temp: true
+                    }), mname);
                     if (found.configFn) {
                         m.configFn = found.configFn;
                     }
-                    m.temp = true;
                 }
             }
         } else {
@@ -7894,7 +7951,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style"
+            "node-style",
+            "color-base"
         ]
     },
     "anim-color": {
@@ -9119,8 +9177,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base",
-            "color-base"
+            "dom-base"
         ]
     },
     "dom-style-ie": {
@@ -9155,7 +9212,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style"
+            "dom-style",
+            "color-base"
         ]
     },
     "dump": {
@@ -9470,7 +9528,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-canvas-default": {
@@ -9533,7 +9592,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-vml-default": {
@@ -10839,7 +10899,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e61397b06e7b9d3e4298ee7a7a4ea6a1';
+YUI.Env[Y.version].md5 = '45357bb11eddf7fd0a89c0b756599df2';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

@@ -30,7 +30,6 @@ var DOCUMENT_ELEMENT = 'documentElement',
         'transform'
     ],
 
-    re_color = /color$/i,
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
@@ -150,21 +149,6 @@ if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== undefined) {
     Y_DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
 } else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== undefined) {
     Y_DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
-}
-
-// fix opera computedStyle default color unit (convert to rgb)
-if (Y.UA.opera) {
-    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
-        var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
-            val = view[GET_COMPUTED_STYLE](node, '')[att];
-
-        if (re_color.test(att)) {
-            val = Y.Color.toRGB(val);
-        }
-
-        return val;
-    };
-
 }
 
 // safari converts transparent to rgba(), others use "transparent"

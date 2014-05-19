@@ -1,10 +1,27 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.17.0
 ------
 
-* No changes.
+* Add support for optional dependencies. These dependencies are conditionally
+  loaded but each dependency is responsible for determining the result of the
+  test, the opposite of `condition`. Example:
+
+```js
+  YUI({
+    modules: {
+      foo: {
+        test: function (Y) {
+          return true;
+        }
+      },
+      bar: {
+        optionalRequires: ['foo']
+      }
+    }
+  }).use('bar', ...);
+```
 
 3.16.0
 ------

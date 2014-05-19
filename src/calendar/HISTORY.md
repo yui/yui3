@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.17.0
 ------
 
 * [#1752][]: Y.Calendar.selectDates fails when passed the maximumDate with minutes/seconds (@mairatma)

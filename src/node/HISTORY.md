@@ -1,10 +1,10 @@
 Node Change History
 ===================
 
-@VERSION@
+3.17.0
 ------
 
-* No changes.
+* Add `invalid` to event whitelist.
 
 3.16.0
 ------
