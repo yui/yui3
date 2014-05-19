@@ -1,7 +1,7 @@
 Widget Anim Change History
 ==========================
 
-@VERSION@
+3.17.0
 ------
 
 * No changes.

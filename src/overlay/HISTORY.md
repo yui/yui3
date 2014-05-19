@@ -1,7 +1,7 @@
 Overlay Change History
 ======================
 
-@VERSION@
+3.17.0
 ------
 
 * [#1812][]: Fix the night skin style for ol and li elements (@okuryu)

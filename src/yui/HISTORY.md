@@ -1,7 +1,7 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.17.0
 ------
 
 * `Y.Lang.sub()` now supports nested object paths in placeholders, such as

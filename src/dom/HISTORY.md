@@ -1,7 +1,7 @@
 DOM Change History
 ==================
 
-@VERSION@
+3.17.0
 ------
 
 * [#1709][]: Move out of color-base module (@okuryu)

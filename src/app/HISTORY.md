@@ -1,10 +1,10 @@
 App Framework Change History
 ============================
 
-@VERSION@
+3.17.0
 ------
 
-* No changes.
+* [ModelSync.Local]: Stringify hash before saving.
 
 3.16.0
 ------

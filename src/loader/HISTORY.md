@@ -1,7 +1,7 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.17.0
 ------
 
 * Add support for optional dependencies. These dependencies are conditionally
