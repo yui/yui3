@@ -1,7 +1,7 @@
 Tree Change History
 ===================
 
-@VERSION@
+3.17.0
 ------
 
 * Fixed: Moving a node to another tree fails when that node has children.

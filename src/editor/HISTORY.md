@@ -1,7 +1,7 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.17.0
 ------
 
 * Increase specificity of when to set cursor.

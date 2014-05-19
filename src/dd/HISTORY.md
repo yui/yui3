@@ -1,7 +1,7 @@
 Drag and Drop Change History
 ============================
 
-@VERSION@
+3.17.0
 ------
 
 * [#1778][] Filter mousedown events to check that they belong to a valid drop target. (Andrew Nicols)

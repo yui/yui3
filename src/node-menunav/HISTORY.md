@@ -1,7 +1,7 @@
 MenuNav Change History
 ======================
 
-@VERSION@
+3.17.0
 ------
 
 * [#1772][] Correct check for IE UserAgent to make sure that the browser is IE. (Andrew Nicols)
