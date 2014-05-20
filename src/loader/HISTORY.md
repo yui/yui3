@@ -1,6 +1,12 @@
 YUI Loader Change History
 =========================
 
+@VERSION@
+------
+
+* Fix a bug in 3.17 which caused certain YUI modules to be loaded with a group
+  `comboBase`.
+
 3.17.0
 ------
 
