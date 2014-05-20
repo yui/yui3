@@ -7670,6 +7670,8 @@ Y.Loader.prototype = {
 
             group = self.groups[mod.group];
 
+            comboBase = self.comboBase;
+
             if (group) {
                 if (!group.combine || mod.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
@@ -7697,8 +7699,6 @@ Y.Loader.prototype = {
                 addSingle(mod);
                 continue;
             }
-
-            comboBase = comboBase || self.comboBase;
 
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
