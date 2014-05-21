@@ -1,7 +1,7 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.17.1
 ------
 
 * Fix a bug in 3.17 which caused certain YUI modules to be loaded with a group
