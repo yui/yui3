@@ -291,6 +291,27 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[out.js.length - 1].indexOf('==!!==') === -1), 'Group comboSep contains Main comboSep');
             Assert.isTrue((out.js[out.js.length - 1].indexOf('==;;==') > 0), 'Group comboSep did not work');
         },
+        'test comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        comboBase: 'http://secondhost.com/combo?',
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.js.length, 'Loader did not generate one URL per comboBase');
+            Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
+            Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
+        },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
                 maxURLLength: 1024,

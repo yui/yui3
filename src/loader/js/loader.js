@@ -2654,6 +2654,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             group = self.groups[mod.group];
 
+            comboBase = self.comboBase;
+
             if (group) {
                 if (!group.combine || mod.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
@@ -2681,8 +2683,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 addSingle(mod);
                 continue;
             }
-
-            comboBase = comboBase || self.comboBase;
 
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
