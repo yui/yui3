@@ -7978,7 +7978,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     mod.root = group.root;
                 }
 
-                comboBase    = group.comboBase;
+                comboBase    = group.comboBase || comboBase;
                 comboSep     = group.comboSep;
                 maxURLLength = group.maxURLLength;
             } else {
