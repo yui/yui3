@@ -312,6 +312,164 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
             Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
         },
+        'test inheritted comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated multiple URLs for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isArray(url.match(/3.5.0\/foogg\/foogg-min\.js/), 'Group match should be combo-loaded with the default URL');
+            Assert.isArray(url.match(/3.5.0\/cookie\/cookie-min\.js/), 'Default match should combo-load with the group result');
+        },
+        'test combine with groups': function () {
+            var loader = new testY.Loader({
+                combine: false,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        comboBase: 'http://secondhost.com/combo?',
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.js.length, 'Loader did not generate one URL per comboBase');
+            Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
+            Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
+        },
+        'test inheritted combine with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated multiple URLs for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isArray(url.match(/3.5.0\/foogg\/foogg-min\.js/), 'Group match should be combo-loaded with the default URL');
+            Assert.isArray(url.match(/3.5.0\/cookie\/cookie-min\.js/), 'Default match should combo-load with the group result');
+        },
+        'test inheritted comboSep with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                comboSep: '__PLACEHOLDER__',
+                groups: {
+                    testGroup: {
+                        modules: {
+                            foogg: {
+                                requires: []
+                            },
+                            boogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'boogg', 'cookie', 'dom-screen']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated a single URL for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isArray(url.match(/__PLACEHOLDER__/), 'Group should inherit the comboSep');
+        },
+        'test inheritted comboSep with groups if comboBase is the same': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        comboSep: '__PLACEHOLDER__',
+                        modules: {
+                            foogg: {
+                                requires: []
+                            },
+                            boogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'boogg', 'cookie', 'dom-screen']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated a single URL for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isNull(url.match(/__PLACEHOLDER__/), 'Group should inherit the default comboSep');
+        },
+        'test different comboSep within group if comboBase is different': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        comboBase: 'http://secondhost.com/combo?',
+                        comboSep: '__PLACEHOLDER__',
+                        modules: {
+                            foogg: {
+                                requires: []
+                            },
+                            boogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'boogg', 'cookie', 'dom-screen']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.js.length, 'Loader generated multiple URLs for a single comboBase');
+
+            Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js__PLACEHOLDER__3.5.0/boogg/boogg-min.js') >= 0, 'Group combo URL should be included in the result');
+            Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js&3.5.0/dom-screen/dom-screen-min.js') >= 0, 'Default YUI combo URL should be included in the result');
+        },
+        'test inheritted maxURLLength with groups if comboBase is the same': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        // Set an incredibly low maxURLLength - this should be ignored.
+                        maxURLLength: 10,
+                        modules: {
+                            foogg: {
+                                requires: []
+                            },
+                            boogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'boogg', 'cookie', 'dom-screen']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated a single URL for a single comboBase');
+        },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
                 maxURLLength: 1024,

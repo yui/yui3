@@ -1,10 +1,15 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.18.0
 ------
 
-* No changes.
+* Inherit group settings from base if they were not specified. ([#1838][]: @andrewnicols)
+
+3.17.2
+------
+
+* Fix a bug in 3.17.1 where there comboBase was no longer inheritted from the default group. ([#1837][]: @andrewnicols)
 
 3.17.1
 ------

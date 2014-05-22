@@ -2637,6 +2637,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var inserted     = (self.ignoreRegistered) ? {} : self.inserted,
             comboSources = {},
             maxURLLength,
+            combine,
             comboMeta,
             comboBase,
             comboSep,
@@ -2654,10 +2655,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             group = self.groups[mod.group];
 
+            // Set sensible defaults for these on each iteration to ensure we don't leak.
+            combine = self.combine;
             comboBase = self.comboBase;
+            comboSep = self.comboSep;
+            maxURLLength = self.maxURLLength;
 
             if (group) {
-                if (!group.combine || mod.fullpath) {
+                if (typeof group.combine === 'boolean') {
+                    combine = group.combine;
+                }
+                if (!combine || mod.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
                     addSingle(mod);
                     continue;
@@ -2668,9 +2676,18 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     mod.root = group.root;
                 }
 
-                comboBase    = group.comboBase;
-                comboSep     = group.comboSep;
-                maxURLLength = group.maxURLLength;
+                if (typeof group.comboBase === 'string') {
+                    comboBase = group.comboBase;
+                }
+                if (comboBase !== self.comboBase) {
+                    // It only makes sense to use a different combo loader settings if the comboBase is different.
+                    if (typeof group.comboSep === 'string') {
+                        comboSep = group.comboSep;
+                    }
+                    if (typeof group.maxURLLength !== 'undefined') {
+                        maxURLLength = group.maxURLLength;
+                    }
+                }
             } else {
                 if (!self.combine) {
                     //This is not a combo module, skip it and load it singly later.
