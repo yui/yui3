@@ -312,6 +312,28 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
             Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
         },
+        'test inheritted comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated multiple URLs for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isArray(url.match(/3.5.0\/foogg\/foogg-min\.js/), 'Group match should be combo-loaded with the default URL');
+            Assert.isArray(url.match(/3.5.0\/cookie\/cookie-min\.js/), 'Default match should combo-load with the group result');
+        },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
                 maxURLLength: 1024,
