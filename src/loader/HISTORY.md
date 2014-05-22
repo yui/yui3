@@ -1,6 +1,11 @@
 YUI Loader Change History
 =========================
 
+3.18.0
+------
+
+* Inherit group settings from base if they were not specified. ([#1838][]: @andrewnicols)
+
 3.17.2
 ------
 
