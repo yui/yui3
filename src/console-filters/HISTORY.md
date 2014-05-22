@@ -1,6 +1,16 @@
 ConsoleFilters Plugin Change History
 ====================================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
 3.17.0
 ------
 
