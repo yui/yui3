@@ -312,7 +312,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
             Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
         },
-        'test inheritted comboBase with groups': function () {
+        'test inherited comboBase with groups': function () {
             var loader = new testY.Loader({
                 combine: true,
                 groups: {
