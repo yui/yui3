@@ -112,3 +112,26 @@ Y.Lang.sub('{question} {answer}', {
 });
 //=>"universe, life and everything? 42"
 ```
+
+<p>`Y.Lang.sub()` also supports nested placeholders:</p>
+
+```
+Y.Lang.sub('year of birth: {user.birthyear}', {
+    user: {
+        birthyear: 1981
+    }
+});
+//=>"year of birth: 1981"
+```
+
+<p>However `Y.Lang.sub()` avoids going deep into your object if it can:</p>
+
+```
+Y.Lang.sub('year of birth: {user.birthyear}', {
+    'user.birthyear': 1984,
+    user: {
+        birthyear: 1981
+    }
+});
+//=>"year of birth: 1984"
+```
