@@ -117,7 +117,7 @@
                 ASSERT.areSame(2, data_out.results[2].number, "Expected last number to be parsed.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
-            
+
             testJSONResults2: function() {
                 var data_in = Y.DataType.XML.parse('<Response><Session>542235629</Session><Tracks  start="1" count="10" total="98" errorCount="0"  defaultSort="popularity+"  description="Top 100 Tracks"  name="Top 100 Tracks"  ><Track id="59672468" rating="-1" title="I Kissed A Girl"><Artist id="30326214" rating="-1">Katy Perry</Artist><ItemInfo><ChartPosition last="26" this="1"/></ItemInfo></Track><Track id="47973564" rating="-1" title="Shake It"><Artist id="45575683" rating="-1">Metro Station</Artist><ItemInfo><ChartPosition last="27" this="2"/></ItemInfo></Track><Track id="52207363" rating="-1" title="Bleeding Love"><Artist id="37956508" rating="-1">Leona Lewis</Artist><ItemInfo><ChartPosition last="28" this="3"/></ItemInfo></Track></Tracks></Response>'),
 
@@ -158,11 +158,11 @@
                     ASSERT.areSame(results.length, data_out.results.length, "The length of the results should equate.");
 
                     ARRAYASSERT.itemsAreEquivalent(results, data_out.results, function (a, b) {
-                        
+
                         // NOTE: `ownsKeys` throws an error upon failure.
                         // If this assertion fails, then the two objects aren't equal.
                         OBJECTASSERT.ownsKeys(a, b);
-                        
+
                         // If this return statement is ever reached, then the two objects are equal.
                         return true;
                     }, "The objects in the `results` arrays should equate.");

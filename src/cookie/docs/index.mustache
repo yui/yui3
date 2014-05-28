@@ -105,7 +105,7 @@ YUI().use('cookie', function(Y){
 ```
 
 <p>Conversion functions accept a single argument, the string value of the cookie, and must return a value. In this example, the conversion function expects a hexadecimal code to be returned and passes it into <code>parseInt()</code> to convert the value into a number. Note that the conversion function is never called if the cookie doesn't exist (<code>get()</code> always returns <code>null</code> when the cookie doesn't exist).</p>
-                    
+
 <p>The second argument can optionally be an object if you'd like to read a raw cookie. As with, writing cookies, it's possible to read a cookie without URL-decoding the value. To specify this, the second argument should be an object, such as:</p>
 
 ```
@@ -114,7 +114,7 @@ YUI().use('cookie', function(Y){
     var value = Y.Cookie.get("code", { raw: true });
 });
 ```
-                    
+
 <p>If you'd like to use a converter on a raw cookie, you can specify this using the &quot;converter&quot; option:</p>
 
 ```
@@ -143,7 +143,7 @@ YUI().use('cookie', function(Y){
     Y.Cookie.remove("info", { domain: "yahoo.com" });
 
     //delete a secure cookie named "username"
-    Y.Cookie.remove("username", { secure: true });                    
+    Y.Cookie.remove("username", { secure: true });
 });
 ```
 
@@ -171,7 +171,7 @@ YUI().use('cookie', function(Y){
     Y.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
 
     //set subcookie to a secure cookie named "user"
-    Y.Cookie.setSub("user", "name", "ace123", { secure:true });                        
+    Y.Cookie.setSub("user", "name", "ace123", { secure:true });
 });
 ```
 
@@ -187,7 +187,7 @@ YUI().use('cookie', function(Y){
         name: "ace123",
         age: 22,
         track: true
-    };                    
+    };
 
     //set a cookie named "user" with subcookies
     Y.Cookie.setSubs("user", data);
@@ -216,7 +216,7 @@ YUI().use('cookie', function(Y){
     var integerValue = Y.Cookie.getSub("settings", "bgcolor", function(stringValue){
         return parseInt(stringValue, 16);   // Create a number from a hexadecimal code
     });
-    
+
 });
 ```
 
@@ -235,7 +235,7 @@ YUI().use('cookie', function(Y){
     //get all subcookies
     var user = Y.Cookie.getSubs("user");
     var userName = user.name;
-    
+
 });
 ```
 
@@ -250,7 +250,7 @@ YUI().use('cookie', function(Y){
     Y.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
 
     //remove the subcookie
-    Y.Cookie.removeSub("info", "age", { domain: "yahoo.com" });                        
+    Y.Cookie.removeSub("info", "age", { domain: "yahoo.com" });
 });
 ```
 
@@ -263,6 +263,6 @@ YUI().use('cookie', function(Y){
 YUI().use('cookie', function(Y){
 
     //remove the subcookie
-    Y.Cookie.removeSub("info", "age", { removeIfEmpty: true });                        
+    Y.Cookie.removeSub("info", "age", { removeIfEmpty: true });
 });
 ```

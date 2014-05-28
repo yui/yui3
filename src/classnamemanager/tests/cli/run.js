@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('cnm-tests');
-    
+
     Y.Test.Runner.setName('ClassNameManager cli tests');
-    
+
 });
 

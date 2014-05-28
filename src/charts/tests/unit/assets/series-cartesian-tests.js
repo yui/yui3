@@ -12,17 +12,17 @@ YUI.add('series-cartesian-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         //Returns an object literal containing x and y coordinates, xMarkerPlane and yMarkerPlane arrays, leftOrigin and bottomOrigin.
-        //Used for testing CartesianSeries.setAreaData method. 
+        //Used for testing CartesianSeries.setAreaData method.
         getAreaData: function(
             xAxis,
             yAxis,
-            xData, 
-            yData, 
-            xOffset, 
-            yOffset, 
-            padding, 
+            xData,
+            yData,
+            xOffset,
+            yOffset,
+            padding,
             xMax,
             xMin,
             yMax,
@@ -34,7 +34,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             ht
         ) {
             var isNumber = Y.Lang.isNumber,
-                nextX, 
+                nextX,
                 nextY,
                 xValue,
                 yValue,
@@ -78,7 +78,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                 bottomOrigin: bottomOrigin
             };
         },
-        
+
         "test: addListeners()" : function() {
             var series = this.series,
                 drawn = false,
@@ -115,9 +115,9 @@ YUI.add('series-cartesian-tests', function(Y) {
                 Y.Assert.isObject(mockSeries._widthChangeHandle, "The _widthChangeHandle should not be set yet.");
                 Y.Assert.isObject(mockSeries._heightChangeHandle, "The _heightChangeHandle should not be set yet.");
                 Y.Assert.isObject(mockSeries._visibleChangeHandle, "The _visibleChangeHandle should not be set yet.");
-               
-                mockSeries.set("xAxis", new Y.AxisBase()); 
-                mockSeries.set("yAxis", new Y.AxisBase()); 
+
+                mockSeries.set("xAxis", new Y.AxisBase());
+                mockSeries.set("yAxis", new Y.AxisBase());
                 series.addListeners.apply(mockSeries);
                 Y.Assert.isObject(mockSeries._xDataReadyHandle, "The _xDataReadyHandle should be set.");
                 Y.Assert.isObject(mockSeries._xDataUpdateHandle, "The _xDataUpdateHandle should be set.");
@@ -126,24 +126,24 @@ YUI.add('series-cartesian-tests', function(Y) {
                 Y.Assert.isFalse(axesUpdated, "The _updateAxisBase method should not have been called.");
                 Y.Assert.isFalse(drawn, "The draw method should not have been called.");
                 axesUpdated = true;
-                series.addListeners.apply(mockSeries); 
+                series.addListeners.apply(mockSeries);
                 Y.Assert.isTrue(axesUpdated, "The _updateAxisBase method should have been called.");
                 //Y.Assert.isTrue(drawn, "The draw method should have been called.");
 
                 //simulate
                 axesUpdated = false;
                 mockSeries._widthChangeHandle.evt._afters[0].fn.apply(mockSeries);
-                mockSeries._heightChangeHandle.evt._afters[0].fn.apply(mockSeries); 
-                mockSeries._stylesChangeHandle.evt._afters[0].fn.apply(mockSeries); 
+                mockSeries._heightChangeHandle.evt._afters[0].fn.apply(mockSeries);
+                mockSeries._stylesChangeHandle.evt._afters[0].fn.apply(mockSeries);
                 Y.Assert.isFalse(drawn, "The draw method should not have been called.");
                 axesUpdated = true;
                 mockSeries._widthChangeHandle.evt._afters[0].fn.apply(mockSeries);
                 Y.Assert.isTrue(drawn, "The draw method should have been called.");
                 drawn = false;
-                mockSeries._heightChangeHandle.evt._afters[0].fn.apply(mockSeries); 
+                mockSeries._heightChangeHandle.evt._afters[0].fn.apply(mockSeries);
                 Y.Assert.isTrue(drawn, "The draw method should have been called.");
                 drawn = false;
-                mockSeries._stylesChangeHandle.evt._afters[0].fn.apply(mockSeries); 
+                mockSeries._stylesChangeHandle.evt._afters[0].fn.apply(mockSeries);
                 Y.Assert.isTrue(drawn, "The draw method should have been called.");
         },
 
@@ -254,9 +254,9 @@ YUI.add('series-cartesian-tests', function(Y) {
                                 }
                             }
                         } else {
-                            data = axisData[key]; 
+                            data = axisData[key];
                         }
-                        return data; 
+                        return data;
                     }
                 },
                 xAxisKey = "xAxisKey",
@@ -281,7 +281,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             axisData.xAxisKey = xKeyData;
             Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there is no data for the y axis.");
             axisData.yAxisKey = yKeyData;
-            Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");    
+            Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");
             seriesXData = mockSeries.get("xData");
             seriesYData = mockSeries.get("yData");
             for(i = 0; i < len; i = i + 1) {
@@ -297,11 +297,11 @@ YUI.add('series-cartesian-tests', function(Y) {
                 xKey1: xKeyData,
                 xKey2: xKeyData,
                 yKey1: yKeyData,
-                yKey2: yKeyData   
+                yKey2: yKeyData
             };
-            Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");    
+            Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");
         },
-    
+
         "test: _checkForDataByKey()" : function() {
             var series = this.series,
                 keys = ["key1", "key2"],
@@ -324,7 +324,7 @@ YUI.add('series-cartesian-tests', function(Y) {
 
                     fire: function(val) {
                         if(val === "drawingComplete") {
-                            drawCompleteFired = true; 
+                            drawCompleteFired = true;
                         } else {
                             Y.CartesianSeries.prototype.fire.apply(this, arguments);
                         }
@@ -370,14 +370,14 @@ YUI.add('series-cartesian-tests', function(Y) {
                 i,
                 len,
                 direction = "horizontal",
-                xOffset = 0, 
-                yOffset = 0, 
+                xOffset = 0,
+                yOffset = 0,
                 padding = {
                     top: 0,
                     right:0,
                     bottom: 0,
-                    left: 0   
-                }, 
+                    left: 0
+                },
                 xMarkerPlaneOffset,
                 yMarkerPlaneOffset,
                 valueAxis = new Y.NumericAxisBase({
@@ -397,13 +397,13 @@ YUI.add('series-cartesian-tests', function(Y) {
                 mockGraphic = new MockSetAreaDataGraphic(),
                 MockSetAreaDataSeries = Y.Base.create("mockSetAreaDataSeries", Y.CartesianSeries, [], {
                     _getCoords: function(
-                        min, 
-                        max, 
-                        datalength, 
-                        data, 
-                        axis, 
-                        offset, 
-                        reverse 
+                        min,
+                        max,
+                        datalength,
+                        data,
+                        axis,
+                        offset,
+                        reverse
                     ) {
                         if(!this._results || this._results.length > 1) {
                             this._results = [];
@@ -469,7 +469,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                 }),
                 mockSeries = new MockSetAreaDataSeries(),
                 testData,
-                setAreaDataAssert = function() { 
+                setAreaDataAssert = function() {
                     var xResults = mockSeries._results[0],
                         yResults = mockSeries._results[1],
                         xAxis = mockSeries.get("xAxis"),
@@ -507,10 +507,10 @@ YUI.add('series-cartesian-tests', function(Y) {
                     categoryAxis,
                     valueAxis,
                     categoryAxis.getDataByKey("date"),
-                    valueAxis.getDataByKey("open"), 
+                    valueAxis.getDataByKey("open"),
                     categoryAxis.getEdgeOffset(22, 500),
-                    valueAxis.getEdgeOffset(22, 500), 
-                    padding, 
+                    valueAxis.getEdgeOffset(22, 500),
+                    padding,
                     categoryAxis.get("maximum"),
                     categoryAxis.get("minimum"),
                     valueAxis.get("maximum"),
@@ -527,11 +527,11 @@ YUI.add('series-cartesian-tests', function(Y) {
                 testData = this.getAreaData(
                     valueAxis,
                     categoryAxis,
-                    valueAxis.getDataByKey("open"), 
+                    valueAxis.getDataByKey("open"),
                     categoryAxis.getDataByKey("date"),
-                    valueAxis.getEdgeOffset(22, 500), 
+                    valueAxis.getEdgeOffset(22, 500),
                     categoryAxis.getEdgeOffset(22, 500),
-                    padding, 
+                    padding,
                     valueAxis.get("maximum"),
                     valueAxis.get("minimum"),
                     categoryAxis.get("maximum"),
@@ -542,19 +542,19 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                setAreaDataAssert(); 
-                
-                valueAxis.set("dataProvider", missingValuesDataProvider); 
-                categoryAxis.set("dataProvider", missingValuesDataProvider); 
+                setAreaDataAssert();
+
+                valueAxis.set("dataProvider", missingValuesDataProvider);
+                categoryAxis.set("dataProvider", missingValuesDataProvider);
                 series.setAreaData.apply(mockSeries);
                 testData = this.getAreaData(
                     valueAxis,
                     categoryAxis,
-                    valueAxis.getDataByKey("open"), 
+                    valueAxis.getDataByKey("open"),
                     categoryAxis.getDataByKey("date"),
-                    valueAxis.getEdgeOffset(22, 500), 
+                    valueAxis.getEdgeOffset(22, 500),
                     categoryAxis.getEdgeOffset(22, 500),
-                    padding, 
+                    padding,
                     valueAxis.get("maximum"),
                     valueAxis.get("minimum"),
                     categoryAxis.get("maximum"),
@@ -565,18 +565,18 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                setAreaDataAssert(); 
-                
+                setAreaDataAssert();
+
                 mockSeries.set("direction", "horizontal");
                 series.setAreaData.apply(mockSeries);
                 testData = this.getAreaData(
                     categoryAxis,
                     valueAxis,
                     categoryAxis.getDataByKey("date"),
-                    valueAxis.getDataByKey("open"), 
+                    valueAxis.getDataByKey("open"),
                     categoryAxis.getEdgeOffset(22, 500),
-                    valueAxis.getEdgeOffset(22, 500), 
-                    padding, 
+                    valueAxis.getEdgeOffset(22, 500),
+                    padding,
                     categoryAxis.get("maximum"),
                     categoryAxis.get("minimum"),
                     valueAxis.get("maximum"),
@@ -587,19 +587,19 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                setAreaDataAssert(); 
+                setAreaDataAssert();
 
-                valueAxis.set("dataProvider", positiveAndNegativeValuesDataProvider); 
-                categoryAxis.set("dataProvider", positiveAndNegativeValuesDataProvider); 
+                valueAxis.set("dataProvider", positiveAndNegativeValuesDataProvider);
+                categoryAxis.set("dataProvider", positiveAndNegativeValuesDataProvider);
                 series.setAreaData.apply(mockSeries);
                 testData = this.getAreaData(
                     categoryAxis,
                     valueAxis,
                     categoryAxis.getDataByKey("date"),
-                    valueAxis.getDataByKey("open"), 
+                    valueAxis.getDataByKey("open"),
                     categoryAxis.getEdgeOffset(22, 500),
-                    valueAxis.getEdgeOffset(22, 500), 
-                    padding, 
+                    valueAxis.getEdgeOffset(22, 500),
+                    padding,
                     categoryAxis.get("maximum"),
                     categoryAxis.get("minimum"),
                     valueAxis.get("maximum"),
@@ -610,9 +610,9 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                setAreaDataAssert(); 
+                setAreaDataAssert();
         },
-        
+
         "test: _setXMarkerPlane()" : function() {
             var series = this.series,
                 getXMarkerPlane = function(coords, dataLength, offset)
@@ -623,9 +623,9 @@ YUI.add('series-cartesian-tests', function(Y) {
                     if(Y.Lang.isArray(coords))
                     {
                         xMarkerPlane = [];
-                        for(i = 0; i < dataLength; i = i + 1) 
+                        for(i = 0; i < dataLength; i = i + 1)
                         {
-                            nextX = coords[i]; 
+                            nextX = coords[i];
                             xMarkerPlane.push({start:nextX - offset, end: nextX + offset});
                         }
                     }
@@ -641,8 +641,8 @@ YUI.add('series-cartesian-tests', function(Y) {
                             Y.Assert.isNaN(results[i].start, "The start value of the " + i + " index of the xMarkerPlane attribute should be NaN.");
                         } else {
                             Y.Assert.areEqual(
-                                test[i].start, 
-                                results[i].start, 
+                                test[i].start,
+                                results[i].start,
                                 "The start value of the " + i + " index of the xMarkerPlane attribute should be " + test[i].start + "."
                             );
                         }
@@ -650,8 +650,8 @@ YUI.add('series-cartesian-tests', function(Y) {
                             Y.Assert.isNaN(results[i].end, "The end value of the " + i + " index of the xMarkerPlane attribute should be NaN.");
                         } else {
                             Y.Assert.areEqual(
-                                test[i].end, 
-                                results[i].end, 
+                                test[i].end,
+                                results[i].end,
                                 "The end value of the " + i + " index of the xMarkerPlane attribute should be " + test[i].end + "."
                             );
                         }
@@ -667,7 +667,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             series._setXMarkerPlane(coords, dataLen);
             compareAndAssert(getXMarkerPlane(coords, dataLen, series.get("xMarkerPlaneOffset")), series.get("xMarkerPlane"));
         },
-        
+
         "test: _setYMarkerPlane()" : function() {
             var series = this.series,
                 getYMarkerPlane = function(coords, dataLength, offset)
@@ -678,9 +678,9 @@ YUI.add('series-cartesian-tests', function(Y) {
                     if(Y.Lang.isArray(coords))
                     {
                         yMarkerPlane = [];
-                        for(i = 0; i < dataLength; i = i + 1) 
+                        for(i = 0; i < dataLength; i = i + 1)
                         {
-                            nextY = coords[i]; 
+                            nextY = coords[i];
                             yMarkerPlane.push({start:nextY - offset, end: nextY + offset});
                         }
                     }
@@ -696,8 +696,8 @@ YUI.add('series-cartesian-tests', function(Y) {
                             Y.Assert.isNaN(results[i].start, "The start value of the " + i + " index of the yMarkerPlane attribute should be NaN.");
                         } else {
                             Y.Assert.areEqual(
-                                test[i].start, 
-                                results[i].start, 
+                                test[i].start,
+                                results[i].start,
                                 "The start value of the " + i + " index of the yMarkerPlane attribute should be " + test[i].start + "."
                             );
                         }
@@ -705,8 +705,8 @@ YUI.add('series-cartesian-tests', function(Y) {
                             Y.Assert.isNaN(results[i].end, "The end value of the " + i + " index of the yMarkerPlane attribute should be NaN.");
                         } else {
                             Y.Assert.areEqual(
-                                test[i].end, 
-                                results[i].end, 
+                                test[i].end,
+                                results[i].end,
                                 "The end value of the " + i + " index of the yMarkerPlane attribute should be " + test[i].end + "."
                             );
                         }
@@ -722,7 +722,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             series._setYMarkerPlane(coords, dataLen);
             compareAndAssert(getYMarkerPlane(coords, dataLen, series.get("yMarkerPlaneOffset")), series.get("yMarkerPlane"));
         },
-        
+
         "test: _getCoords()" : function() {
             var mockAxis = {
                     _getCoordsFromValues: function() {
@@ -744,8 +744,8 @@ YUI.add('series-cartesian-tests', function(Y) {
                     pixelLength,
                     data1,
                     mockAxis,
-                    offset     
-                ], 
+                    offset
+                ],
                 args2 = [
                     -5,
                     100,
@@ -812,14 +812,14 @@ YUI.add('series-cartesian-tests', function(Y) {
                 if(dataObj.hasOwnProperty(key)) {
                     for(i = 0; i < len; i = i + 1) {
                         Y.Assert.areEqual(
-                            dataObj[key][i], 
+                            dataObj[key][i],
                             resultData[key][i], "The " + i + " index of the " + key + " property of the returned object should equal " + dataObj[key][i] + "."
                         );
                     }
                 }
             }
         },
-        
+
         "test: _getFirstValidIndex()" : function() {
             var series = this.series,
                 validIndex = 2,
@@ -837,7 +837,7 @@ YUI.add('series-cartesian-tests', function(Y) {
         "test: draw()" : function() {
             var series = this.series,
                 wid,
-                ht, 
+                ht,
                 areaDataSet = false,
                 axisBaseUpdated = false,
                 xData,
@@ -934,10 +934,10 @@ YUI.add('series-cartesian-tests', function(Y) {
             Y.Assert.isTrue(visibleToggled, "The _toggleVisible method should have been called.");
             xcoords = [10, 20];
             ycoords = [];
-            series.draw.apply(mockSeries);  
+            series.draw.apply(mockSeries);
             Y.Assert.isTrue(seriesDrawn, "The drawSeries method should have been called.");
             mockSeries._drawing = true;
-            series.draw.apply(mockSeries);  
+            series.draw.apply(mockSeries);
             Y.Assert.isTrue(mockSeries._callLater, "The _callLater boolean should have been set.");
             mockSeries._drawing = false;
             forceCallLaterTrue = true;
@@ -972,17 +972,17 @@ YUI.add('series-cartesian-tests', function(Y) {
                 colorIndex = i > colorLength - 1 ? i % colorLength : i;
                 for(key in colors) {
                     color = colors[key][colorIndex];
-                    Y.Assert.areEqual(color, series._getDefaultColor(i, key), "The default color for an index of " + i + " for a " + key + " should be " + color + ".");    
+                    Y.Assert.areEqual(color, series._getDefaultColor(i, key), "The default color for an index of " + i + " for a " + key + " should be " + color + ".");
                 }
                 color = colors.fill[colorIndex];
                 Y.Assert.areEqual(color, series._getDefaultColor(i), "The default color for an index of " + i + " when a type is not specified should be " + color + ".");
             }
         },
-        
+
         "test: destructor()" : function() {
             var series = this.series,
                 graphic = new Y.Graphic({
-                    autoDraw: false   
+                    autoDraw: false
                 }),
                 Destroyer = function(owner, instance) {
                     this._owner = owner;
@@ -1031,7 +1031,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             Y.Assert.isTrue(mockSeries._xDataUpdateHandle._attached, "The _xDataUpdateHandle should be attached.");
             Y.Assert.isTrue(mockSeries._yDataUpdateHandle._attached, "The _yDataUpdateHandle should be attached.");
             mockSeries.set("markers", []);
-            series.destructor.apply(mockSeries); 
+            series.destructor.apply(mockSeries);
             Y.Assert.isFalse(mockSeries._xAxisChangeHandle._attached, "The _xAxisChangeHandle should be detached.");
             Y.Assert.isFalse(mockSeries._yAxisChangeHandle._attached, "The _yAxisChangeHandle should be detached.");
             Y.Assert.isFalse(mockSeries._xDataReadyHandle._attached, "The _xDataReadyHandle should be detached.");
@@ -1069,15 +1069,15 @@ YUI.add('series-cartesian-tests', function(Y) {
                 yDisplayNameValue = "yDisplayNameValue";
             series.set("categoryDisplayName", xDisplayNameValue);
             Y.Assert.areEqual(
-                xDisplayNameValue, 
-                series.get("categoryDisplayName"), 
+                xDisplayNameValue,
+                series.get("categoryDisplayName"),
                 "The categoryDisplayName attribute should equal the xDisplayName attribute when the direction of the series is horizontal."
             );
             series.set("direction", "vertical");
             series.set("categoryDisplayName", yDisplayNameValue);
             Y.Assert.areEqual(
-                yDisplayNameValue, 
-                series.get("categoryDisplayName"), 
+                yDisplayNameValue,
+                series.get("categoryDisplayName"),
                 "The categoryDisplayName attribute should equal the yDisplayName attribute when the direction of the series is vertical."
             );
         },
@@ -1090,15 +1090,15 @@ YUI.add('series-cartesian-tests', function(Y) {
                 yDisplayNameValue = "yDisplayNameValue";
             series.set("valueDisplayName", yDisplayNameValue);
             Y.Assert.areEqual(
-                yDisplayNameValue, 
-                series.get("valueDisplayName"), 
+                yDisplayNameValue,
+                series.get("valueDisplayName"),
                 "The valueDisplayName attribute should equal the yDisplayName attribute when the direction of the series is horizontal."
             );
             series.set("direction", "vertical");
             series.set("valueDisplayName", xDisplayNameValue);
             Y.Assert.areEqual(
-                xDisplayNameValue, 
-                series.get("valueDisplayName"), 
+                xDisplayNameValue,
+                series.get("valueDisplayName"),
                 "The valueDisplayName attribute should equal the xDisplayName attribute when the direction of the series is vertical."
             );
         },
@@ -1137,7 +1137,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             Y.Assert.areEqual(markerSize/2, series.get("yMarkerPlaneOffset"), "The offset should be " + defaultOffset + ".");
         }
     });
-    
+
     var suite = new Y.Test.Suite("Charts: CartesianSeries"),
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},

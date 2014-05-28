@@ -47,15 +47,15 @@ YUI().use("datatable", "datasource-get", "datasource-jsonschema", "datatable-dat
         summary: "Pizza places near 98089",
         caption: "Table with JSON data from YQL"
     });
-    
+
     table.plug(Y.Plugin.DataTableDataSource, { datasource: dataSource });
 
     table.render("#pizza");
 
     table.datasource.load({
         request: query,
-        
-        callback: { 
+
+        callback: {
             success: function (e) {
                 table.datasource.onDataReturnInitializeTable(e);
             },

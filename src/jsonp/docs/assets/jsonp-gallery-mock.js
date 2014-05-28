@@ -23,7 +23,7 @@ YUI.add('jsonp-gallery-mock', function (Y) {
                         url: "http:\/\/yuilibrary.com\/gallery\/show\/model-sync-socket",
                         title: "Socket Model Sync",
                         summary: "An extension which provides a sync implementation using Socket.IO as the\r\ntransport method, which can be mixed into a Model or ModelList subclass.",
-                        owner: {    
+                        owner: {
                             fullname: "Clarence Leung",
                             rank: "YUI Contributor",
                             icon: "http:\/\/www.gravatar.com\/avatar\/fd6d95d8ba7e22c228d90f4c5a6d4c77?s=64&d=http:\/\/yuilibrary.com\/assets\/gravatar-64.png"
@@ -37,7 +37,7 @@ YUI.add('jsonp-gallery-mock', function (Y) {
                         url: "http:\/\/yuilibrary.com\/gallery\/show\/tabby",
                         title: "Textarea Tab Control",
                         summary: "This little module adds the ability to use the tab key inside of a textarea. Currently it doesn't support Opera and it doesn't support text-selection tabbing.",
-                        owner: {    
+                        owner: {
                             fullname: "Dav Glass",
                             rank: null,
                             icon: "http:\/\/www.gravatar.com\/avatar\/05243ae612fb4dcfb151e08489f334b0?s=64&d=http:\/\/yuilibrary.com\/assets\/gravatar-64.png"

@@ -24,7 +24,7 @@ YUI().use('node', function(Y) {
 </div>
 
 <h3>Using YUI 2 inside of YUI 3</h3>
-<p>In this example, we are using the new YUI 3 support for loading and sandboxing YUI 2. 
+<p>In this example, we are using the new YUI 3 support for loading and sandboxing YUI 2.
 From the `YUI().use()` statement, you will be able to load any module/utility/widget from
 YUI 2 and use it like you would in YUI 2.</p>
 
@@ -38,11 +38,11 @@ YUI().use('node', 'yui2-imagecropper', function(Y) {
 ```
 
 <h3>Creating the ImageCropper</h3>
-<p>Now that we have our tools in place, let's create the ImageCropper. Using the new support 
-for loading YUI 2 into a YUI 3 instance, you can set up a simple variable to help you cut 
+<p>Now that we have our tools in place, let's create the ImageCropper. Using the new support
+for loading YUI 2 into a YUI 3 instance, you can set up a simple variable to help you cut
 and paste your YUI 2 based code.</p>
 <p>In the code sample below, we are creating a scoped variable called `YAHOO` and assigning
-it from `Y.YUI2`. The `YUI2` property of the `YUI` instance is a scoped version of the 
+it from `Y.YUI2`. The `YUI2` property of the `YUI` instance is a scoped version of the
 YUI 2 `YAHOO` object. If this page is inspected, you will notice that there is no global `YAHOO` variable.</p>
 
 ```
@@ -50,8 +50,8 @@ YUI().use('node', 'yui2-imagecropper', function(Y) {
     //This will make your YUI 2 code run unmodified
     var YAHOO = Y.YUI2;
 
-    var crop = new YAHOO.widget.ImageCropper('cropper'); 
-    
+    var crop = new YAHOO.widget.ImageCropper('cropper');
+
 });
 ```
 

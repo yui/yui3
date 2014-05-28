@@ -20,7 +20,7 @@ YUI.add('series-line-stacked-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: setAreaData()" : function()
         {
             var series = this.series,
@@ -34,7 +34,7 @@ YUI.add('series-line-stacked-tests', function(Y) {
             Y.StackedLineSeries.superclass.setAreaData = storedSetAreaDataMethod;
         }
     });
-    
+
     suite.add(new Y.StackedLineSeriesTest({
         name: "StackedLineSeries Tests"
     }));

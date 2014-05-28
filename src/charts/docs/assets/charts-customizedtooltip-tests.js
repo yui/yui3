@@ -19,11 +19,11 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
         name: "Charts Customized Tooltip Tests",
 
         dataProvider: [
-            {category:"5/1/2010", Miscellaneous:2000, Expenses:3700, Revenue:2200}, 
-            {category:"5/2/2010", Miscellaneous:50, Expenses:9100, Revenue:100}, 
-            {category:"5/3/2010", Miscellaneous:400, Expenses:1100, Revenue:1500}, 
-            {category:"5/4/2010", Miscellaneous:200, Expenses:1900, Revenue:2800}, 
-            {category:"5/5/2010", Miscellaneous:5000, Expenses:5000, Revenue:2650} 
+            {category:"5/1/2010", Miscellaneous:2000, Expenses:3700, Revenue:2200},
+            {category:"5/2/2010", Miscellaneous:50, Expenses:9100, Revenue:100},
+            {category:"5/3/2010", Miscellaneous:400, Expenses:1100, Revenue:1500},
+            {category:"5/4/2010", Miscellaneous:200, Expenses:1900, Revenue:2800},
+            {category:"5/5/2010", Miscellaneous:5000, Expenses:5000, Revenue:2650}
         ],
 
         seriesKeys: [
@@ -49,11 +49,11 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                 testTouchEvents: isMouse
             }
         },
-        
+
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -68,7 +68,7 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
-                handleEvent = function(event) 
+                handleEvent = function(event)
                 {
                     result = event;
                 },
@@ -82,7 +82,7 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                 seriesMarkers = Y.all(CHART_SERIESMARKER),
                 tooltip = Y.all(CHART_TOOLTIP).shift();
             seriesMarkers.each(function(node) {
-                var domNode = node.getDOMNode(), 
+                var domNode = node.getDOMNode(),
                     xy = node.getXY(),
                     x = xy[0] - Y.one('document').get('scrollLeft'),
                     y = xy[1] - Y.one('document').get('scrollTop');
@@ -100,7 +100,7 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
         },
-        
+
         testTouchEvents: function()
         {
             var result = null,
@@ -130,8 +130,8 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },
@@ -151,7 +151,7 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-        
+
         markerLabelFunction: function(seriesIndex, index)
         {
             var parent = Y.Node.create('<div></div>'),
@@ -165,15 +165,15 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
             boldTextBlock.style.marginTop = "5px";
             boldTextBlock.style.fontWeight = "bold";
             underlinedTextBlock.appendChild(document.createTextNode(seriesDisplayName + " for " + item.category));
-            boldTextBlock.appendChild(document.createTextNode("$" + item[seriesKey] + ".00"));   
+            boldTextBlock.appendChild(document.createTextNode("$" + item[seriesKey] + ".00"));
             msg.appendChild(underlinedTextBlock);
             msg.appendChild(document.createElement("br"));
-            msg.appendChild(boldTextBlock); 
+            msg.appendChild(boldTextBlock);
             parent.appendChild(msg);
-            return parent.get("innerHTML"); 
+            return parent.get("innerHTML");
         }
     }));
-    
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});
 

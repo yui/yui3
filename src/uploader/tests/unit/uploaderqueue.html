@@ -22,7 +22,7 @@
         coverage: ['uploader-queue', 'uploader-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "uploader-flash", "uploader-queue", function(Y) {
-        
+
 
 
         // Set up the page
@@ -30,7 +30,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
         btnRun.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
@@ -70,9 +70,9 @@
             testQueueBasic : function() {
                 this.basicqueue.set("simUploads", 4);
                 Y.Assert.areEqual(this.basicqueue.get('simUploads'), 4);
-             
+
                 this.basicqueue._uploadStartHandler({target: {}});
-             
+
                 this.basicqueue._uploadErrorHandler({target: this.filearray[0]});
 
                 this.basicqueue.set("errorAction", Y.Uploader.Queue.RESTART_AFTER);
@@ -87,28 +87,28 @@
                 this.basicqueue.startUpload();
 
                 this.filearray[0].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
                 this.filearray[0].fire("uploadcomplete", {originEvent: {},
                                                           data: "data"});
 
                 this.filearray[1].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
                 this.filearray[1].fire("uploadcomplete", {originEvent: {},
                                                           data: "data"});
 
                 this.filearray[2].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
                 this.filearray[2].fire("uploadcomplete", {originEvent: {},
-                                                          data: "data"});  
+                                                          data: "data"});
             },
 
             testQueueMethods : function() {
@@ -116,8 +116,8 @@
                 this.basicqueue.startUpload();
 
                 this.filearray[0].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
 
@@ -129,8 +129,8 @@
                 this.basicqueue.restartUpload();
 
                 this.filearray[1].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
 
@@ -140,12 +140,12 @@
                                                           data: "data"});
 
                 this.filearray[2].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
                 this.filearray[2].fire("uploadcomplete", {originEvent: {},
-                                                          data: "data"});  
+                                                          data: "data"});
             },
 
             testCancelActiveFile : function() {
@@ -153,8 +153,8 @@
                 this.basicqueue.startUpload();
 
                 this.filearray[0].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
 
@@ -166,8 +166,8 @@
                 this.basicqueue.startUpload();
 
                 this.filearray[0].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 100, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 100,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 100
                                              });
 
@@ -181,8 +181,8 @@
                 this.basicqueue.startUpload();
 
                 this.filearray[0].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
 
@@ -195,8 +195,8 @@
                 this.basicqueue.startUpload();
 
                 this.filearray[0].fire("uploadprogress", {originEvent: {},
-                                                          bytesLoaded: 50, 
-                                                          bytesTotal: 100, 
+                                                          bytesLoaded: 50,
+                                                          bytesTotal: 100,
                                                           percentLoaded: 50
                                              });
 

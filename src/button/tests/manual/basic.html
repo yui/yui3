@@ -9,9 +9,9 @@
                 background-color:#426FD9;
                 color:white;
             }
-          
+
         </style>
-      
+
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
@@ -21,9 +21,9 @@
                 combo: false,
                 filter: 'raw'
             }).use('button', 'console', function(Y){
-                
+
                 new Y.Console().render();
-                
+
                 var push = new Y.Button({
                     label: 'Click to select',
                     srcNode: Y.one('#push')
@@ -40,48 +40,48 @@
                         push.set('disabled', true);
                     })
                 })
-                
+
                 var toggle = new Y.ToggleButton({
                     label: 'Click to toggle',
                     srcNode: '#toggle'
                 }).render();
-                
+
                 var disabled = new Y.Button({
                     srcNode: '#disabled',
                     disabled: true
                 }).render();
-                
+
                 toggle.on('click', function(e){
                     Y.log('click toggle')
                 });
             });
         </script>
     </head>
-    
+
     <body class='yui3-skin-sam'>
-        
+
         <div id='yconsole'></div>
-        
+
         <h1>Button Example: Basic</h1>
-        
+
         <hr />
 
         <h2>Push w/ event</h2>
         <button id='push' tabindex='3'>Button</button>
-        
-        
+
+
         <br>
-        
-        
+
+
         <h2>Toggle</h2>
         <input type='button' id='toggle' value='Toggle'></input>
-        
-        
+
+
         <br>
-        
-        
+
+
         <h2>disabled</h2>
         <input type='button' id='disabled' value='disabled'></input>
-        
+
     </body>
 </html>

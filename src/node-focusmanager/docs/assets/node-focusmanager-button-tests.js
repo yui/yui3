@@ -20,12 +20,12 @@ YUI.add('node-focusmanager-button-tests', function (Y) {
             var button  = Y.one('#button-1'),
                 options = Y.all('#menu-1 ul li input'),
                 out     = Y.one('#out');
-            
+
             options.each(function (node) {
                 button.simulate('click');
                 node.simulate('click');
-                Assert.areEqual('You clicked ' + node.get('value'), 
-                    out.getHTML(), 'Option ' + node.get('value') + ' is wrong'); 
+                Assert.areEqual('You clicked ' + node.get('value'),
+                    out.getHTML(), 'Option ' + node.get('value') + ' is wrong');
             });
         },
 
@@ -49,7 +49,7 @@ YUI.add('node-focusmanager-button-tests', function (Y) {
                 for (var i = 0; i < menuItems.size(); i++) {
                     Assert.isTrue(menuItems.item(i).hasClass(MENU_ITEM_ACTIVE), 'Item is properly focused');
                     Assert.areEqual(choices[i], menuItems.item(i).one('input').get('value'), 'Unexpected output from choice ' + choices[i]);
-                    
+
                     menu.one('input').simulate(keyEvent, {
                         charCode: DOWN_ARROW_KEY,
                         keyCode: DOWN_ARROW_KEY

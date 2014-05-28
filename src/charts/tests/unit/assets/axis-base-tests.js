@@ -3,9 +3,9 @@ YUI.add('axis-base-tests', function(Y) {
         DOC = Y.config.doc,
     AxisBaseTests = new Y.Test.Case({
         name: "AxisBase Tests",
-        
+
         tearDown: function() {
-            Y.Event.purgeElement(DOC, false);    
+            Y.Event.purgeElement(DOC, false);
         },
 
         dataValues: [
@@ -34,8 +34,8 @@ YUI.add('axis-base-tests', function(Y) {
         ],
 
         openValues: [
-            90.27, 
-            91.55, 
+            90.27,
+            91.55,
             337.55,
             220.27,
             276.72,
@@ -84,13 +84,13 @@ YUI.add('axis-base-tests', function(Y) {
         ],
 
         keys: ["open", "close"],
-        
+
         newKeys: ["expenses", "revenue"],
 
         dataMaximum: 400.55,
-        
+
         dataMinimum: 8.55,
-         
+
         newDataValues: [
             {date: "01/01/2009", revenue: 90.27, expenses: 170.27},
             {date: "01/02/2009", revenue: 91.55, expenses: 8.55},
@@ -115,7 +115,7 @@ YUI.add('axis-base-tests', function(Y) {
             {date: "01/21/2009", revenue: 198.91, expenses: 211.91},
             {date: "01/22/2009", revenue: 229.28, expenses: 176.28}
         ],
-        
+
         "test: getDataByKey()" : function() {
             var resultData,
                 key,
@@ -128,7 +128,7 @@ YUI.add('axis-base-tests', function(Y) {
                 });
             resultData = axis.getDataByKey(this.keys);
             Y.Assert.areEqual(0, Y.Object.size(resultData), "The getDataByKey method should return an empty object.");
-            axis.set("keys", this.keys); 
+            axis.set("keys", this.keys);
             resultData = axis.getDataByKey(this.keys);
             for(key in resultData) {
                 if(resultData.hasOwnProperty(key)) {
@@ -136,10 +136,10 @@ YUI.add('axis-base-tests', function(Y) {
                     for(i = 0; i < len; i = i + 1) {
                         dataValue = this.dataValues[i][key];
                         Y.Assert.areEqual(
-                            dataValue, 
-                            item[i], 
+                            dataValue,
+                            item[i],
                             "The value of the " + i + " index of the " + key + " array from the object returned by getDataByKey should equal " + dataValue + "."
-                       ); 
+                       );
                     }
                 }
             }
@@ -179,10 +179,10 @@ YUI.add('axis-base-tests', function(Y) {
                 len = dataValues.length;
             for(i = 0; i < len; i = i + 1) {
                 dataValue = dataValues[i];
-                Y.Assert.areEqual(dataValue, result[i], "The result should be equal to " + dataValue + ".");   
+                Y.Assert.areEqual(dataValue, result[i], "The result should be equal to " + dataValue + ".");
             }
         },
-        
+
         "test: _getDataValuesByCount()" : function() {
             var testValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                 testValue,
@@ -212,10 +212,10 @@ YUI.add('axis-base-tests', function(Y) {
                 if(defaultMajorUnit.hasOwnProperty(key)) {
                     Y.Assert.isTrue(axisMajorUnit.hasOwnProperty(key), "The default axis styles.majorUnit should contain a " + key + " property.");
                     Y.Assert.areEqual(
-                        defaultMajorUnit[key], 
-                        axisMajorUnit[key], 
+                        defaultMajorUnit[key],
+                        axisMajorUnit[key],
                         "The default axis styles.majorUnit." + key + " property should be equal to the defaultMajorUnit." + key + " property."
-                    ); 
+                    );
                 }
            }
 
@@ -224,7 +224,7 @@ YUI.add('axis-base-tests', function(Y) {
 
         "test:set(dataProvider)": function() {
             this.axis.set("dataProvider", this.dataValues);
-            Y.Assert.areEqual(this.dataValues, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");  
+            Y.Assert.areEqual(this.dataValues, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");
         },
 
         "test:set(keys) array" : function() {
@@ -238,20 +238,20 @@ YUI.add('axis-base-tests', function(Y) {
             openDataByKey = this.axis.getDataByKey("open");
             closeDataByKey = this.axis.getDataByKey("close");
             len = this.dataValues.length;
-            
+
             for(i = 0; i < len; i = i + 1) {
                 Y.Assert.areEqual(this.openValues[i], axisKeys.open[i], "The keys attribute should be equal to the values it received.");
                 Y.Assert.areEqual(this.closeValues[i], axisKeys.close[i], "The keys attribute should be equal to the values it received.");
                 Y.Assert.areEqual(this.openValues[i], openDataByKey[i], "The getDataByKey method should return the correct values.");
                 Y.Assert.areEqual(this.closeValues[i], closeDataByKey[i], "The getDataByKey method should return the correct values.");
                 Y.Assert.areEqual(
-                    this.openValues[i], 
-                    this.axis.getKeyValueAt("open", i), 
+                    this.openValues[i],
+                    this.axis.getKeyValueAt("open", i),
                     'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
                 );
                 Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    this.axis.getKeyValueAt("close", i), 
+                    this.closeValues[i],
+                    this.axis.getKeyValueAt("close", i),
                     'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
                 );
             }
@@ -260,7 +260,7 @@ YUI.add('axis-base-tests', function(Y) {
 
         "test:set(dataProvider, newDataProvider)": function() {
             this.axis.set("dataProvider", this.newDataValues);
-            Y.Assert.areEqual(this.newDataValues, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");  
+            Y.Assert.areEqual(this.newDataValues, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");
         },
 
         "test:set(keys) new" : function() {
@@ -282,13 +282,13 @@ YUI.add('axis-base-tests', function(Y) {
                 Y.Assert.areEqual(this.openValues[i], revenueDataByKey[i], "The getDataByKey method should return the correct values.");
                 Y.Assert.areEqual(this.closeValues[i], expensesDataByKey[i], "The getDataByKey method should return the correct values.");
                 Y.Assert.areEqual(
-                    this.openValues[i], 
-                    this.axis.getKeyValueAt("revenue", i), 
+                    this.openValues[i],
+                    this.axis.getKeyValueAt("revenue", i),
                     'The axis.getKeyValueAt("revenue", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
                 );
                 Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    this.axis.getKeyValueAt("expenses", i), 
+                    this.closeValues[i],
+                    this.axis.getKeyValueAt("expenses", i),
                     'The axis.getKeyValueAt("expenses", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
                 );
             }
@@ -340,13 +340,13 @@ YUI.add('axis-base-tests', function(Y) {
                 Y.Assert.areEqual(this.openValues[i], openDataByKey[i], "The getDataByKey method should return the correct values.");
                 Y.Assert.areEqual(this.closeValues[i], closeDataByKey[i], "The getDataByKey method should return the correct values.");
                 Y.Assert.areEqual(
-                    this.openValues[i], 
-                    this.axis.getKeyValueAt("open", i), 
+                    this.openValues[i],
+                    this.axis.getKeyValueAt("open", i),
                     'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
                 );
                 Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    this.axis.getKeyValueAt("close", i), 
+                    this.closeValues[i],
+                    this.axis.getKeyValueAt("close", i),
                     'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
                 );
             }
@@ -394,7 +394,7 @@ YUI.add('axis-base-tests', function(Y) {
             Y.Assert.areEqual(max, this.axis._maximumSetter(max), "The _maximumSetter method should return " + max + ".");
             Y.Assert.areEqual(max, this.axis._maximumGetter(), "The _maximumGetter method should return " + max + ".");
             Y.Assert.isTrue(this.axis._getSetMax(), "The _getSetMax method should return true.");
-            
+
         },
 
         "test: _minimumSetter()" : function() {

@@ -5,7 +5,7 @@ var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 var _wlhash = function(r, s, wlhash) {
    var p;
    for (p in s) {
-        if(wlhash[p]) { 
+        if(wlhash[p]) {
             r[p] = s[p];
         }
    }
@@ -52,7 +52,7 @@ var s = {
 var props = [
     "setter",
     "getter",
-    "validator", 
+    "validator",
     "value",
     "valueFn",
     "writeOnce",
@@ -66,7 +66,7 @@ var props = [
 var hash = Y.Array.hash(props);
 
 suite.add('Y.mix wl', function () {
-    var o = Y.mix({}, s, true, props);    
+    var o = Y.mix({}, s, true, props);
 });
 
 suite.add('wlHash', function () {

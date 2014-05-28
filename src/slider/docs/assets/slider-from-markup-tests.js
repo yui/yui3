@@ -1,4 +1,4 @@
-YUI.add('slider-from-markup-tests', function(Y){ 
+YUI.add('slider-from-markup-tests', function(Y){
 
     // copied this from event-key-test.js to add tests for changing value by keyboard
     Y.Node.prototype.key = function (code, mods, type) {

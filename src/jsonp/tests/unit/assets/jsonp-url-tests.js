@@ -20,7 +20,7 @@ var suite = new Y.Test.Suite("jsonp-url"),
                         callback;
 
                     test._proxyName = proxy;
-                    
+
                     if (url.indexOf('404') > -1) {
                         callback = config.onFailure;
                     // for the timeout + success test, where one request should
@@ -81,10 +81,10 @@ suite.add(new Y.Test.Case({
 
         Y.jsonp("echo/jsonp?&callback=globalFunction");
     },
-        
+
     "inline callback should be replaced if function passed": function () {
         this._global = 'globalFunction';
-        
+
         Y.config.win.globalFunction = function (data) {
             Y.Assert.fail("inline function should not be used");
         };
@@ -93,10 +93,10 @@ suite.add(new Y.Test.Case({
             Y.Assert.isObject(data);
         });
     },
-        
+
     "inline callback should be replaced if success function provided in config": function () {
         this._global = 'globalFunction';
-        
+
         Y.config.win.globalFunction = function (data) {
             Y.Assert.fail("inline function should not be used");
         };
@@ -109,7 +109,7 @@ suite.add(new Y.Test.Case({
             }
         });
     },
-    
+
     "complex nested callback in URL should be executed": function () {
         this._global = 'deeply';
 

@@ -120,7 +120,7 @@ add('load', '8', {
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
+
     return svg && (useSVG || !canvas);
 },
     "trigger": "graphics"
@@ -133,7 +133,7 @@ add('load', '9', {
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
+
     return svg && (useSVG || !canvas);
 },
     "trigger": "graphics"
@@ -186,7 +186,7 @@ add('load', '14', {
     function workingNative( k, v ) {
         return k === "ok" ? true : v;
     }
-    
+
     // Double check basic functionality.  This is mainly to catch early broken
     // implementations of the JSON API in Firefox 3.1 beta1 and beta2
     if ( nativeSupport ) {

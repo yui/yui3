@@ -62,7 +62,7 @@ YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
 // which receives the current date and outputs a string.
 // use the Y.Datatype.Date format to format the date, and
 // the Datatype.Date math to add one month to the current
-// date, so both months can appear in the header (since 
+// date, so both months can appear in the header (since
 // this is a two-pane calendar).
  calendar.set("headerRenderer", function (curDate) {
    var ydate = Y.DataType.Date,
@@ -72,7 +72,7 @@ YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
        format: "%B %Y"
      });
    return output;
- }); 
+ });
 
 // When selection changes, output the fired event to the
 // console. the newSelection attribute in the event facade
@@ -81,7 +81,7 @@ YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
  calendar.on("selectionChange", function (ev) {
    Y.log(ev);
  });
- 
+
  });
 
 </script>

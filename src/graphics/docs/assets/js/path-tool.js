@@ -1,7 +1,7 @@
 YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', function (Y){
     var myline,
     mycurve;
-        
+
 ///////////////////// pencil //////////////////////
 
 
@@ -75,8 +75,8 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
             if(prevToMethod === 'moveTo'){  // this is part of a patch for the problem that multiple moveTo commands = lineTo
                 Y.log('double moveto issue') ;
                 jsStr = jsStr.substring(0, jsStr.lastIndexOf('.moveTo(')) + '.end(); // lastEndMarker';
-                txtCode.set('value', jsStr); 
-            } 
+                txtCode.set('value', jsStr);
+            }
             myline.moveTo(myX, myY); //Notice we're using myLine that is defined to do the real drawing
             prevToMethod = 'moveTo';
         }else if(altIsDown){
@@ -96,12 +96,12 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
             prevToMethod = '';
             return; // Do not write code in box. Do not update prevX prevY
         }else{
-            myline.set("stroke", {color: "#f00"}); 
-            toMethod = 'lineTo'; 
+            myline.set("stroke", {color: "#f00"});
+            toMethod = 'lineTo';
             myline.lineTo(myX, myY); //Notice we're using myLine that is defined to do the real drawing
             prevToMethod = '';
         }
-        
+
         if(toMethod === 'moveTo'){
             // this is part of a patch for the problem that multiple moveTo commands = lineTo See drag:end
         } else{
@@ -110,9 +110,9 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
         methodStr = '.' + toMethod + '(' + myX + ',' + myY + ');\n' + objName + '.end(); // lastEndMarker';
         insertCode(methodStr);
         prevX = myX;
-        prevY = myY;    
-    });    
-    
+        prevY = myY;
+    });
+
     // inserts code into text area
     var insertCode = function(methodStr){
         jsStr = txtCode.get('value');
@@ -126,7 +126,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
         myline.moveTo(prevX,prevY);
         myline.curveTo(cp1X,cp1Y,cp2X,cp2Y, myX, myY);
         myline.end();
-        
+
         // try to clear mycurve, FIXME
         mycurve.clear();
         mycurve.set('stroke', {opacity:0}); // set opacity 0
@@ -136,11 +136,11 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
         methodStr = '.' + toMethod + '(' + cp1X + ',' + cp1Y + ',' + cp2X + ',' + cp2Y + ',' + myX + ',' + myY + ');\r\n'  + objName + '.end(); // lastEndMarker';
         insertCode(methodStr);
         prevX = myX;
-        prevY = myY;    
+        prevY = myY;
         curveInProgress = false;
-        
+
     }
-    
+
     Y.on('keydown', function(e){
         if(e.shiftKey){
             shiftIsDown = true; // This will be a myLine.moveTo
@@ -150,14 +150,14 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
             altIsDown = true; // triggers a curve line
         }
     },document);
-    
+
     Y.on('keyup', function(e){
             shiftIsDown = false; // This will be a myLine.lineTo
             altIsDown = false;  // Will this cause bug if multiple keys are down?
             //Y.one('.pencil-img-container').removeClass('pencil-img-container-moving');  // doesn't work in IE6
             Y.one('.pencil-img-container').setStyle('backgroundPosition', '0 0');
     },document);
-    
+
     // when user changes the object name in the input box "Graphic Object Name"
     Y.on('change', function(){
         if(inpObjName.get('value') !== objName){
@@ -167,18 +167,18 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
             if(prevToMethod === 'moveTo'){  // this is part of a patch for the problem that multiple moveTo commands = lineTo
                 Y.log('double moveto issue on new obj creation') ;
                 jsStr = jsStr.substring(0, jsStr.lastIndexOf('.moveTo(')) + '.end();\r\n\r\n';   // remove the last moveTo because a new object is being created
-            }             
+            }
             jsStr += makeStrForNewObject();
             txtCode.set('value', jsStr);
             myline.end();
             txtCode.select();
         }
-    },inpObjName);    
+    },inpObjName);
 
     var makeStrForNewObject = function(){
             objName = Y.Escape.html(inpObjName.get('value'));
             var newLine = '\r\n',
-            newObjStr = newLine + 'var ' + objName + 
+            newObjStr = newLine + 'var ' + objName +
             ' = mygraphic.addShape({' + newLine +
             '   type: "path",' + newLine +
             '   stroke: {' + newLine +
@@ -193,7 +193,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
             '       ]' + newLine +
             '   }' + newLine +
             '});' + newLine +
-            objName + '.moveTo(' + prevX + ',' + prevY + ');' + newLine + 
+            objName + '.moveTo(' + prevX + ',' + prevY + ');' + newLine +
             objName + '.end(); // lastEndMarker' + newLine +
             '';
             return newObjStr;
@@ -234,7 +234,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','escape', func
 		mycurve.lineTo(208, 208);
         mycurve.clear();
         mycurve.end();
-    } 
+    }
 
     loadGraphics();
 });

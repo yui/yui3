@@ -38,7 +38,7 @@ YUI.add('calendar-multipane-tests', function(Y) {
                 Assert.isTrue(thirdDay.hasClass("yui3-calendar-day-selected"), " - The third day of July should be selected.");
                 Assert.isFalse(secondDay.hasClass("yui3-calendar-day-selected"), " - The second day of July should be deselected.");
          },
-         
+
         'test calendar navigation': function() {
             var todaysDate = new Date(),
                 normalizedDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1, 12, 00);

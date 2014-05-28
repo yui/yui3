@@ -8,7 +8,7 @@ YUI().use('transition', function(Y) {
 
     node.one('a').on('click', function(e) {
         e.preventDefault();
-        
+
         node.transition({
             duration: 1, // seconds
             easing: 'ease-out',
@@ -18,7 +18,7 @@ YUI().use('transition', function(Y) {
             top: '100px',
             opacity: 0
         }, function() {
-            this.remove(); 
+            this.remove();
         });
     });
 });

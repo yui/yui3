@@ -199,7 +199,7 @@ available.
             YUI.Env.DOMReady = true;
             if (hasWin) {
                 remove(doc, 'DOMContentLoaded', handleReady);
-            }        
+            }
         },
         handleLoad = function() {
             YUI.Env.windowLoaded = true;

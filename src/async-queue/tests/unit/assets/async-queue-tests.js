@@ -42,7 +42,7 @@ suite.add(new Y.Test.Case({
             var callback,
 
                 q = new Y.Queue(inc, inc, "string", inc);
-            
+
             while ((callback = q.next())) {
                 if (Y.Lang.isFunction(callback)) {
                     callback();
@@ -550,7 +550,7 @@ suite.add(new Y.Test.Case({
     test_iterations : function () {
         var results = '',
             self = this;
-       
+
         (new Y.AsyncQueue(
             function () { results += 'A'; },
             { fn: function () { results += 'B'; } },
@@ -569,7 +569,7 @@ suite.add(new Y.Test.Case({
     test_until : function () {
         var results = '',
             self = this;
-       
+
         (new Y.AsyncQueue(
             function () { results += 'A'; },
             {
@@ -696,7 +696,7 @@ suite.add(new Y.Test.Case({
                 timeout : 10
             });
         }
-        
+
         function test(s,f,step) {
             return function () {
                 var msg = "Incorrect number of ",
@@ -977,7 +977,7 @@ suite.add(new Y.Test.Case({
                 Y.Assert.areSame( 11, register );
             } );
         } );
-        
+
         q.run();
 
         this.wait();

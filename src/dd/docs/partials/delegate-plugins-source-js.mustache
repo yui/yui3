@@ -10,7 +10,7 @@
         del.on('drag:end', function(e) {
             e.target.get('node').setStyle('opacity', '1');
         });
-        
+
         del.dd.plug(Y.Plugin.DDConstrained, {
             constrain2node: '#play'
         });
@@ -24,7 +24,7 @@
         drop.drop.on('drop:hit', function(e) {
             drop.set('innerHTML', 'You dropped: <strong>' + e.drag.get('node').get('innerHTML') + '</strong>');
         });
-        
+
 
     });
 

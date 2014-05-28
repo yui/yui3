@@ -90,7 +90,7 @@ Widget Child Change History
 -----
 
   * No changes.
-  
+
 3.7.3
 -----
 

@@ -1,10 +1,10 @@
 YUI.add('charts-ariapie-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: AriaPie"),
         pieDataValues = [
-            {category:"5/1/2010", revenue:2200}, 
-            {category:"5/2/2010", revenue:100}, 
-            {category:"5/3/2010", revenue:1500}, 
-            {category:"5/4/2010", revenue:2800}, 
+            {category:"5/1/2010", revenue:2200},
+            {category:"5/2/2010", revenue:100},
+            {category:"5/3/2010", revenue:1500},
+            {category:"5/4/2010", revenue:2800},
             {category:"5/5/2010", revenue:2650}
         ],
         defaultPieAriaDescription = "Use the left and right keys to navigate through items.",
@@ -30,12 +30,12 @@ YUI.add('charts-ariapie-tests', function(Y) {
             var mychart = new Y.Chart(this.attrConfig);
             this.chart = mychart;
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         "test:getAriaLabel()": function()
         {
             Y.Assert.isTrue(this.chart.get("ariaLabel") == this.defaultAriaLabel);
@@ -52,7 +52,7 @@ YUI.add('charts-ariapie-tests', function(Y) {
         {
             Y.Assert.isTrue(this.chart.get("ariaDescription") == this.defaultAriaDescription);
         },
-        
+
         "test:setAriaDescription()": function()
         {
             var chart = this.chart;
@@ -61,7 +61,7 @@ YUI.add('charts-ariapie-tests', function(Y) {
         }
     });
     Y.AriaTests = AriaTests;
-    
+
     var pieTests = new Y.AriaTests({
         dataProvider: pieDataValues,
         render: "#testdiv",

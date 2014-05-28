@@ -50,7 +50,7 @@ onload = function() {
                         children.push(el.childNodes[i]);
                     }
                 }
-                
+
                 return children;
             },
             getElementsByClassName: function (clz, tag, root) {
@@ -230,19 +230,19 @@ onload = function() {
                 Assert.areEqual(
                     $('a span, a', Y.DOM.byId('mod1')).length,
                     $('a, a span', Y.DOM.byId('mod1')).length,
-                    "$('a, a span') === $('a span, a')"); 
+                    "$('a, a span') === $('a span, a')");
 
                 var node = document.createElement('div');
                 node.innerHTML = '<li><em>foo</em></li>';
                 Assert.areEqual(node.getElementsByTagName('em')[0], $('li em', node, true), 'off-dom: li em');
                 Assert.isNull($('div li em', node, true), 'off-dom: div li em');
 
-                Assert.areEqual(Y.DOM.byId('test:colon').getElementsByTagName('h2')[0], 
+                Assert.areEqual(Y.DOM.byId('test:colon').getElementsByTagName('h2')[0],
                     $('h2', Y.DOM.byId('test:colon'), true),
                     "$('h2', Y.DOM.byId('test:colon'), true)");
 
 
-                Assert.areEqual(Y.DOM.byId('demo-last-child'), $('.foo #demo-last-child', document.body, true), 
+                Assert.areEqual(Y.DOM.byId('demo-last-child'), $('.foo #demo-last-child', document.body, true),
                     "$('.foo #demo-last-child', true, document.body)");
 
                 // standard: no element-scoped query
@@ -391,14 +391,14 @@ onload = function() {
                 Assert.isNull($('[href$="?html"]', null, true), "$('[href$=\?html\]')");
 
                 /* failing in brute (ticket 2528057)
-                Assert.areEqual(Y.DOM.byId('test:colon'), 
+                Assert.areEqual(Y.DOM.byId('test:colon'),
                     $('#test\\:colon', null, true),
                     "$('#test\\:colon', null, true)");
                 */
             },
 
             'should find all queries in group': function() {
-                Assert.areEqual(14, Y.Selector.query('input[type=foo], input[type=hidden], input[type=checkbox], input[type=radio], input[type=button], input[type=bar]').length);                
+                Assert.areEqual(14, Y.Selector.query('input[type=foo], input[type=hidden], input[type=checkbox], input[type=radio], input[type=button], input[type=bar]').length);
             }
         });
 
@@ -548,13 +548,13 @@ onload = function() {
                         <p></p>
                         <p></p>
                     </div>
-                    
-                    This is the tree in which the horror below results in. 
+
+                    This is the tree in which the horror below results in.
                 */
                 var fragment, div, div2, div3;
 
                 fragment = document.createDocumentFragment();
-            
+
                 div = document.createElement("div");
                 div.appendChild(document.createElement("p"));
 
@@ -568,7 +568,7 @@ onload = function() {
                 div2.appendChild(document.createElement("p"));
 
                 div.appendChild(div2);
-                
+
                 div.appendChild(document.createElement("div"));
                 div.appendChild(document.createElement("p"));
                 div.appendChild(document.createElement("p"));
@@ -578,7 +578,7 @@ onload = function() {
 
                 // NOTE: skipNative is passed in as true.
                 // Why? We want to simulate browsers who do not support QSA on document fragments.
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "*"), $("*", fragment, false, true), "*");                
+                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "*"), $("*", fragment, false, true), "*");
                 ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "div"), $("div", fragment, false, true), "div");
                 ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "p"), $("p", fragment, false, true), "p");
             },
@@ -728,11 +728,11 @@ onload = function() {
 
     <div id="empty"></div>
 
-    <select id="test-select" name="test-select"> 
-        <option value="0">foo</option> 
-        <option value="1">bar</option> 
-        <option>baz</option> 
-    </select> 
+    <select id="test-select" name="test-select">
+        <option value="0">foo</option>
+        <option value="1">bar</option>
+        <option>baz</option>
+    </select>
     <div id="root-test">
         <ol id="nth-test">
             <li class="odd three-1 four-1">foo</li>
@@ -753,7 +753,7 @@ onload = function() {
         <span>span</span>
         <div class="even">second div</div>
         <div>third div</div>
-        <div class="even">fourth div</div> 
+        <div class="even">fourth div</div>
         <span>span</span>
     </div>
     <a id="href-test" href="foo.html">foo</a>

@@ -24,8 +24,8 @@ Graphics Change History
 3.15.0
 ------
 
-* #1543 Parse rgba value into color string and opacity value for vml fill and stroke. 
-* #1566 Addressed issue with path chaining in canvas implementation of graphics.  
+* #1543 Parse rgba value into color string and opacity value for vml fill and stroke.
+* #1566 Addressed issue with path chaining in canvas implementation of graphics.
 
 3.14.1
 ------
@@ -36,12 +36,12 @@ Graphics Change History
 ------
 
 * #1398 Address issue in which canvas implementation does not position itself properly within a container.
-* #1375 Address issue in which path does not stroke correctly in svg implementation. 
+* #1375 Address issue in which path does not stroke correctly in svg implementation.
 
 3.13.0
 ------
 
-* #1138 Address issues with orphan elements after destroy.   
+* #1138 Address issues with orphan elements after destroy.
 
 3.12.0
 ------

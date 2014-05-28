@@ -40,8 +40,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('event-do-tests', 'event-custom-base-tests', 'event-custom-complex-tests', 'event-custom-complex-sequence-tests');
-    
+
     Y.Test.Runner.setName('event-custom cli tests');
-    
+
 });
 

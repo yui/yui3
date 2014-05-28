@@ -1,6 +1,6 @@
 {
     "name": "stylesheet",
-    "displayName": "StyleSheet", 
+    "displayName": "StyleSheet",
     "description": "StyleSheet addresses the need to apply style or style changes to multiple elements without incurring the cost of a page reflow for each element.",
 
     "author": "lsmith",

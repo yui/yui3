@@ -1,5 +1,5 @@
 YUI().use('parallel', 'node', function(Y) {
-    
+
     //Create the stack
     var stack = new Y.Parallel(),
         //Setup our results node
@@ -19,7 +19,7 @@ YUI().use('parallel', 'node', function(Y) {
                 //This is called when the timeout is reached.
                 res.append('Callback fired<br>');
             }));
-        
+
         }
 
         //What to do when all the callbacks are completed.

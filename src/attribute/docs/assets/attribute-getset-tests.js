@@ -56,7 +56,7 @@ YUI.add('attribute-getset-tests', function(Y) {
         },
 
         random : function(min, max) {
-            var range = max - min; 
+            var range = max - min;
             return Math.floor(min + (Math.random() * range));
         },
 
@@ -231,7 +231,7 @@ YUI.add('attribute-getset-tests', function(Y) {
                 region,
                 xValue = this.random(xy[0][0], xy[0][1]),
                 yValue = this.random(xy[1][0], xy[1][1]),
-                red = /rgb\(255,\s?0,\s?0\)/;            
+                red = /rgb\(255,\s?0,\s?0\)/;
 
             this.x.set("value", xValue);
             this.y.set("value", yValue);

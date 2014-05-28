@@ -13,7 +13,7 @@
         newWindow = YUI.Env.Tests.newWindow,
         isExample = false, i;
 
-    
+
     for (i = 0; i < examples.length; i++) {
         if (name === examples[i]) {
             isExample = true;
@@ -81,7 +81,7 @@
         };
 
         renderLogger();
-        
+
         Y.Test.Case.prototype._poll = function(condition, period, timeout, success, failure, startTime) {
 
             var currentTime = (new Date()).getTime(),
@@ -108,9 +108,9 @@
             this._poll(condition, period, timeout, success, failure);
             this.wait(timeout + 1000);
         };
-      
-        //This is a temporary fix for functional tests that are affected by #2532840. The ultimate fix is address subpixel issues with Dom.setXY().  
-        Y.Test.Case.prototype.closeEnough = function(expected, actual) { 
+
+        //This is a temporary fix for functional tests that are affected by #2532840. The ultimate fix is address subpixel issues with Dom.setXY().
+        Y.Test.Case.prototype.closeEnough = function(expected, actual) {
             return (Math.abs(expected - actual) < 2);
         };
 
@@ -151,11 +151,11 @@
         Y.Test.Runner.on('ignored', count);
 
         Y.Test.Runner.add(testCase);
-        
+
         Y.Test.Runner._ignoreEmpty = false; //Throw on no assertions
         Y.Test.Runner.setName(title);
         Y.Test.Runner.on('complete', function(e) {
-            
+
             if (e.results.failed) {
                 testConsole.show();
             }

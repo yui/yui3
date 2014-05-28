@@ -1,5 +1,5 @@
 YUI.add('plugin-example-tests', function (Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('plugin-example');
 

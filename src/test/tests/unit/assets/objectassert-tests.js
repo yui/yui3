@@ -268,7 +268,7 @@ YUI.add('objectassert-tests', function(Y) {
         "ownsNoKeys() should pass for empty objects with a prototype": function(){
             var object = function() {};
             object.prototype.foo = "bar";
-            
+
             ObjectAssert.ownsNoKeys(object);
         }
 

@@ -6,9 +6,9 @@
         <button type="button" class="hi">Hi, I'm John</button>
 
         <span class="interests disabled">
-            I enjoy: 
+            I enjoy:
             <label><input type="checkbox" id="sunsets" class="interest" value="Sunsets" disabled="disabled"> Sunsets</label>
-            <label><input type="checkbox" id="specs" class="interest" value="Reading Specifications" disabled="disabled"> Reading Specifications</label> 
+            <label><input type="checkbox" id="specs" class="interest" value="Reading Specifications" disabled="disabled"> Reading Specifications</label>
             <label><input type="checkbox" id="whales" class="interest" value="Saving Whales" disabled="disabled"> Saving Whales</label>
             <label><input type="checkbox" id="knitting" class="interest" value="Knitting" disabled="disabled"> Knitting</label>
         </span>
@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
 
-// Get a new instance of YUI and 
+// Get a new instance of YUI and
 // load it with the required set of modules
 
 YUI().use("collection", "event", "node", "attribute", function(Y) {
@@ -44,7 +44,7 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
 
             available : {
                 value:true
-            }, 
+            },
 
             interests : {
                 value : []
@@ -80,7 +80,7 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
         this.listenForChanges();
     };
 
-    // Method used to attach attribute change event listeners, so that the SpeedDater instance 
+    // Method used to attach attribute change event listeners, so that the SpeedDater instance
     // will react to changes in attribute state, and update what's rendered on the page
     SpeedDater.prototype.listenForChanges = function() {
 
@@ -130,7 +130,7 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
             });
             john.applyNameTag("#john .shirt");
 
-            Y.one("#jane .hi").set("disabled", false); 
+            Y.one("#jane .hi").set("disabled", false);
         }
 
     }, "#john .hi");
@@ -153,7 +153,7 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
                     johnsInterests = e.newVal,
 
                     readingSpecs = "Reading Specifications";
-    
+
                 // If it turns out that John enjoys reading specs, then Jane can admit it too...
                 if (Y.Array.indexOf(johnsInterests, readingSpecs) !== -1) {
                     if(Y.Array.indexOf(janesInterests, readingSpecs) == -1) {
@@ -171,11 +171,11 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
 
             // We can also listen before an attribute changes its value, and decide if we want to
             // allow the state change to occur or not. Invoking e.preventDefault() stops the state from
-            // being updated. 
+            // being updated.
 
-            // In this case, Jane can change her mind about making herself unavailable, if John likes 
+            // In this case, Jane can change her mind about making herself unavailable, if John likes
             // saving whales, as long as he doesn't dig knitting too.
- 
+
             jane.on("availableChange", function(e) {
                 var johnsInterests = john.get("interests");
                 var janeAvailable = e.newVal;
@@ -192,8 +192,8 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
 
     }, "#jane .hi");
 
-    Y.on("click", function() { 
-        jane.set("available", false); 
+    Y.on("click", function() {
+        jane.set("available", false);
     }, "#jane .movingOn");
 
     // A delegate DOM event listener which will update John's interests, based on the checkbox state, whenever
@@ -219,9 +219,9 @@ YUI().use("collection", "event", "node", "attribute", function(Y) {
         Y.one("#john .interests").removeClass("disabled");
         Y.one("#jane .reconsider").removeClass("disabled");
     }
-    
+
     function setMessage(msg) {
-        Y.one("#jane .message").set("innerHTML", msg);      
+        Y.one("#jane .message").set("innerHTML", msg);
     }
 
  });

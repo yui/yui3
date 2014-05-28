@@ -6,11 +6,11 @@ YUI.add('cnm-tests', function(Y) {
             testSingleSection: function() {
 				Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem"), "yui3-menuitem");
             },
-            
+
             testSingleSectionNoPrefix: function() {
                 Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem", true), "menuitem");
             },
-            
+
             testMoreThanOneSection : function() {
 				Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem", "active"), "yui3-menuitem-active");
             },

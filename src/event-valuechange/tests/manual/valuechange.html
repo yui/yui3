@@ -53,7 +53,7 @@ var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', 
 
     Y.Node.DOM_EVENTS['input'] = true;
     Y.all('.input').on('input', function (e) {
-        var node       = e.currentTarget, 
+        var node       = e.currentTarget,
             isEditable = node.getDOMNode().isContentEditable,
             newValue   = isEditable ? node.getHTML() : node.get('value');
 
@@ -61,7 +61,7 @@ var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', 
     });
 
     Y.all('.keyup').on('keyup', function (e) {
-        var node       = e.currentTarget, 
+        var node       = e.currentTarget,
             isEditable = node.getDOMNode().isContentEditable,
             newValue   = isEditable ? node.getHTML() : node.get('value');
 
@@ -69,7 +69,7 @@ var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', 
     });
 
     Y.all('.keypress').on('keypress', function (e) {
-        var node       = e.currentTarget, 
+        var node       = e.currentTarget,
             isEditable = node.getDOMNode().isContentEditable,
             newValue   = isEditable ? node.getHTML() : node.get('value');
 

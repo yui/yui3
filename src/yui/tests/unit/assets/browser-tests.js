@@ -6,7 +6,7 @@ YUI.add('browser-tests', function(Y) {
         test_attach_after: function() {
             var Assert = Y.Assert;
             YUI.add('after-test', function(Y) {
-                Y.afterTest = true; 
+                Y.afterTest = true;
                 Assert.isObject(Y.Node, 'Node not loaded before this module');
             }, '1.0.0', {
                 after: [ 'node' ]

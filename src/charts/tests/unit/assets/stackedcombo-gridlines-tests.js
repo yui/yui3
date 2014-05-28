@@ -26,7 +26,7 @@ YUI.add('stackedcombo-gridlines-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         testDefault: function()
         {
             var chart = this.chart.get("graph"),
@@ -46,14 +46,14 @@ YUI.add('stackedcombo-gridlines-tests', function(Y) {
         }
     });
 
-    var basicDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    var basicDataValues = [
+            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
-    
+
     styledGridlines = {
         styles: {
             line: {
@@ -90,7 +90,7 @@ YUI.add('stackedcombo-gridlines-tests', function(Y) {
         }
         return new GridlinesTestTemplate(cfg, globalCfg);
     };
-    
+
     suite.add(getGridlinesTest("combo", null, true, false));
     suite.add(getGridlinesTest("combo", null, true, true));
     suite.add(getGridlinesTest("combo", null, false, true));
@@ -109,6 +109,6 @@ YUI.add('stackedcombo-gridlines-tests', function(Y) {
     suite.add(getGridlinesTest("combo", "time", true, styledGridlines));
     suite.add(getGridlinesTest("combo", "time", true, styledGridlines));
     suite.add(getGridlinesTest("combo", "time", false, styledGridlines));
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

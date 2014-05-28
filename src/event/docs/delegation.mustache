@@ -17,7 +17,7 @@
 YUI().use('node-event-delegate', 'event-key', function (Y) {
     var todoList = Y.one('#todo-example ol'),
         newTask = Y.one('#todo');
-    
+
     todoList.delegate('click', function () {
         this.ancestor('li').remove();
     }, 'button');
@@ -162,7 +162,7 @@ our Todo widget to look like this:</p>
 YUI().use('node-event-delegate', 'event-key', function (Y) {
     var todoList = Y.one('#todo-example ol'),
         newTask = Y.one('#todo');
-    
+
     // clicks inside the todo list on a <button> element will cause the
     // button's containing <li> to be removed
     todoList.delegate('click', function () {

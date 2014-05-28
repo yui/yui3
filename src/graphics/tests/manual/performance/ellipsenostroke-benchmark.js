@@ -9,8 +9,8 @@ YUI.add('ellipsenostroke-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("EllipseNoStroke", function() { 
+
+    suite.add("EllipseNoStroke", function() {
         var ellipse = graphic.addShape({
                 type: "ellipse",
                 width: 16,
@@ -18,7 +18,7 @@ YUI.add('ellipsenostroke-benchmark', function (Y) {
                 fill: {
                     color: "#9aa"
                 },
-                stroke: null 
+                stroke: null
             });
     }, {
         onStart: function() {
@@ -31,5 +31,5 @@ YUI.add('ellipsenostroke-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

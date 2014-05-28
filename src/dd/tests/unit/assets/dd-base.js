@@ -1,5 +1,5 @@
 YUI.add('dd-base', function(Y) {
-    
+
     var old;
 
     /*

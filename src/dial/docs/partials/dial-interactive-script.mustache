@@ -26,7 +26,7 @@ YUI().use('dial', function(Y) {
         diameter: 100,
         minorStep: 1,
         majorStep: 10,
-        decimalPlaces: 2, 
+        decimalPlaces: 2,
         strings:{label:'Altitude in Kilometers:', resetStr: 'Reset', tooltipHandle: 'Drag to set'},
         // construction-time event subscription
         after : {
@@ -34,15 +34,15 @@ YUI().use('dial', function(Y) {
         }
     });
     dial.render('#demo');
-    
-    // Function that calls a method in Dial that sets its value to the value of the max config attribute 
+
+    // Function that calls a method in Dial that sets its value to the value of the max config attribute
     // Other methods available include,
-    // _setToMin(), _resetDial(), _incrMinor(), _decrMinor(), _incrMajor(), _decrMajor(),  
+    // _setToMin(), _resetDial(), _incrMinor(), _decrMinor(), _incrMajor(), _decrMajor(),
     var setDialToMax = function(e){
         e.preventDefault();
         this._setToMax();
     }
-    
+
     // Subscribe to the click of the "Hubble" anchor, passing the dial as the 'this'
     Y.on('click', setDialToMax, '#a-hubble', dial);
 
