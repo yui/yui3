@@ -3980,7 +3980,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("yql-winjs")) > -1, "Module (yql-winjs) not found in sorted array");
-        }
+        }    
 }));
 
 YUITest.TestRunner.add(suite);
