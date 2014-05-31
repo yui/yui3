@@ -32,6 +32,19 @@ YUI.add('throttle-tests', function(Y) {
             Y.Lang.now = this.originalNow;
         },
 
+        test_immediate_throttle: function() {
+            var throttledFn,
+                hasRun = false;
+
+            throttledFn = Y.throttle(function() {
+                hasRun = true;
+            }, 150);
+
+            Assert.isFalse(hasRun);
+            throttledFn();
+            Assert.isTrue(hasRun);
+        },
+
         test_throttle: function() {
             var counter = 0,
                 out = 0,
@@ -42,17 +55,17 @@ YUI.add('throttle-tests', function(Y) {
             }
 
             // Y.Lang.now() returns always previousTime + 1, so if we throttle
-            // the function by 75ms and we call the returned function 76 times
-            // the throttled function should be called once
-            throttledFn = Y.throttle(count, 75);
+            // the function by 100ms and we call the returned function 50 times
+            // the throttled function should be called once.
+            throttledFn = Y.throttle(count, 100);
 
-            // Calling the result function 100 times means the throttled function
-            // will be called once. So `out` will be 100 and `counter` will be 1
-            for (i; i < 100; i++) {
+            // Calling the result function 50 times means the throttled function
+            // will be called once. So `out` will be 50 and `counter` will be 1
+            for (i; i < 50; i++) {
                 out++;
                 throttledFn();
             }
-            
+
             Assert.isFunction(throttledFn, 'Y.throttle failed to return a function');
             Assert.areNotSame(count, throttledFn, 'Y.throttle failed to return a new function');
             Assert.isTrue(counter < out, 'Y.throttle did not throttle the function call');
@@ -74,7 +87,7 @@ YUI.add('throttle-tests', function(Y) {
                 out++;
                 throttledFn();
             }
-            
+
             Assert.isFunction(throttledFn, 'Y.throttle failed to return a function');
             Assert.areNotSame(count, throttledFn, 'Y.throttle failed to return a new function');
             Assert.areEqual(out, counter, 'Y.throttle DID throttle the function call');
@@ -96,18 +109,6 @@ YUI.add('throttle-tests', function(Y) {
             Assert.isFalse(counter < 1, 'throttled function with no throttle time never called');
             Assert.isFalse(counter > 1, 'throttled function with no throttle time called more than once');
         },
-        'test throttled function never called after throttle time': function () {
-            var counter = 0,
-                fn = Y.throttle(function () {
-                    counter++;
-                }, 10);
-
-            // call once before the 10ms threshold (as if it were only 5ms)
-            this.tDelta = 5;
-            fn();
-            
-            Assert.areEqual(0, counter, 'throttled function called before throttle time');
-        },
         '`this` is not modified in throttled function': function () {
             var counter = 0,
                 obj = {
@@ -119,7 +120,6 @@ YUI.add('throttle-tests', function(Y) {
 
             // Adjust delta to be larger the throttle time so the function is called
             this.tDelta = 10;
-            obj.fn();
             obj.fn();
 
             // Ensure the test function is called and we do not get a false positive
@@ -133,6 +133,36 @@ YUI.add('throttle-tests', function(Y) {
             };
 
             obj.fn();
+        },
+
+        'test function is invoked when called immediately after setup': function() {
+            var throttledFn,
+                runCount = 0;
+
+            // Create a throttled function with a delay of 200ms.
+            throttledFn = Y.throttle(function(args) {
+                runCount++;
+            }, 100, true);
+
+            // Get the current time, and then immediately call the function.
+            this.tDelta = 1;
+            throttledFn();
+
+            // Should have happened initially.
+            Assert.areSame(1, runCount, 'The throttled function was not called');
+
+            // Now ensure that the function is invoked after the throttle limit has expired since we set it up.
+            this.tDelta = 100;
+            Y.Lang.now();
+            throttledFn();
+
+            Y.later(200, this, function() {
+                this.resume(function () {
+                    Assert.areSame(2, runCount, 'throttled function was not executed the expected number of times');
+                });
+            });
+
+            this.wait();
         }
     }));
 
