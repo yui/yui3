@@ -42,8 +42,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('array-extras-test', 'array-invoke-tests', 'arraylist-tests');
-    
+
     Y.Test.Runner.setName('Array Extras cli tests');
-    
+
 });
 

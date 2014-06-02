@@ -16,10 +16,10 @@ YUI().use('datatable', 'datatype-number-format', function (Y) {
             decimalPlaces: 2
         });
     }
-    
+
     function formatGainLoss(o) {
         o.className += (o.value < 0) ? 'loss' : 'gain';
-        
+
         return o.value ?
             Y.DataType.Number.format(o.value, {
                 suffix: ' %',
@@ -28,12 +28,12 @@ YUI().use('datatable', 'datatype-number-format', function (Y) {
             }) :
             'n/a';
     }
-    
+
     var dt = new Y.DataTable({
         data: portfolio,
         columns: [
             { key: 'ticker',  label: 'Ticker' },
-            { key: 'company', label: 'Company Name' },        
+            { key: 'company', label: 'Company Name' },
             { key: 'qty',     label: 'Share Qty', className: 'numeric' },
             {
               key      : 'cost',
@@ -69,7 +69,7 @@ YUI().use('datatable', 'datatype-number-format', function (Y) {
                     var cost = this.get('cost'),
                         amt  = (this.get('qty') * this.get('price')) -
                                     this.get('cost');
-                    
+
                     return cost ? ((100 * amt) / cost) : 0;
                 }
             }
@@ -77,6 +77,6 @@ YUI().use('datatable', 'datatype-number-format', function (Y) {
         sortable: ['ticket', 'company', 'cost', 'marketvalue', 'gainloss'],
         sortBy: { gainloss: 'desc' }
     });
-    
-    dt.render("#dtable");    
+
+    dt.render("#dtable");
 });

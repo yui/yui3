@@ -4,7 +4,7 @@
     <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
     <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/sam/widget-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">    
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">
     <title>Loader Automated Tests</title>
 </head>
 <body class="yui3-skin-sam">
@@ -26,14 +26,14 @@ var TestName = 'Loader: On Page';
 
 YUI({
     allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },
     filter: YUI_config.gfilter,
     modules: {
         'loader-tests': {
             fullpath: './assets/loader-tests.js',
             requires: [ 'test']
         }
-        
+
     }
 }).use('loader-tests', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');

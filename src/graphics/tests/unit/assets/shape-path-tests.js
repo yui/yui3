@@ -54,7 +54,7 @@ Y.extend(PathTestTemplate, Y.Test.Case, {
         this.pathAttrs.type = "path";
         this.path = this.graphic.addShape(this.pathAttrs);
     },
-    
+
     tearDown: function () {
         this.graphic.destroy();
         Y.Event.purgeElement(DOC, false);
@@ -65,7 +65,7 @@ Y.extend(PathTestTemplate, Y.Test.Case, {
 Y.PathTestTemplate = PathTestTemplate;
 
 
-var drawRectTest = function(name, attrs) 
+var drawRectTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -87,7 +87,7 @@ var drawRectTest = function(name, attrs)
     });
 },
 
-drawEllipseTest = function(name, attrs) 
+drawEllipseTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -109,7 +109,7 @@ drawEllipseTest = function(name, attrs)
     });
 },
 
-drawCircleTest = function(name, attrs) 
+drawCircleTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -132,7 +132,7 @@ drawCircleTest = function(name, attrs)
     });
 },
 
-drawRoundRectTest = function(name, attrs) 
+drawRoundRectTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -156,7 +156,7 @@ drawRoundRectTest = function(name, attrs)
     });
 },
 
-drawDiamondTest = function(name, attrs) 
+drawDiamondTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -179,7 +179,7 @@ drawDiamondTest = function(name, attrs)
 },
 
 
-drawQuadraticCurvesTest = function(name, attrs) 
+drawQuadraticCurvesTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -205,7 +205,7 @@ drawQuadraticCurvesTest = function(name, attrs)
     });
 },
 
-drawCubicCurvesTest = function(name, attrs) 
+drawCubicCurvesTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -232,7 +232,7 @@ drawCubicCurvesTest = function(name, attrs)
     });
 },
 
-drawWedgeTest = function(name, attrs) 
+drawWedgeTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -255,7 +255,7 @@ drawWedgeTest = function(name, attrs)
     });
 },
 
-drawMultipleRectsTest = function(name, attrs) 
+drawMultipleRectsTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -287,7 +287,7 @@ drawMultipleRectsTest = function(name, attrs)
     });
 },
 
-drawMultipleEllipsesTest = function(name, attrs) 
+drawMultipleEllipsesTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -319,7 +319,7 @@ drawMultipleEllipsesTest = function(name, attrs)
     });
 },
 
-drawMultipleCirclesTest = function(name, attrs) 
+drawMultipleCirclesTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -351,7 +351,7 @@ drawMultipleCirclesTest = function(name, attrs)
     });
 },
 
-drawMultipleRoundRectsTest = function(name, attrs) 
+drawMultipleRoundRectsTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -385,7 +385,7 @@ drawMultipleRoundRectsTest = function(name, attrs)
     });
 },
 
-drawMultipleDiamondsTest = function(name, attrs) 
+drawMultipleDiamondsTest = function(name, attrs)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -417,7 +417,7 @@ drawMultipleDiamondsTest = function(name, attrs)
     });
 },
 
-setPathDataTest = function(name, attrs, pathData) 
+setPathDataTest = function(name, attrs, pathData)
 {
     return new Y.PathTestTemplate({}, {
         pathAttrs: attrs,
@@ -436,7 +436,7 @@ setPathDataTest = function(name, attrs, pathData)
         }
     });
 };
- 
+
 suite.add(drawRectTest("DrawRectTestStrokeAndFill", strokeAndFill));
 suite.add(drawRectTest("DrawRectTestStrokeNoFill", strokeNoFill));
 suite.add(drawRectTest("DrawRectTestFillNoStroke", fillNoStroke));

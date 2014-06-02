@@ -4,7 +4,7 @@ YUI.add('slider-skin-tests', function(Y){
 
 	suite.add(new Y.Test.Case({
 
-		name: 'Slider Skin Tests', 
+		name: 'Slider Skin Tests',
 
 		'should have four light and dark modules': function() {
 			var light = Y.one('.light'),

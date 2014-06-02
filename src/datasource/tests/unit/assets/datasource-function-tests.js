@@ -116,7 +116,7 @@ suite.add(new Y.Test.Case({
 
         Assert.isTrue(errorCallback);
     },
-    
+
     testFunctionException: function() {
         var ds = new Y.DataSource.Function({
                 source: function() {

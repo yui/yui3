@@ -7,8 +7,8 @@ YUI().use('dial', function(Y) {
         value: 30
     });
     dial.render('#demo');
-    
-    
+
+
     // Function to update the text input value from the Dial value
     function updateInput( e ){
         var val = e.newVal;
@@ -18,17 +18,17 @@ YUI().use('dial', function(Y) {
         }
         this.set( "value", val );
     }
-    
+
     var theInput = Y.one( "#myTextInput" );
     // Subscribe to the Dial's valueChange event, passing the input as the 'this'
     dial.on( "valueChange", updateInput, theInput );
-    
+
     // Function to pass input value back to the Slider
     function updateDial( e ){
         dial.set( "value" , e.target.get( "value" ) - 0);
     }
     theInput.on( "keyup", updateDial );
-    
+
     // Initialize the input
     theInput.set('value', dial.get('value'));
 

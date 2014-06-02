@@ -39,13 +39,13 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use(Object.keys(modules));
-    
+
     //Setup the dynamic server urls
     Y.Object.each(Y.IO.URLS, function(url, name) {
         Y.IO.URLS[name] = 'http://127.0.0.1:' + port + '/tests/src/io/tests/unit/' + url;
     });
 
     Y.Test.Runner.setName('io-base cli tests');
-    
+
 });
 

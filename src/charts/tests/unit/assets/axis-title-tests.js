@@ -4,7 +4,7 @@ YUI.add('axis-title-tests', function(Y) {
         parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
         DOC = Y.config.doc;
     DOC.body.appendChild(parentDiv);
-   
+
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -25,14 +25,14 @@ YUI.add('axis-title-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         }
     });
-    
+
     var AxisTitleTestTemplate = function()
     {
         AxisTitleTestTemplate.superclass.constructor.apply(this, arguments);
@@ -46,8 +46,8 @@ YUI.add('axis-title-tests', function(Y) {
                 valueAxisTitleRotation = chart.getAxisByKey("values").get("styles").title.rotation,
                 categoryAxisTitleRotation = chart.getAxisByKey("category").get("styles").title.rotation;
             this.eventListener = this.chart.on("chartRendered", function(e) {
-                Y.Assert.areEqual(specifiedRotation, categoryAxisTitleRotation, "The value axis' title rotation should equal specified " + specifiedRotation + "."); 
-                Y.Assert.areEqual(specifiedRotation, valueAxisTitleRotation, "The category axis' title rotation should equal specified " + specifiedRotation + "."); 
+                Y.Assert.areEqual(specifiedRotation, categoryAxisTitleRotation, "The value axis' title rotation should equal specified " + specifiedRotation + ".");
+                Y.Assert.areEqual(specifiedRotation, valueAxisTitleRotation, "The category axis' title rotation should equal specified " + specifiedRotation + ".");
             });
             this.chart.render("#testdiv");
         }
@@ -55,11 +55,11 @@ YUI.add('axis-title-tests', function(Y) {
 
     Y.AxisTitleTestTemplate = AxisTitleTestTemplate;
 
-    var dataProvider =  [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+    var dataProvider =  [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
     ],
 
@@ -84,14 +84,14 @@ YUI.add('axis-title-tests', function(Y) {
         }
         return new Y.AxisTitleTestTemplate({
             axes: axes,
-            dataProvider: dataProvider 
+            dataProvider: dataProvider
         },
         {
             name: "Left and Bottom Axes with " + rotation + " degree title rotation",
             specifiedLabelRotation: rotation
         });
     },
-  
+
     RightTopAxisTitleRotationTest = function(rotation)
     {
         var axes = {
@@ -113,7 +113,7 @@ YUI.add('axis-title-tests', function(Y) {
         }
         return new Y.AxisTitleTestTemplate({
             axes: axes,
-            dataProvider: dataProvider 
+            dataProvider: dataProvider
         },
         {
             name: "Right and Top Axes with " + rotation + " degree title rotation",
@@ -143,7 +143,7 @@ YUI.add('axis-title-tests', function(Y) {
     LeftBottomNegative60DegreeTest = LeftBottomAxisTitleRotationTest(-60),
     LeftBottomNegative75DegreeTest = LeftBottomAxisTitleRotationTest(-75),
     LeftBottomNegative90DegreeTest = LeftBottomAxisTitleRotationTest(-90),
-    
+
     RightTopUndefinedDegreeTest = RightTopAxisTitleRotationTest();
     RightTop15DegreeTest = RightTopAxisTitleRotationTest(15),
     RightTop30DegreeTest = RightTopAxisTitleRotationTest(30),
@@ -157,7 +157,7 @@ YUI.add('axis-title-tests', function(Y) {
     RightTopNegative60DegreeTest = RightTopAxisTitleRotationTest(-60),
     RightTopNegative75DegreeTest = RightTopAxisTitleRotationTest(-75),
     RightTopNegative90DegreeTest = RightTopAxisTitleRotationTest(-90);
-    
+
     suite.add(LeftBottomUndefinedDegreeTest);
     suite.add(LeftBottom15DegreeTest);
     suite.add(LeftBottom30DegreeTest);
@@ -185,6 +185,6 @@ YUI.add('axis-title-tests', function(Y) {
     suite.add(RightTopNegative60DegreeTest);
     suite.add(RightTopNegative75DegreeTest);
     suite.add(RightTopNegative90DegreeTest);
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

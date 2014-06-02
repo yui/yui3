@@ -6,7 +6,7 @@ YUI.add('button-plugin-tests', function(Y) {
 
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Button Plugin Tests',
-        
+
         'all buttons should exist': function() {
             Y.Assert.isNotNull(Y.one('#myButton'));
             Y.Assert.isNotNull(Y.one('#myEventButton'));
@@ -38,7 +38,7 @@ YUI.add('button-plugin-tests', function(Y) {
             Y.Assert.areSame('Not disabled', disabledBtn.getContent(), 'Disabled Button' + WRONG_TEXT);
 
             eventBtn.simulate('click');
-            
+
             // initial state
             Y.Assert.areSame('Disabled', disabledBtn.getContent(), 'Disabled Button' + WRONG_TEXT);
             Y.Assert.isTrue(disabledBtn.get('disabled'), 'Disabled Button is not disabled');

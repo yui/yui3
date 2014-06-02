@@ -9,7 +9,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
 
         setUp: function() {
             this.graphic = new Y.Graphic({
-                render: parentDiv 
+                render: parentDiv
             });
             this.path = this.graphic.addShape({
                 type: "path"
@@ -92,8 +92,8 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
             Y.Assert.areEqual(this.path, this.path.drawWedge(175, 175, -3, 0, 175), "The drawWedge method should return a reference to the path.");
         }
     });
-    
+
     suite.add(drawingTests);
     Y.Test.Runner.add( suite );
-    
+
 }, '@VERSION@' ,{requires:['graphics', 'test']});

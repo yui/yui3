@@ -30,7 +30,7 @@ suite.add(new Y.Test.Case({
         Assert.isInstanceOf(Y.Cache, this.ds.cache, "Expected Cache instance.");
         Assert.areSame(5, this.ds.cache.get("max"), "Expected 5 max in Cache.");
     },
-    
+
     testLocalCache: function() {
         var cached;
 
@@ -90,7 +90,7 @@ suite.add(new Y.Test.Case({
         this.ds.plug(Y.Plugin.DataSourceCache, { max: 3 });
 
         this.ds.sendRequest({
-            request: "a", 
+            request: "a",
             callback: {
                 success: function (e) {
                     response = e.response;

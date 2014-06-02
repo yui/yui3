@@ -4,7 +4,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
         parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
         DOC = Y.config.doc;
     DOC.body.appendChild(parentDiv);
-    
+
     GroupMarkerTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -29,7 +29,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-    
+
         testGroupMarkers: function()
         {
             var chart = this.chart,
@@ -44,21 +44,21 @@ YUI.add('charts-groupmarker-tests', function(Y) {
             Y.Event.purgeElement(DOC, false);
         }
     });
-    
+
     Y.GroupMarkerTestTemplate = GroupMarkerTestTemplate;
 
-    var dataProvider =  [ 
-        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    var dataProvider =  [
+        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
 
-    
+
     GroupMarkerTest = new Y.GroupMarkerTestTemplate({
         seriesKeys: ["miscellaneous", "expenses", "revenue"],
-        dataProvider: dataProvider    
+        dataProvider: dataProvider
     },
     {
         name: "Group Marker Test"
@@ -100,7 +100,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     {
         name: "Circle Marker Test"
     }),
-   
+
     RectMarkerTest = new Y.GroupMarkerTestTemplate({
         seriesKeys: ["miscellaneous", "expenses", "revenue"],
         dataProvider: dataProvider,
@@ -137,7 +137,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     {
         name: "Rect Marker Test"
     }),
-    
+
     DiamondMarkerTest = new Y.GroupMarkerTestTemplate({
         seriesKeys: ["miscellaneous", "expenses", "revenue"],
         dataProvider: dataProvider,
@@ -174,7 +174,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     {
         name: "Diamond Marker Test"
     }),
-    
+
     EllipseMarkerTest = new Y.GroupMarkerTestTemplate({
         seriesKeys: ["miscellaneous", "expenses", "revenue"],
         dataProvider: dataProvider,
@@ -211,7 +211,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     {
         name: "Ellipse Marker Test"
     }),
-   
+
     ColumnTest = new Y.GroupMarkerTestTemplate({
         seriesKeys: ["miscellaneous", "expenses", "revenue"],
         dataProvider: dataProvider,
@@ -248,7 +248,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     {
         name: "Column Marker Test"
     }),
-   
+
     BarTest = new Y.GroupMarkerTestTemplate({
         seriesKeys: ["miscellaneous", "expenses", "revenue"],
         dataProvider: dataProvider,
@@ -285,7 +285,7 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     {
         name: "Bar Marker Test"
     });
-    
+
     suite.add(GroupMarkerTest);
     suite.add(CircleMarkerTest);
     suite.add(RectMarkerTest);

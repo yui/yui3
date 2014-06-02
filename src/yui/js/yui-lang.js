@@ -249,14 +249,14 @@ L.now = Date.now || function () {
 };
 
 /**
- * Performs `{placeholder}` substitution on a string. The object passed as the 
+ * Performs `{placeholder}` substitution on a string. The object passed as the
  * second parameter provides values to replace the `{placeholder}`s.
  * `{placeholder}` token names must match property names of the object. For example,
- * 
+ *
  *`var greeting = Y.Lang.sub("Hello, {who}!", { who: "World" });`
  *
- * `{placeholder}` tokens that are undefined on the object map will be left 
- * in tact (leaving unsightly `{placeholder}`'s in the output string). 
+ * `{placeholder}` tokens that are undefined on the object map will be left
+ * in tact (leaving unsightly `{placeholder}`'s in the output string).
  *
  * @method sub
  * @param {string} s String to be modified.

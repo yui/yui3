@@ -85,7 +85,7 @@ YUI.add('node-attrs-test', function(Y) {
         'should return the correct number of children': function() {
             Assert.areEqual(2, this._testNode.get('children')._nodes.length);
         },
-            
+
         'should return zero children from empty node': function() {
             Assert.areEqual(0, Y.one('#test-empty-children').get('children')._nodes.length);
         },

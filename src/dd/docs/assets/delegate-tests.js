@@ -1,5 +1,5 @@
 YUI.add('delegate-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('delegate');
 
@@ -35,7 +35,7 @@ YUI.add('delegate-tests', function(Y) {
         },
         'DD is still active on new items' : function() {
             var li = Y.all('#demo li').item(15);
-            
+
             Assert.areEqual('New item #6', li.get('innerHTML'), 'Failed to get the right node');
             Assert.isFalse(li.hasClass('yui3-dd-draggable'), 'item has a dd class');
             Assert.areEqual('', li.get('id'), 'Item has an id');
@@ -60,7 +60,7 @@ YUI.add('delegate-tests', function(Y) {
         },
         'DD is still active on new items after second make' : function() {
             var li = Y.all('#demo li').item(26);
-            
+
             Assert.areEqual('New item #7', li.get('innerHTML'), 'Failed to get the right node');
             Assert.isFalse(li.hasClass('yui3-dd-draggable'), 'item has a dd class');
             Assert.areEqual('', li.get('id'), 'Item has an id');

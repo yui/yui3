@@ -9,7 +9,7 @@ var fs = require('fs'),
 var parse = function(filter) {
     var dirs = fs.readdirSync(base),
         json = {};
-    
+
     dirs.forEach(function(dir) {
         if (dir === 'io' || dir === 'jsonp') {
             return;

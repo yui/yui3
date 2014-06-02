@@ -18,12 +18,12 @@
 
 <script type="text/javascript">
 
-// Get a new instance of YUI and 
+// Get a new instance of YUI and
 // load it with the required set of modules
 
 YUI().use("node", "attribute", function(Y) {
 
-    // Setup custom class which we want to 
+    // Setup custom class which we want to
     // add managed attribute support to
 
     function SpeedDater(cfg) {
@@ -36,11 +36,11 @@ YUI().use("node", "attribute", function(Y) {
             name : {
                 writeOnce:true
             },
-    
+
             personality : {
                 value:50
             },
-    
+
             available : {
                 value:true
             }
@@ -75,7 +75,7 @@ YUI().use("node", "attribute", function(Y) {
         this.nameTag.one(".sd-name").set("innerHTML", name);
         this.nameTag.one(".sd-availability").set("innerHTML", taken);
 
-        var personalityEl = this.nameTag.one(".sd-personality"); 
+        var personalityEl = this.nameTag.one(".sd-personality");
         personalityEl.set("innerHTML", personality);
 
         if (personality > 90) {
@@ -85,21 +85,21 @@ YUI().use("node", "attribute", function(Y) {
 
     // Augment custom class with Attribute
     Y.augment(SpeedDater, Y.Attribute);
-    
+
     var john, jane;
 
     Y.on("click", function() {
 
         if (!john) {
 
-            // Set both name and personality during construction 
+            // Set both name and personality during construction
             john = new SpeedDater({
                 name: "John",
                 personality: 76.43
             });
             john.applyNameTag("#john .shirt");
 
-            Y.one("#jane .hi").set("disabled", false); 
+            Y.one("#jane .hi").set("disabled", false);
         }
 
     }, "#john .hi");
@@ -119,7 +119,7 @@ YUI().use("node", "attribute", function(Y) {
             jane.applyNameTag("#jane .shirt");
 
             Y.all("#jane button").set("disabled", false);
-            Y.all("#john button").set("disabled", false); 
+            Y.all("#john button").set("disabled", false);
         }
 
     }, "#jane .hi");
@@ -128,7 +128,7 @@ YUI().use("node", "attribute", function(Y) {
 
         john.set("available", false);
         john.updateNameTag();
-        
+
     }, "#john .taken");
 
     Y.on("click", function() {

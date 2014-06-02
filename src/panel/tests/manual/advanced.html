@@ -53,7 +53,7 @@
               width:200px;
             }
         </style>
-        <script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+        <script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script>
     </head>
 
     <body class='yui3-skin-sam'>
@@ -123,7 +123,7 @@
         Nunc tristique purus sed elit varius lobortis. Nulla in erat ac purus porta ultricies. Nullam vitae ullamcorper dolor. Integer non est at arcu fermentum hendrerit. Pellentesque condimentum blandit elit, eu euismod dui scelerisque ac. Nullam dictum bibendum dignissim. Cras cursus euismod vulputate. Fusce placerat tellus ac quam pharetra congue. Vestibulum dapibus, mi vel faucibus sollicitudin, justo sem consequat libero, in tristique ipsum ligula quis metus. Quisque dignissim nulla at nisl blandit pretium. Fusce tempor, enim condimentum ultricies fermentum, neque eros dictum dolor, nec gravida mi ligula nec augue. Sed eu lacus non tortor porttitor gravida in vitae nisi. Praesent sit amet volutpat libero. Mauris accumsan, nulla vel rutrum vulputate, augue ipsum laoreet nulla, eu accumsan neque lorem eget justo.
         </p>
 
-                
+
         <script>
           YUI({filter:"raw"}).use("datatable-base", "panel", "dd-plugin", function(Y) {
 
@@ -164,8 +164,8 @@
               panel.addButton(
                 {
                     value: "Add Item",
-                    action: function(e) { 
-                      e.preventDefault(); 
+                    action: function(e) {
+                      e.preventDefault();
                       addItem();
                     },
                     section: Y.WidgetStdMod.FOOTER
@@ -174,14 +174,14 @@
               panel.addButton(
                 {
                     value: "Remove All Items",
-                    action: function(e) { 
-                      e.preventDefault(); 
+                    action: function(e) {
+                      e.preventDefault();
                       removeAllItemsConfirm();
                     },
                     section: Y.WidgetStdMod.FOOTER
                 }
               );
-              
+
               //Render the modal form
               panel.render();
 
@@ -190,10 +190,10 @@
                 panel.show();
               });
 
-              //Define the addItem function - this will be called 
+              //Define the addItem function - this will be called
               //when "Add Item" is pressed on the modal form
               var addItem = function() {
-                var o = {}, 
+                var o = {},
                 id = Y.one('#productId'),
                 name = Y.one('#name'),
                 price = Y.one('#price');
@@ -213,7 +213,7 @@
                 panel.hide();
               };
 
-              //Define the removeItems function - this will be called 
+              //Define the removeItems function - this will be called
               //when "Remove All Items" is pressed on the modal form
               //and is confirmed "yes" by the nested panel.
               var removeItems = function() {
@@ -234,11 +234,11 @@
                     width:400,
                     modal:true,
                     buttons: [
-                      
+
                       {
                           value: "Yes",
-                          action  : function(e) { 
-                            e.preventDefault(); 
+                          action  : function(e) {
+                            e.preventDefault();
                             nestedPanel.hide();
                             panel.hide();
                             removeItems();
@@ -247,8 +247,8 @@
                       },
                       {
                           value: "No",
-                          action: function(e) { 
-                            e.preventDefault(); 
+                          action: function(e) {
+                            e.preventDefault();
                             nestedPanel.hide();
                           },
                           section: Y.WidgetStdMod.FOOTER

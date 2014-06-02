@@ -15,10 +15,10 @@ YUI().use("event-key", "widget", function(Y) {
         Spinner.superclass.constructor.apply(this, arguments);
     }
 
-    /* 
-     * Required NAME static field, to identify the Widget class and 
-     * used as an event prefix, to generate class names etc. (set to the 
-     * class name in camel case). 
+    /*
+     * Required NAME static field, to identify the Widget class and
+     * used as an event prefix, to generate class names etc. (set to the
+     * class name in camel case).
      */
     Spinner.NAME = "spinner";
 
@@ -61,7 +61,7 @@ YUI().use("event-key", "widget", function(Y) {
             value: 0
         },
 
-        // The strings for the spinner UI. This attribute is 
+        // The strings for the spinner UI. This attribute is
         // defined by the base Widget class but has an empty value. The
         // spinner is simply providing a default value for the attribute.
         strings: {
@@ -80,8 +80,8 @@ YUI().use("event-key", "widget", function(Y) {
     Spinner.INPUT_TEMPLATE = '<input type="text" class="' + Spinner.INPUT_CLASS + '">';
     Spinner.BTN_TEMPLATE = '<button type="button"></button>';
 
-    /* 
-     * The HTML_PARSER static constant is used by the Widget base class to populate 
+    /*
+     * The HTML_PARSER static constant is used by the Widget base class to populate
      * the configuration for the spinner instance from markup already on the page.
      *
      * The Spinner class attempts to set the value of the spinner widget if it
@@ -89,7 +89,7 @@ YUI().use("event-key", "widget", function(Y) {
      */
     Spinner.HTML_PARSER = {
         value: function (srcNode) {
-            var val = parseInt(srcNode.get("value")); 
+            var val = parseInt(srcNode.get("value"));
             return Y.Lang.isNumber(val) ? val : null;
         }
     };
@@ -98,10 +98,10 @@ YUI().use("event-key", "widget", function(Y) {
     Y.extend(Spinner, Widget, {
 
         /*
-         * initializer is part of the lifecycle introduced by 
+         * initializer is part of the lifecycle introduced by
          * the Widget class. It is invoked during construction,
          * and can be used to setup instance specific state.
-         * 
+         *
          * The Spinner class does not need to perform anything
          * specific in this method, but it is left in as an example.
          */
@@ -110,14 +110,14 @@ YUI().use("event-key", "widget", function(Y) {
         },
 
         /*
-         * destructor is part of the lifecycle introduced by 
+         * destructor is part of the lifecycle introduced by
          * the Widget class. It is invoked during destruction,
          * and can be used to cleanup instance specific state.
-         * 
+         *
          * The spinner cleans up any node references it's holding
-         * onto. The Widget classes destructor will purge the 
-         * widget's bounding box of event listeners, so spinner 
-         * only needs to clean up listeners it attaches outside of 
+         * onto. The Widget classes destructor will purge the
+         * widget's bounding box of event listeners, so spinner
+         * only needs to clean up listeners it attaches outside of
          * the bounding box.
          */
         destructor : function() {
@@ -137,9 +137,9 @@ YUI().use("event-key", "widget", function(Y) {
          *     syncUI()
          *
          * renderUI is intended to be used by the Widget subclass
-         * to create or insert new elements into the DOM. 
+         * to create or insert new elements into the DOM.
          *
-         * For spinner the method adds the input (if it's not already 
+         * For spinner the method adds the input (if it's not already
          * present in the markup), and creates the inc/dec buttons
          */
         renderUI : function() {
@@ -148,14 +148,14 @@ YUI().use("event-key", "widget", function(Y) {
         },
 
         /*
-         * bindUI is intended to be used by the Widget subclass 
+         * bindUI is intended to be used by the Widget subclass
          * to bind any event listeners which will drive the Widget UI.
-         * 
+         *
          * It will generally bind event listeners for attribute change
-         * events, to update the state of the rendered UI in response 
+         * events, to update the state of the rendered UI in response
          * to attribute value changes, and also attach any DOM events,
          * to activate the UI.
-         * 
+         *
          * For spinner, the method:
          *
          * - Sets up the attribute change listener for the "value" attribute
@@ -184,7 +184,7 @@ YUI().use("event-key", "widget", function(Y) {
         /*
          * syncUI is intended to be used by the Widget subclass to
          * update the UI to reflect the current state of the widget.
-         * 
+         *
          * For spinner, the method sets the value of the input field,
          * to match the current state of the value attribute.
          */
@@ -242,7 +242,7 @@ YUI().use("event-key", "widget", function(Y) {
          * Bounding box mouse down handler. Will determine if the mouse down
          * is on one of the spinner buttons, and increment/decrement the value
          * accordingly.
-         * 
+         *
          * The method also sets up a timer, to support the user holding the mouse
          * down on the spinner buttons. The timer is cleared when a mouse up event
          * is detected.
@@ -357,8 +357,8 @@ YUI().use("event-key", "widget", function(Y) {
         },
 
         /*
-         * value attribute change listener. Updates the 
-         * value in the rendered input box, whenever the 
+         * value attribute change listener. Updates the
+         * value in the rendered input box, whenever the
          * attribute value changes.
          */
         _afterValueChange : function(e) {
@@ -366,7 +366,7 @@ YUI().use("event-key", "widget", function(Y) {
         },
 
         /*
-         * Updates the value of the input box to reflect 
+         * Updates the value of the input box to reflect
          * the value passed in
          */
         _uiSetValue : function(val) {
@@ -385,8 +385,8 @@ YUI().use("event-key", "widget", function(Y) {
         }
     });
 
-    // Create a new Spinner instance, drawing it's 
-    // starting value from an input field already on the 
+    // Create a new Spinner instance, drawing it's
+    // starting value from an input field already on the
     // page (the #numberField text box)
     var spinner = new Spinner({
         srcNode: "#numberField",

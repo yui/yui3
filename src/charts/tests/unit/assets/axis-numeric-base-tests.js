@@ -245,10 +245,10 @@ YUI.add('axis-numeric-base-tests', function(Y) {
                 if(defaultMajorUnit.hasOwnProperty(key)) {
                     Y.Assert.isTrue(axisMajorUnit.hasOwnProperty(key), "The default axis styles.majorUnit should contain a " + key + " property.");
                     Y.Assert.areEqual(
-                        defaultMajorUnit[key], 
-                        axisMajorUnit[key], 
+                        defaultMajorUnit[key],
+                        axisMajorUnit[key],
                         "The default axis styles.majorUnit." + key + " property should be equal to the defaultMajorUnit." + key + " property."
-                    ); 
+                    );
                 }
            }
         },
@@ -265,7 +265,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         },
 
         "test: get('dataProvider')" : function() {
-            Y.Assert.areEqual(this.dataProvider, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");  
+            Y.Assert.areEqual(this.dataProvider, this.axis.get("dataProvider"), "The dataProvider attribute should equal the values it received.");
         },
 
         "test: set('keys')" : function() {
@@ -281,7 +281,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
             openDataByKey = this.axis.getDataByKey("open");
             closeDataByKey = this.axis.getDataByKey("close");
             len = this.dataProvider.length;
-            
+
             for(i = 0; i < len; i = i + 1) {
                 Y.Assert.areEqual(this.openValues[i], axisKeys.open[i], "The keys attribute should be equal to the values it received.");
                 Y.Assert.areEqual(this.closeValues[i], axisKeys.close[i], "The keys attribute should be equal to the values it received.");
@@ -291,23 +291,23 @@ YUI.add('axis-numeric-base-tests', function(Y) {
                 closeKeyValue = this.axis.getKeyValueAt("close", i);
                 if(!Y.Lang.isNumber(openKeyValue)) {
                     openKeyValue = undefined;
-                } 
+                }
                 if(!Y.Lang.isNumber(closeKeyValue)) {
                     closeKeyValue = undefined;
-                } 
+                }
                 Y.Assert.areEqual(
-                    this.openValues[i], 
+                    this.openValues[i],
                     openKeyValue,
                     'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
                 );
                 Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    closeKeyValue, 
+                    this.closeValues[i],
+                    closeKeyValue,
                     'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
                 );
             }
         },
-        
+
         "test: addKey()" : function() {
             var i,
                 len = this.dataProvider.length,
@@ -330,18 +330,18 @@ YUI.add('axis-numeric-base-tests', function(Y) {
                 closeKeyValue = this.axis.getKeyValueAt("close", i);
                 if(!Y.Lang.isNumber(openKeyValue)) {
                     openKeyValue = undefined;
-                } 
+                }
                 if(!Y.Lang.isNumber(closeKeyValue)) {
                     closeKeyValue = undefined;
-                } 
+                }
                 Y.Assert.areEqual(
-                    this.openValues[i], 
+                    this.openValues[i],
                     openKeyValue,
                     'The axis.getKeyValueAt("open", ' + i + ') method should return a value of ' + this.openValues[i] + '.'
                 );
                 Y.Assert.areEqual(
-                    this.closeValues[i], 
-                    closeKeyValue, 
+                    this.closeValues[i],
+                    closeKeyValue,
                     'The axis.getKeyValueAt("close", ' + i + ') method should return a value of ' + this.closeValues[i] + '.'
                 );
             }
@@ -406,7 +406,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
             Y.Assert.areEqual(this.setMaximum, this.axis.get("maximum"), "The get max method should return " + this.setMaximum + ".");
             Y.Assert.areEqual(this.setMinimum, this.axis.get("minimum"), "The get min method should return " + this.setMinimum + ".");
         },
-        
+
         "test: labelFunction()" : function() {
             var val = 300,
                 format = {
@@ -418,7 +418,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
              Y.Assert.areEqual(unformatted, this.axis.get("labelFunction")(val), "The label should equal " + unformatted + ".");
              Y.Assert.areEqual(formatted, this.axis.get("labelFunction")(val, format), "The label should equal " + formatted + ".");
         },
-        
+
         "test: roundingMethods" : function() {
             Y.Assert.areEqual(18, this.axis._roundToNearest(18), "The _roundToNearest method should round 18 to 18.");
             Y.Assert.areEqual(18, this.axis._roundToNearest(18, 0), "The _roundToNearest method should round 18 to 18.");
@@ -457,22 +457,22 @@ YUI.add('axis-numeric-base-tests', function(Y) {
                 result,
                 testResult = getTestResult(scaleType, horizontalOffset);
             result = axis._getCoordFromValue.apply(
-                axis, 
+                axis,
                 [min, max, length, dataValue, horizontalOffset]
             );
             Y.Assert.isNumber(result, "The value should be a number.");
             Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
-            
+
             testResult = getTestResult(scaleType, verticalOffset, true);
             result = axis._getCoordFromValue.apply(
-                axis, 
+                axis,
                 [min, max, length, dataValue, verticalOffset, true]
             );
             Y.Assert.isNumber(result, "The value should be a number.");
             Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
-            
+
             result = axis._getCoordFromValue.apply(
-                axis, 
+                axis,
                 [min, max, length, null, horizontalOffset]
             );
             Y.Assert.isNaN(result, "The value should not be a number.");
@@ -488,7 +488,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
             Y.Assert.areEqual(origin, axis.getOrigin(), "The origin value should be " + origin + ".");
         }
     });
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: plainOldDataProvider,
         dataMaximum: 400.55,
@@ -500,7 +500,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -536,7 +536,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: allNegativeSmallValuesDataProvider,
         dataMaximum: -0.91,
@@ -608,7 +608,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -620,7 +620,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Small Values alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: missingValuesDataProvider,
         dataMaximum: 400.55,
@@ -644,7 +644,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: allNegativeSmallValuesDataProvider,
         dataMaximum: -0.91,
@@ -704,7 +704,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
-      
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: plainOldDataProvider,
         dataMaximum: 400.55,
@@ -716,7 +716,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -824,7 +824,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -860,7 +860,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: allNegativeSmallValuesDataProvider,
         dataMaximum: -0.91,
@@ -908,7 +908,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: plainOldDataProvider,
         dataMaximum: 400.55,
@@ -920,7 +920,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -956,7 +956,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: allNegativeSmallValuesDataProvider,
         dataMaximum: -0.91,
@@ -1028,7 +1028,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -1040,7 +1040,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Small Values alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: missingValuesDataProvider,
         dataMaximum: 400.55,
@@ -1064,7 +1064,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: allNegativeSmallValuesDataProvider,
         dataMaximum: -0.91,
@@ -1112,7 +1112,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Large Min/Max alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: plainOldDataProvider,
         dataMaximum: 400.55,
@@ -1124,7 +1124,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,
@@ -1136,7 +1136,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase Small Values Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: missingValuesDataProvider,
         dataMaximum: 400.55,
@@ -1160,7 +1160,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase All Negative Data Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: allNegativeSmallValuesDataProvider,
         dataMaximum: -0.91,
@@ -1232,7 +1232,7 @@ YUI.add('axis-numeric-base-tests', function(Y) {
         keys: ["open", "close"],
         name: "NumericAxisBase alwaysShowZero=false Tests"
     }));
-    
+
     suite.add(new Y.NumericAxisBaseTest({
         dataProvider: smallValuesDataProvider,
         dataMaximum: 0.91,

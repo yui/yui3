@@ -45,7 +45,7 @@
 <body>
     <div id="ruler"></div>
     <div id="corn">
-        <div class="ruler-marker"></div>                
+        <div class="ruler-marker"></div>
         <div id="output">? px</div>
     </div>
     <label>Width:</label>
@@ -62,9 +62,9 @@ YUI().use('node', 'button', function(Y) {
        var width = corn.get('offsetWidth');
        output.setHTML(width + 'px'); // display width near the get button
     }
-    
+
     Y.one('.example .btn-get').on('click', getWidth);
-    output.on('click', getWidth); // also allows getting width by clicking on ruler width label 
+    output.on('click', getWidth); // also allows getting width by clicking on ruler width label
 
     Y.one('.example .btn-set').on('click', function(e) {
         var value = input.get('value'),

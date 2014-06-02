@@ -1,5 +1,5 @@
 YUI.add('delegate-plugins-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('delegate-plugins');
 
@@ -8,13 +8,13 @@ YUI.add('delegate-plugins-tests', function(Y) {
         'is rendered': function() {
             var el = Y.one('#demo');
             Assert.isNotNull(el, '#demo is null');
-            
+
         },
         'drop is rendered': function() {
             var el = Y.one('#drop');
             Assert.isNotNull(el, '#drop is null');
             Assert.isTrue(el.hasClass('yui3-dd-drop'), 'Failed it init drop');
-            
+
         },
         'DD is active': function() {
             var li = Y.one('#demo li');

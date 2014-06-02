@@ -2,7 +2,7 @@ YUI.add('series-areaspline-stacked-tests', function(Y) {
     var DOC = Y.config.doc,
         MockStackedAreaSplineSeries = Y.Base.create("mockStackedAreaSplineSeries", Y.StackedAreaSplineSeries, [], {
             _areaSplineDrawn: false,
-            
+
             _coordinatesStacked: false,
 
             _stackCoordinates: function() {
@@ -26,16 +26,16 @@ YUI.add('series-areaspline-stacked-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: drawSeries()" : function() {
             var series = this.series,
                 mockStackedAreaSplineSeries = new MockStackedAreaSplineSeries();
             series.drawSeries.apply(mockStackedAreaSplineSeries);
-            Y.Assert.isTrue(mockStackedAreaSplineSeries._coordinatesStacked, "The _stackCoordinates method should have been called.");     
-            Y.Assert.isTrue(mockStackedAreaSplineSeries._areaSplineDrawn, "The drawStackedAreaSpline method should have been called.");     
+            Y.Assert.isTrue(mockStackedAreaSplineSeries._coordinatesStacked, "The _stackCoordinates method should have been called.");
+            Y.Assert.isTrue(mockStackedAreaSplineSeries._areaSplineDrawn, "The drawStackedAreaSpline method should have been called.");
         }
     });
-    
+
     suite.add(new Y.StackedAreaSplineSeriesTest({
         name: "StackedAreaSplineSeries Tests"
     }));

@@ -385,7 +385,7 @@ improve performance by allowing the browser to fetch as many scripts at once as 
 </p>
 
 <p>If your custom modules are properly wrapped in a `YUI.add` callback, you will see no difference at all.
-However, if you are loading custom modules that require ordered script loading 
+However, if you are loading custom modules that require ordered script loading
 (depends on another dynamic, unwrapped module), you will need to change your module config to tell
 `Loader` to <strong>not</strong> load these modules with the `async` flag. You can do this by adding
 an `async: false` config to it's module definition and `Y.Get.script` will not load it asynchronously.

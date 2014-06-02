@@ -15,7 +15,7 @@
 <h2>The Path Tool</h2>
 
 <p>As you drag the pencil icon, corresponding graphics code is auto-generated.
-This code can be copied and pasted into a graphics instance to reproduce 
+This code can be copied and pasted into a graphics instance to reproduce
 the paths you created with the pencil.
 </p>
 
@@ -23,7 +23,7 @@ the paths you created with the pencil.
 <h2>Initial State</h2>
 <p>When the tool window is loaded, its generated code is placed
 in the text area control. The generated code assumes you will have a separate
-page to paste it into. This separate page must contain the following code: 
+page to paste it into. This separate page must contain the following code:
 A graphics container such as this,</p>
 ```
 <div id="mygraphiccontainer"></div>
@@ -42,7 +42,7 @@ YUI().use('graphics', function (Y) {
 
     var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
     // generated code from the path tool goes here
-    
+
 });
 ```
 <p>The tool generates paste-able code for an `addShape` method that will
@@ -50,8 +50,8 @@ create and render a path. It generates some fill and stroke placeholder code.
 You can change this to change the attributes of the fill and stroke
 after it's pasted into your code.</p>
 <p><Strong>Note:</strong>
-As you draw paths with the pencil, they won't have these attributes; you'll 
-only see thin, red lines for precision. The placeholder attributes below will 
+As you draw paths with the pencil, they won't have these attributes; you'll
+only see thin, red lines for precision. The placeholder attributes below will
 only show after you paste the code in your page.</p>
 ```
 {
@@ -82,7 +82,7 @@ two draggable control points. The curve adjusts while you drag the control point
 Clicking the pencil icon, or starting another line, finalizes the `curveTo`.</p>
 
 <h2>New Path Object</h2>
-<p>Crate a new path object with a new name by changing the name in the 
+<p>Crate a new path object with a new name by changing the name in the
 'Graphic Object Name' text input, then clicking the 'New' button.</p>
 
 <h2>Trace an Image</h2>

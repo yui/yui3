@@ -1,5 +1,5 @@
 YUI.add('drag-plugin-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('drag-plugin');
 
@@ -22,7 +22,7 @@ YUI.add('drag-plugin-tests', function(Y) {
             });
             el.simulate('mouseup');
             Assert.areNotEqual('', el.getAttribute('id'));
-            
+
         },
         'check for .luggage mousedown': function() {
             var el = Y.one('.luggage .handle');
@@ -33,7 +33,7 @@ YUI.add('drag-plugin-tests', function(Y) {
             });
             el.simulate('mouseup');
             Assert.areNotEqual('', el.getAttribute('id'));
-            
+
         }
     }));
 

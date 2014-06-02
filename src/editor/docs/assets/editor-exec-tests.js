@@ -1,5 +1,5 @@
 YUI.add('editor-exec-tests', function (Y) {
-    
+
     var suite = new Y.Test.Suite('editor exec example test suite'),
         Assert = Y.Assert;
 
@@ -29,7 +29,7 @@ YUI.add('editor-exec-tests', function (Y) {
                 bazButton  = Y.one('#buttons #baz');
 
             fooButton.simulate('click');
-            
+
             Assert.areEqual(Y.one('#out').getHTML(),
                 'You clicked on Foo',
                 'Foo button output is unexpected');

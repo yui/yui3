@@ -64,7 +64,7 @@ YUI.add('series-pie-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         "test: _setMap()" : function() {
             var setMapTestMockGraph = Y.Base.create("setMapTestMockGraph", Y.Base, [], {
                     init: function() {
@@ -102,12 +102,12 @@ YUI.add('series-pie-tests', function(Y) {
                     ATTRS: {
                         graphic: {
                             getter: function() {
-                                return mockGraphic;   
+                                return mockGraphic;
                             }
                         },
                         graph: {
                             getter: function() {
-                                return mockGraph;   
+                                return mockGraph;
                             }
                         }
                     }
@@ -140,7 +140,7 @@ YUI.add('series-pie-tests', function(Y) {
             Y.Assert.areEqual(1, mockSeries._image.nodeType, "The _image property should be an element node.");
             Y.Assert.areEqual(1, mockSeries._map.nodeType, "The _image property should be an element node.");
         },
-        
+
         "test: addListeners()" : function() {
             var series = this.series,
                 drawn = false,
@@ -156,14 +156,14 @@ YUI.add('series-pie-tests', function(Y) {
                     _valueAxisChangeHandler: function() {}
                 }),
                 mockSeries = new AddListenersMockSeries();
-                
-                
-            series.addListeners.apply(mockSeries); 
-            Y.Assert.isObject(mockSeries._visibleChangeHandle, "The visibleChangeHandle should be set."); 
-            mockSeries.set("categoryAxis", new Y.AxisBase()); 
-            mockSeries.set("valueAxis", new Y.AxisBase()); 
-            series.addListeners.apply(mockSeries); 
-            Y.Assert.isObject(mockSeries._visibleChangeHandle, "The visibleChangeHandle should be set."); 
+
+
+            series.addListeners.apply(mockSeries);
+            Y.Assert.isObject(mockSeries._visibleChangeHandle, "The visibleChangeHandle should be set.");
+            mockSeries.set("categoryAxis", new Y.AxisBase());
+            mockSeries.set("valueAxis", new Y.AxisBase());
+            series.addListeners.apply(mockSeries);
+            Y.Assert.isObject(mockSeries._visibleChangeHandle, "The visibleChangeHandle should be set.");
         },
 
         "test: validate()" : function() {
@@ -203,7 +203,7 @@ YUI.add('series-pie-tests', function(Y) {
             Y.Assert.isTrue(mockAxis._dataUpdateHandleSet, "The _dataUpdateChangeHandle should be set.");
             Y.Assert.isTrue(mockAxis._dataReadyHandleSet, "The _dataReadyChangeHandle should be set.");
         },
-    
+
         "test: _categoryDataChangeHandler()" : function() {
             var series = this.series,
                 mockSeries = new DataChangeMockPieSeries();
@@ -219,7 +219,7 @@ YUI.add('series-pie-tests', function(Y) {
             series._categoryDataChangeHandler.apply(mockSeries);
             Y.Assert.isTrue(mockSeries._hasDrawn, "The draw method should have been called.");
         },
-    
+
         "test: _valueDataChangeHandler()" : function() {
             var series = this.series,
                 mockSeries = new DataChangeMockPieSeries();
@@ -252,7 +252,7 @@ YUI.add('series-pie-tests', function(Y) {
                     ATTRS: Y.merge(Y.SeriesBase.ATTRS, {
                         valueAxis: {
                             getter: function(val) {
-                                return mockAxis;  
+                                return mockAxis;
                             }
                         }
                     })
@@ -260,11 +260,11 @@ YUI.add('series-pie-tests', function(Y) {
                 mockSeries = new GetTotalValuesMockSeries();
             Y.Assert.areEqual(totalData, series.getTotalValues.apply(mockSeries), "The getTotalByKey method should return " + totalData + ".");
         },
-   
+
         "test: draw()" : function() {
             var series = this.series,
                 wid,
-                ht, 
+                ht,
                 drawingComplete = false,
                 seriesDrawn = false,
                 drawCalled = false,
@@ -281,7 +281,7 @@ YUI.add('series-pie-tests', function(Y) {
                     },
                     fire: function(val) {
                         if(val === "drawingComplete") {
-                            drawCompleteFired = true; 
+                            drawCompleteFired = true;
                         } else {
                             Y.Base.prototype.fire.apply(this, arguments);
                         }
@@ -306,11 +306,11 @@ YUI.add('series-pie-tests', function(Y) {
             Y.Assert.isUndefined(mockSeries._rendered, "The _rendered property should not have been set.");
             wid = 100;
             ht = 100;
-            series.draw.apply(mockSeries);  
+            series.draw.apply(mockSeries);
             Y.Assert.isTrue(seriesDrawn, "The drawSeries method should have been called.");
             Y.Assert.isTrue(mockSeries._rendered, "The _rendered property should have been set.");
             mockSeries._drawing = true;
-            series.draw.apply(mockSeries);  
+            series.draw.apply(mockSeries);
             Y.Assert.isTrue(mockSeries._callLater, "The _callLater boolean should have been set.");
             mockSeries._drawing = false;
             forceCallLaterTrue = true;
@@ -344,7 +344,7 @@ YUI.add('series-pie-tests', function(Y) {
                         this._markerCache = [];
                         MockDrawPlotsSeries.superclass.init.apply(this, arguments);
                     },
-                    
+
                     _mapSet: false,
 
                     _hotspotAdded: false,
@@ -364,7 +364,7 @@ YUI.add('series-pie-tests', function(Y) {
                     },
 
                     _createMarkerCache: function() {
-                        this._markerCacheCreated = true;   
+                        this._markerCacheCreated = true;
                     },
 
                     getMarker: function() {
@@ -417,7 +417,7 @@ YUI.add('series-pie-tests', function(Y) {
                     }
                 }),
                 mockSeries = new MockDrawPlotsSeries({
-                    categoryKey: "date"   
+                    categoryKey: "date"
                 }),
                 mockGraphic = new MockDrawPlotsGraphic(),
                 storedGraphicName = Y.Graphic.NAME;
@@ -436,9 +436,9 @@ YUI.add('series-pie-tests', function(Y) {
             series.drawPlots.apply(mockSeries);
             Y.Assert.isTrue(mockSeries._mapSet, "The _setMap function should have been called.");
             Y.Assert.isTrue(mockSeries._hotspotAdded, "The _addHotspot function should have been called.");
-            
+
             Y.Graphic.NAME = storedGraphicName;
-            
+
             //change data to key that contains null
             valueKey = "close";
             //reset mock series
@@ -446,14 +446,14 @@ YUI.add('series-pie-tests', function(Y) {
             series.drawPlots.apply(mockSeries);
             Y.Assert.isTrue(mockSeries._markerCacheCreated, "The _createMarkerCache method should have been called.");
             Y.Assert.isTrue(mockSeries._markerCacheCleared, "The _clearMarkerCache method should have been called.");
-           
+
             valueKey = "none";
             //reset mock series
             mockSeries._reset();
             series.drawPlots.apply(mockSeries);
             Y.Assert.isTrue(mockSeries._markerCacheCreated, "The _createMarkerCache method should have been called.");
             Y.Assert.isTrue(mockSeries._markerCacheCleared, "The _clearMarkerCache method should have been called.");
-            
+
             //reset mock series
             mockSeries._reset();
             //catch some branches
@@ -481,7 +481,7 @@ YUI.add('series-pie-tests', function(Y) {
                         colors: ["#dc143c", "#c41e3a", "#000080", "#fa4a1e", "#ee0000"]
                     },
                     fill: {
-                        color: ["#0000ff", "#800080", "#0f4d92", "#d21d66", "#ffd700"], 
+                        color: ["#0000ff", "#800080", "#0f4d92", "#d21d66", "#ffd700"],
                         alphas: [1]
                     }
                 },
@@ -516,7 +516,7 @@ YUI.add('series-pie-tests', function(Y) {
                             len = styleProp.length;
                             for(i = 0; i < len; i = i + 1) {
                                 Y.Assert.areEqual(
-                                    styleProp[i], setStyleProp[i], 
+                                    styleProp[i], setStyleProp[i],
                                     "The " + i + " index of the " + styleProp + " property of the styles." + key + " object should equal " + styleProp[i] + "."
                                 );
                             }
@@ -541,7 +541,7 @@ YUI.add('series-pie-tests', function(Y) {
                             len = styleProp.length;
                             for(i = 0; i < len; i = i + 1) {
                                 Y.Assert.areEqual(
-                                    styleProp[i], setStyleProp[i], 
+                                    styleProp[i], setStyleProp[i],
                                     "The " + i + " index of the " + styleProp + " property of the styles." + key + " object should equal " + styleProp[i] + "."
                                 );
                             }
@@ -552,13 +552,13 @@ YUI.add('series-pie-tests', function(Y) {
                 }
             }
         },
-   
+
         "test: addHotspot()" : function() {
             var AddHotspotMockSeries = Y.Base.create("addHotspotMockSeries", Y.Base, [], {
                     init: function() {
                         this._map = document.createElement("map");
-                        this._areaNodes = [];  
-                        AddHotspotMockSeries.superclass.init.apply(this, arguments); 
+                        this._areaNodes = [];
+                        AddHotspotMockSeries.superclass.init.apply(this, arguments);
                     }
                 }),
                 mockSeries = new AddHotspotMockSeries(),
@@ -602,7 +602,7 @@ YUI.add('series-pie-tests', function(Y) {
                     pts.push(by);
                     pts.push(x);
                     pts.push(y);
-                    return pts; 
+                    return pts;
                 },
                 testCoords,
                 resultCoords,
@@ -622,7 +622,7 @@ YUI.add('series-pie-tests', function(Y) {
                     startAngle: 180,
                     radius: 175
                 },
-                closeEnough = function(expected, actual) { // compensates for rounding that occurs in IE 
+                closeEnough = function(expected, actual) { // compensates for rounding that occurs in IE
                     return (Math.abs(expected - actual) < 2);
                 };
             series._addHotspot.apply(mockSeries, [
@@ -662,7 +662,7 @@ YUI.add('series-pie-tests', function(Y) {
                 }
             }
         },
-    
+
         "test: updateMarkerState()" : function() {
             var updateMarkerStateMockMarker = Y.Base.create("updateMarkerStateMockMarker", Y.Base, [], {
                     indexStyles: null,
@@ -687,7 +687,7 @@ YUI.add('series-pie-tests', function(Y) {
                     return {
                         color: fill.colors[i % fill.colors.length],
                         alpha: fill.alphas[i % fill.alphas.length]
-                    };  
+                    };
                 },
                 testFill,
                 resultFill;
@@ -718,14 +718,14 @@ YUI.add('series-pie-tests', function(Y) {
                 resultFill = mockSeries._markers[i].indexStyles.fill;
                 Y.Assert.areEqual(testFill.color, resultFill.color, "The color should be " + testFill.color + ".");
                 Y.Assert.areEqual(testFill.alpha, resultFill.alpha, "The alpha should be " + testFill.alpha + ".");
-                
+
                 //over
                 testFill = getFillStyles(markerStyles.over.fill, i);
                 series.updateMarkerState.apply(mockSeries, ["over", i]);
                 resultFill = mockSeries._markers[i].indexStyles.fill;
                 Y.Assert.areEqual(testFill.color, resultFill.color, "The color should be " + testFill.color + ".");
                 Y.Assert.areEqual(testFill.alpha, resultFill.alpha, "The alpha should be " + testFill.alpha + ".");
-                
+
                 //down
                 testFill = getFillStyles(markerStyles.down.fill, i);
                 series.updateMarkerState.apply(mockSeries, ["down", i]);
@@ -820,7 +820,7 @@ YUI.add('series-pie-tests', function(Y) {
             Y.Assert.areEqual(padding, resultPlotDefaults.padding.bottom, "The bottom padding should be " + padding + ".");
             Y.Assert.areEqual(padding, resultPlotDefaults.padding.left, "The left padding should be " + padding + ".");
             Y.Assert.areEqual(borderWeight, resultPlotDefaults.border.weight, "The border weight should be " + borderWeight + ".");
-            Y.Assert.areEqual(borderAlpha, resultPlotDefaults.border.alpha, "The border alpha should be " + borderAlpha + "."); 
+            Y.Assert.areEqual(borderAlpha, resultPlotDefaults.border.alpha, "The border alpha should be " + borderAlpha + ".");
             Y.Assert.areEqual(fillAlphas[0], resultPlotDefaults.fill.alphas[0], "The fill alpha should be " + fillAlphas[0] + ".");
             resultBorderColors = resultPlotDefaults.border.colors;
             resultFillColors = resultPlotDefaults.fill.colors;
@@ -848,7 +848,7 @@ YUI.add('series-pie-tests', function(Y) {
             Y.Assert.areEqual(setKey, series.get("valueDisplayName"), "The categoryDispayName attribute should be " + setKey + ".");
         }
     });
-    
+
     suite.add(new Y.PieSeriesTest({
         name: "PieSeries Tests"
     }));

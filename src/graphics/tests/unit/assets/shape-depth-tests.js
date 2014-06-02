@@ -54,7 +54,7 @@ Y.extend(RoundedRect, Y.Shape, {
             value: 4
         }
     }, Y.Shape.ATTRS)
-}); 
+});
 Y.RoundedRect = RoundedRect;
 
 DepthTests = new Y.Test.Case({
@@ -171,7 +171,7 @@ DepthTests = new Y.Test.Case({
         shape.toFront();
         Y.Assert.areEqual(shapeNode, contentNode.lastChild, "The shape's dom node should be the last child of the graphic node.");
     },
-    
+
     roundRectToBack: function() {
         var shape = this.roundRect,
             shapeNode = shape.get("node"),
@@ -180,7 +180,7 @@ DepthTests = new Y.Test.Case({
         shape.toBack();
         Y.Assert.areEqual(shapeNode, contentNode.firstChild, "The shape's dom node should be the first child of the graphic node.");
     },
-    
+
     ellipseToBack: function() {
         var shape = this.ellipse,
             shapeNode = shape.get("node"),
@@ -189,7 +189,7 @@ DepthTests = new Y.Test.Case({
         shape.toBack();
         Y.Assert.areEqual(shapeNode, contentNode.firstChild, "The shape's dom node should be the first child of the graphic node.");
     },
-    
+
     circleToBack: function() {
         var shape = this.circle,
             shapeNode = shape.get("node"),
@@ -210,7 +210,7 @@ DepthTests = new Y.Test.Case({
 });
 
 suite.add(DepthTests);
-    
+
 
 Y.Test.Runner.add( suite );
 

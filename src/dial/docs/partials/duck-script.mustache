@@ -12,12 +12,12 @@
             diameter: 150
         });
         dial.render('#demo');
-        
+
         // Reposition the duck sprite background image
         dial.on( "valueChange", function(e){
             // Handle values greater than one revolution
             var moduloValue = (e.newVal % framesInSprite);
-             
+
             Y.one('#duck').setStyle('backgroundPosition', (moduloValue * -oneFrameWidth) + 'px 0px');
         }, '#duck' );
     });

@@ -11,7 +11,7 @@ YUI.add('perfcolumngroup-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-    
+
     suite.add("PerfColumnGroupChart", function() {
         chart = new Y.Chart({
             dataProvider: dataProvider,
@@ -19,7 +19,7 @@ YUI.add('perfcolumngroup-benchmark', function (Y) {
             type: "column",
             categoryType: "time",
             categoryKey: "date",
-            render: container 
+            render: container
         });
         chart.destroy(true);
     });

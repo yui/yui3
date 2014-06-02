@@ -8,7 +8,7 @@ YUI.add('cache-plugin-tests', function(Y) {
 
         var testClass = new Y.Test.Case({
             name: "Class Tests",
-        
+
             testDefaults: function() {
                 var myWidget = getWidget();
                 ASSERT.areSame("cache", Y.Plugin.Cache.NS, "Expected namespace.");
@@ -31,7 +31,7 @@ YUI.add('cache-plugin-tests', function(Y) {
                 ARRAYASSERT.isEmpty(myWidget.cache.get("entries"), "Expected empty array.");
             }
         });
-        
+
         var testEvents = new Y.Test.Case({
             name: "Event Tests",
 

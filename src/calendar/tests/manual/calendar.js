@@ -25,17 +25,17 @@ YUI({
 		 	}
 		 };
 
-		 calendar.set("customRenderer", {rules: rules, 
+		 calendar.set("customRenderer", {rules: rules,
 			                             filterFunction: function (date, node, rules) {
 			                             	               if (Y.Array.indexOf(rules, 'all_weekends') >= 0) {
 			                             	               	node.addClass("redtext");
 			                             	               }
 			                                             }
 			                            });
-    
+
 	     var curDate = calendar.get("date");
 
- 
+
 	     calendar.set("headerRenderer", function (curDate) {
 	     	var ydate = Y.DataType.Date,
 	     	    output = ydate.format(curDate, {format: "%B %Y"}) +
@@ -44,20 +44,20 @@ YUI({
 
 	     	return output;
 	     });
- 
- 			
+
+
 		Y.one("#updateCalendar").on('click', function () {
-	      curDate = new Date(1950 + Math.round(Math.random()*100), 
+	      curDate = new Date(1950 + Math.round(Math.random()*100),
 		                                Math.round(Math.random()*12.49), 1);
-		  calendar.set('date', curDate);	
-		  Y.one("#currentDate").setContent(calendar.get("date").toString());	
+		  calendar.set('date', curDate);
+		  Y.one("#currentDate").setContent(calendar.get("date").toString());
 		});
 
 		Y.one("#togglePrevMonth").on('click', function () {
-		  calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));			
+		  calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));
 		});
 		Y.one("#toggleNextMonth").on('click', function () {
-		  calendar.set('showNextMonth', !(calendar.get("showNextMonth")));			
+		  calendar.set('showNextMonth', !(calendar.get("showNextMonth")));
 		});
 
 		Y.one("#getSelectedDates").on('click', function () {

@@ -81,15 +81,15 @@ suite.add(new Y.Test.Case({
     name: "datatable-message",
 
     "test showMessage()": function () {
-        
+
     },
 
     "test showMessage(string)": function () {
-        
+
     },
 
     "test showMessage(intlString)": function () {
-        
+
     },
 
     "test hideMessage()": function () {

@@ -6,7 +6,7 @@ YUI.add('graphics-customshape-manual-tests', function(Y) {
 
         "Test custom shape loaded" : function()
         {
-            Y.Assert.isTrue((false), "Ensure there is an rounded rectangle with a gradient on the page."); 
+            Y.Assert.isTrue((false), "Ensure there is an rounded rectangle with a gradient on the page.");
         }
     }));
 

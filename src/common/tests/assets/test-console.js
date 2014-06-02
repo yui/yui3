@@ -34,5 +34,5 @@ YUI.add('test-console', function (Y) {
             status: false
         }
     }).render('#log');
-    
+
 }, '@VERSION@', {requires: ['console-filters']});

@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('async-queue-tests');
-    
+
     Y.Test.Runner.setName('async-queue cli tests');
-    
+
 });
 

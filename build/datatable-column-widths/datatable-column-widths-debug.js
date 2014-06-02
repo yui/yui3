@@ -305,10 +305,10 @@ the natural width of the table's containing DOM elements.
 
 If absolute widths are required, it can be accomplished with
 some custom CSS and the use of a `cellTemplate`, or
-`formatter`.  
+`formatter`.
 
-See the description of 
-[datatable-column-widths](DataTable.ColumnWidths.html) 
+See the description of
+[datatable-column-widths](DataTable.ColumnWidths.html)
 for an example of how to do this.
 
     { key: 'a', width: '400px' },

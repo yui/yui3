@@ -13,7 +13,7 @@
 <!-- get from lastSuccessful
 <script type="text/javascript" src="http://yuibuild.corp.yahoo.com/yui3/lastSuccessful/build/yui/yui-min.js"></script>-->
 
-<!-- get from local copy of 3.3.0 
+<!-- get from local copy of 3.3.0
 <script src="../yui_3.3.0/yui/build/yui/yui.js"></script>-->
 
 
@@ -23,11 +23,11 @@
 <!-- get all from gitroot -->
 <script src="../../../../build/yui/yui.js"></script>
 
-<!-- get just dial from a local js dir 
+<!-- get just dial from a local js dir
 <script src="js/dial_local.js"></script>-->
 
 <!-- ///////////////////   for iPad (not on vger network) need these ////////////////////////-->
-	<!-- conniffcolletion need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class) 
+	<!-- conniffcolletion need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class)
 	<link type="text/css" rel="stylesheet" href="http://conniffcollection.com/dial/assets/dial-core.css" />
 	<link type="text/css" rel="stylesheet" href="http://conniffcollection.com/dial/assets/skins/sam/dial-skin.css" />
 -->
@@ -35,11 +35,11 @@
 	<!--<script src="http://conniffcollection.com/dial/js/yui.js"></script>-->
 	<!--<script src="http://conniffcollection.com/dial/js/dial.js"></script>-->
 	<!--<script src="http://conniffcollection.com/build/yui/yui-min.js"></script> ftp'd the whole build subdir over to conniffco -->
-		
+
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////-->
 
-<!-- need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class) 
+<!-- need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class)
 <link type="text/css" rel="stylesheet" href="assets/dial-core.css" />
 <link type="text/css" rel="stylesheet" href="assets/skins/sam/dial-skin.css" />-->
 
@@ -59,7 +59,7 @@ body{
 p{margin:40px;}
 </style>
 </head>
-<body class="yui3-skin-sam"> 
+<body class="yui3-skin-sam">
     <span id="dial_container">This is a Dial Widget. It supports keyboard input and screen readers. done?</span>
 	<ul class="steps">
 		<li><a class="xx d_min">-minor</a><a class="xx i_min">+minor</a></li>
@@ -78,7 +78,7 @@ p{margin:40px;}
 	<span id="dial_three"></span>
 	<span id="dial_four"></span>
 	<p></p>
-	
+
 </body>
 </html>
 <script>
@@ -176,33 +176,33 @@ p{margin:40px;}
 			if(e.target.hasClass('d_maj')){
 				dial._decrMajor();
 			}
-	
-	
+
+
 			if(e.target.hasClass('min')){
 				dial._setToMin();
 			}
 			if(e.target.hasClass('max')){
 				dial._setToMax();
 			}
-	
+
 			if(e.target.hasClass('orig')){
 				dial._resetDial();
 			}
-	
-	
+
+
 		}, '.xx');
-	
+
 		// update value of the Dial from another object's value when it gets a keyup event
 		Y.on('keyup', function(e){
 			dial.set('value', e.target.get('value') - 0);
 		}, '#myOtherNode');
-	
+
 		// update the value of another object when the Dial changes value
 		dial.after('valueChange', function(e){
 			Y.one('#myOtherNode').set('value', e.target.get('value'));
-			Y.log('dial._angle: ' + dial._angle + '... prevAng: ' + dial._prevAng + '...wrapping: ' + dial._timesWrapped);	
+			Y.log('dial._angle: ' + dial._angle + '... prevAng: ' + dial._prevAng + '...wrapping: ' + dial._timesWrapped);
 		});
-		
-		
-    }); 
+
+
+    });
 </script>

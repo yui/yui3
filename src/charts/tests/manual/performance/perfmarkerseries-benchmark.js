@@ -17,7 +17,7 @@ YUI.add('perfmarkerseries-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
+
     suite.add("PerfMarkerSeries", function() {
         var i,
             key,
@@ -36,7 +36,7 @@ YUI.add('perfmarkerseries-benchmark', function (Y) {
                 yKey: key
             });
             series.render();
-            seriesObject[key] = series; 
+            seriesObject[key] = series;
         }
         graphic._redraw();
         for(key in seriesObject)
@@ -87,5 +87,5 @@ YUI.add('perfmarkerseries-benchmark', function (Y) {
             };
         }
     });
-    
+
 }, '@VERSION@', {requires: ['charts']});

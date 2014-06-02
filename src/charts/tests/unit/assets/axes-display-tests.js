@@ -29,7 +29,7 @@ YUI.add('axes-display-tests', function(Y) {
                 catTickNodeWeight,
                 catTickNodeOpacity,
                 catTickNodeColor;
-            
+
             if(valueTickPath)
             {
                 valueTickNode = valueTickPath.get("node");
@@ -40,7 +40,7 @@ YUI.add('axes-display-tests', function(Y) {
                 Y.Assert.areEqual(tickWeight, valueTickNodeWeight, "The weight of the value axis tick should be " + tickWeight + ".");
                 Y.Assert.areEqual(tickOpacity, valueTickNodeOpacity, "The opacity of the value axis tick should be " + tickOpacity + ".");
             }
-            
+
             if(catTickPath)
             {
                 catTickNode = catTickPath.get("node");
@@ -73,7 +73,7 @@ YUI.add('axes-display-tests', function(Y) {
                 Y.Assert.areEqual(lineWeight, catLineNodeWeight, "The weight of the category axis line should be " + lineWeight + ".");
                 Y.Assert.areEqual(lineOpacity, catLineNodeOpacity, "The opacity of the category axis line should be " + lineOpacity + ".");
             }
-            
+
             if(tickStyles.display == "none")
             {
                 Y.Assert.isTrue(!valueTickPath, "There should not be a path element for the value axis ticks.");
@@ -111,7 +111,7 @@ YUI.add('axes-display-tests', function(Y) {
                 valueLineNode,
                 catLineStrokeNode,
                 catLineNode;
-            
+
             if(valueTickPath)
             {
                 valueTickNode = valueTickPath.get("stroke");
@@ -146,7 +146,7 @@ YUI.add('axes-display-tests', function(Y) {
                 //Y.Assert.isTrue(compareVMLStrokeWeight(lineWeight, catLineStrokeNode, catLineNode), "The weight of the category axis line should be " + lineWeight + ".");
                 Y.Assert.areEqual(parseFloat(lineOpacity), parseFloat(catLineStrokeNode.opacity), "The opacity of the category axis line should be " + lineOpacity + ".");
             }
-            
+
             if(tickStyles.display == "none")
             {
                 Y.Assert.isTrue(!valueTickPath, "There should not be a path element for the value axis ticks.");
@@ -195,7 +195,7 @@ YUI.add('axes-display-tests', function(Y) {
             {
                 valueLineContext = valueLinePath._context;
                 valueLineColor = valueLineContext.strokeStyle;
-                //Test values line color and alpha 
+                //Test values line color and alpha
                 if(valueLineColor.indexOf("RGBA") > -1 || valueLineColor.indexOf("rgba") > -1)
                 {
                     valueLineColor = valueLineColor.toLowerCase();
@@ -213,7 +213,7 @@ YUI.add('axes-display-tests', function(Y) {
             {
                 catLineContext = catLinePath._context;
                 catLineColor = catLineContext.strokeStyle;
-                //Test category line color and alpha 
+                //Test category line color and alpha
                 if(catLineColor.indexOf("RGBA") > -1 || catLineColor.indexOf("rgba") > -1)
                 {
                     catLineColor = catLineColor.toLowerCase();
@@ -231,7 +231,7 @@ YUI.add('axes-display-tests', function(Y) {
             {
                 valueTickContext = valueTickPath._context;
                 valueTickColor = valueTickContext.strokeStyle;
-                //Test values ticks color and alpha 
+                //Test values ticks color and alpha
                 if(valueTickColor.indexOf("RGBA") > -1 || valueTickColor.indexOf("rgba") > -1)
                 {
                     valueTickColor = valueTickColor.toLowerCase();
@@ -244,10 +244,10 @@ YUI.add('axes-display-tests', function(Y) {
                 }
                 Y.Assert.areEqual(tickWeight, valueTickContext.lineWidth, "The width of the value axis ticks should be " + lineWeight + ".");
             }
-            
-            
 
-            //Test category ticks color and alpha 
+
+
+            //Test category ticks color and alpha
             if(catTickPath)
             {
                 catTickContext = catTickPath._context;
@@ -264,7 +264,7 @@ YUI.add('axes-display-tests', function(Y) {
                 }
                 Y.Assert.areEqual(tickWeight, catTickContext.lineWidth, "The width of the category axis ticks should be " + lineWeight + ".");
             }
-            
+
             if(tickStyles.display == "none")
             {
                 Y.Assert.isTrue(!valueTickPath, "There should not be a path element for the value axis ticks.");
@@ -281,7 +281,7 @@ YUI.add('axes-display-tests', function(Y) {
     {
         ENGINE = "Canvas";
     }
-    
+
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -302,14 +302,14 @@ YUI.add('axes-display-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         }
     });
-    
+
     function AxisDataProviderTemplate()
     {
         AxisDataProviderTemplate.superclass.constructor.apply(this, arguments);
@@ -365,7 +365,7 @@ YUI.add('axes-display-tests', function(Y) {
             case "SVG" :
                 this._testNodes = TestSVGNodes;
             break;
-            case "Canvas" : 
+            case "Canvas" :
                 this._testNodes = TestCanvasNodes;
             break;
             case "VML" :
@@ -389,30 +389,30 @@ YUI.add('axes-display-tests', function(Y) {
                     catLinePath = catAxis._path,
                     catTickPath = catAxis._tickPath;
                 testNodes.apply(this, [
-                    lineStyles, 
-                    tickStyles, 
-                    valueLinePath, 
-                    valueTickPath, 
-                    catLinePath, 
+                    lineStyles,
+                    tickStyles,
+                    valueLinePath,
+                    valueTickPath,
+                    catLinePath,
                     catTickPath
                 ]);
             });
             this.chart.render("#testdiv");
         }
-    
+
     });
-    
+
     Y.AxisGraphicStylesTemplate = AxisGraphicStylesTemplate;
 
     var AxesTests = new Y.Test.Case({
         name: "Axes Tests",
-        
+
         setUp: function() {
-            var myDataValues = [ 
-                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-                {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-                {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-                {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+            var myDataValues = [
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+                {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+                {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+                {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
                 {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
             ];
             var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
@@ -448,9 +448,9 @@ YUI.add('axes-display-tests', function(Y) {
             this.xHandle.detach();
             this.yHandle.detach();
         },
-        
+
         testAddKey: function()
-        {       
+        {
             var assert = Y.Assert,
                 yAxis = this.chart.getAxisByKey("values"),
                 keys,
@@ -471,23 +471,23 @@ YUI.add('axes-display-tests', function(Y) {
             yAxis.addKey("expenses");
             this.yHandle.detach();
         }
-    }), 
+    }),
 
     AxisAlwaysShowZero = new Y.Test.Case({
         name: "Axis alwaysShowZero Test",
-        
-        setUp: function() 
+
+        setUp: function()
         {
-            var myDataValues = [ 
-                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-                {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+            var myDataValues = [
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+                {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
                 {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
             ];
             this.chart = new Y.Chart({
-                width:400, 
-                height:300, 
+                width:400,
+                height:300,
                 dataProvider:myDataValues
             });
         },
@@ -521,22 +521,22 @@ YUI.add('axes-display-tests', function(Y) {
             this.chart.render("#testdiv");
         }
     }),
-    
+
     AxisAlwaysShowZeroFalse = new Y.Test.Case({
         name: "Axis alwaysShowZero = false Test",
-        
-        setUp: function() 
+
+        setUp: function()
         {
-            var myDataValues = [ 
-                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-                {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+            var myDataValues = [
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+                {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
                 {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
             ];
             this.chart = new Y.Chart({
-                width:400, 
-                height:300, 
+                width:400,
+                height:300,
                 axes: {
                     values: {
                         alwaysShowZero: false
@@ -551,7 +551,7 @@ YUI.add('axes-display-tests', function(Y) {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         testAlwaysShowZeroEqualsFalse: function()
         {
             var chart = this.chart;
@@ -576,11 +576,11 @@ YUI.add('axes-display-tests', function(Y) {
         }
     }),
 
-    allPositiveDataProvider =  [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+    allPositiveDataProvider =  [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
     ],
 
@@ -588,11 +588,11 @@ YUI.add('axes-display-tests', function(Y) {
 
     allPositiveDataProviderDataMin = 50,
 
-    positiveAndNegativeDataProvider = [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+    positiveAndNegativeDataProvider = [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
         {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
     ],
 
@@ -600,11 +600,11 @@ YUI.add('axes-display-tests', function(Y) {
 
     positiveAndNegativeDataProviderDataMin = -5000,
 
-    allNegativeDataProvider = [ 
-        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
-        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500}, 
-        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800}, 
+    allNegativeDataProvider = [
+        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200},
+        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100},
+        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500},
+        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800},
         {category:"5/5/2010", values:-5000, expenses:-5000, revenue:-2650}
     ],
 
@@ -612,18 +612,18 @@ YUI.add('axes-display-tests', function(Y) {
 
     allNegativeDataProviderDataMin = -9100,
 
-    decimalDataProvider = [ 
-        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2}, 
-        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16}, 
-        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25}, 
-        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8}, 
+    decimalDataProvider = [
+        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2},
+        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16},
+        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25},
+        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8},
         {category:"5/5/2010", values:5.53, expenses:5.21, revenue:2.65}
     ],
 
     decimalDataProviderDataMax = 9.1,
 
     decimalDataProviderDataMin = 0.05,
-    
+
     missingDataSmallDataProvider = [
         {date: "1/1/2010", expenses: 3700},
         {date: "1/2/2010", revenue: 2200},
@@ -641,7 +641,7 @@ YUI.add('axes-display-tests', function(Y) {
         {date: "2/3/2010", expenses: 3300},
         {date: "2/4/2010", revenue: 1500}
     ],
-    
+
     AxisNoMinOrMaxTest = new Y.AxisDataProviderTemplate({
         dataProvider: allNegativeDataProvider
     }),
@@ -674,7 +674,7 @@ YUI.add('axes-display-tests', function(Y) {
         },
         seriesKeys: ["expenses", "revenue"]
     });
-    
+
     DualAxesMissingDataLargeTest = new Y.AxisDataProviderTemplate({
         axes: {
             leftAxis: {
@@ -703,7 +703,7 @@ YUI.add('axes-display-tests', function(Y) {
         },
         seriesKeys: ["expenses", "revenue"]
     });
-    
+
     DualAxesMissingDataSmallAlwaysShowZeroFalseTest = new Y.AxisDataProviderTemplate({
         axes: {
             leftAxis: {
@@ -734,7 +734,7 @@ YUI.add('axes-display-tests', function(Y) {
         },
         seriesKeys: ["expenses", "revenue"]
     });
-    
+
     DualAxesMissingDataLargeAlwaysShowZeroFalseTest = new Y.AxisDataProviderTemplate({
         axes: {
             leftAxis: {
@@ -765,7 +765,7 @@ YUI.add('axes-display-tests', function(Y) {
         },
         seriesKeys: ["expenses", "revenue"]
     }),
-    
+
     LeftAndBottomAxisCustomTickAndLinesInsideTicks = new Y.AxisGraphicStylesTemplate({
         axes: {
             category: {
@@ -1506,7 +1506,7 @@ YUI.add('axes-display-tests', function(Y) {
             display: "none"
         }
     });
-    
+
     suite.add(AxesTests);
     suite.add(AxisAlwaysShowZero);
     suite.add(AxisAlwaysShowZeroFalse);
@@ -1527,6 +1527,6 @@ YUI.add('axes-display-tests', function(Y) {
     suite.add(RightAndTopAxisCustomTickAndLinesOutsideTicks);
     suite.add(RightAndTopAxisCustomTickAndLinesCrossTicks);
     suite.add(RightAndTopAxisCustomTickAndLinesNoneTicks);
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'color-base', 'test']});

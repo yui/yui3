@@ -12,7 +12,7 @@ YUI.add('series-base-tests', function(Y) {
             this.series = null;
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         "test: render()" : function() {
             var series = this.series,
                 canvasSet = false,
@@ -98,12 +98,12 @@ YUI.add('series-base-tests', function(Y) {
                     ATTRS: Y.merge(Y.SeriesBase.ATTRS, {
                         xAxis: {
                             getter: function(val) {
-                                return mockAxis;  
+                                return mockAxis;
                             }
                         },
                         yAxis: {
                             getter: function(val) {
-                                return mockAxis;  
+                                return mockAxis;
                             }
                         }
                     })
@@ -117,7 +117,7 @@ YUI.add('series-base-tests', function(Y) {
         "test: destructor()" : function() {
             var series = this.series,
                 graphic = new Y.Graphic({
-                    autoDraw: false   
+                    autoDraw: false
                 }),
                 Destroyer = function(owner, instance) {
                     this._owner = owner;
@@ -168,7 +168,7 @@ YUI.add('series-base-tests', function(Y) {
             Y.Assert.isFalse(mockSeries._heightChangeHandle._attached, "The _heightChangeHandle should be detached.");
             Y.Assert.isFalse(mockSeries._visibleChangeHandle._attached, "The _visibleChangeHandle should be detached.");
             mockSeries.set("markers", []);
-            series.destructor.apply(mockSeries); 
+            series.destructor.apply(mockSeries);
             mockSeries.set("markers", [
                 graphic.addShape({type:"circle"}),
                 "randomstring",
@@ -176,7 +176,7 @@ YUI.add('series-base-tests', function(Y) {
                 graphic.addShape({type:"circle"})
             ]);
             series.destructor.apply(mockSeries);
-            Y.Assert.areEqual(0, mockSeries.get("markers"), "All markers should be removed."); 
+            Y.Assert.areEqual(0, mockSeries.get("markers"), "All markers should be removed.");
             mockSeries.addSomeShapes();
             series.destructor.apply(mockSeries);
             Y.Assert.isNull(mockSeries._path, "The _path should be destroyed.");
@@ -219,8 +219,8 @@ YUI.add('series-base-tests', function(Y) {
             Y.Assert.areEqual("graphicInstance", series._getChart.apply(mockSeries), "The getChart method should return the graphic attribute if the graph attribute is not set.");
             mockGraph = new MockGetChartGraph();
             Y.Assert.areEqual(
-                "graphicInstance", 
-                series._getChart.apply(mockSeries), 
+                "graphicInstance",
+                series._getChart.apply(mockSeries),
                 "The getChart method should return the graphic attribute if the graph attribute is not have a chart attribute set."
             );
             mockChart = "chartInstance";
@@ -246,13 +246,13 @@ YUI.add('series-base-tests', function(Y) {
                 colorIndex = i > colorLength - 1 ? i % colorLength : i;
                 for(key in colors) {
                     color = colors[key][colorIndex];
-                    Y.Assert.areEqual(color, series._getDefaultColor(i, key), "The default color for an index of " + i + " for a " + key + " should be " + color + ".");    
+                    Y.Assert.areEqual(color, series._getDefaultColor(i, key), "The default color for an index of " + i + " for a " + key + " should be " + color + ".");
                 }
                 color = colors.fill[colorIndex];
                 Y.Assert.areEqual(color, series._getDefaultColor(i), "The default color for an index of " + i + " when a type is not specified should be " + color + ".");
             }
         },
-       
+
         "test: set('graphic')" : function() {
             var graphic = new Y.Graphic(),
                 series = this.series;
@@ -321,7 +321,7 @@ YUI.add('series-base-tests', function(Y) {
             Y.Assert.isTrue(series.get("groupMarkers"), "The _groupMarkes property is set to true.");
         }
     });
-    
+
     var suite = new Y.Test.Suite("Charts: SeriesBase");
     suite.add(new Y.SeriesBaseTest({
         name: "SeriesBase Tests"

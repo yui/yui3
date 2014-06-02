@@ -49,7 +49,7 @@ YUI.add('console-filters-intro-tests', function(Y) {
                 Assert.areEqual(2, entries.size() , 'should have 2 entries');
                 Assert.isNotNull(Y.one('#yconsole .yui3-console-filter-my_stuff'));
                 Assert.isNotNull(Y.one('#yconsole .yui3-console-filter-MyApp'));
-            }, 200);       
+            }, 200);
         }
     }));
 
