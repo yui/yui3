@@ -1,4 +1,4 @@
-.yui3-skin-night{    
+.yui3-skin-night{
 	background-color:#000;
     font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
 	color:#fff;
@@ -70,9 +70,9 @@
 	border:solid 1px #1B1C1C;
 	border-radius: 6px;
 
-	-moz-box-shadow: 0 1px #677478; 
+	-moz-box-shadow: 0 1px #677478;
 	-webkit-box-shadow: 0 1px #677478;
-	box-shadow: 0 1px #677478; 
+	box-shadow: 0 1px #677478;
 
     text-shadow: 0 -1px 0 rgba(0,0,0,0.7);
 	font-size:85%;
@@ -81,8 +81,8 @@
 	padding: 6px 28px;
 	background-color:#2B2D2D;
 	background: -moz-linear-gradient(
-		0% 100% 90deg, 
-		#242526 0%, 
+		0% 100% 90deg,
+		#242526 0%,
 		#3b3c3d 96%,
 		#2C2D2F 100%
 	);
@@ -92,7 +92,7 @@
         left top,
         from(#242526),
         color-stop(0.96, #3b3c3d),
-        to(#2C2D2F)     
+        to(#2C2D2F)
     );
 }
 .yui3-skin-night .yui3-overlay .yui3-widget-ft li:first-child {
@@ -105,13 +105,13 @@
 
 .yui3-skin-night .yui3-overlay .yui3-widget-ft li:last-child a {
 	border:solid 1px #520E00;
-	-moz-box-shadow: 0 1px #7D5D57; 
+	-moz-box-shadow: 0 1px #7D5D57;
 	-webkit-box-shadow: 0 1px #7D5D57;
-	box-shadow: 0 1px #7D5D57; 
+	box-shadow: 0 1px #7D5D57;
 	background-color:#901704;
 	background: -moz-linear-gradient(
 	100% 0% 270deg,
-	#ab1c0b, 
+	#ab1c0b,
 	#7b1400
 	);
     background: -webkit-gradient(
@@ -119,7 +119,7 @@
         left top,
         left bottom,
         from(#ab1c0b),
-        to(#7b1400)     
+        to(#7b1400)
     );
 	margin-right: 0;
 }
@@ -134,7 +134,7 @@
 	background-color:#252525;
 	background: -moz-linear-gradient(
 	100% 0% 270deg,
-	#3f3f3f, 
+	#3f3f3f,
 	#0e0e0e
 	);
 	background: -webkit-gradient(
@@ -142,7 +142,7 @@
         left top,
         left bottom,
         from(#3f3f3f),
-        to(#0e0e0e)     
+        to(#0e0e0e)
     );
 
 	line-height:32px;
@@ -156,7 +156,7 @@
 	background-color:#901704;
 	background: -moz-linear-gradient(
 	100% 0% 270deg,
-	#ab1c0b, 
+	#ab1c0b,
 	#7b1400
 	);
     background: -webkit-gradient(
@@ -164,7 +164,7 @@
         left top,
         left bottom,
         from(#ab1c0b),
-        to(#7b1400)     
+        to(#7b1400)
     );
 	margin-right: 0px;
 }

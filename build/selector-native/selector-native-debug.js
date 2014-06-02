@@ -292,7 +292,7 @@ var Selector = {
     /**
      * Determines whether or not the given node matches the given CSS selector.
      * @method test
-     * 
+     *
      * @param {HTMLElement} node A node to test.
      * @param {String} selector A CSS selector to test the node against.
      * @param {HTMLElement} root optional A node to start the query from. Defaults to the parent document of the node.
