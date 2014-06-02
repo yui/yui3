@@ -1,7 +1,7 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.17.2
 ------
 
 * Fix a bug in 3.17.1 where there comboBase was no longer inherited from the default group. ([#1837][]: @andrewnicols)
