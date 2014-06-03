@@ -4,7 +4,7 @@ Node Change History
 3.17.2
 ------
 
-* No changes.
+* [#1848][] NodeList.importMethod should respect the alternative name it was provided with. (Andrew Nicols)
 
 3.17.1
 ------
