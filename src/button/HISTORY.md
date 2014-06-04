@@ -1,6 +1,11 @@
 Button Change History
 ====================
 
+@VERSION@
+------
+
+* No changes.
+
 3.17.2
 ------
 
