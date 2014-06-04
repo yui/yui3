@@ -36,7 +36,7 @@ YUI.add('axis-numeric-tests', function(Y) {
                     dataProvider: this.dataProvider,
                     keys: this.dataKeys,
                     position: position,
-                    roundingMethod: this.roundingMethod   
+                    roundingMethod: this.roundingMethod
                 };
             if(position === "right" || position === "left") {
                 cfg.height = this.height;
@@ -140,7 +140,7 @@ YUI.add('axis-numeric-tests', function(Y) {
             Y.Assert.areEqual(min, axis._getLabelByIndex(0, len), "The testLabel's value should be " + min + ".");
             Y.Assert.areEqual(max, axis._getLabelByIndex(len - 1, len), "The testLabel's value should be " + max + ".");
         },
-        
+
         getHasDataOverflow: function(setMin, setMax, min, max, dataMinimum, dataMaximum, roundingMethod) {
             if(setMin || setMax) {
                 return true;
@@ -263,8 +263,8 @@ YUI.add('axis-numeric-tests', function(Y) {
                         testValue = testValues[i];
                         axisValue = axisValues[i];
                         if(testPoint) {
-                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + "."); 
-                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + "."); 
+                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + ".");
+                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + ".");
                         } else {
                             Y.Assert.isNull(axisPoint, "There should not be a value for the axis point.");
                         }
@@ -279,7 +279,7 @@ YUI.add('axis-numeric-tests', function(Y) {
             assertFn.apply(this);
         }
     });
-    
+
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "left",

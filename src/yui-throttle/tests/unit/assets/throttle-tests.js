@@ -52,7 +52,7 @@ YUI.add('throttle-tests', function(Y) {
                 out++;
                 throttledFn();
             }
-            
+
             Assert.isFunction(throttledFn, 'Y.throttle failed to return a function');
             Assert.areNotSame(count, throttledFn, 'Y.throttle failed to return a new function');
             Assert.isTrue(counter < out, 'Y.throttle did not throttle the function call');
@@ -74,7 +74,7 @@ YUI.add('throttle-tests', function(Y) {
                 out++;
                 throttledFn();
             }
-            
+
             Assert.isFunction(throttledFn, 'Y.throttle failed to return a function');
             Assert.areNotSame(count, throttledFn, 'Y.throttle failed to return a new function');
             Assert.areEqual(out, counter, 'Y.throttle DID throttle the function call');
@@ -105,7 +105,7 @@ YUI.add('throttle-tests', function(Y) {
             // call once before the 10ms threshold (as if it were only 5ms)
             this.tDelta = 5;
             fn();
-            
+
             Assert.areEqual(0, counter, 'throttled function called before throttle time');
         },
         '`this` is not modified in throttled function': function () {

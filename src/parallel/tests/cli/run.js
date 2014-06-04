@@ -27,8 +27,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('parallel-tests');
-    
+
     Y.Test.Runner.setName('Parallel cli tests');
-    
+
 });
 

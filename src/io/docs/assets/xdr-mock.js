@@ -1,4 +1,4 @@
-YUI.add('xdr-mock', function (Y) {    
+YUI.add('xdr-mock', function (Y) {
     var MOCK_DATA = {
         "count": 20,
         "value": {
@@ -75,7 +75,7 @@ YUI.add('xdr-mock', function (Y) {
             }, {
                 "title": "Females to the fore in Tamworth lower grades",
                 "link": "http:\/\/www.northerndailyleader.com.au\/story\/1948605\/females-to-the-fore-in-tamworth-lower-grades\/?src=rss",
-                "pubDate": "Tue, 03 Dec 2013 09:16:40 -0800"        
+                "pubDate": "Tue, 03 Dec 2013 09:16:40 -0800"
             }, {
                 "title": "Cycling: Villumsen headlines a strong woman's field",
                 "link": "http:\/\/nz.sports.yahoo.com\/news\/article\/-\/20162216\/cycling-villumsen-headlines-a-strong-womans-field\/",

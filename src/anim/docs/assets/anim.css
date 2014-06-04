@@ -11,7 +11,7 @@ a#demo {
     text-decoration:none;
 
 
-    
+
     padding:1.6em;
     text-align:center;
 }
@@ -60,13 +60,13 @@ div#demo .yui3-hd h3 {
     top: 4px;
     right: 4px;
     border:solid 1px;
-    border-color: #CCD1E1 #6E7BA0 #6E7BA0 #CCD1E1; 
+    border-color: #CCD1E1 #6E7BA0 #6E7BA0 #CCD1E1;
     background-color: #97A2C4;
     border-radius: 2px;
 }
 
 #demo .yui3-hd a:hover {
-    background-color:#8793b8;    
+    background-color:#8793b8;
 }
 
 div#demo .yui3-bd {

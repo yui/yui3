@@ -333,7 +333,7 @@
         },
 
         /**
-         * If true, the `from` and `to` attributes are swapped, 
+         * If true, the `from` and `to` attributes are swapped,
          * and the animation is then run starting from `from`.
          * @attribute reverse
          * @type Boolean

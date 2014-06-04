@@ -1,7 +1,7 @@
 {
     "name"       : "tabview",
     "displayName": "TabView",
-    "description": "The TabView widget is a UI control that enables the user to switch between content panels.", 
+    "description": "The TabView widget is a UI control that enables the user to switch between content panels.",
     "author"     : "msweeney",
 
     "tags": ["widget", "tabview"],

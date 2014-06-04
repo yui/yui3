@@ -52,7 +52,7 @@ body{
 	left:0px;
 }
 .pics img{
-		
+
 }
 .hd{
 	font-size:150%;
@@ -73,12 +73,12 @@ body{
 .pics li div{
 	position:absolute;
 	bottom:-74px;
-	height:30px;	
+	height:30px;
 }
 .pics .num {
 	position:absolute;
 	bottom:-24px;
-	height:30px;	
+	height:30px;
 	font-size:373%;
 	width:100%;
 	text-align:center;
@@ -86,14 +86,14 @@ body{
 em {font-weight:bold;}
 </style>
 </head>
-	
-<body class="yui3-skin-sam"> 
+
+<body class="yui3-skin-sam">
 <div class="hd">Test on Dials with different value ranges</div>
 
 
 
-    
-    
+
+
     	<div class="width-container">
         <span id="dial_container1"></span>
         <span id="dial_container2"></span>
@@ -105,7 +105,7 @@ em {font-weight:bold;}
             <li><img src="assets/images/clock.png" width="200" height="200"/><div>Range is one revolution</div><div class="num">1</div></li>
             <li><img src="assets/images/wrapper.png" width="200" height="200"/><div>Range wraps around the dial one or more times</div><div class="num">2</div></li>
             <li><img src="assets/images/needle.png" width="200" height="200"/><div>Range is < one revolution. The wrap point is in the range</div><div class="num">3</div></li>
-            <li><img src="assets/images/gas.png" width="200" height="200"/><div>Range is < one revolution. No wrap point in either the range nor out of range section</div><div class="num">4</div></li> 
+            <li><img src="assets/images/gas.png" width="200" height="200"/><div>Range is < one revolution. No wrap point in either the range nor out of range section</div><div class="num">4</div></li>
             <li><img src="assets/images/ship.png" width="200" height="200"/><div>Range is < one revolution. wrap point found in out of range section</div><div class="num">5</div></li>
         </ul>
 	</div>
@@ -123,16 +123,16 @@ YUI({lang:'en', filter:'raw'}).use("dial",  function(Y) {
 		range = max - min,
 		rangeDashNum = range / 5,
 		angMax, angMin, thisVal = min, angThis, newUl, newLi, label;
-		
+
 		newUl = Y.Node.create('<ul class="angle-lines"></ul>')
 		dialObj._ringNode.append(newUl);
-		
+
 		for(var i = 1; i < rangeDashNum; i++){
 			thisVal = min + ((range / rangeDashNum) * i);
 			angThis = dialObj._getAngleFromValue(thisVal);
 			newLi = Y.Node.create('<li class="range" style="-moz-transform: rotate(' + angThis + 'deg); -moz-transform-origin: center center;"></li>');
 			newUl.append(newLi);
-			
+
 		}
 		angMin = dialObj._getAngleFromValue(dialObj.get('min'));
 		newLi = Y.Node.create('<li class="min" style="-moz-transform: rotate(' + angMin + 'deg); -moz-transform-origin: bottom center;"></li>');
@@ -142,7 +142,7 @@ YUI({lang:'en', filter:'raw'}).use("dial",  function(Y) {
 		newLi = Y.Node.create('<li class="max" style="-moz-transform: rotate(' + angMax + 'deg); -moz-transform-origin: bottom center;"></li>');
 		newUl.append(newLi);
 
-		
+
 		label = Y.Node.create('<div class="min-max-label">min: ' + dialObj.get('min') + '<br>max: ' + dialObj.get('max') + '</div>');
 		dialObj._ringNode.append(label);
 	}
@@ -180,11 +180,11 @@ var dial_02 = new Y.Dial({
 		diameter: 200,
 		decimalPlaces:0,
         strings:{label:'Monkeys in barrel:', resetStr: 'Reset', tooltipHandle: 'my tool tip text'}
-		
+
 	});
 	dial_02.render("#dial_container3");
 	drawMinMaxLines(dial_02);
-	
+
 var dial_03 = new Y.Dial({
 		min:0,
 		max:20,
@@ -249,7 +249,7 @@ var dial_06 = new Y.Dial({
 
 
 
-	
-	
-}); 
+
+
+});
 </script>

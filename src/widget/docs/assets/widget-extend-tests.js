@@ -1,5 +1,5 @@
 YUI.add('widget-extend-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('widget-extend example test suite'),
         TIMEOUT = 10000;
 
@@ -55,7 +55,7 @@ YUI.add('widget-extend-tests', function(Y) {
             for (i = 0; i < 7; i++) {
                 bb.simulate(keyEvent, {
                     charCode : 38,
-                    keyCode : 38 
+                    keyCode : 38
                 });
             }
 

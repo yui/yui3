@@ -38,7 +38,7 @@ YUI.add('later-test', function(Y) {
                 });
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -70,7 +70,7 @@ YUI.add('later-test', function(Y) {
                 });
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -104,7 +104,7 @@ YUI.add('later-test', function(Y) {
                 Y.later(10, context, "fn");
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -134,7 +134,7 @@ YUI.add('later-test', function(Y) {
                 }, args);
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -204,7 +204,7 @@ YUI.add('later-test', function(Y) {
                 }, null, true);
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -228,7 +228,7 @@ YUI.add('later-test', function(Y) {
                 }, null, true);
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -254,7 +254,7 @@ YUI.add('later-test', function(Y) {
                 handle = Y.later(10, context, "fn", null, true);
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -277,7 +277,7 @@ YUI.add('later-test', function(Y) {
                 }, args, true);
 
                 Y.Assert.areSame(0, count);
-                
+
                 this.wait();
             },
 
@@ -289,7 +289,7 @@ YUI.add('later-test', function(Y) {
 
                 handle = Y.later(10, null, function () {
                     count++;
-                    
+
                     if (done) {
                         test.resume(function () {
                             Y.Assert.fail("Interval callback executed after cancel()");

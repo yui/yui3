@@ -110,11 +110,11 @@ function isRTL(lang) {
     // currently Arabic is our only RTL language
     return lang === "ar";
 }
-    
+
 
 // Default Date Format (no language specified)
 YUI().use("node", "datatype-date", function (Y) {
-    
+
     Y.one("#default_lang_output").setHTML(
         Y.Date.format(new Date(), {format:"%x"})
     );
@@ -127,7 +127,7 @@ YUI({lang:"fr-FR"}).use("node", "datatype-date", function (Y) {
     Y.one("#single_lang_output").setHTML(
         Y.Date.format(new Date(), {format:"%x"})
     );
-    
+
 });
 
 YUI().use("node", "datatype-date", function (Y) {

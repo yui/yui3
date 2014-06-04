@@ -1,6 +1,11 @@
 Charts Change History
 =====================
 
+@VERSION@
+------
+
+* No changes.
+
 3.17.2
 ------
 
@@ -24,14 +29,14 @@ Charts Change History
 3.15.0
 ------
 
-* #1480 Address issue in which _maxSize property was not updated for single series histogram. 
+* #1480 Address issue in which _maxSize property was not updated for single series histogram.
 * #1632 Add labelFormat attribute to CategoryAxisBase and CategoryAxis.
 
 3.14.1
 ------
 
 * #1475 Address issue in which _maxSize property was not updated for single series histogram causing the column/bar to disappear
-on mouseover.  
+on mouseover.
 
 3.14.0
 ------
@@ -67,15 +72,15 @@ on mouseover.
 3.10.2
 ------
 
-  * #743 Addressed issue in which styles don't map correctly to a legend when series are styled using a global style object. 
-  * #706 Addressed issue in which the legend did not honor specified series marker style for shape. 
+  * #743 Addressed issue in which styles don't map correctly to a legend when series are styled using a global style object.
+  * #706 Addressed issue in which the legend did not honor specified series marker style for shape.
 
 3.10.0
 ------
 
   * #2533184 Addressed issue in which Axis.getEdgeOffset was returning an incorrect value.
   * #2533130 Added hideFirstMajorUnit and hideLastMajorUnit attributes to axis classes allowing for suppression of rendering the first/last label and tick on an axis.
-  * #2533128 Add ability for axis to generate labels and their position from an array of values.  
+  * #2533128 Add ability for axis to generate labels and their position from an array of values.
 
 3.9.1
 -----

@@ -19,7 +19,7 @@ YUI.add('attribute-event-tests', function(Y) {
 
         changeValueForm : Y.one("#changeValue"),
 
-        preventBox : Y.one("#preventFoobar"), 
+        preventBox : Y.one("#preventFoobar"),
 
         clickFormSubmit : function(form) {
 
@@ -89,7 +89,7 @@ YUI.add('attribute-event-tests', function(Y) {
             Y.Assert.areEqual("e.prevVal: 10", eventData.item(1).get("text"));
             Y.Assert.areEqual("e.newVal: qwerty", eventData.item(2).get("text"));
 
-            eventData = events.item(1).all(".event-props li");            
+            eventData = events.item(1).all(".event-props li");
 
             Y.Assert.areEqual("e.attrName: foo", eventData.item(0).get("text"));
             Y.Assert.areEqual("e.prevVal: 5", eventData.item(1).get("text"));
@@ -123,7 +123,7 @@ YUI.add('attribute-event-tests', function(Y) {
             Y.Assert.areEqual("e.prevVal: Hello World!", eventData.item(1).get("text"));
             Y.Assert.areEqual("e.newVal: asdfg", eventData.item(2).get("text"));
 
-            eventData = events.item(1).all(".event-props li");            
+            eventData = events.item(1).all(".event-props li");
 
             Y.Assert.areEqual("e.attrName: foo", eventData.item(0).get("text"));
             Y.Assert.areEqual("e.prevVal: 10", eventData.item(1).get("text"));
@@ -149,7 +149,7 @@ YUI.add('attribute-event-tests', function(Y) {
             Y.Assert.areEqual("e.prevVal: Hello World!", eventData.item(1).get("text"));
             Y.Assert.areEqual("e.newVal: asdfg", eventData.item(2).get("text"));
 
-            eventData = events.item(1).all(".event-props li");            
+            eventData = events.item(1).all(".event-props li");
 
             Y.Assert.areEqual("e.attrName: foo", eventData.item(0).get("text"));
             Y.Assert.areEqual("e.prevVal: 10", eventData.item(1).get("text"));

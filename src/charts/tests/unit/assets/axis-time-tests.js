@@ -89,7 +89,7 @@ YUI.add('axis-time-tests', function(Y) {
                 len = 11,
                 increm = ((max - min)/(len - 1)) * index,
                 testLabel = min + increm;
-            
+
             Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len), "The label's value should be " + testLabel + ".");
         },
 
@@ -165,8 +165,8 @@ YUI.add('axis-time-tests', function(Y) {
                         testValue = testValues[i];
                         axisValue = axisValues[i];
                         if(testPoint) {
-                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + "."); 
-                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + "."); 
+                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + ".");
+                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + ".");
                         } else {
                             Y.Assert.isNull(axisPoint, "There should not be a value for the axis point.");
                         }
@@ -175,7 +175,7 @@ YUI.add('axis-time-tests', function(Y) {
                         }
                     }
                 };
-            len = labelValues.length; 
+            len = labelValues.length;
             assertFn.apply(this);
             //hit the branch
             labelValues[3] = null;
@@ -185,7 +185,7 @@ YUI.add('axis-time-tests', function(Y) {
             assertFn.apply(this);
         }
     });
-    
+
     var suite = new Y.Test.Suite("Charts: TimeAxis"),
         DOC = Y.config.doc,
         plainOldDataProvider = [

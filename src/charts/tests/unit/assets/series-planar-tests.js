@@ -5,8 +5,8 @@ YUI.add('series-planar-tests', function(Y) {
         parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
         DOC = Y.config.doc;
     DOC.body.appendChild(parentDiv);
-            
-            
+
+
     //-------------------------------------------------------------------------
     // Chart Event Test Case
     //-------------------------------------------------------------------------
@@ -21,49 +21,49 @@ YUI.add('series-planar-tests', function(Y) {
         //---------------------------------------------------------------------
         // Setup and teardown of test harnesses
         //---------------------------------------------------------------------
-        
+
         /*
          * Sets up several event handlers used to test UserAction mouse events.
          */
-        setUp : function() 
+        setUp : function()
         {
             var chart,
                 overlay,
                 win = Y.config.win,
                 isTouch = ((win && ("ontouchstart" in win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-            //create the chart 
+            //create the chart
             this.chart = new Y.Chart(this.attrCfg);
             chart = this.chart;
             overlay = chart._overlay;
             this.contentBox = chart.get("contentBox");
             //reset the result
             this.result = null;
-            
-            //assign event handler                
+
+            //assign event handler
             this.eventType = isTouch ? "touchend" : "mousemove";
             this.name = "Event '" + this.eventType + "' Tests";
             this.chart.on("planarEvent:mouseover", Y.bind(this.handleEvent, this));
         },
-        
+
         /*
          * Removes event handlers that were used during the test.
          */
-        tearDown : function() 
+        tearDown : function()
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         //---------------------------------------------------------------------
         // Event handler
         //---------------------------------------------------------------------
-        
+
         /*
          * Uses to trap and assign the event object for interrogation.
          * @param {Event} event The event object created from the event.
          */
-        handleEvent : function(event) 
+        handleEvent : function(event)
         {
             this.result = event;
         }
@@ -184,7 +184,7 @@ YUI.add('series-planar-tests', function(Y) {
         }
     });
     Y.ChartPlanarEventTestCase = ChartPlanarEventTestCase;
-    
+
     var DataProviderWithZeros = [
                 {category:"1/1/2010", miscellaneous:1000, expenses:0, revenue:2200},
                 {category:"2/1/2010", miscellaneous:0, expenses:0, revenue:100},
@@ -278,7 +278,7 @@ YUI.add('series-planar-tests', function(Y) {
         {category: 4, miscellaneous: 4233},
         {category: 5, miscellaneous: 3800},
         {category: 6, miscellaneous: 4899},
-        {category: 7, miscellaneous: 3333}, 
+        {category: 7, miscellaneous: 3333},
         {category: 8, miscellaneous: 5210},
         {category: 9, miscellaneous: 2011},
         {category: 10, miscellaneous: 3100}
@@ -393,7 +393,7 @@ YUI.add('series-planar-tests', function(Y) {
         dataProvider: numericCategoryValuesDataProvider,
         render: "#testdiv"
     });
-   
+
     suite.add(zeroValueColumnMouseOverTests);
     suite.add(zeroValueBarMouseOverTests);
     suite.add(zeroValueStackedColumnMouseOverTests);
@@ -404,15 +404,15 @@ YUI.add('series-planar-tests', function(Y) {
     suite.add(nullValueStackedBarMouseOverTests);
     suite.add(zeroValueComboMouseOverTests);
     suite.add(nullValueComboMouseOverTests);
-    suite.add(missingSeriesAndSeriesStartingWithZero); 
-    suite.add(missingSeriesAndSeriesStartingWithZero); 
+    suite.add(missingSeriesAndSeriesStartingWithZero);
+    suite.add(missingSeriesAndSeriesStartingWithZero);
     suite.add(missingValueComboMouseOverTests);
     suite.add(missingValueColumnMouseOverTests);
     suite.add(missingValueBarMouseOverTests);
     suite.add(missingValueStackedColumnMouseOverTests);
     suite.add(missingValueStackedBarMouseOverTests);
-    suite.add(categoryWithNumericValuesChart); 
-    
+    suite.add(categoryWithNumericValuesChart);
+
     //add to the testrunner and run
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['node-event-simulate', 'charts', 'test']});

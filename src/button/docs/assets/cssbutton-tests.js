@@ -7,7 +7,7 @@ YUI.add('cssbutton-tests', function(Y){
             Y.Assert.areSame(14, Y.all('.example .yui3-button').size());
         }
 
-        
+
     }));
 
 }, '@VERSION@', {requires: ['button', 'test']});

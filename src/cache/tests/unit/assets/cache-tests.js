@@ -2,11 +2,11 @@ YUI.add('cache-tests', function(Y) {
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert;
-        
+
 
         var testClass = new Y.Test.Case({
             name: "Class Tests",
-        
+
             testDefaults: function() {
                 var cache = new Y.Cache();
                 ASSERT.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
@@ -20,14 +20,14 @@ YUI.add('cache-tests', function(Y) {
                 ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
             }
         });
-        
+
         var testBasic = new Y.Test.Case({
             name: "Basic Tests",
 
             testmax0: function() {
                 var cache = new Y.Cache();
                 ASSERT.areSame(0, cache.get("max"), "Expected max to be 0.");
-                
+
                 cache.add(1, "a");
                 ASSERT.areSame(0, cache.get("size"), "Expected 0 entries.");
                 ASSERT.isNull(cache.retrieve(1), "Expected null cached response.");
@@ -36,7 +36,7 @@ YUI.add('cache-tests', function(Y) {
             testmax2: function() {
                 var cache = new Y.Cache({max:2});
                 ASSERT.areSame(2, cache.get("max"), "Expected max to be 2.");
-                
+
                 cache.add(1, "a");
                 ASSERT.areSame(1, cache.get("size"), "Expected 1 entry.");
                 cache.add(2, "b");
@@ -44,7 +44,7 @@ YUI.add('cache-tests', function(Y) {
                 cache.add(3, "c");
                 ASSERT.areSame(2, cache.get("size"), "Expected 2 entries (still).");
             },
-        
+
             testmax2to1: function() {
                 var cache = new Y.Cache({max:2});
                 cache.add(1, "a");
@@ -151,7 +151,7 @@ YUI.add('cache-tests', function(Y) {
                 cache.flush();
                 ASSERT.areSame(0, cache.get("size"), "Expected empty cache.");
             },
-            
+
             testFlushItem: function() {
                 var cache = new Y.Cache({max:2});
                 cache.add(1, "a");
@@ -161,7 +161,7 @@ YUI.add('cache-tests', function(Y) {
                 ASSERT.areSame("b", cache.get("entries")[0].response, "Expected 'b'");
             }
         });
-    
+
         var testEvents = new Y.Test.Case({
             name: "Event Tests",
 
@@ -178,7 +178,7 @@ YUI.add('cache-tests', function(Y) {
 
                 Y.Mock.verify(mock);
             },
-        
+
             testFlush: function() {
                 var mock = new Y.Mock();
                 Y.Mock.expect(mock, {
@@ -251,7 +251,7 @@ YUI.add('cache-tests', function(Y) {
                     e.preventDefault();
                 }, this, true);
                 cache.add(1, "a");
-                
+
                 // Test the cancel
                 ASSERT.areSame(0, cache.get("size"), "Expected 0 entries.");
             },
@@ -263,7 +263,7 @@ YUI.add('cache-tests', function(Y) {
                 }, this, true);
                 cache.add(1, "a");
                 cache.flush();
-                
+
                 // Test the cancel
                 ASSERT.areSame(1, cache.get("size"), "Expected 1 entry.");
             }
@@ -287,7 +287,7 @@ YUI.add('cache-tests', function(Y) {
                 cache.add(1, "c");
                 ASSERT.areSame(2, cache.get("size"), "Expected 2 entries.");
             },
-            
+
             testUniqueKeyValues: function() {
                 var cache = new Y.Cache({max:3,uniqueKeys:true});
                 cache.add(1, "a");

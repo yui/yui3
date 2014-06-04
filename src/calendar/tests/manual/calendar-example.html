@@ -83,8 +83,8 @@ newrules = addNewRule(newrules, [dYear, dMonth, dDate], "theweekends");
 function myFilter (oDate, oNode, rules) {
 if (Y.Array.indexOf(rules, "theweekends") >= 0) {
 	//oNode.addClass('redtext');
-}	
-};	     
+}
+};
 
          var calendar = new Y.Calendar({
 	        showNextMonth: true,
@@ -95,7 +95,7 @@ if (Y.Array.indexOf(rules, "theweekends") >= 0) {
 	        date: new Date(2011,10,1),
 	        headerRenderer: myHeaderRenderer,
 			width:'600px'});
-			
+
 
 		calendar.selectDates([new Date(2011,9,4), new Date(2011,9,3), new Date(2011,10,8)]);
 		calendar.render("#mycalendar");
@@ -134,12 +134,12 @@ Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.ONE_PANE_TEMPLATE;
                        }
                    }
                 };
-        
-        
+
+
                function myFilter (oDate, oNode, rules) {
                if (Y.Array.indexOf(rules, "theweekends") >= 0) {
                    oNode.addClass('redtext');
-               }   
+               }
                };
 
            var cfg = {

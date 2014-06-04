@@ -15,9 +15,9 @@
             coverage: ['datatable-scroll'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-scroll-tests', function (Y) {
-			
+
 			new Y.Test.Console().render();
-            
+
             Y.Test.Runner.setName('Datatable: Scroll');
 			Y.Test.Runner.run();
 		});

@@ -27,7 +27,7 @@
 <h3>Access and Update a `Chart` Instance's Axis.</h3>
 
 
-<p>Often times, you will need to update a chart after it has been rendered. This example demonstrates how to access and update an axis. Specifically, we'll update the rotation and color of 
+<p>Often times, you will need to update a chart after it has been rendered. This example demonstrates how to access and update an axis. Specifically, we'll update the rotation and color of
 the axis labels.</p>
 <p>A `Chart` instance's axes can be accessed through the `getAxisByKey` method. This method takes the axis' key identifier as an argument. If you have explicitly set your
 axis through the `axes` attribute, you will know the key identifier. If not, the default key identifier for the value axis is "values" and the default key identifier for the category
@@ -50,18 +50,18 @@ axis is `category`. Once you have a reference for the axis, you can update all o
 
 <h4>JavaScript</h4>
 ```
-YUI().use('charts', function (Y) 
-{ 
+YUI().use('charts', function (Y)
+{
     //dataProvider source
-    var myDataValues = [ 
-        {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100}, 
-        {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500}, 
-        {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800}, 
+    var myDataValues = [
+        {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+        {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100},
+        {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500},
+        {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800},
         {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
-        {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200} 
+        {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}
     ];
-    
+
     //Define our axes for the chart.
     var myAxes = {
         financials:{
@@ -94,8 +94,8 @@ YUI().use('charts', function (Y)
     var myChart = new Y.Chart({
                         type:"column",
                         categoryKey:"date",
-                        dataProvider:myDataValues, 
-                        axes:myAxes, 
+                        dataProvider:myDataValues,
+                        axes:myAxes,
                         horizontalGridlines: true,
                         verticalGridlines: true,
                         render:"#mychart"

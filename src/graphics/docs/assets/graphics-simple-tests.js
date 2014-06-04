@@ -41,7 +41,7 @@ YUI.add('graphics-simple-tests', function(Y) {
     }
     SHAPE = "." + _getClassName(ENGINE + "Shape");
     ELLIPSE = "." + _getClassName(ENGINE + "Ellipse");
-   
+
     IMPLEMENTATION = {
         svg: {
             getStroke: function()
@@ -102,7 +102,7 @@ YUI.add('graphics-simple-tests', function(Y) {
                         stopNodes = fillNode.get("children");
                         stopNodes = stopNodes ? stopNodes.filter("stop") : null;
                         if(stopNodes)
-                        {   
+                        {
                             len = stopNodes.size();
                             stops = [];
                             for(; i < len; i = i + 1)
@@ -144,7 +144,7 @@ YUI.add('graphics-simple-tests', function(Y) {
                 }
                 return fill;
             },
-            
+
             getDimensions: function(shape)
             {
                 var w,
@@ -252,7 +252,7 @@ YUI.add('graphics-simple-tests', function(Y) {
                         {
                             color = color.value;
                         }
-                        color = toRGBA(TOHEX(color), parseFloat(opacity)); 
+                        color = toRGBA(TOHEX(color), parseFloat(opacity));
                         fill.color = color;
                     break;
                     case "linear" :
@@ -309,7 +309,7 @@ YUI.add('graphics-simple-tests', function(Y) {
                 fill.type = type;
                 return fill;
             },
-            
+
             getDimensions: function(shape)
             {
                 var node = this._node,

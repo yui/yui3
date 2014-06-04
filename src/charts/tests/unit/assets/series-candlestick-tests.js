@@ -119,7 +119,7 @@ YUI.add('series-candlestick-tests', function(Y) {
                         closecoord = closecoords[i];
                         up = opencoord > closecoord;
                         top = up ? closecoord : opencoord;
-                        bottom = up ? opencoord : closecoord; 
+                        bottom = up ? opencoord : closecoord;
                         height = bottom - top;
                         candle = up ? upcandlepath : downcandlepath;
                         if(up) {
@@ -156,7 +156,7 @@ YUI.add('series-candlestick-tests', function(Y) {
         },
 
         "test: toggleVisible()" : function() {
-            var series = this.series, 
+            var series = this.series,
                 mockSeries = new CandlestickMockSeries();
             series._toggleVisible.apply(mockSeries, [false]);
             Y.Assert.isFalse(mockSeries.get("upcandle").get("visible"), "The visible attribute for upcandle should be false.");
@@ -172,7 +172,7 @@ YUI.add('series-candlestick-tests', function(Y) {
             var series = this.series,
                 mydiv = Y.DOM.create('<div id="testdiv">'),
                 graphic;
-            DOC.body.appendChild(mydiv);    
+            DOC.body.appendChild(mydiv);
             graphic = new Y.Graphic({
                 render: mydiv
             });
@@ -196,7 +196,7 @@ YUI.add('series-candlestick-tests', function(Y) {
             Y.Assert.isFalse(mockSeries.get("upcandle")._destroyed, "The upcandle should not be destroyed.");
             Y.Assert.isFalse(mockSeries.get("downcandle")._destroyed, "The downcandle should not be destroyed.");
             Y.Assert.isFalse(mockSeries.get("wick")._destroyed, "The wick should not be destroyed.");
-            series.destructor.apply(mockSeries); 
+            series.destructor.apply(mockSeries);
             Y.Assert.isTrue(mockSeries.get("upcandle")._destroyed, "The upcandle should be destroyed.");
             Y.Assert.isTrue(mockSeries.get("downcandle")._destroyed, "The downcandle should be destroyed.");
             Y.Assert.isTrue(mockSeries.get("wick")._destroyed, "The wick should be destroyed.");
@@ -204,7 +204,7 @@ YUI.add('series-candlestick-tests', function(Y) {
             mockSeries.set("upcandle", null);
             mockSeries.set("downcandle", null);
             mockSeries.set("wick", null);
-            series.destructor.apply(mockSeries); 
+            series.destructor.apply(mockSeries);
         }
     });
     suite.add(seriesTest);

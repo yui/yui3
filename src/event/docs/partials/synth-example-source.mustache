@@ -86,30 +86,30 @@ YUI({ filter: 'raw' }).use('node', 'event-synthetic', 'transition', function (Y)
         }else{
             moving = true; // During moving, block other arrow keys from moving
         }
-                
+
         var xy = this.getData(),
             imgWidth,
             imgHeight,
             // var scale is used to make the image size and distance moved
             // proportional to the Y position of the image
-            scale = (150 + xy.y) / 150, 
+            scale = (150 + xy.y) / 150,
             moveXDistance = 40,
             moveYDistance = 20;
-           
+
         switch (e.direction) {
             case 'up':
-                if(xy.y < -100){ 
+                if(xy.y < -100){
                     moving = false;
                     return; // Stop moving when image gets too small
-                }    
+                }
                 xy.y -= Math.round(moveYDistance * scale);
                 e.target.setAttribute('src', imgUp);
                 break;
-            case 'down':  
+            case 'down':
                 if(xy.y > 90){
                     moving = false;
                     return; // Stop moving when image gets too big
-                }    
+                }
                 xy.y += Math.round(moveYDistance * scale);
                 e.target.setAttribute('src', imgDown);
                 break;

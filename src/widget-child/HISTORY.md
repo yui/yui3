@@ -1,6 +1,11 @@
 Widget Child Change History
 ===========================
 
+@VERSION@
+------
+
+* No changes.
+
 3.17.2
 ------
 
@@ -90,7 +95,7 @@ Widget Child Change History
 -----
 
   * No changes.
-  
+
 3.7.3
 -----
 

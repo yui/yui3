@@ -46,7 +46,7 @@ YUI.add('recordset-filter-tests', function(Y){
 						firstLetter = state.substring(0,1).toLowerCase();
 
 					isTrue('mnop'.indexOf(firstLetter) >= 0, 'State `' + state + '` is not allowed.');
-				
+
 				});
 			}, 200);
 

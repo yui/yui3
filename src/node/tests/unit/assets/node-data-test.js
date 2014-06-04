@@ -11,65 +11,65 @@ YUI.add('node-data-test', function(Y) {
         },
 
         'should return undefined when no data field set': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             Y.Assert.isUndefined(node.getData('foo'));
         },
 
         'should set data value to string': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData('foo');
             Y.Assert.areEqual('foo', node.getData());
         },
 
         'should set data value to number': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(10);
             Y.Assert.areEqual(10, node.getData());
         },
 
         'should set data value to zero': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(0);
             Y.Assert.areEqual(0, node.getData());
         },
 
         'should set data value to undefined': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(undefined);
             Y.Assert.isUndefined(node.getData());
         },
 
         'should set data value to null': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(null);
             Y.Assert.isNull(node.getData());
         },
 
         'should set field value to string': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData('foo', 'foo');
             Y.Assert.areEqual('foo', node.getData('foo'));
         },
 
         'should set field name to number': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(1, 'foo');
             Y.Assert.areEqual('foo', node.getData(1));
         },
 
         'should set field name to zero': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(0, 'foo');
             Y.Assert.areEqual('foo', node.getData(0));
         },
 
         'should initialize from HTML attribute': function() {
-            var node = Y.Node.create('<div data-foo="foo"/>'); 
+            var node = Y.Node.create('<div data-foo="foo"/>');
             Y.Assert.areEqual('foo', node.getData('foo'));
         },
 
         'should prefer setData value to HTML attribute': function() {
-            var node = Y.Node.create('<div data-foo="foo"/>'); 
+            var node = Y.Node.create('<div data-foo="foo"/>');
             node.setData('foo', 'foo2');
             Y.Assert.areEqual('foo2', node.getData('foo'));
         },
@@ -77,7 +77,7 @@ YUI.add('node-data-test', function(Y) {
         'should return all set values': function() {
             var node = Y.Node.create('<div />'),
                 data;
-                
+
             node.setData({
                 foo: 'foo',
                 bar: 'bar',
@@ -93,14 +93,14 @@ YUI.add('node-data-test', function(Y) {
         'should return all html data': function() {
             var node = Y.Node.create('<div data-foo="foo" data-bar="bar" data-baz="baz"/>'),
                 data = node.getData();
-                
+
             Y.Assert.areEqual('foo', data.foo);
             Y.Assert.areEqual('bar', data.bar);
             Y.Assert.areEqual('baz', data.baz);
         },
 
         'should prefer setData values to HTML attributes': function() {
-            var node = Y.Node.create('<div data-foo="foo" data-bar="bar" data-baz="baz"/>'); 
+            var node = Y.Node.create('<div data-foo="foo" data-bar="bar" data-baz="baz"/>');
             node.setData({
                 foo: 'foo2',
                 bar: 'bar2'
@@ -156,21 +156,21 @@ YUI.add('node-data-test', function(Y) {
         },
 
         'should clear field data': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData('foo', 'foo');
             node.clearData('foo');
             Y.Assert.isUndefined(node.getData('foo'));
         },
 
         'should clear number field data': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(1, 'foo');
             node.clearData(1);
             Y.Assert.isUndefined(node.getData(1));
         },
 
         'should clear number zero field data': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData(0, 'foo');
             node.clearData(0);
             Y.Assert.isUndefined(node.getData(0));
@@ -212,7 +212,7 @@ YUI.add('node-data-test', function(Y) {
         },
 
         'should clear all data': function() {
-            var node = Y.Node.create('<div/>'); 
+            var node = Y.Node.create('<div/>');
             node.setData('foo', 'foo');
             node.setData('bar', 'bar');
             node.clearData();

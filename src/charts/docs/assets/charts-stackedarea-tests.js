@@ -22,18 +22,18 @@ YUI.add('charts-stackedarea-tests', function(Y) {
         name: "Charts Stacked Area Tests",
 
         dataProvider: [
-            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"2/1/2010", miscellaneous:3000, expenses:3100, revenue:4100}, 
-            {date:"3/1/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"4/1/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"2/1/2010", miscellaneous:3000, expenses:3100, revenue:4100},
+            {date:"3/1/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {date:"4/1/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
-            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}, 
-            {date:"7/1/2010", miscellaneous:6550, expenses:6500, revenue:1100}, 
-            {date:"8/1/2010", miscellaneous:4005, expenses:2600, revenue:3500}, 
-            {date:"9/1/2010", miscellaneous:1200, expenses:8900, revenue:3800}, 
+            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200},
+            {date:"7/1/2010", miscellaneous:6550, expenses:6500, revenue:1100},
+            {date:"8/1/2010", miscellaneous:4005, expenses:2600, revenue:3500},
+            {date:"9/1/2010", miscellaneous:1200, expenses:8900, revenue:3800},
             {date:"10/1/2010", miscellaneous:2000, expenses:1000, revenue:3650},
-            {date:"11/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"12/1/2010", miscellaneous:5000, expenses:3100, revenue:4100}        
+            {date:"11/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"12/1/2010", miscellaneous:5000, expenses:3100, revenue:4100}
         ],
 
         getFormattedDate: function(index)
@@ -55,18 +55,18 @@ YUI.add('charts-stackedarea-tests', function(Y) {
             "Nov 01, 10",
             "Dec 01, 10"
         ],
-        
+
         _should: {
             ignore: {
                 testMouseEvents:  isTouch || IGNORETOOLTIPTEST,
                 testTouchEvents: isMouse || IGNORETOOLTIPTEST
             }
         },
-        
+
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -94,7 +94,7 @@ YUI.add('charts-stackedarea-tests', function(Y) {
                 wid = parseFloat(overlay.getComputedStyle("width"));
                 ht = parseFloat(overlay.getComputedStyle("height"));
                 multiple = Math.ceil(wid/len) + 1;
-                y = xy[1] + 10 - Y.one('document').get('scrollLeft'); 
+                y = xy[1] + 10 - Y.one('document').get('scrollLeft');
                 x = xy[0] + 2 - Y.one('document').get('scrollTop');
             }, this);
             for(; index < len; index = index + 1)
@@ -107,7 +107,7 @@ YUI.add('charts-stackedarea-tests', function(Y) {
                 });
                 if(tooltip.getStyle("visibility") == "visible")
                 {
-                    contents = Y.Node.create("<div><div>" + this.getFormattedDate(index) + "<br>miscellaneous: " + item.miscellaneous + 
+                    contents = Y.Node.create("<div><div>" + this.getFormattedDate(index) + "<br>miscellaneous: " + item.miscellaneous +
                         "<br>expenses: " + item.expenses + "<br>revenue: " + item.revenue + "</div></div>").get("innerHTML");
                     Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
                 }
@@ -159,13 +159,13 @@ YUI.add('charts-stackedarea-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },
                 success = function() {
-                    contents = Y.Node.create("<div><div>" + this.getFormattedDate(index - 1) + "<br>miscellaneous: " + item.miscellaneous + 
+                    contents = Y.Node.create("<div><div>" + this.getFormattedDate(index - 1) + "<br>miscellaneous: " + item.miscellaneous +
                         "<br>expenses: " + item.expenses + "<br>revenue: " + item.revenue + "</div></div>").get("innerHTML");
                     Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
                     checkAndFireEvent();

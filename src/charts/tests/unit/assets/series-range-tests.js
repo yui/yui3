@@ -21,7 +21,7 @@ YUI.add('series-range-tests', function(Y) {
                 RangeMockSeries = Y.Base.create("rangeMockSeries", Y.RangeSeries, [], {
                     _drawMarkers: function(xcoords, opencoords, highcoords, lowcoords, closecoords, len, width, halfwidth, styles) {
                         this._drawMarkersArgs = {
-                            xcoords: xcoords, 
+                            xcoords: xcoords,
                             opencoords: opencoords,
                             highcoords: highcoords,
                             lowcoords: lowcoords,
@@ -29,14 +29,14 @@ YUI.add('series-range-tests', function(Y) {
                             len: len,
                             width: width,
                             halfwidth: halfwidth,
-                            styles: styles  
+                            styles: styles
                         };
                     }
                 }, {
                     ATTRS: {
                         width: {
                             getter: function() {
-                                return width;   
+                                return width;
                             }
                         }
                     }
@@ -83,7 +83,7 @@ YUI.add('series-range-tests', function(Y) {
             halfwidth = markerWidth/2;
             series.drawSeries.apply(mockSeries);
             drawMarkersArgs = mockSeries._drawMarkersArgs;
-            
+
             resultOpenCoords = drawMarkersArgs.opencoords;
             resultHighCoords = drawMarkersArgs.highcoords;
             resultLowCoords = drawMarkersArgs.lowcoords;

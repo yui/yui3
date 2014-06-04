@@ -2,7 +2,7 @@
         //Get the node #drag
         var d = Y.one('#drag');
         d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
-        
+
         //Get all the divs with the class anim
         var anims = Y.Node.all('div.anim');
         var counter = 0;
@@ -85,7 +85,7 @@
                 }, this);
                 //Run this animation
                 this.fx.run();
-                
+
                 //others that were dropped on.
                 Y.each(e.others, function(v, k) {
                     var node = v.get('node');
@@ -93,7 +93,7 @@
                 });
 
             }, a);
-            
+
             //on tween of the original anim, we need to sync the drop's shim.
             a.fx.on('tween', function() {
                 //Do we have an active Drag?

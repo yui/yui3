@@ -10,22 +10,22 @@
 }
 </style>
 <link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
-</head>		
+</head>
 <body class="yui3-skin-sam">
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <h3>Combo Chart with area fill multidimensional array dataProvider</h3>
 <div id="mychart"></div>
-<script type="text/javascript">            
+<script type="text/javascript">
     YUI({
         defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
 		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-    }).use('charts', function (Y) 
+    }).use('charts', function (Y)
     {
         var myDataValues = [
             ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             [2000, 1500, 200, 400, 5000]
         ],
-        
+
         mychart = new Y.Chart({
             showAreaFill: true,
             dataProvider:myDataValues,

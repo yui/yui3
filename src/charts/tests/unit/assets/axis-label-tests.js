@@ -24,14 +24,14 @@ YUI.add('axis-label-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         }
     });
-    
+
     var AxisLabelTestTemplate = function()
     {
         AxisLabelTestTemplate.superclass.constructor.apply(this, arguments);
@@ -45,8 +45,8 @@ YUI.add('axis-label-tests', function(Y) {
                 valueAxisLabelRotation = chart.getAxisByKey("values").get("styles").label.rotation,
                 categoryAxisLabelRotation = chart.getAxisByKey("category").get("styles").label.rotation;
             this.eventListener = this.chart.on("chartRendered", function(e) {
-                Y.Assert.areEqual(specifiedRotation, categoryAxisLabelRotation, "The value axis' label rotation should equal specified " + specifiedRotation + "."); 
-                Y.Assert.areEqual(specifiedRotation, valueAxisLabelRotation, "The category axis' label rotation should equal specified " + specifiedRotation + "."); 
+                Y.Assert.areEqual(specifiedRotation, categoryAxisLabelRotation, "The value axis' label rotation should equal specified " + specifiedRotation + ".");
+                Y.Assert.areEqual(specifiedRotation, valueAxisLabelRotation, "The category axis' label rotation should equal specified " + specifiedRotation + ".");
             });
             this.chart.render("#testdiv");
         }
@@ -54,11 +54,11 @@ YUI.add('axis-label-tests', function(Y) {
 
     Y.AxisLabelTestTemplate = AxisLabelTestTemplate;
 
-    var dataProvider =  [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+    var dataProvider =  [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
     ],
 
@@ -83,14 +83,14 @@ YUI.add('axis-label-tests', function(Y) {
                     }
                 }
             },
-            dataProvider: dataProvider 
+            dataProvider: dataProvider
         },
         {
             name: "Left and Bottom Axes with " + rotation + " degree label rotation",
             specifiedLabelRotation: rotation
         });
     },
-  
+
     RightTopAxisLabelRotationTest = function(rotation)
     {
         return new Y.AxisLabelTestTemplate({
@@ -112,7 +112,7 @@ YUI.add('axis-label-tests', function(Y) {
                     }
                 }
             },
-            dataProvider: dataProvider 
+            dataProvider: dataProvider
         },
         {
             name: "Right and Top Axes with " + rotation + " degree label rotation",
@@ -132,7 +132,7 @@ YUI.add('axis-label-tests', function(Y) {
     LeftBottomNegative60DegreeTest = LeftBottomAxisLabelRotationTest(-60);
     LeftBottomNegative75DegreeTest = LeftBottomAxisLabelRotationTest(-75);
     LeftBottomNegative90DegreeTest = LeftBottomAxisLabelRotationTest(-90);
-    
+
     RightTop15DegreeTest = RightTopAxisLabelRotationTest(15);
     RightTop30DegreeTest = RightTopAxisLabelRotationTest(30);
     RightTop45DegreeTest = RightTopAxisLabelRotationTest(45);
@@ -145,7 +145,7 @@ YUI.add('axis-label-tests', function(Y) {
     RightTopNegative60DegreeTest = RightTopAxisLabelRotationTest(-60);
     RightTopNegative75DegreeTest = RightTopAxisLabelRotationTest(-75);
     RightTopNegative90DegreeTest = RightTopAxisLabelRotationTest(-90);
-    
+
     suite.add(LeftBottom15DegreeTest);
     suite.add(LeftBottom30DegreeTest);
     suite.add(LeftBottom45DegreeTest);
@@ -171,6 +171,6 @@ YUI.add('axis-label-tests', function(Y) {
     suite.add(RightTopNegative60DegreeTest);
     suite.add(RightTopNegative75DegreeTest);
     suite.add(RightTopNegative90DegreeTest);
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

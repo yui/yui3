@@ -172,7 +172,7 @@ YUI.add('dom-class-test', function(Y) {
         'should remove the given class and preserve existing': function() {
             var node = document.createElement('div'),
                 val = 'foo bar';
-            
+
             node.className = val;
             Y.DOM.toggleClass(node, 'foo');
             Assert.areEqual('bar', node.className);
@@ -189,7 +189,7 @@ YUI.add('dom-class-test', function(Y) {
         'should add the given class and preserve existing': function() {
             var node = document.createElement('div'),
                 val = 'bar';
-            
+
             node.className = val;
             Y.DOM.toggleClass(node, 'foo');
             Assert.areEqual('bar foo', node.className);

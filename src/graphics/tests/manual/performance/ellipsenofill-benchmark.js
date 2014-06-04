@@ -9,8 +9,8 @@ YUI.add('ellipsenofill-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("EllipseNoFill", function() { 
+
+    suite.add("EllipseNoFill", function() {
         var ellipse = graphic.addShape({
                 type: "ellipse",
                 width: 16,
@@ -31,5 +31,5 @@ YUI.add('ellipsenofill-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

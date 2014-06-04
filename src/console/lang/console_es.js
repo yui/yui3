@@ -4,4 +4,4 @@
    clear : "Borrar",
    collapse : "Colapsar",
    expand   : "Expandir"
-} 
+}

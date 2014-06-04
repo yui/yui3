@@ -11,14 +11,14 @@
 		font-family: sans-serif;
 		font-size: smaller;
 	}
-	
+
 	.message {
 		padding: 5px;
 		font-size:120%;
 		background: #FFFCB6;
 		border:1px solid #C9C675;
 	}
-	
+
 	#results dt {
 		font-weight:bold;
 		padding:3px;
@@ -39,7 +39,7 @@
 <h1>Datatable Tests</h1>
 
 <p>To test the performance of various datatables, look at the following sections in the code:
-	
+
 	<pre>
 //large or small dataset.
 data: large,
@@ -60,7 +60,7 @@ _should: {
 	}
 }
 	</pre>
-	
+
 	Toggle <code>data</code> from <code>large</code> to <code>small</code> to get a different sized dataset. The <code>ignore</code> object determines which table to load. If testing performance, it is recommended that you only enable 1 table at a time.</p>
 	<hr>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
@@ -96,14 +96,14 @@ _should: {
 <script type="text/javascript">
 
 
- 
+
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false,
         useBrowserConsole: true
     }).use("console", "test", "dump", "datatable","node","json-parse", function(Y) {
-	
+
 
         // Set up the page
         var ASSERT = Y.Assert,
@@ -118,7 +118,7 @@ _should: {
 	        BTNRUN.set("disabled", true);
 
         }, BTNRUN);
-		
+
 		function testCompleted() {
 			BTNRUN.set("value", 'Test Completed');
 			Y.log('Test Completed');
@@ -129,13 +129,13 @@ _should: {
 
 
 
-		
+
 		//large data set
 		var large = [];
 		for (var i=0; i<500; i++) {
 			large[i] = {a: i+1, b:i+2, c:i+3, d: i+4, e: i+5, f: i+6, g:i+7};
 		}
-		
+
 		//small data set
 		var small = [{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
 				{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
@@ -158,11 +158,11 @@ _should: {
 			 	cols2: [{key:"a", field:"a", label:"AAA", sortable:true, className: ["oneClass", "anotherClass"], width:'75px'},{key:"b", abbr:"bbb", className:"myClass", width:'75px'},{key:"c"},{key:"d"},{key:"e"},{key:"f"},{key:"g"}],
 
 				cols3: [{key:"a", field:"a", label:"Lorem Ipsum Dolor SIt Amet", sortable:true, className: ["oneClass", "anotherClass"], width:'5px'},{key:"b", abbr:"Lorem Ipsum Dolor SIt Amet", className:"myClass", width:'75px'},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"}],
-				
-				
+
+
 				//large or small dataset.
 				data: large,
-				
+
 				//---------------------------------------------
 			    // Special instructions
 			    //---------------------------------------------
@@ -184,7 +184,7 @@ _should: {
 		    //---------------------------------------------
 
 		    setUp : function () {
-		        
+
 				//create recordset
 				//this.rs = new Y.Recordset({records:this.initialData});
 
@@ -196,65 +196,65 @@ _should: {
 		    tearDown : function () {
 				delete this.dt;
 		    },
-		
-			
+
+
 			/////////////////////////////////////////////////////////////////////////////
 			//
 			// Tests
 			//
 			/////////////////////////////////////////////////////////////////////////////
-			
-			
-			
+
+
+
 			testBaseDatatable: function() {
 				var sel = "#base";
-				this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"}); 
+				this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"});
 			    this.dt.render(sel);
 			},
-			
+
 			testXYDatatable: function() {
 				var sel = '#scrolling-xy';
-				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});  
+				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});
 				this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px", scroll:"xy"});
-			    this.dt.render(sel);				
+			    this.dt.render(sel);
 			},
-			
+
 			testXDatatable: function() {
 				var sel = "#scrolling-x";
-				
+
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
-				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", scroll:"x"});    
-				
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", scroll:"x"});
+
 			    this.dt.render(sel);
-				
+
 			},
-			
+
 			testYDatatable_FixedCol: function() {
 				var sel = "#scrolling-y";
-				
+
 				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px", scroll:"y"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px", scroll:"y"});
 			    this.dt.render(sel);
 			},
-			
+
 			testYDatatable_AutoCol: function() {
 				var sel = "#scrolling-colwidth";
-				
+
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", scroll:"y"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", scroll:"y"});
 			    this.dt.render(sel);
 			},
-			
+
 			testXYDatatable_BigHeaders: function() {
 				var sel = "#scrolling-bigcols";
-				
+
 				this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px", scroll:"xy"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px", scroll:"xy"});
 			    this.dt.render(sel);
 			}
-			
-			
-			
+
+
+
         });
 
         var suite = new Y.Test.Suite({name:"Datatable Test Suite"});

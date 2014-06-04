@@ -11,9 +11,9 @@
         to the native implementation.
     </p>
 </div>
-                
+
 {{>getting-started}}
-                
+
 <h2 id="using">Using the JSON Utility</h2>
 
 <h3 id="modules">JSON module overview</h3>
@@ -182,7 +182,7 @@ YUI().use("json-stringify", function (Y) {
             { name: "Ashley", age: 12 },
             { name: "Abby", age:9 }
         ]
-    }; 
+    };
 
     var jsonStr = Y.JSON.stringify(myData);
 
@@ -330,7 +330,7 @@ var myData = {
         { name: "Ashley", age: 12 },
         { name: "Abby", age:9 }
     ]
-}; 
+};
 
 // Create a cyclical reference
 myData.troop[0]["NEWKEY"] = myData;
@@ -409,14 +409,14 @@ YUI({
         <p>Native JSON.stringify treats regex values as a function on Android 2.3.</p>
         ```
 Y.JSON.stringify([{
-    "str" : "string", 
+    "str" : "string",
     "arr" : [5, /some regex/]
 }]);
 //modern browsers return
 [{"str":"string","arr":[5,{}]}]
 //Android 2.3.4 returns
 [{"str":"string","arr":[5,null]}]
-        
+
         ```
     </li>
 </ul>

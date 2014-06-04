@@ -29,7 +29,7 @@
     </tr>
     </table>
 
-    
+
     <h6>Schema</h6>
     <pre>
 {
@@ -149,7 +149,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
                 schema = {resultListLocator:"tr"},
                 // Each field name is held in a TH
                 thList = tableNode.all("th");
-                
+
             // Generate field definitions based on TH
             thList.each(function(thNode, i){
                 // Note that the XPath indexes are 1-based!
@@ -158,7 +158,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
             schema.resultFields = fields;
             return schema;
         };
-        
+
         var tableNode = Y.one("#complex"),
             // Generate schema dynamically
             schema = getSchemaFromTableNode(tableNode),

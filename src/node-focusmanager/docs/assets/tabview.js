@@ -11,7 +11,7 @@ YUI().use("*", function (Y) {
 
 	tabView.addClass("yui3-tabview");
 
-	//	Remove the "yui3-loading" class now that the necessary YUI dependencies are loaded and the 
+	//	Remove the "yui3-loading" class now that the necessary YUI dependencies are loaded and the
 	//	tabview has been skinned.
 
 	tabView.removeClass("yui3-tabview-loading");
@@ -31,7 +31,7 @@ YUI().use("*", function (Y) {
 	tabView.one("div").set("role", "presentation");
 
 
-	tabView.plug(Y.Plugin.NodeFocusManager, { 
+	tabView.plug(Y.Plugin.NodeFocusManager, {
 			descendants: ".yui3-tab>a",
 			keys: { next: "down:39", //	Right arrow
 					previous: "down:37" },	// Left arrow
@@ -45,7 +45,7 @@ YUI().use("*", function (Y) {
 		});
 
 
-	//	If the list of tabs loses focus, set the activeDescendant 
+	//	If the list of tabs loses focus, set the activeDescendant
 	//	attribute to the currently selected tab.
 
 	tabView.focusManager.after("focusedChange", function (event) {
@@ -69,7 +69,7 @@ YUI().use("*", function (Y) {
 		anchor.get("parentNode").set("role", "presentation");
 
 
-		//	Remove the "href" attribute from the anchor element to  
+		//	Remove the "href" attribute from the anchor element to
 		//	prevent JAWS and NVDA from reading the value of the "href"
 		//	attribute when the anchor is focused
 
@@ -103,7 +103,7 @@ YUI().use("*", function (Y) {
 		var selectedPanel,
 			sID = this.get("id");
 
-		//	Deselect the currently selected tab and hide its 
+		//	Deselect the currently selected tab and hide its
 		//	corresponding panel.
 
 		if (selectedTabAnchor) {
@@ -119,7 +119,7 @@ YUI().use("*", function (Y) {
 
 		creatingPaging(selectedPanel);
 
-		//	Prevent the browser from following the URL specified by the 
+		//	Prevent the browser from following the URL specified by the
 		//	anchor's "href" attribute when clicked.
 
 		event.preventDefault();
@@ -127,10 +127,10 @@ YUI().use("*", function (Y) {
 	}, ".yui3-tab>a");
 
 
-	//	Since the anchor's "href" attribute has been removed, the 
-	//	element will not fire the click event in Firefox when the 
-	//	user presses the enter key.  To fix this, dispatch the 
-	//	"click" event to the anchor when the user presses the 
+	//	Since the anchor's "href" attribute has been removed, the
+	//	element will not fire the click event in Firefox when the
+	//	user presses the enter key.  To fix this, dispatch the
+	//	"click" event to the anchor when the user presses the
 	//	enter key.
 
 	if (bGeckoIEWin) {
@@ -190,5 +190,5 @@ YUI().use("*", function (Y) {
 		node.simulate("click");
 
 	}, ".yui3-tabview-nextbtn");
-	
+
 });

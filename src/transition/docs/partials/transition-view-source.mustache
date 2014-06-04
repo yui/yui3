@@ -8,7 +8,7 @@ YUI().use('transition', 'node-event-delegate', 'cssbutton', function(Y) {
     Y.delegate('click', function(e) {
         var buttonID = e.currentTarget.get('id'),
             node = Y.one('.demo');
-            
+
         if (buttonID === 'show') {
             node.show(true);
         } else if (buttonID == 'hide') {

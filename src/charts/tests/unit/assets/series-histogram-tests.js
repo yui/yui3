@@ -28,7 +28,7 @@ YUI.add('series-histogram-tests', function(Y) {
             this.series = null;
             Y.Event.purgeElement(DOC, false);
         },
-         
+
         getDrawSeriesData: function(
             xcoords,
             ycoords,
@@ -99,7 +99,7 @@ YUI.add('series-histogram-tests', function(Y) {
             setSize = style[setSizeKey];
             calculatedSize = style[calculatedSizeKey];
             markerCacheCreated = true;
-            
+
             maxSize = graphic.get(setSizeKey);
             if(seriesTypeCollection && seriesLen > 1)
             {
@@ -133,7 +133,7 @@ YUI.add('series-histogram-tests', function(Y) {
                     maxSize = seriesSize;
                 }
             }
-            
+
             offset -= seriesSize/2;
             for(i = 0; i < len; ++i)
             {
@@ -185,8 +185,8 @@ YUI.add('series-histogram-tests', function(Y) {
                         }
                         marker = {
                             fillColor: style.fill.color,
-                            borderColor: style.border.color, 
-                            graphOrder: graphOrder, 
+                            borderColor: style.border.color,
+                            graphOrder: graphOrder,
                             i: i
                         };
                         markers.push(marker);
@@ -249,19 +249,19 @@ YUI.add('series-histogram-tests', function(Y) {
                 HistogramDrawSeriesMock = Y.Base.create("histogramDrawSeriesMock", Y.CartesianSeries, [Y.Histogram], {
                     _leftOrigin: 0,
 
-                    _bottomOrigin: height, 
+                    _bottomOrigin: height,
 
                     _getMarkerDimensions: function(x, y, size, offset) {
                         return {
                             top: y,
                             left: x,
                             width: size,
-                            height: size,  
+                            height: size,
                             offset: offset,
-                            calculatedSize: size 
+                            calculatedSize: size
                         };
                     },
-                   
+
                     getMarker: function(style, graphOrder, i) {
                         var marker =  {
                             fillColor: style.fill.color,
@@ -270,7 +270,7 @@ YUI.add('series-histogram-tests', function(Y) {
                             i: i
                         };
                         this._markers.push(marker);
-                        return marker;    
+                        return marker;
                     },
 
                     _createMarkerCache: function() {
@@ -289,7 +289,7 @@ YUI.add('series-histogram-tests', function(Y) {
                     _getDefaultStyles: function() {
                         var styles = {};
                         styles.marker = this._getPlotDefaults();
-                        return styles;        
+                        return styles;
                     }
                 }, {
                     ATTRS: {
@@ -322,7 +322,7 @@ YUI.add('series-histogram-tests', function(Y) {
                     styles: {
                         marker: {
                             border: {
-                                color: "#f00"   
+                                color: "#f00"
                             },
                             fill: {
                                 color: "#00f"
@@ -339,7 +339,7 @@ YUI.add('series-histogram-tests', function(Y) {
                     styles: {
                         marker: {
                             border: {
-                                color: ["#f00", "#00f"]   
+                                color: ["#f00", "#00f"]
                             },
                             fill: {
                                 color: ["#00f", "#f00"]
@@ -381,13 +381,13 @@ YUI.add('series-histogram-tests', function(Y) {
                     );
                     for(i = 0; i < len; i = i + 1) {
                         testMarker = testData.markers[i];
-                        marker = series._markers[i];  
+                        marker = series._markers[i];
                         if(testMarker) {
                             Y.Assert.isNotNull(marker, "There should be a marker.");
                             fillColor = testMarker.fillColor;
                             strokeColor = testMarker.borderColor;
-                            Y.Assert.areEqual(fillColor, marker.fillColor, "The marker's fill color should be " + fillColor + ".");   
-                            Y.Assert.areEqual(strokeColor, marker.borderColor, "The marker's border color should be " + strokeColor + ".");   
+                            Y.Assert.areEqual(fillColor, marker.fillColor, "The marker's fill color should be " + fillColor + ".");
+                            Y.Assert.areEqual(strokeColor, marker.borderColor, "The marker's border color should be " + strokeColor + ".");
                         }
                     }
                 };
@@ -397,38 +397,38 @@ YUI.add('series-histogram-tests', function(Y) {
                 series1.set("xcoords", [20, 60, 100, 140, 180, 220, 260, 300, 340, 380]);
                 series1.set("ycoords", [280, 80, 310, 270, 300, 400, 240, 160, 220, 40]);
                 series.drawSeries.apply(series1);
-                testDrawSeries(series1); 
+                testDrawSeries(series1);
                 series1.set("styles", {
                    marker: {
-                        width: 50   
+                        width: 50
                    }
                 });
                 series.drawSeries.apply(series1);
-                testDrawSeries(series1); 
+                testDrawSeries(series1);
                 series1.set("styles", {
                    marker: {
-                        width: 12   
+                        width: 12
                    }
                 });
                 series1.set("direction", "vertical");
                 series.drawSeries.apply(series1);
-                testDrawSeries(series1); 
-                seriesTypeCollection.push(series2); 
+                testDrawSeries(series1);
+                seriesTypeCollection.push(series2);
                 series2._markers = [];
                 series1.set("direction", "horizontal");
                 series.drawSeries.apply(series1);
-                testDrawSeries(series1); 
+                testDrawSeries(series1);
                 series2.set("xcoords", [20, 60, 100, 140, 180, 220, 260, 300, 340, 380]);
                 series2.set("ycoords", [280, 80, 310, 270, 300, 210, 240, 160, 220, 40]);
                 series.drawSeries.apply(series2);
                 testDrawSeries(series2);
                 series1.set("styles", {
                    marker: {
-                        width: 30   
+                        width: 30
                    }
                 });
                 series.drawSeries.apply(series1);
-                testDrawSeries(series1); 
+                testDrawSeries(series1);
         },
 
         "test: _getPlotDefaults()" : function() {
@@ -454,13 +454,13 @@ YUI.add('series-histogram-tests', function(Y) {
             for(key in testFill) {
                 if(testFill.hasOwnProperty(key)) {
                     Y.Assert.isTrue(plotDefaults.fill.hasOwnProperty(key), "The fill should have a " + key + " value.");
-                    Y.Assert.areEqual(testFill[key], plotDefaults.fill[key], "The " + key + " value of fill should be " + testFill[key] + "."); 
+                    Y.Assert.areEqual(testFill[key], plotDefaults.fill[key], "The " + key + " value of fill should be " + testFill[key] + ".");
                 }
             }
             for(key in testBorder) {
                 if(testBorder.hasOwnProperty(key)) {
                     Y.Assert.isTrue(plotDefaults.border.hasOwnProperty(key), "The border should have a " + key + " value.");
-                    Y.Assert.areEqual(testBorder[key], plotDefaults.border[key], "The " + key + " value of border should be " + testBorder[key] + "."); 
+                    Y.Assert.areEqual(testBorder[key], plotDefaults.border[key], "The " + key + " value of border should be " + testBorder[key] + ".");
                 }
             }
             Y.Assert.areEqual(testWidth, plotDefaults.width, "The width should be " + testWidth + ".");
@@ -471,9 +471,9 @@ YUI.add('series-histogram-tests', function(Y) {
             Y.Assert.areEqual(0, plotDefaults.padding.right, "The right padding should be zero.");
             Y.Assert.areEqual(0, plotDefaults.padding.bottom, "The bottom padding should be zero.");
         }
-            
+
     });
-    
+
     suite.add(new Y.HistogramTest({
         name: "Histogram Tests"
     }));

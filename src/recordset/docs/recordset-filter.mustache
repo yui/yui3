@@ -25,13 +25,13 @@ YUI().use("recordset-base", "recordset-filter", function(Y) {
         {ANSI: "06000", STATE: "CALIFORNIA", TOTAL_POP: 36961664, LAND_AREA: 155959.34, POP_PER_SQ_MILE: 217.2},
         {ANSI: "10000", STATE: "DELAWARE", TOTAL_POP: 885122, LAND_AREA: 1953.56, POP_PER_SQ_MILE: 401}
     ],
-	
+
 	//instantiate a new Recordset
 	recordset = new Y.Recordset({records: state_census_data});
-	
+
 	//Plug it with the Filter plugin
 	recordset.plug(Y.Plugin.RecordsetFilter);
-	
+
 	//call filter methods with the 'filter' namespace
 	var subset = recordset.filter.filter("STATE", "CALIFORNIA");
 });
@@ -74,7 +74,7 @@ var subset = recordset.filter.filter(myCustomFilterFunction);
 ```
 //use the 'array-extras' submodule
 YUI().use("recordset-base", "recordset-filter", "array-extras", function(Y) {
-	
+
     var state_census_data = [
         {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
         {ANSI: "06000", STATE: "CALIFORNIA", TOTAL_POP: 36961664, LAND_AREA: 155959.34, POP_PER_SQ_MILE: 217.2},
@@ -82,12 +82,12 @@ YUI().use("recordset-base", "recordset-filter", "array-extras", function(Y) {
 	],
 	//instantiate a new Recordset
 	recordset = new Y.Recordset({records: state_census_data});
-	
+
 	//Define a custom function
 	customFindFunction = function() {
 		...
 	}
-	
+
 	//Use the Array.find method found in the array-extras sub-module
 	var subset = new Y.Recordset({
 	       records: Y.Array.find(recordset.get('records'), customFindFunction)

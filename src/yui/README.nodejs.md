@@ -5,7 +5,7 @@ The YUI system needs to be built in order for it to work inside of NodeJS proper
 We have created a script to do this for you so you can create an npm packge that's
 installable and usable locally.
 
-We have also created a new seed file for YUI inside of node (`yui-nodejs`) that 
+We have also created a new seed file for YUI inside of node (`yui-nodejs`) that
 loads all of the YUI modules needed to make YUI run on node properly.
 
 Installation
@@ -56,7 +56,7 @@ console.log('YQL?', (Y.YQL) ? true : false); //true
 ```
 
 When you require a YUI module more than once in a process, the YUI instance
-used under the hood is shared. 
+used under the hood is shared.
 
 ```javascript
 var Y = require('yui/yql');

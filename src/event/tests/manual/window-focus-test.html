@@ -30,7 +30,7 @@
             win.on("focus", function (e) {
                 Y.log("First focus listener called");
             });
-            
+
             win.on("blur", function (e) {
                 Y.log("First blur listener called");
             });
@@ -38,13 +38,13 @@
             Y.on("focus", function (e) {
                 Y.log("Second focus listener called");
             }, window);
-            
+
             Y.on("blur", function (e) {
                 Y.log("Second blur listener called");
             }, window);
 
         });
-    
+
     </script>
 
 </body>

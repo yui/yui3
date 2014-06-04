@@ -23,12 +23,12 @@ Y.mix(Y.namespace("XML"), {
             if (win.ActiveXObject !== undefined) {
                 xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
                 xmlDoc.async = false;
-                xmlDoc.loadXML(data);            
+                xmlDoc.loadXML(data);
             } else if (win.DOMParser !== undefined) {
-                xmlDoc = new DOMParser().parseFromString(data, "text/xml");            
+                xmlDoc = new DOMParser().parseFromString(data, "text/xml");
             } else if (win.Windows !== undefined) {
                 xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
-                xmlDoc.loadXml(data);            
+                xmlDoc.loadXml(data);
             }
         }
 

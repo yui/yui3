@@ -117,7 +117,7 @@
 </style>
 
 <div class="intro">
-    <p>This example shows how you can mix and match the `WidgetPosition`, `WidgetPositionAlign`, `WidgetStack` and `WidgetStdMod` extensions to build custom versions of the `Widget` class, using `Base.create`.</p>    
+    <p>This example shows how you can mix and match the `WidgetPosition`, `WidgetPositionAlign`, `WidgetStack` and `WidgetStdMod` extensions to build custom versions of the `Widget` class, using `Base.create`.</p>
 </div>
 
 <div class="example">
@@ -170,7 +170,7 @@ stdmod.render();
 var contentInput = Y.one("#content");
 var sectionInput = Y.one("#section");
 
-// This should work, since the StandardModule widget has settable 
+// This should work, since the StandardModule widget has settable
 // header/body/footer sections
 Y.on("submit", function(e) {
     e.preventDefault();
@@ -219,7 +219,7 @@ Since the `StandardModule` class is not positionable, we use `display:none` to d
 <p>As with `StandardModule`, we use `Base.create` to create the new `Positionable` widget class. This time we add `WidgetPosition` and `WidgetStack` support to the base `Widget` class to create a basic XY positionable widget, with shimming and z-index support.</p>
 
 ```
-var Positionable = Y.Base.create("positionable", Y.Widget, 
+var Positionable = Y.Base.create("positionable", Y.Widget,
                             [Y.WidgetPosition, Y.WidgetStack]);
 
 // Render from markup
@@ -246,7 +246,7 @@ positionable.move(xy[0], xy[1]);
 // This should work, since Positionable has basic XY Positioning support
 Y.on("submit", function(e) {
     e.preventDefault();
-    
+
     var x = parseInt(xInput.get("value"));
     var y = parseInt(yInput.get("value"));
 
@@ -263,7 +263,7 @@ Y.on("click", function(e) {
     try {
         positionable.setStdModContent("header", "new content");
     } catch (e) {
-        alert("setStdModContent() is " + typeof positionable.setStdModContent + 
+        alert("setStdModContent() is " + typeof positionable.setStdModContent +
             ", positionable.hasImpl(Y.WidgetStdMod) : " + positionable.hasImpl(Y.WidgetStdMod));
     }
 }, "#tryContent");
@@ -279,7 +279,7 @@ Y.on("click", function(e) {
     position:absolute;
 }
 
-/* 
+/*
    In order to be able to position the widget when hidden, we define hidden
    to use visibility, as opposed to display
 */
@@ -295,7 +295,7 @@ Y.on("click", function(e) {
 <p>Again, we use `Base.create` to create our new `Alignable` widget class, by combining `WidgetPosition`, `WidgetStack` and `WidgetPositionAlign` with the base widget class:</p>
 
 ```
-var Alignable = Y.Base.create("alignable", Y.Widget, 
+var Alignable = Y.Base.create("alignable", Y.Widget,
                     [Y.WidgetPosition, Y.WidgetPositionAlign, Y.WidgetStack]);
 
 var alignable = new Alignable({
@@ -306,7 +306,7 @@ var alignable = new Alignable({
     },
     zIndex:1
 });
-alignable.get("contentBox").set("innerHTML", 
+alignable.get("contentBox").set("innerHTML",
     '<strong>Alignable Widget</strong><div id="alignment"><p>#widget3-example</p> \
     <p>[center, center]</p></div>');
 alignable.render("#widget3-example");
@@ -317,25 +317,25 @@ alignable.render("#widget3-example");
 <p>We'll attempt to align an instance of the `Alignable` class, using some of the additional attributes which `WidgetPositionAlign` adds to the base `Widget` class: `align` and `centered`:</p>
 
 ```
-// Align left-center egde of widget to 
+// Align left-center egde of widget to
 // right-center edge of the node with id "widget3-example"
 alignable.set("align", {node:"#widget3-example", points:["lc", "rc"]});
 
-// Align top-right corner of widget to 
+// Align top-right corner of widget to
 // bottom-right corner of the node with id "widget3-example"
 alignable.set("align", {node:"#widget3-example", points:["tr", "br"]});
 
 // Center the widget in the node with id "widget3-example"
 alignable.set("centered", "widget3-example");
 
-// Align the right-center edge of the widget to 
+// Align the right-center edge of the widget to
 // the right center edge of the viewport (since a node is not provided to 'align')
 alignable.set("align", {points:["rc", "rc"]});
 
 // Center the widget in the viewport (wince a node is not provided to 'centered')
 alignable.set("centered", true);
 
-// Return the node to it's original alignment 
+// Return the node to it's original alignment
 // (centered in the node with id "widget3-example")
 // NOTE: centered is a shortcut for align : { points:["cc", "cc"] }
 alignable.set("align", {node:"#widget3-example", points:["cc", "cc"]});
@@ -351,7 +351,7 @@ alignable.set("align", {node:"#widget3-example", points:["cc", "cc"]});
     position:absolute;
 }
 
-/* 
+/*
    In order to be able to position the widget when hidden, we define hidden
    to use visibility, as opposed to display
 */

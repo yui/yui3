@@ -1,4 +1,4 @@
-    // handler that positions and shows the tooltip 
+    // handler that positions and shows the tooltip
     var onMousemove = function (e) {
         var i;
         if (tooltip.get('visible') === false) {
@@ -12,11 +12,11 @@
                 Y.one('#tooltip').setStyle('opacity', '1');
                 tooltip.show();
             }, 500);
-            
+
             // while waiting to show tooltip, don't let other
             // mousemoves try to show tooltip too.
             waitingToShow = true;
-            
+
             // loop through the tipText array looking for a match between
             // the class name and the array literal `name`
             for (i = 0; i < tipText.length; i += 1) {
@@ -33,10 +33,10 @@
     // handler that hides the tooltip
     var onMouseleave = function (e) {
 
-        // this check prevents hiding the tooltip 
+        // this check prevents hiding the tooltip
         // when the cursor moves over the tooltip itself
         if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
             tooltip.hide();
-            waitingToShow = false;            
+            waitingToShow = false;
         }
     }
