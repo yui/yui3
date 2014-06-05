@@ -1,0 +1,227 @@
+<style scoped>
+/* custom styles for this example */
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
+
+/* css to counter global site css */
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
+.intro {
+    min-height: 182px;
+    zoom: 1;    
+}
+.intro:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.intro img {
+    width: 256px;
+    height: 150px;
+    float: right;
+    margin: 0 0 0.3em 1em;
+}
+
+{{>datatable-colorsort-css}}
+
+</style>
+
+<div class="intro">
+    <p>
+    <img src="{{{componentAssets}}}/img/color_sort_filt.png" width="297" height="150" alt="DataTable sorted by colors"/>
+    This example builds on the Column Sort example. It makes use of the <a href="../color/">Y.Color</a> module. It also shows how to <a href="../model-list/#filtering-models">filter the Model List</a> of the DataTable to get a subset of the data.</p>
+    <p>Click on the column headers to sort the color swatches in different ways. Filter the data with the radio buttons on the right.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>datatable-colorsort-html}}
+    <script>    
+        {{>datatable-colorsort-js}}
+    </script>
+</div>
+
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+<p>
+To add column sorting functionality to any DataTable, simply include the `datatable-sort` module in your `use()` line and add the `sortable: true` configuration to the configuration objects of the columns you want to be sortable, as shown in the <a href="datatable-sort.html">Column Sorting</a> example.</p>
+
+<p>Note, if you want all columns to be sortable, simply set `sortable: true` on the DataTable instance.</p>
+
+```
+YUI().use("datatable-sort", function(Y) {
+    // code goes here
+});
+```
+<p>
+This example also uses the `color-harmony` module
+</p>
+```
+YUI().use("datatable-sort", 'color-harmony', function(Y) {
+    // code goes here
+});
+``` 
+<h2>Color Data</h2>
+The color data for this example comes from <a href="http://www.w3.org/TR/css3-color/#svg-color">http://www.w3.org/TR/css3-color/#svg-color</a>. The data contains only the name of the color and its hex value.
+```
+var myData = [
+        {name: 'antiquewhite', hex: 'faebd7'},
+        {name: 'aqua', hex: '00ffff'},
+        {name: 'aquamarine', hex: '7fffd4'},
+        // ... a lot more colors
+        {name: 'whitesmoke', hex: 'f5f5f5'},
+        {name: 'yellow', hex: 'ffff00'},
+        {name: 'yellowgreen', hex: '9acd32'}
+    ];
+```
+<h2>Generating a Color Number</h2>
+<p>
+Sorting and filtering can help users find the right color. Hex values don't help much in sorting the colors in a visually logical way. Later in the code, the following function will use the <a href="../color/">Y.Color</a> module to generate a special color number for each hex value. This color number will be more useful in sorting and filtering.
+</p>
+```
+{{>datatable-colorsort-js-getcolornum}}
+```
+<h2>The DataTable Instance</h2>
+The DataTable instance will include: 
+<ul>
+    <li>Column configs that add new columns</li>
+    <li>A recordType that will populate the DataTable's ModelList so that some of the additional columns can be sortable</li>
+    <li>Data</li>
+    <li>An initial sorting config</li>
+</ul>
+```
+    myTable = new Y.DataTable({
+        columns: [
+            // code goes here
+        ],
+        recordType: {
+            // code goes here
+        },
+        data: myData,
+        sortBy: { hbs: 'desc' }
+    }).render("#cTable");
+
+```
+<p>
+    We'll now add the details to the DataTable instance.
+</p>
+<h2>Formatter - Adding Columns</h2>
+<p>
+The provided data from `var = myData` only has two properties per row to use as columns, but we are adding more columns in the `columns` config. A Swatch column allows users to see the colors. We used a formatter to set the content to be a `<div>` with the background color accessed from the hex value of each row. Since there's no swatch property in `myData`, this column cannot be made sortable.
+</p>
+<p>
+We're also adding 2 columns that will allow sorting by Hue and Brightness priorities respectively. The DataTables ModelList (where myData is stored) doesn't contain any data for these columns yet. That will be added by the `recordType`. See next snippet.
+</p>
+```
+    myTable = new Y.DataTable({
+        columns: [
+            { key: "swatch",
+              label: 'Swatch',
+              // Use formatter to add a div swatch in each cell
+              // Color the background-color from hex value in each row
+              formatter: function(o) {
+                return '<div class="swatch" style="' +
+                'background-color: #' + o.data.hex + ';' +
+                '"></div>';
+              },
+              sortable: false,
+              allowHTML: true
+            },
+            { key: "name",
+              label: 'Color Name',
+              sortable: true
+            },
+            { key: "hex",
+              label: 'Hex',
+              sortable: true
+            },
+            { key: "hbs",
+              label: 'Hue', // hue.bright.sat
+              sortable: true
+            },
+            { key: "bhs",
+              label: 'Bright', // bright.hue.sat
+              sortable: true
+            }
+        ],
+        recordType: {
+            // see the next code snippet below
+        },
+        data: myData,
+        sortBy: { hbs: 'desc' }
+    }).render("#cTable");
+
+```
+<h2>RecordType - Sortable Generated Columns</h2>
+<p>
+As described in the <a href="datatable-recordtype.html">Sortable Generated Columns</a> example, we're using a `getter` to return a color number string from the `getColorNum` function shown above. This puts these values in the DataTable's ModelList so they'll be filterable and the columns can be sortable.
+</p> 
+```
+    myTable = new Y.DataTable({
+        columns: [
+            // see the previous code snippet above
+        ],
+        recordType: {
+            swatch: {},
+            name: {},
+            hex: {},
+            hbs: {
+                getter: function() {
+                    // create a new attribute in the model
+                    // and generate a sortable color number
+                    // from the hex value for each Model
+                    return getColorNum(this.get('hex'), 'hbs');
+                }
+            },
+            bhs: {
+                getter: function() {
+                    // do the same for bright.hue.sat
+                    return getColorNum(this.get('hex'), 'bhs');
+                }
+            }
+        },
+        data: myData,
+        sortBy: { hbs: 'desc' } // initial sorting
+    }).render("#cTable");
+
+```
+<h2>Filtering</h2>
+<p>
+The `filterModel` function filters the original data of the DataTable to get a subset. See the example <a href="../model-list/#filtering-models">Filtering the Model List</a> for a simpler example of filtering.
+```
+{{>datatable-colorsort-js-filtermodel}}
+```
+<p>The `filterModel` function is used in these ways.</p>
+```
+    // initial filtering of the dataTable's modelList to muted colors
+    filterModel('filter-mute');
+
+    // listen for filter change
+    Y.all('.filters').on('click', function(e) {
+        filterModel(e.target.get('id'));
+    });
+```
+<h2>Full Code Listing</h2>
+<h4>The CSS</h4>
+```
+{{>datatable-colorsort-css}}
+```
+<h4>The HTML</h4>
+```
+{{>datatable-colorsort-html}}
+```
+<h4>The JavaScript</h4>
+```
+{{>datatable-colorsort-js}}
+```
