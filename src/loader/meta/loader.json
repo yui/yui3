@@ -17,6 +17,9 @@
                 "requires": [
                     "loader-base"
                 ]
+            },
+            "loader-pathogen-encoder": {
+                "use" : ["loader-base", "loader-rollup", "loader-yui3", "loader-pathogen-combohandler" ]
             }
         }
     }
