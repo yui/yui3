@@ -503,7 +503,7 @@ proto = {
         }
         filter = (filter) ? '-' + filter : filter;
         Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
-
+        Y.config.loaderModuleName = YUI.config.loaderModuleName || 'loader'
     },
 
     /**
@@ -1316,7 +1316,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                 queue.running = false;
                 Env.bootstrapped = true;
                 G_ENV._bootstrapping = false;
-                if (Y._attach(['loader'])) {
+                if (Y._attach([config.loaderModuleName])) {
                     Y._use(args, callback);
                 }
             };
@@ -2054,6 +2054,13 @@ available.
 
 @property {String} loaderPath
 @default "loader/loader-min.js"
+**/
+
+/**
+Module name for the loader module. Changing this enables the use of an alternate loader.
+
+@property {String} loaderModuleName
+@default "loader"
 **/
 
 /**
