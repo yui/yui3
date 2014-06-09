@@ -10398,7 +10398,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dd-drag": {
         "requires": [
-            "dd-ddm-base"
+            "dd-ddm-base",
+            "selector-css2"
         ]
     },
     "dd-drop": {
@@ -12210,7 +12211,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '45357bb11eddf7fd0a89c0b756599df2';
+YUI.Env[Y.version].md5 = '7ef189c2dd804768209f77293bfb00d9';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
