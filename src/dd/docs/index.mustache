@@ -73,7 +73,7 @@ You can also use the `removeHandle` method to remove a previously added handle.
 <p>
 The opposite of handles are Invalid Handles. This is a selector string that will never
 fire a drag event. By default the following HTML elements will not be draggable since adding
-the mouse events to them prohibit their actual use: `textarea, input, a, button, select`
+the mouse events to them prohibit their actual use: `textarea, input, a, button, select, [contenteditable]`
 </p>
 
 <p>If you need to drag one of these items, you will have to call `removeInvalid` on your
