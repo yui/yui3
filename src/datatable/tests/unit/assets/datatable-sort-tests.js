@@ -294,6 +294,72 @@ suite.add(new Y.Test.Case({
         table.destroy();
     },
 
+    "sort should order based on insertion order when sorting against same values": function () {
+        var table = new Y.DataTable({
+                columns: ['a', 'b'],
+                data: [
+                    { a: 'a1', b: 1 },
+                    { a: 'a1', b: 2 },
+                    { a: 'a1', b: 3 },
+                    { a: 'a1', b: 4 },
+                    { a: 'a1', b: 5 },
+                    { a: 'a1', b: 6 },
+                    { a: 'a2', b: 7 },
+                    { a: 'a3', b: 8 },
+                    { a: 'a4', b: 9 },
+                    { a: 'a5', b: 10 },
+                    { a: 'a6', b: 11 },
+                ],
+                sortable: true
+            }).render(),
+            size,
+            idx;
+
+        // Test initial sort order
+        table.data.each(function (item, index) {
+            Y.Assert.areEqual(++index, item.get('b'), 'item ' + item.get('a') + ' should be ' + index + ' in default order');
+        });
+
+        // Test sort directions multiple times because they could change order each time
+
+        table.sort({a:-1});
+        size = table.data.size();
+        table.data.each(function (item, index) {
+            idx = size - index;
+            Y.Assert.areEqual(idx, item.get('b'), 'item ' + item.get('a') + ' should be ' + idx + ' when desc sort');
+        });
+
+        table.sort('a');
+        table.data.each(function (item, index) {
+            Y.Assert.areEqual(++index, item.get('b'), 'item ' + item.get('a') + ' should be ' + index + ' in asc order');
+        });
+
+        table.sort({a:-1});
+        size = table.data.size();
+        table.data.each(function (item, index) {
+            idx = size - index;
+            Y.Assert.areEqual(idx, item.get('b'), 'item ' + item.get('a') + ' should be ' + idx + ' when desc sort');
+        });
+
+        table.sort('a');
+        table.data.each(function (item, index) {
+            Y.Assert.areEqual(++index, item.get('b'), 'item ' + item.get('a') + ' should be ' + index + ' in asc order');
+        });
+
+        table.sort({a:-1});
+        size = table.data.size();
+        table.data.each(function (item, index) {
+            idx = size - index;
+            Y.Assert.areEqual(idx, item.get('b'), 'item ' + item.get('a') + ' should be ' + idx + ' when desc sort');
+        });
+
+        table.sort('a');
+        table.data.each(function (item, index) {
+            Y.Assert.areEqual(++index, item.get('b'), 'item ' + item.get('a') + ' should be ' + index + ' in asc order');
+        });
+
+        table.destroy();
+    },
 
     // reverse sorting a column
     "reverse sorting a column": function () {
@@ -432,4 +498,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['datatable-sort', 'test', 'node-event-simulate']});
+}, '@VERSION@' ,{requires:['datatable', 'test', 'node-event-simulate']});
