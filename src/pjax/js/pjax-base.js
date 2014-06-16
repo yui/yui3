@@ -139,18 +139,18 @@ PjaxBase.prototype = {
 
         if (!this._hasSameOrigin(url)) {
             Y.error('Security error: The new URL must be of the same origin as the current URL.');
-        }
-
-        // Send paths with the same origin but no matching routes to window.location if specified.
-        // [options.handleFallThrough] overrides the `handleFallThroughNavigation` attribute.
-        if (options && typeof options.handleFallThrough !== 'undefined') {
-            handleFallThrough = options.handleFallThrough;
         } else {
-            handleFallThrough = this.get('handleFallThroughNavigation');
-        }
-        if (handleFallThrough) {
-            console.log("FALL THROUGH");
-            win.location = url;
+            // Send paths with the same origin but no matching routes to window.location if specified.
+            // [options.handleFallThrough] overrides the `handleFallThroughNavigation` attribute.
+            if (options && typeof options.handleFallThrough !== 'undefined') {
+                handleFallThrough = options.handleFallThrough;
+            } else {
+                handleFallThrough = this.get('handleFallThroughNavigation');
+            }
+            if (handleFallThrough) {
+                console.log("FALL THROUGH");
+                win.location = url;
+            }
         }
 
         return false;
