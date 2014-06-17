@@ -190,11 +190,14 @@ Y.mix(NodeList.prototype, {
 
     /**
      * Executes the function once for each node until a true value is returned.
+     *
      * @method some
-     * @param {Function} fn The function to apply. It receives 3 arguments:
-     * the current node instance, the node's index, and the NodeList instance
-     * @param {Object} context optional An optional context to execute the function from.
-     * Default context is the current Node instance
+     * @param fn {Function}
+     *  The function to apply. It receives 3 arguments:
+     *  the current node instance, the node's index, and the NodeList instance
+     * @param [context] {Object}
+     *  An optional context to execute the function from.
+     *  Default context is the current Node instance
      * @return {Boolean} Whether or not the function returned true for any node.
      */
     some: function(fn, context) {
