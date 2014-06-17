@@ -122,8 +122,6 @@ PjaxBase.prototype = {
           to `true` if the specified `url` is the same as the current URL.
         @param {Boolean} [options.force=false] Whether the enhanced navigation
           should occur even in browsers without HTML5 history.
-        @param {Boolean} [options.handleFallThrough=false] Whether to set `window.location`
-          to the URL if no routes match. Overrides the `handleFallThroughNavigation` attribute.
     @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
     @since 3.5.0
     **/
@@ -139,18 +137,13 @@ PjaxBase.prototype = {
 
         if (!this._hasSameOrigin(url)) {
             Y.error('Security error: The new URL must be of the same origin as the current URL.');
-        } else {
+            return false;
+        }
+
+        if (this.get('allowFallThrough')) {
             // Send paths with the same origin but no matching routes to window.location if specified.
-            // [options.handleFallThrough] overrides the `handleFallThroughNavigation` attribute.
-            if (options && typeof options.handleFallThrough !== 'undefined') {
-                handleFallThrough = options.handleFallThrough;
-            } else {
-                handleFallThrough = this.get('handleFallThroughNavigation');
-            }
-            if (handleFallThrough) {
-                console.log("FALL THROUGH");
-                win.location = url;
-            }
+            win.location = url;
+            return true;
         }
 
         return false;
@@ -435,13 +428,13 @@ PjaxBase.ATTRS = {
     Whether to set `window.location` when calling `navigate()`
     if no routes match the specified URL.
 
-    @attribute handleFallThroughNavigation
+    @attribute allowFallThrough
     @type Boolean
-    @default false
-    @since 3.17.3
+    @default true
+    @since @SINCE@
     **/
-    handleFallThroughNavigation: {
-        value: false
+    allowFallThrough: {
+        value: true
     }
 };
 
