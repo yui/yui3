@@ -126,8 +126,6 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
     navigate: function (url, options) {
-        var handleFallThrough;
-
         // The `_navigate()` method expects fully-resolved URLs.
         url = this._resolveURL(url);
 
