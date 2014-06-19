@@ -67,7 +67,6 @@ Y.mix(JSONPRequest.prototype, {
                     })
                 .replace(/\[(\d+)\]/g,
                     function (x, $1) {
-                        /*jslint bitwise: true */
                         keys[i] = parseInt($1, 10) | 0;
                         return '.@' + (i++);
                     })
