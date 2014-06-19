@@ -475,9 +475,9 @@ suite.add( new Y.Test.Case({
 
     "thumbUrl should default at render()": function () {
         var slider = new Y.Slider();
-        
+
         Y.Assert.isNull( slider.get('thumbUrl') );
-        
+
         slider.render('#testbed');
 
         Y.Assert.isString( slider.get('thumbUrl') );
@@ -507,7 +507,7 @@ suite.add( new Y.Test.Case({
     },
 
     "test clickableRail": function () {
-        
+
     },
 
     "test min": function () {
@@ -564,9 +564,9 @@ suite.add( new Y.Test.Case({
         thumb.key(37); // left
         thumb.key(37); // left
         Y.Assert.areEqual(59, slider.get('value'));
-        thumb.key(36); // home 
+        thumb.key(36); // home
         Y.Assert.areEqual(0, slider.get('value'));
-        thumb.key(35); // end 
+        thumb.key(35); // end
         Y.Assert.areEqual(100, slider.get('value'));
         // beyond max
         thumb.key(33); // pageUp
@@ -588,14 +588,14 @@ suite.add( new Y.Test.Case({
         slider.destroy();
 
     },
-    
+
     /*
      * This tests changing the value by one unit
      * that would not move the slider a full pixel
      * and because of ticket #2531498, was
      * changing the value back to previous value
      * to match the thumb position
-     */                             
+     */
     "test keyboard input and resultant value change, when Slider length is less than max - min": function () {
         var slider = new Y.Slider({
             length: '30px',  // length less than max - min
@@ -613,7 +613,7 @@ suite.add( new Y.Test.Case({
         slider.destroy();
 
     },
-    
+
     "test ARIA attributes while values change by keyboard input": function () {
         var slider = new Y.Slider({
             length: '300px',  // length less than max - min

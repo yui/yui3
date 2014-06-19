@@ -11,14 +11,14 @@ YUI.add('perfcombo-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-    
+
     suite.add("PerfComboChart", function() {
         chart = new Y.Chart({
             dataProvider: dataProvider,
             type: "combo",
             categoryType: "time",
             categoryKey: "date",
-            render: container 
+            render: container
         });
         chart.destroy(true);
     });

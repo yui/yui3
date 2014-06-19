@@ -28,7 +28,7 @@ YUI.add('yql-requery-tests', function (Y) {
 
             var queryNode   = Y.one('#res h2 em'),
                 content     = queryNode.getHTML();
-            
+
             firstNumber = getNumber(content);
             Assert.isNumber(firstNumber, 'Query number not found');
 

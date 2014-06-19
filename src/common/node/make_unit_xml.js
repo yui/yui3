@@ -27,7 +27,7 @@ var paths = require('./parse'),
     str.push(tab + '</tests>');
     str.push('</yuitest>');
     str.push('');
-    
+
     fs.writeFileSync(xml, str.join('\n'), 'utf8');
 
     console.log('Wrote', examples.length, 'test urls to unit.xml');

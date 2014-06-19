@@ -135,7 +135,7 @@ YUI.add('gesture-tests', function(Y) {
                     Assert.areSame('gesturemove', e.type, 'Event type not correct');
                     Assert.areEqual(1, e.button, 'e.button is not set');
                 }
-                
+
             }, Y.one('doc'));
         }
 

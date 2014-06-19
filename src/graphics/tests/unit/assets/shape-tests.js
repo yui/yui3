@@ -10,7 +10,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
 
         setUp: function() {
             this.graphic = new Y.Graphic({
-                render: parentDiv 
+                render: parentDiv
             });
             this.shape = this.graphic.addShape({
                 type: "path"
@@ -33,7 +33,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
                 _parsePathDataCalled: false,
                 _updateHandlerCalled: false,
                 _setGraphic: function() {
-                    this._setGraphicCalled = true;   
+                    this._setGraphicCalled = true;
                 },
                 _parsePathData: function() {
                     this._parsePathDataCalled = true;
@@ -115,7 +115,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
             Y.Assert.isTrue(graphicToBackCalled, "The graphic's toBack method should have been called.");
         }
     });
-    
+
     suite.add(shapeTests);
     Y.Test.Runner.add( suite );
 

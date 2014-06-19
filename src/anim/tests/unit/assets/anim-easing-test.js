@@ -5,7 +5,7 @@ YUI.add('anim-easing-test', function(Y) {
             node.setStyle('height', '');
         });
     }
-    
+
     var node = Y.one('.demo'),
         testCase = new Y.Test.Case({
             name: 'Anim Easing'
@@ -23,7 +23,7 @@ YUI.add('anim-easing-test', function(Y) {
 
                 duration: 0.25
             });
-            
+
             anim.on('end', onEnd, this);
             anim.run();
             this.wait(500);

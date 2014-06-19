@@ -1,0 +1,40 @@
+    // This filters the DataModel to have a subset of it's original
+    // data
+    function filterModel(filterType) {
+        // reset model list to include all colors to prepare for filter
+        myTable.set('data', myData);
+
+        var list = myTable.data,
+            filteredData = list.filter({asList: true}, function (list) {
+                var hbsStr = list.get('hbs'), // get the hue emphasized color number
+                    bright = hbsStr.substring(3, 5), // only the 2 brightness digits
+                    sat = hbsStr.substring(6, 8), // only the 2 saturation digits
+                    type; // clicked filter type
+
+                // Depending on which filter radio was clicked,
+                // filter the DataTable's modelList to include a
+                // subset of models/rows/colors
+                if (filterType === 'filter-all') {
+                    // Don't show black, white, or grays
+                    type = sat >= 1;
+                } else if (filterType === 'filter-tint') {
+                    // Bright colors that are not gray or white
+                    type = (bright >= 75) && (sat >= 1);
+                } else if (filterType === 'filter-shade') {
+                    // Darker colors that are not grayish
+                    type = (bright <= 50) && (sat >= 20);
+                } else if (filterType === 'filter-midtone') {
+                    // Middle brightness colors that are not grayish
+                    type = (bright >= 50) && (bright <= 75) && (sat >= 20);
+                } else if (filterType === 'filter-mute') {
+                    // Low saturation (grayish) but not pure grays
+                    type = (sat <= 55) && (sat >= 1);
+                } else if (filterType === 'filter-gray') {
+                    // Only colors that are completely gray
+                    type = sat === '00';
+                }
+
+                return type;
+            });
+        myTable.set('data', filteredData);
+    }

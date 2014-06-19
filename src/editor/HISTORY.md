@@ -6,6 +6,22 @@ Rich Text Editor Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* Increase specificity of when to set cursor.
+* Check for the existence of `node` before removing it.
+
 3.16.0
 ------
 

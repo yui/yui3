@@ -1,15 +1,15 @@
 /* base.css, part of YUI's CSS Foundation */
 .yui3-cssbase h1 {
 	/*18px via YUI Fonts CSS foundation*/
-	font-size:138.5%;  
+	font-size:138.5%;
 }
 .yui3-cssbase h2 {
 	/*16px via YUI Fonts CSS foundation*/
-	font-size:123.1%; 
+	font-size:123.1%;
 }
 .yui3-cssbase h3 {
 	/*14px via YUI Fonts CSS foundation*/
-	font-size:108%;  
+	font-size:108%;
 }
 .yui3-cssbase h1,.yui3-cssbase h2,.yui3-cssbase h3 {
 	/* top & bottom margin based on font size */
@@ -17,13 +17,13 @@
 }
 .yui3-cssbase h1,.yui3-cssbase h2,.yui3-cssbase h3,.yui3-cssbase h4,.yui3-cssbase h5,.yui3-cssbase h6,.yui3-cssbase strong {
 	/*bringing boldness back to headers and the strong element*/
-	font-weight:bold; 
+	font-weight:bold;
 }
 .yui3-cssbase abbr,.yui3-cssbase acronym {
 	/*indicating to users that more info is available */
 	border-bottom:1px dotted #000;
 	cursor:help;
-} 
+}
 .yui3-cssbase em {
 	/*bringing italics back to the em element*/
 	font-style:italic;
@@ -38,7 +38,7 @@
 }
 .yui3-cssbase ol {
 	/*giving OL's LIs generated numbers*/
-	list-style: decimal outside;	
+	list-style: decimal outside;
 }
 .yui3-cssbase ul {
 	/*giving UL's LIs generated disc markers*/
@@ -68,6 +68,6 @@
 	/*so things don't run into each other*/
 	margin-bottom:1em;
 }
-/* setting a consistent width, 160px; 
+/* setting a consistent width, 160px;
    control of type=file still not possible */
 .yui3-cssbase input[type=text],.yui3-cssbase input[type=password],.yui3-cssbase textarea{width:12.25em;*width:11.9em;}

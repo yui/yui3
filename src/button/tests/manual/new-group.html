@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
-        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
-        
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+
         <script type="text/javascript" charset="utf-8">
         YUI({
             debug: true,
@@ -17,32 +17,32 @@
                 srcNode : '#pushGroup',
                 type : 'push'
             }).render();
-            
+
             var CheckboxGroup = new Y.ButtonGroup({
                 srcNode : '#checkboxGroup',
                 type : 'checkbox'
             }).render();
-            
+
             var RadioGroup = new Y.ButtonGroup({
                 srcNode : '#radioGroup',
                 type : 'radio'
             }).render();
-            
+
             PushGroup.on('press', function(e){
                 console.log(e.details[0].target.getContent());
             });
-            
+
             CheckboxGroup.on('selectionChange', function(e){
                 console.log(this.getSelectedValues());
                 console.log(e.originEvent.target.get('id'));
                 console.log('CheckboxGroup - selectionChange');
             });
-            
+
             RadioGroup.on('selectionChange', function(e){
                 console.log(this.getSelectedButtons()[0].get('label'));
                 console.log('Radio - selectionChange');
             });
-            
+
         });
         </script>
     </head>

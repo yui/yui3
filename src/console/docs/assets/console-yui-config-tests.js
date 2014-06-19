@@ -2,7 +2,7 @@ YUI.add('console-yui-config-tests', function(Y) {
 
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('console-yui-config');
-    
+
     var uncheckAll = function() {
         Y.all('.filter-controls input[type=checkbox]').set('checked', false);
     };
@@ -59,14 +59,14 @@ YUI.add('console-yui-config-tests', function(Y) {
                 Assert.areEqual(1, entries.size(), 'Console contains entries');
                 var source = getSource();
                 Assert.areEqual('sourceA', source.get('innerHTML'));
-            
+
             }, 200);
         },
         'test different log message sourceA': function() {
             var entries = getEntries();
 
             Assert.areEqual(0, entries.size(), 'Console contains entries');
-            
+
             this.msg.set('value', 'THIS IS A TEST');
             this.log.simulate('click');
 
@@ -84,7 +84,7 @@ YUI.add('console-yui-config-tests', function(Y) {
             var entries = getEntries();
 
             Assert.areEqual(0, entries.size(), 'Console contains entries');
-            
+
             this.msg.set('value', 'THIS IS ANOTHER TEST');
             Y.one('#msg_src_b').set('checked', true);
             this.log.simulate('click');
@@ -103,7 +103,7 @@ YUI.add('console-yui-config-tests', function(Y) {
             var entries = getEntries();
 
             Assert.areEqual(0, entries.size(), 'Console contains entries');
-            
+
             this.msg.set('value', 'THIS IS ANOTHER TEST AGAIN');
             Y.one('#msg_src_c').set('checked', true);
             this.log.simulate('click');
@@ -118,7 +118,7 @@ YUI.add('console-yui-config-tests', function(Y) {
             var entries = getEntries();
 
             Assert.areEqual(0, entries.size(), 'Console contains entries');
-            
+
             this.msg.set('value', 'THIS IS ANOTHER TEST AGAIN');
             Y.one('#msg_src_a').set('checked', true);
             Y.one('#msg_warn').set('checked', true);
@@ -137,7 +137,7 @@ YUI.add('console-yui-config-tests', function(Y) {
             var entries = getEntries();
 
             Assert.areEqual(0, entries.size(), 'Console contains entries');
-            
+
             this.msg.set('value', 'THIS IS ANOTHER TEST AGAIN');
             Y.one('#msg_src_b').set('checked', true);
             Y.one('#msg_error').set('checked', true);

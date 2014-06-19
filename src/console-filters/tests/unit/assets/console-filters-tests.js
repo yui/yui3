@@ -43,7 +43,7 @@ suite.add(new Y.Test.Case({
 
 suite.add(new Y.Test.Case({
     name : "instantiation",
-    
+
     setUp: setUp,
     tearDown: tearDown,
 
@@ -52,7 +52,7 @@ suite.add(new Y.Test.Case({
             newestOnTop: true,
             boundingBox: '#testbed'
         });
-        
+
         c.plug(Y.Plugin.ConsoleFilters);
 
         c.destroy();
@@ -63,7 +63,7 @@ suite.add(new Y.Test.Case({
             newestOnTop: true,
             boundingBox: '#testbed'
         });
-        
+
         c.plug(Y.Plugin.ConsoleFilters);
 
         c.render();

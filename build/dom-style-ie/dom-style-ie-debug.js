@@ -297,4 +297,4 @@ if (!testFeature('style', 'computedStyle')) {
 }
 
 
-}, '@VERSION@', {"requires": ["dom-style"]});
+}, '@VERSION@', {"requires": ["dom-style", "color-base"]});

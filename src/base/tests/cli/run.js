@@ -32,8 +32,8 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.use('base-tests', 'base-core-tests');
 
     Y.Test.Runner._ignoreEmpty = true;
-    
+
     Y.Test.Runner.setName('Base cli tests');
-    
+
 });
 

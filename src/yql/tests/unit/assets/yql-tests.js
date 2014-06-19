@@ -2,7 +2,7 @@ YUI.add('yql-tests', function(Y) {
 
     //This is the callback for the current Mock operation
     var currentMock;
-    
+
     //Backup of the YQLRequest send method
     var oldSend = Y.YQLRequest.prototype.send;
 
@@ -18,7 +18,7 @@ YUI.add('yql-tests', function(Y) {
         // Bypass SSL cert validation
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
-    
+
     //If live, then don't do the mock, use a real YQL query
     if (!live) {
         /*
@@ -70,7 +70,7 @@ YUI.add('yql-tests', function(Y) {
                     }
                 }
             };
-            
+
             Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 test.resume(function() {
                     Y.Assert.isObject(r, 'Query Failure');
@@ -126,7 +126,7 @@ YUI.add('yql-tests', function(Y) {
         },
         test_escaped: function() {
             var test = this;
-            
+
             currentMock = function() {
                 return {
                     query: {
@@ -146,7 +146,7 @@ YUI.add('yql-tests', function(Y) {
         test_requery: function() {
             var test = this,
                 counter = 0;
-            
+
             currentMock = function() {
                 return {
                     query: {
@@ -171,7 +171,7 @@ YUI.add('yql-tests', function(Y) {
         },
         'test: context as option': function() {
             var test = this;
-            
+
             currentMock = function() {
                 return {
                     query: {
@@ -271,7 +271,7 @@ YUI.add('yql-tests', function(Y) {
         }*/
     };
     var suite = new Y.Test.Suite("YQL");
-    
+
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
 

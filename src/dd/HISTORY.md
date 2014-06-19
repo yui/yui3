@@ -4,7 +4,24 @@ Drag and Drop Change History
 @VERSION@
 ------
 
+* [#1831][] Add `[contenteditable]` to the list of invalid drag handles. (Andrew Nicols)
+
+3.17.2
+------
+
 * No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [#1778][] Filter mousedown events to check that they belong to a valid drop target. (Andrew Nicols)
+
+[#1778]: https://github.com/yui/yui3/pull/1778
 
 3.16.0
 ------

@@ -189,7 +189,7 @@ YUI.add('parallel-tests', function(Y) {
                     Y.ArrayAssert.itemsAreEqual(results, [1, 2, 3], 'Results array did not retain order of callbacks');
                 });
             });
-            
+
             test.wait();
         }
     });

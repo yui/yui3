@@ -1,5 +1,5 @@
 YUI.add('gesture-functional-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('gesture functional test suite'),
         SWIPE_DURATION = 0,
         SWIPE_WAIT_DURATION = 100,
@@ -43,7 +43,7 @@ YUI.add('gesture-functional-tests', function(Y) {
 
         simulateSwipeLeft : function(node, distance, duration, cb) {
             var test = this;
-            
+
             node.simulateGesture("move", {
                 path : {
                     xdist: -distance
@@ -58,7 +58,7 @@ YUI.add('gesture-functional-tests', function(Y) {
 
         simulateTap : function(node, cb) {
             var test = this;
-            
+
             node.simulateGesture("tap", function() {
                 test.resume(cb);
             });
@@ -81,7 +81,7 @@ YUI.add('gesture-functional-tests', function(Y) {
                 fired = true;
                 box.setStyle('background', 'blue');
             });
-            
+
             test.simulateFlickX(box, 250, SWIPE_DURATION, function () {
                 Assert.isTrue(fired);
             });
@@ -106,7 +106,7 @@ YUI.add('gesture-functional-tests', function(Y) {
                 fired = true;
                 box.setStyle('background', 'green');
             });
-            
+
             test.simulateSwipeLeft(box, 250, SWIPE_DURATION, function () {
                 Assert.isTrue(fired);
             });
@@ -133,7 +133,7 @@ YUI.add('gesture-functional-tests', function(Y) {
                 box.set('text', 'On GestureMoveEnd');
                 box.setStyle('background', 'green');
             }, '#box');
-            
+
             test.simulateSwipeLeft(box, 250, SWIPE_DURATION, function () {
                 Assert.isTrue(fired);
             });
@@ -162,7 +162,7 @@ YUI.add('gesture-functional-tests', function(Y) {
             });
 
             box.detach();
-            
+
             test.simulateSwipeLeft(box, 250, SWIPE_DURATION, function () {
                 Assert.isFalse(fired);
             });
@@ -170,7 +170,7 @@ YUI.add('gesture-functional-tests', function(Y) {
         },
 
         _should: {
-            /* 
+            /*
                 TODO: Gesture simulate issue in IE 10 and 11 (scrollview has the same issue, need to debug). Unit tests work.
 
                 TODO: Is there a good way to simulate functional tests in PhantomJS?

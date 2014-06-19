@@ -28,8 +28,8 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.use('arraysort-tests');
 
     Y.Test.Runner._ignoreEmpty = true; //ArrayAssert's don't count
-    
+
     Y.Test.Runner.setName('arraysort cli tests');
-    
+
 });
 

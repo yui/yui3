@@ -41,7 +41,7 @@
 <div id="boxParent"></div>
 
 <script type="text/javascript">
-// Get a new YUI instance 
+// Get a new YUI instance
 YUI().use("node", "attribute", function(Y) {
 
     var boxParent = Y.one("#boxParent");
@@ -49,10 +49,10 @@ YUI().use("node", "attribute", function(Y) {
     // Setup a custom class with attribute support
     function Box(cfg) {
         this._createNode(cfg);
-        
+
         // Attribute configuration
         var attrs = {
-    
+
             "parent" : {
                 value: null
             },
@@ -62,7 +62,7 @@ YUI().use("node", "attribute", function(Y) {
                     // Pass through x value to xy
                     this.set("xy", [val, this.get("y")]);
                 },
-    
+
                 getter: function(val, name) {
                     // Get x value from xy
                     return this.get("xy")[0];
@@ -74,7 +74,7 @@ YUI().use("node", "attribute", function(Y) {
                     // Pass through y value to xy
                     this.set("xy", [this.get("x"), val]);
                 },
-    
+
                 getter: function() {
                     // Get y value from xy
                     return this.get("xy")[1];
@@ -84,15 +84,15 @@ YUI().use("node", "attribute", function(Y) {
             "xy" : {
                 // Actual stored xy co-ordinates
                 value: [0, 0],
-    
+
                 setter: function(val, name) {
                     // Constrain XY value to the parent element.
-    
+
                     // Returns the constrained xy value, which will
                     // be the final value stored.
                     return this.constrain(val);
                 },
-    
+
                 validator: function(val, name) {
                     // Ensure we only store a valid data value
                     return (Y.Lang.isArray(val) && val.length == 2 && Y.Lang.isNumber(val[0]) && Y.Lang.isNumber(val[1]));
@@ -101,10 +101,10 @@ YUI().use("node", "attribute", function(Y) {
 
             "color" : {
                 value: "olive",
-    
+
                 getter: function(val, name) {
-                    // Always normalize the returned value to 
-                    // a hex color value,  even if the stored 
+                    // Always normalize the returned value to
+                    // a hex color value,  even if the stored
                     // value is a keyword, or an rgb value.
                     if (val) {
                         return Y.Color.toHex(val);
@@ -112,10 +112,10 @@ YUI().use("node", "attribute", function(Y) {
                         return null;
                     }
                 },
-    
+
                 validator: function(val, name) {
                     // Ensure we only store rgb, hex or keyword values.
-                    return (Y.Color.re_RGB.test(val) || Y.Color.re_hex.test(val) || Y.Color.KEYWORDS[val]); 
+                    return (Y.Color.re_RGB.test(val) || Y.Color.re_hex.test(val) || Y.Color.KEYWORDS[val]);
                 }
             }
         };
@@ -231,7 +231,7 @@ YUI().use("node", "attribute", function(Y) {
 
     // Create a new instance of Box
     var box = new Box({
-        parent : boxParent 
+        parent : boxParent
     });
 
     // Set references to form controls
@@ -254,7 +254,7 @@ YUI().use("node", "attribute", function(Y) {
         // Get Node target from the event object
 
         // We already know it's a button which has an action because
-        // of our selector (button.action), so all we need to do is 
+        // of our selector (button.action), so all we need to do is
         // route it based on the id.
         var id = e.currentTarget.get("id");
 
@@ -282,7 +282,7 @@ YUI().use("node", "attribute", function(Y) {
         // Get Node target from the event object
 
         // We already know it's a button which has an action because
-        // of our selector (button.action), so all we need to do is 
+        // of our selector (button.action), so all we need to do is
         // route it based on the id.
         var id = e.currentTarget.get("id");
 

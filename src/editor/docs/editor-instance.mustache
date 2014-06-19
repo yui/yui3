@@ -9,9 +9,9 @@
 <h3>Working with EditorBase</h3>
 <p>`EditorBase` is not a fully functional Editor, it is simply the base utility that will be used under the hood to create an Editor.</p>
 
-<p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe. 
+<p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe.
 This means that you now have the full power of YUI 3 inside the Editor iframe. You can use Event, Stylesheet, Node and even DD
-inside the iframe, without having to load all the JavaScript inside the document. In this example we will show how to use the 
+inside the iframe, without having to load all the JavaScript inside the document. In this example we will show how to use the
 internal YUI instance to get Node instances from the Editor. </p>
 
 <p>Getting access to this instance is simple. Just use the `getInstance` method on the Editor instance.</p>
@@ -28,7 +28,7 @@ YUI().use('editor', function(Y) {
         content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
         extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
     });
-    
+
     //Rendering the Editor
     editor.render('#editor');
 

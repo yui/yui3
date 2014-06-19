@@ -1,5 +1,5 @@
 YUI.add('flick-tests', function(Y) {
- 
+
     var eventData = {
             flick: Y.Node.DOM_EVENTS.flick.eventDef
         },

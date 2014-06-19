@@ -4,14 +4,14 @@
     <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
     <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/sam/widget-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">    
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">
     <title>Loader Automated Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
 
-<!-- This is the main test file, notice it's using the `yui-base` seed file 
+<!-- This is the main test file, notice it's using the `yui-base` seed file
 without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
@@ -60,7 +60,7 @@ var TestName = 'Loader: Fetch';
 
 YUI({
     allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true },    
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true },
     filter: YUI_config.gfilter,
     modules: {
         'loader-tests': {

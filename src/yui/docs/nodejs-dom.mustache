@@ -5,7 +5,7 @@
 
 <h2>Installing the packages</h2>
 
-<p>This example uses the <a href="https://github.com/tmpvar/jsdom">JSDom</a> npm package, 
+<p>This example uses the <a href="https://github.com/tmpvar/jsdom">JSDom</a> npm package,
 but theortically YUI can be used with any valid DOM.</p>
 
 ```terminal
@@ -15,7 +15,7 @@ npm install yui jsdom
 <h2>Setup the DOM</h2>
 
 <p>JSDom has many useful features and some that are a little on the edge, luckily it's highly configurable.</p>
-<p>Here we will `require` jsdom, configure it to our liking and 
+<p>Here we will `require` jsdom, configure it to our liking and
 then create the `window` and `document` references that we will later give to our YUI instance.</p>
 
 ```
@@ -34,7 +34,7 @@ then create the `window` and `document` references that we will later give to ou
         //Do not use their implementation of QSA
         QuerySelector            : false
     };
-    
+
     var dom = jsdom.defaultLevel;
     //Hack in focus and blur methods so they don't fail when a YUI widget calls them
     dom.Element.prototype.blur = function() {};
@@ -57,7 +57,7 @@ YUI({
     win: window,
     doc: document
 }).use('node', function(Y) {
-    
+
     Y.one('title').setHTML('YUI Server Side DOM');
     console.log(Y.one('doc').get('outerHTML'));
 
@@ -94,7 +94,7 @@ YUI({
       MutationEvents           : false,
       QuerySelector            : false
     };
-    
+
     var dom = jsdom.defaultLevel;
     //Hack in focus and blur methods so they don't fail
     dom.Element.prototype.blur = function() {};
@@ -116,7 +116,7 @@ YUI({
     Y.one('title').setHTML('YUI Server Side DOM');
 
     Y.one('body').append('<div id="demo"></div>');
-    
+
     Y.log('Creating the TabView from script..');
 
     var tabview = new Y.TabView({

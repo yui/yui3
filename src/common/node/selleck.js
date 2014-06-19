@@ -11,7 +11,7 @@ var dirs = fs.readdirSync(base);
 var examples = [];
 
 var ignore = function(json) {
-    
+
     if (json.name === 'test' || json.name.indexOf('-deprecated') > 0) {
         return true;
     }

@@ -51,7 +51,7 @@ YUI.add('editor-tests', function(Y) {
             iframeLinkedCSS = iframe.get('linkedcss');
 
             Y.ArrayAssert.doesNotContain(undefined, iframeLinkedCSS);
-            Y.ArrayAssert.doesNotContain('undefined', iframeLinkedCSS); 
+            Y.ArrayAssert.doesNotContain('undefined', iframeLinkedCSS);
 
             this.wait(function() {
                 Y.Assert.isTrue(iframeReady, 'IFRAME ready event did not fire');

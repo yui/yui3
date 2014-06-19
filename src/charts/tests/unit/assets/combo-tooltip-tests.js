@@ -5,8 +5,8 @@ YUI.add('combo-tooltip-tests', function(Y) {
         parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
         DOC = Y.config.doc;
     DOC.body.appendChild(parentDiv);
-            
-            
+
+
     //-------------------------------------------------------------------------
     // Chart Event Test Template
     //-------------------------------------------------------------------------
@@ -31,43 +31,43 @@ YUI.add('combo-tooltip-tests', function(Y) {
         //---------------------------------------------------------------------
         // Setup and teardown of test harnesses
         //---------------------------------------------------------------------
-        
+
         /*
          * Sets up several event handlers used to test UserAction mouse events.
          */
-        setUp : function() 
+        setUp : function()
         {
-            //create the chart 
+            //create the chart
             this.chart = new Y.Chart(this.attrCfg);
 
             this.contentBox = this.chart.get("contentBox");
-        
+
             //reset the result
             this.result = null;
-            
-            //assign event handler                
+
+            //assign event handler
             this.handler = Y.delegate(this.eventType, Y.bind(this.handleEvent, this), this.contentBox, this.eventNode);
         },
-        
+
         /*
          * Removes event handlers that were used during the test.
          */
-        tearDown : function() 
+        tearDown : function()
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         //---------------------------------------------------------------------
         // Event handler
         //---------------------------------------------------------------------
-        
+
         /*
          * Uses to trap and assign the event object for interrogation.
          * @param {Event} event The event object created from the event.
          */
-        handleEvent : function(event) 
+        handleEvent : function(event)
         {
             this.result = event;
         }
@@ -94,18 +94,18 @@ YUI.add('combo-tooltip-tests', function(Y) {
                 pageY = e.pageY,
                 x = pageX - cb.getX(),
                 y = pageY - cb.getY();
-            return { 
-                type: "markerEvent:" + type, 
+            return {
+                type: "markerEvent:" + type,
                 originEvent: e,
-                pageX:pageX, 
-                pageY:pageY, 
-                categoryItem:items.category, 
-                valueItem:items.value, 
-                node:markerNode, 
-                x:x, 
-                y:y, 
-                series:series, 
-                index:index, 
+                pageX:pageX,
+                pageY:pageY,
+                categoryItem:items.category,
+                valueItem:items.value,
+                node:markerNode,
+                x:x,
+                y:y,
+                series:series,
+                index:index,
                 seriesIndex:seriesIndex
             };
         },
@@ -215,7 +215,7 @@ YUI.add('combo-tooltip-tests', function(Y) {
             {
                 keys[this.seriesKeys[i]] = i;
             }
-            
+
             for(key in keys)
             {
                 if(keys.hasOwnProperty(key))
@@ -245,8 +245,8 @@ YUI.add('combo-tooltip-tests', function(Y) {
                                     Y.Event.simulate(marker.get("node"), this.eventType, {
                                         clientX: markerXY[0] + markerWidth/2,
                                         clientY: markerXY[1] + markerHeight/2
-                                    }); 
-                                    markerData = this.getMarkerData(this.result);                
+                                    });
+                                    markerData = this.getMarkerData(this.result);
                                     categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
                                     if(this.chart.get("categoryType") == "time")
                                     {
@@ -271,16 +271,16 @@ YUI.add('combo-tooltip-tests', function(Y) {
         }
     });
     Y.ChartMarkerEventTestTemplate = ChartMarkerEventTestTemplate;
-    
+
     var dataValues = [
-        {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-        {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-        {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+        {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+        {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+        {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
         {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
     styledTooltip = {
-        styles: { 
+        styles: {
             backgroundColor: "#333",
             color: "#eee",
             borderColor: "#fff",
@@ -294,13 +294,13 @@ YUI.add('combo-tooltip-tests', function(Y) {
             underlinedTextBlock.style.textDecoration = "underline";
             boldTextBlock.style.marginTop = "5px";
             boldTextBlock.style.fontWeight = "bold";
-            underlinedTextBlock.appendChild(document.createTextNode(valueItem.displayName + " for " + 
+            underlinedTextBlock.appendChild(document.createTextNode(valueItem.displayName + " for " +
                                             categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")])));
-            boldTextBlock.appendChild(document.createTextNode(valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}])));   
+            boldTextBlock.appendChild(document.createTextNode(valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}])));
             msg.appendChild(underlinedTextBlock);
             msg.appendChild(document.createElement("br"));
-            msg.appendChild(boldTextBlock); 
-            return msg; 
+            msg.appendChild(boldTextBlock);
+            return msg;
         }
     },
 
@@ -352,11 +352,11 @@ YUI.add('combo-tooltip-tests', function(Y) {
         }
         return new ChartMarkerEventTestTemplate(cfg, globalCfg);
     };
-    
+
     suite.add(getTooltipTest("combo", null, {
         showEvent: "mousedown"
     }, null, false));
     suite.add(getTooltipTest("combo", null, styledTooltip, null, false));
 
     Y.Test.Runner.add(suite);
-}, '@VERSION@' ,{requires:['charts', 'test']});
+}, '@VERSION@' ,{requires:['charts', 'color-base', 'test']});

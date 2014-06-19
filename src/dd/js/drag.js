@@ -614,12 +614,12 @@
         */
         _invalids: null,
         /**
-        * A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true}
+        * A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true, '[contenteditable]': true}
         * @private
         * @property _invalidsDefault
         * @type {Object}
         */
-        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true, '[contenteditable]': true },
         /**
         * Private flag to see if the drag threshhold was met
         * @private
@@ -756,7 +756,9 @@
         * @param {EventFacade} ev  The Event
         */
         _handleMouseDownEvent: function(ev) {
-            ev.preventDefault();
+            if (this.validClick(ev)) {
+                ev.preventDefault();
+            }
             this.fire(EV_MOUSE_DOWN, { ev: ev });
         },
         /**

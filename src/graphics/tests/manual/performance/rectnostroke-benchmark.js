@@ -9,8 +9,8 @@ YUI.add('rectnostroke-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("RectNoStroke", function() { 
+
+    suite.add("RectNoStroke", function() {
         var rect = graphic.addShape({
                 type: "rect",
                 width: 16,
@@ -18,7 +18,7 @@ YUI.add('rectnostroke-benchmark', function (Y) {
                 fill: {
                     color: "#9aa"
                 },
-                stroke: null 
+                stroke: null
             });
     }, {
         onStart: function() {
@@ -31,5 +31,5 @@ YUI.add('rectnostroke-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

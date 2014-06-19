@@ -14,7 +14,7 @@
 
 <h6>Records vs. Object Literals</h6>
 <p>You can interact with a Recordset instance by simply passing in object literals. Recordset will convert them into record instances under the hood. If you want the object literal back from the Recordset, simply use the `getValue` method on a record instance. Optionally, a string can be passed into the `getValue` method if you only want a specific property back. Not passing in an argument returns the entire object bag that the record is holding on to.
-	
+
 <h3>Working with a Recordset</h3>
 
 This section describes how to use the Recordset Utility in further detail. It contains the following subsections:
@@ -35,12 +35,12 @@ YUI().use("recordset-base", function(Y) {
 		{a:9, b:8, c:7},
 		{a:1, b:2, c:3}
 	],
-	
+
 	//Recordset is created with the objects from the data array
 	myRecordset = new Y.Recordset({records: data}),
-	
+
 	//Empty Recordsets can also be created
-	anEmptyRecordset = new Y.Recordset(); 
+	anEmptyRecordset = new Y.Recordset();
 
 });
 ```
@@ -55,12 +55,12 @@ YUI().use("recordst-base", function(Y) {
         {key:"b", label:"Column B"},
         {key:"c", label:"Column C"}
     ],
-	
+
 	myRecordset = new Y.Recordset({records:data});
-	
+
 	//Adding a single record to the end of a Recordset
 	myRecordset.add({key:"d", label:"Column D"});
-	
+
 	//Adding multiple records at the 2nd index of the Recordset
 	myRecordset.add([
 		{key:"e", label:"Column E"},
@@ -78,12 +78,12 @@ YUI().use("recordset-base", function(Y) {
         {key:"b", label:"Column B"},
         {key:"c", label:"Column C"}
     ],
-	
+
 	myRecordset = new Y.Recordset({records:data});
-	
+
 	//removes the record stored at index 2 (in this case {key:"c", label:"Column C"} is removed)
 	myRecordset.remove(2);
-	
+
 	//Removes 2 records starting at index zero
 	myRecordset.remove(0,2);
 });
@@ -98,12 +98,12 @@ YUI().use("recordset-base", function(Y) {
         {key:"b", label:"Column B"},
         {key:"c", label:"Column C"}
     ],
-	
+
 	myRecordset = new Y.Recordset({records:data});
-	
+
 	//overwite the record at index 2 with the following record
 	myRecordset.update({key:"d", label:"Column D"}, 2);
-	
+
 	//You can also update multiple records at a time.
 	//Here we are updating indices 0 and 1 of the Recordset with the corresponding two objects.
 	myRecordset.update([
@@ -122,7 +122,7 @@ YUI().use("recordset-base", function(Y) {
         {key:"b", label:"Column B"},
         {key:"c", label:"Column C"}
     ],
-	
+
 	myRecordset = new Y.Recordset({records:data});
 	myRecordset.empty();
 });
@@ -142,24 +142,24 @@ YUI().use("recordset-base", function(Y) {
         {key:"b", label:"Column B"},
         {key:"c", label:"Column C"}
     ],
-	
+
 	myRecordset = new Y.Recordset({records:data});
-	
+
 	//Store some IDs that I will need access to later
 	var record2_ID = myRecordset.getRecord(1).get('id'),
 	record3_ID = myRecordset.getRecord(2).get('id');
-	
+
 	//Get Access to the Hash Table
 	var hashTable = myRecordset.get('table');
-	
+
 	//Get Records back using IDs
 	var record2 = hashTable[record2_ID];
 	var record3 = hashTable[record3_ID];
-	
-	
+
+
 	//Remove Record from index 1 (record2)
 	myRecordset.remove(1);
-	
+
 	hashTable[record2_ID]; //this will now be undefined as that record was removed.
 	hashTable[record3_ID]; //this still points to the correct record (record3)
 });

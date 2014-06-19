@@ -57,7 +57,7 @@
 				{
 					var obj = new Object();
 					obj.date = new Date(mon + "/" + i + "/" + year).valueOf();
-				    obj.date = obj.date.toString();	
+				    obj.date = obj.date.toString();
                     obj.date = parseInt(obj.date, 10);
                     var div = ((Math.random()*5))
 					var cont = (Math.random() * 101) * div;
@@ -73,10 +73,10 @@
     //set canvas as the defaultGraphicEngine
     YUI({
         defaultGraphicEngine: "canvas"
-    }).use('charts', function (Y) 
+    }).use('charts', function (Y)
     {
-        var myDataValues = getData(); 
-       
+        var myDataValues = getData();
+
         //style the series
         var myseries = [
             {
@@ -98,15 +98,15 @@
 
         //instantiate chart with interactionType of planar and groupMarkers set to true
         var mychart = new Y.Chart({
-                interactionType:"planar", 
-                groupMarkers:true, 
-                dataProvider:myDataValues, 
-                categoryType:"time", 
-                categoryKey:"date", 
-                render:"#mychart", 
+                interactionType:"planar",
+                groupMarkers:true,
+                dataProvider:myDataValues,
+                categoryType:"time",
+                categoryKey:"date",
+                render:"#mychart",
                 seriesCollection: myseries
             });
-            
+
     });
 })();
 </script>

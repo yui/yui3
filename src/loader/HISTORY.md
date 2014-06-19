@@ -6,6 +6,39 @@ YUI Loader Change History
 
 * No changes.
 
+3.17.2
+------
+
+* Fix a bug in 3.17.1 where there comboBase was no longer inherited from the default group. ([#1837][]: @andrewnicols)
+
+3.17.1
+------
+
+* Fix a bug in 3.17 which caused certain YUI modules to be loaded with a group
+  `comboBase`.
+
+3.17.0
+------
+
+* Add support for optional dependencies. These dependencies are conditionally
+  loaded but each dependency is responsible for determining the result of the
+  test, the opposite of `condition`. Example:
+
+```js
+  YUI({
+    modules: {
+      foo: {
+        test: function (Y) {
+          return true;
+        }
+      },
+      bar: {
+        optionalRequires: ['foo']
+      }
+    }
+  }).use('bar', ...);
+```
+
 3.16.0
 ------
 

@@ -3688,4 +3688,4 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
 Y.CanvasGraphic = CanvasGraphic;
 
 
-}, '@VERSION@', {"requires": ["graphics"]});
+}, '@VERSION@', {"requires": ["graphics", "color-base"]});

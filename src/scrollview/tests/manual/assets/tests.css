@@ -18,17 +18,17 @@ body {
         left bottom,
         from(#d8dee6),
         color-stop(0.01, #b0bccc),
-        color-stop(0.49, #889bb3),      
-        color-stop(0.50, #8094ae),      
-        to(#6d83a1)     
+        color-stop(0.49, #889bb3),
+        color-stop(0.50, #8094ae),
+        to(#6d83a1)
     );
 
     background: -moz-linear-gradient(
         top,
         #d8dee6,
         #b0bccc 1%,
-        #889bb3 49%,      
-        #8094ae 50%,      
+        #889bb3 49%,
+        #8094ae 50%,
         #6d83a1
     );
 
@@ -67,5 +67,5 @@ h1 {
 	width: 300px;
 	margin: 10px;
     margin-bottom:10px;
-    -webkit-transform: translate3d(0, 0, 0); 
+    -webkit-transform: translate3d(0, 0, 0);
 }

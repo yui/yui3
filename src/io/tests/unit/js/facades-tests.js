@@ -8,7 +8,7 @@ YUI.add('facades-tests', function(Y) {
     function se(o) {
         Y.Assert.isObject(o);
         Y.Assert.isObject(o.cfg);
-        Y.Assert.isNumber(o.id);				
+        Y.Assert.isNumber(o.id);
         Y.Assert.isUndefined(o.data.status);
         Y.Assert.isUndefined(o.data.statusText);
         Y.Assert.isUndefined(o.data.responseText);
@@ -18,7 +18,7 @@ YUI.add('facades-tests', function(Y) {
     function csf(o) {
         Y.Assert.isObject(o);
         Y.Assert.isObject(o.cfg);
-        Y.Assert.isNumber(o.id);				
+        Y.Assert.isNumber(o.id);
         Y.Assert.isNumber(o.data.status);
         Y.Assert.isString(o.data.statusText);
         Y.Assert.isString(o.data.responseText);
@@ -52,13 +52,13 @@ YUI.add('facades-tests', function(Y) {
             responseText: 'Hello World',
             responseXML: null,
             getResponseHeader: function() { },
-            getAllResponseHeaders: function() { }	
+            getAllResponseHeaders: function() { }
         }
     };
 
     suite.add(new Y.Test.Case({
         name: 'Test IO Start Event Facade',
-        'test': function() {		
+        'test': function() {
             io._evt('start', o1, cfg);
         }
     }));

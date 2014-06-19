@@ -13,8 +13,8 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     coverage: ['axis-base']
 }).use(
-    'test-console', 
-    'renderer-tests', 
+    'test-console',
+    'renderer-tests',
     function (Y) {
 
     (new Y.Test.Console()).render('#log');

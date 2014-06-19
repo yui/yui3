@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('throttle-tests');
-    
+
     Y.Test.Runner.setName('yui-throttle cli tests');
-    
+
 });
 

@@ -315,7 +315,7 @@ Promise.race = function (values) {
             reject(new TypeError('Promise.race expects an array of values or promises'));
             return;
         }
-        
+
         // just go through the list and resolve and reject at the first change
         // This abuses the fact that calling resolve/reject multiple times
         // doesn't change the state of the returned promise

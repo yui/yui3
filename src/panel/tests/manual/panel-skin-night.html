@@ -24,7 +24,7 @@
   border:none;
   padding:0;
 }
-/*	
+/*
 #desc {
   margin-bottom:20px;
   border-bottom:1px dotted #333;
@@ -62,7 +62,7 @@
 }
 #addRow {
   margin-top:10px;
-}   
+}
 </style>
 <h1>Using a panel to show a modal form</h1>
 <h2>Using a panel to show a modal form</h2>
@@ -138,8 +138,8 @@
     panel.addButton(
       {
           value: "Add Item",
-          action: function(e) { 
-            e.preventDefault(); 
+          action: function(e) {
+            e.preventDefault();
             addItem();
           },
           section: Y.WidgetStdMod.FOOTER
@@ -148,14 +148,14 @@
     panel.addButton(
       {
           value: "Remove All Items",
-          action: function(e) { 
-            e.preventDefault(); 
+          action: function(e) {
+            e.preventDefault();
             removeAllItemsConfirm();
           },
           section: Y.WidgetStdMod.FOOTER
       }
     );
-    
+
     //Render the modal form
     panel.render();
 
@@ -164,10 +164,10 @@
       panel.show();
     });
 
-    //Define the addItem function - this will be called 
+    //Define the addItem function - this will be called
     //when "Add Item" is pressed on the modal form
     var addItem = function() {
-      var o = {}, 
+      var o = {},
       id = Y.one('#productId'),
       name = Y.one('#name'),
       price = Y.one('#price');
@@ -187,7 +187,7 @@
       panel.hide();
     };
 
-    //Define the removeItems function - this will be called 
+    //Define the removeItems function - this will be called
     //when "Remove All Items" is pressed on the modal form
     //and is confirmed "yes" by the nested panel.
     var removeItems = function() {
@@ -208,11 +208,11 @@
           width:400,
           modal:true,
           buttons: [
-            
+
             {
                 value: "Yes",
-                action  : function(e) { 
-                  e.preventDefault(); 
+                action  : function(e) {
+                  e.preventDefault();
                   nestedPanel.hide();
                   panel.hide();
                   removeItems();
@@ -221,8 +221,8 @@
             },
             {
                 value: "No",
-                action: function(e) { 
-                  e.preventDefault(); 
+                action: function(e) {
+                  e.preventDefault();
                   nestedPanel.hide();
                 },
                 section: Y.WidgetStdMod.FOOTER

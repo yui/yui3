@@ -18,7 +18,7 @@ YUI.add('button-basic-tests', function(Y){
             var buttons = Y.all('.example .yui3-button'),
                 push = buttons.item(0),
                 toggle = buttons.item(1);
-           
+
             Y.Assert.isNotNull(push, 'Push Button does not exist.');
             Y.Assert.isNotNull(toggle, 'Toggle Button does not exist.');
 
@@ -33,7 +33,7 @@ YUI.add('button-basic-tests', function(Y){
 
             var buttons = Y.all('.example .yui3-button'),
                 toggle = buttons.item(1);
-          
+
             // unselected
             Y.Assert.isFalse(toggle.hasClass(SELECTED_CLASS), 'Toggle' + IS_SELECTED);
             Y.Assert.areSame(UNSELECTED_TEXT, toggle.getContent(), 'Toggle' + WRONG_TEXT);
@@ -60,7 +60,7 @@ YUI.add('button-basic-tests', function(Y){
             var buttons = Y.all('.example .yui3-button'),
                 push = buttons.item(0),
                 toggle = buttons.item(1);
-           
+
             // unselected
             Y.Assert.isFalse(toggle.hasClass(SELECTED_CLASS), 'Toggle' + IS_SELECTED);
             Y.Assert.areSame(UNSELECTED_TEXT, toggle.getContent(), 'Toggle' + WRONG_TEXT);

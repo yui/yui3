@@ -31,7 +31,7 @@
     </ul>
 </div>
 ```
-<p>The `yui3-scrollview-loading` class is applied by the developer to progressively enhanced markup, and can be used along with the `yui3-js-enabled` class applied to the document element, to hide the scrollview markup from view, while the JS is being loaded. The examples show how to set up a `yui3-scrollview-loading` rule to hide progressively enhanced content.</p>  
+<p>The `yui3-scrollview-loading` class is applied by the developer to progressively enhanced markup, and can be used along with the `yui3-js-enabled` class applied to the document element, to hide the scrollview markup from view, while the JS is being loaded. The examples show how to set up a `yui3-scrollview-loading` rule to hide progressively enhanced content.</p>
 
 <p>When instantiating from markup, a reference to the `srcNode` is provided to the constructor as part of the configuration object. This reference can be a node reference, or a selector string which can be used to identify the node. If the selector string is too broad (returns multiple nodes), the first node found will be used.
 The following code references the markup shown above, while constructing the scrollview:</p>
@@ -48,7 +48,7 @@ YUI({...}).use("scrollview", function(Y) {
 ```
 
 <p>Generally, a ScrollView widget will be scrollable either horizontally (along the X axis) or vertically (along the Y axis). The ScrollView determines which direction it can scroll in based on whether or not its content is taller (vertically scrolled) or wider (horizontally scrolled) than its height or width respectively, as you would expect
-from native overflow handling. In the above example the widget is given a fixed height, so that it will scroll vertically, when the content gets larger than the specified height. In most use cases you will provide either a height or a width to the ScrollView widget constructor.</p>  
+from native overflow handling. In the above example the widget is given a fixed height, so that it will scroll vertically, when the content gets larger than the specified height. In most use cases you will provide either a height or a width to the ScrollView widget constructor.</p>
 
 <p>Following instantiation, a call to `render` is required to have the ScrollView's state reflected in the DOM, as with all YUI 3 widgets:</p>
 
@@ -78,8 +78,8 @@ from native overflow handling. In the above example the widget is given a fixed 
     <tr><td>`easing`</td><td>The default easing used when scrolling to a given X or Y.</td><td>`cubic-bezier(0, 0.1, 0, 1.0)`</td></tr>
     <tr><td>`flick`</td><td>An object which specifies the minimum distance and minimum velocity (in pixels/ms - generally around 0.5) which should constitute a flick gesture. Can be set to false to disable flick support, in which case the ScrollView content can only be dragged to scroll it.</td><td>`{minDistance:10, minVelocity:0.3}`</td></tr>
     <tr><td>`frameDuration`</td><td>The default time interval used when animating the flick deceleration.</td><td>`30`</td></tr>
-    <tr><td>`snapDuration`</td><td>The default duration (in ms) used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr> 
-    <tr><td>`snapEasing`</td><td>The default easing used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr> 
+    <tr><td>`snapDuration`</td><td>The default duration (in ms) used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr>
+    <tr><td>`snapEasing`</td><td>The default easing used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr>
 </table>
 
 <h3 id="markup">Markup Structure</h3>
@@ -109,13 +109,13 @@ from native overflow handling. In the above example the widget is given a fixed 
 
 <h3 id="css">CSS</h3>
 
-<p>The core structural css for the ScrollView is shown below, and is pretty straightforward. It simply sets up the bounding box and the content box as positioned elements, and sets overflow hidden, so that the 
+<p>The core structural css for the ScrollView is shown below, and is pretty straightforward. It simply sets up the bounding box and the content box as positioned elements, and sets overflow hidden, so that the
 content beyond the bounding box area is hidden, until scrolled into view.</p>
 
 ```
 /* Bounding Box */
 .yui3-scrollview {
-    position: relative; /* To provide positioning context */ 
+    position: relative; /* To provide positioning context */
     overflow: hidden;   /* To clip scrolled content */
     ...
 }
@@ -139,7 +139,7 @@ content beyond the bounding box area is hidden, until scrolled into view.</p>
     margin:0;
 
     list-style:none;
-    
+
     /* cross browser inline block */
     display: -moz-inline-stack;
     display: inline-block;
@@ -170,12 +170,12 @@ YUI({...}).use("scrollview-base", "scrollview-scrollbars", function(Y) {
     /* Add scrollbar indicator support */
     scrollview.plug(Y.Plugin.ScrollViewScrollbars);
 
-    /* 
-      scrollview.scrollbars is an instance of the ScrollViewScrollbars 
-      plugin 
+    /*
+      scrollview.scrollbars is an instance of the ScrollViewScrollbars
+      plugin
     */
     scrollview.scrollbars.hide();
-    scrollview.scrollbars.show(); 
+    scrollview.scrollbars.show();
     scrollview.scrollbars.flash();
 });
 ```
@@ -200,9 +200,9 @@ YUI({...}).use("scrollview-base", "scrollview-paginator", function(Y) {
         selector: "li" // elements definining page boundaries
     });
 
-    /* 
-       scrollview.pages is an instance of the ScrollViewPaginator 
-       plugin 
+    /*
+       scrollview.pages is an instance of the ScrollViewPaginator
+       plugin
     */
     scrollview.pages.set("index", 3);
     scrollview.pages.scrollTo(3, 0.6, "ease-in");

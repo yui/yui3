@@ -15,7 +15,7 @@
 			padding: 10px;
 			list-style: none;
 		}
-		
+
 		ul ul {
 			width: auto;
 		}
@@ -26,7 +26,7 @@
 			background-color: yellow;
 
 		}
-	
+
 	</style>
 
 </head>
@@ -47,7 +47,7 @@
 	<li><a href="#" class="focusable">Four</a></li>
 	<li><input type="button" name="button-1" value="Five" class="focusable" disabled></li>
 	<li><input type="button" name="button-2" value="Six" class="focusable"></li>
-	<li><button type="button" class="focusable" disabled><em>Seven</em></button></li>	
+	<li><button type="button" class="focusable" disabled><em>Seven</em></button></li>
 	<li><button type="button" class="focusable"><em><em>Eight</em></em></button></li>
 </ul>
 
@@ -66,7 +66,7 @@
 	<li><a href="#" class="focusable">Four</a></li>
 	<li><input type="button" name="button-1" value="Five" class="focusable" disabled></li>
 	<li><input type="button" name="button-2" value="Six" class="focusable"></li>
-	<li><button type="button" class="focusable" disabled><em>Seven</em></button></li>	
+	<li><button type="button" class="focusable" disabled><em>Seven</em></button></li>
 	<li><button type="button" class="focusable"><em><em>Eight</em></em></button></li>
 </ul>
 
@@ -93,13 +93,13 @@
 
 					//	TEST #1:
 					//	If no value is specified for the "activeDescendant"
-					//	attribute, the value is interpreted from the markup 
+					//	attribute, the value is interpreted from the markup
 					//	by using the first descendant whose tabIndex attribute
 					//	is set to "0"
-					
+
 					var oList1 = Y.one("#list-1");
 
-					oList1.plug(Y.Plugin.NodeFocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -111,18 +111,18 @@
 
 					//	TEST #2:
 					//	If no value is specified for the "activeDescendant"
-					//	attribute, the value is interpreted from the markup 
+					//	attribute, the value is interpreted from the markup
 					//	by using the first descendant whose tabIndex attribute
 					//	is set to "0"
 
 					var oList2 = Y.one("#list-2");
 
-					oList2.plug(Y.Plugin.NodeFocusManager, { 
+					oList2.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
 						circular: true
-					});					
+					});
 
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
 
@@ -134,9 +134,9 @@
 
 					//	Test #3:
 					//	The value specified for the activeDescendant attribute
-					//	via the configuration object, should supercede the 
-					//	value interpreted via the markup					
-					oList1.plug(Y.Plugin.NodeFocusManager, { 
+					//	via the configuration object, should supercede the
+					//	value interpreted via the markup
+					oList1.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						activeDescendant: 3,
 						keys: { next: "down:40", previous: "down:38" },
@@ -145,11 +145,11 @@
 					});
 
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 3));
-	
+
 
 					//	TEST #4:
 					//	Setting the "activeDescendant" attribute to -1 should
-					//	result in none of the descendants being focusable via 
+					//	result in none of the descendants being focusable via
 					//	the keyboard
 					oList1.focusManager.set("activeDescendant", -1);
 
@@ -159,60 +159,60 @@
 						Y.Assert.isTrue( (node.get("tabIndex") === -1) );
 					});
 
-					//	Calling "focus" with no arguments should result in none 
+					//	Calling "focus" with no arguments should result in none
 					//	of the descendants being focused
 					oList1.focusManager.focus();
 	                Y.Assert.isFalse(oList1.focusManager.get("focused"));
 
-					
+
 					//	TEST #5:
-					//	With the "activeDescendant" attribute set to "-1", 
-					//	the user can still focus a descendant by mousing 
+					//	With the "activeDescendant" attribute set to "-1",
+					//	the user can still focus a descendant by mousing
 					//	down on it
 					oList1.focusManager.get("descendants").item(0).simulate("mousedown");
 	                Y.Assert.isTrue(oList1.focusManager.get("focused"));
 
 
 					//	TEST #6:
-					//	The "activeDescendant" attribute should return the 
+					//	The "activeDescendant" attribute should return the
 					//	index of the currently focused descendant
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 0));
 
 
 					//	TEST #7:
-					//	With the "activeDescendant" attribute set to "-1", 
-					//	the user can focus a descendant programmically by 
-					//	calling the "focus" method and passing in the index 
+					//	With the "activeDescendant" attribute set to "-1",
+					//	the user can focus a descendant programmically by
+					//	calling the "focus" method and passing in the index
 					//	of the descendant to be focused
 					oList1.focusManager.set("activeDescendant", -1);
 					oList1.focusManager.focus(1);
 	                Y.Assert.isTrue(oList1.focusManager.get("focused"));
-	
-					//	The "activeDescendant" attribute should return the 
-					//	index of the currently focused descendant	
+
+					//	The "activeDescendant" attribute should return the
+					//	index of the currently focused descendant
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 1));
 
 
 					//	TEST #8:
-					//	The "activeDescendant" attribute can also be set to a 
+					//	The "activeDescendant" attribute can also be set to a
 					//	Node reference
 					oList1.focusManager.focus(oList1.focusManager.get("descendants").item(2));
 	                Y.Assert.isTrue(oList1.focusManager.get("focused"));
 
-					//	The "activeDescendant" attribute should return the 
+					//	The "activeDescendant" attribute should return the
 					//	index of the currently focused descendant
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 2));
 
 
 					//	TEST #9:
-					//	The "activeDescendant" attribute cannot be set to the 
+					//	The "activeDescendant" attribute cannot be set to the
 					//	index of a disabled Node...
 					oList1.focusManager.focus(4);
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 2));
 
 					//	...Or a disabled Node reference
 					oList1.focusManager.focus(oList1.focusManager.get("descendants").item(4));
-	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 2));	
+	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 2));
 
 
 
@@ -223,16 +223,16 @@
 
 					oList1.focusManager.blur();
 
-					//	There should be no elements with the CSS class of 
+					//	There should be no elements with the CSS class of
 					//	"focused" applied
 					Y.Assert.isTrue((Y.all(".focused").size() === 0));
 
 
 					//	Clean up for next set of tests
 					oList1.unplug("focusManager");
-	
+
 	            },
-	
+
 				testDescendants: function() {
 
 					//	TEST #1:
@@ -241,7 +241,7 @@
 
 					var oList1 = Y.one("#list-1");
 
-					oList1.plug(Y.Plugin.NodeFocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -258,18 +258,18 @@
 
 					//	Test #3:
 					//	Can modify the child nodes of the current owner Node
-					//	of the FocusManager and call "refresh" to sync the 
+					//	of the FocusManager and call "refresh" to sync the
 					//	number of descendants
 					var oSublist = Y.one("#list-1-2"),
 						oParentNode = oSublist.get("parentNode");
-					
+
 					oParentNode.removeChild(oSublist);
-					
+
 					oList1.focusManager.refresh();
 					Y.Assert.isTrue((oList1.focusManager.get("descendants").size() === 8));
-					
+
 					//	Clean up for next set of tests
-					oList1.unplug("focusManager");				
+					oList1.unplug("focusManager");
 
 
 					//	Test #3:
@@ -278,30 +278,30 @@
                     //  the "refresh" method to update the managed descendants.
                     var oList3 = Y.one("#list-3");
 
-					oList3.plug(Y.Plugin.NodeFocusManager, { 
+					oList3.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" }
 					});
 
 					Y.Assert.isTrue((oList3.focusManager.get("descendants").size() === 0));
-					
+
 					oList3.append('<li><a href="#" class="focusable">One</a></li><li><a href="#" class="focusable">Two</a></li><li><a href="#" class="focusable">Three</a></li><li><a href="#" class="focusable">Four</a></li>');
-					
+
 					oList3.focusManager.refresh();
 
 					Y.Assert.isTrue((oList3.focusManager.get("descendants").size() === 4));
-					
+
 					oList3.unplug("focusManager");
 
 				},
-				
+
 				testFocusedAttribute: function() {
 
 					//	TEST #1:
 					//	The "focused" attribute should be false by default
 					var oList2 = Y.one("#list-2");
 
-					oList2.plug(Y.Plugin.NodeFocusManager, { 
+					oList2.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -309,11 +309,11 @@
 					});
 
 					Y.Assert.isFalse(oList2.focusManager.get("focused"));
-					
-					
+
+
 					//	TEST #2:
 					//	Calling the "focus" method with no arguments should
-					//	result in the "focused" attribute being set to true 
+					//	result in the "focused" attribute being set to true
 					//	and the "activeDescendant" attribute being 0
 					oList2.focusManager.focus();
 	                Y.Assert.isTrue(oList2.focusManager.get("focused"));
@@ -321,37 +321,37 @@
 
 
 					//	TEST #3:
-					//	Calling the "blur" method should result in the 
-					//	"focused" attribute being set to false, the 
+					//	Calling the "blur" method should result in the
+					//	"focused" attribute being set to false, the
 					//	removal of the the "focused" CSS class,
-					//	and the "activeDescendant" attribute being still 0				
+					//	and the "activeDescendant" attribute being still 0
 					oList2.focusManager.blur();
-					Y.Assert.isTrue((Y.all(".focused").size() === 0));					
+					Y.Assert.isTrue((Y.all(".focused").size() === 0));
 	                Y.Assert.isFalse(oList2.focusManager.get("focused"));
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
 
 
 					//	TEST #4:
-					//	Focusing another element in the DOM will result in the 
-					//	"focused" attribute being set to false, the 
-					//	removal of the "focused" CSS class, 
+					//	Focusing another element in the DOM will result in the
+					//	"focused" attribute being set to false, the
+					//	removal of the "focused" CSS class,
 					//	and the "activeDescendant" attribute being still 0
 					oList2.focusManager.focus();
 					Y.one("#anchor-1").focus();
-					Y.Assert.isTrue((Y.all(".focused").size() === 0));					
+					Y.Assert.isTrue((Y.all(".focused").size() === 0));
 	                Y.Assert.isFalse(oList2.focusManager.get("focused"));
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
-	
+
 					//	Clean up for next set of tests
-					oList2.unplug("focusManager");	
-					
-				}, 
+					oList2.unplug("focusManager");
+
+				},
 
 				testFocusClassAttribute: function() {
 
 					var oList1 = Y.one("#list-1");
 
-					oList1.plug(Y.Plugin.NodeFocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, {
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -361,64 +361,64 @@
 
 					oList1.focusManager.focus();
 
-					//	TEST #1: Make sure that the "focused" class is 
+					//	TEST #1: Make sure that the "focused" class is
 					//	applied to the first descendant
 
 					var nodes = oList1.all(".focused");
-					
+
 					Y.Assert.isTrue(nodes.size() === 1);
 					Y.Assert.isTrue(oList1.focusManager.get("descendants").item(0).hasClass("focused"));
 
 					oList1.focusManager.blur();
 
 
-					//	TEST #2: Make sure that the "focused" class is not 
+					//	TEST #2: Make sure that the "focused" class is not
 					//	not applied to any of the descendants
 
 					nodes = oList1.all(".focused");
-					
+
 					Y.Assert.isTrue(nodes.size() === 0);
 					Y.Assert.isFalse(oList1.focusManager.get("descendants").item(0).hasClass("focused"));
-					
 
-					//	TEST #3: Make sure that the "focused" class is 
+
+					//	TEST #3: Make sure that the "focused" class is
 					//	applied to the parent node of the first descendant
-					
+
 					oList1.focusManager.set("focusClass", {
 						className: "focused",
 						fn: function (node) {
 							return node.get("parentNode");
 						}
 					});
-					
 
-					oList1.focusManager.focus();					
+
+					oList1.focusManager.focus();
 
 					nodes = oList1.all(".focused");
-					
+
 					Y.Assert.isTrue(nodes.size() === 1);
 					Y.Assert.isTrue(oList1.focusManager.get("descendants").item(0).get("parentNode").hasClass("focused"));
 
 
-					//	TEST #4: Make sure that the "focused" class is not 
+					//	TEST #4: Make sure that the "focused" class is not
 					//	not applied to any of the descendants
 
 					oList1.focusManager.blur();
 
 					nodes = oList1.all(".focused");
- 
+
 					Y.Assert.isTrue(nodes.size() === 0);
 					Y.Assert.isFalse(oList1.focusManager.get("descendants").item(0).get("parentNode").hasClass("focused"));
-					
-				}				
+
+				}
 
 	        });
 
             var suite = new Y.Test.Suite('Focus Manager');
 	        suite.add(testFocusManager);
             Y.Test.Runner.add(suite);
-	        Y.Test.Runner.run();	
-	
+	        Y.Test.Runner.run();
+
 
 		}, "#list-2");
 

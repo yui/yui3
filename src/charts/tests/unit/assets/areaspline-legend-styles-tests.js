@@ -5,15 +5,15 @@ YUI.add('areaspline-legend-styles-tests', function(Y) {
         areasplineStylesTest,
         areasplineGlobalStylesTest,
         dataProvider = [
-            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
         seriesStyles = {
             miscellaneous: {
-                color: "#f00"    
+                color: "#f00"
             },
             expenses: {
                 color: "#00f"
@@ -33,7 +33,7 @@ YUI.add('areaspline-legend-styles-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
@@ -78,7 +78,7 @@ YUI.add('areaspline-legend-styles-tests', function(Y) {
         type: "areaspline",
         render: "#testdiv"
     });
-    
+
     areasplineGlobalStylesTest = new ChartsLegendStylesTest({
         dataProvider: dataProvider,
         styles: {
@@ -90,7 +90,7 @@ YUI.add('areaspline-legend-styles-tests', function(Y) {
         type: "areaspline",
         render: "#testdiv"
     });
-    
+
     suite.add(areasplineStylesTest);
     suite.add(areasplineGlobalStylesTest);
     Y.Test.Runner.add(suite);
