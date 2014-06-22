@@ -1084,8 +1084,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             shortWeekDays = dateFormat.a;
         }
 
-            // Initialize the partial template for the weekday row cells.
-            partials.weekday_row = '';
+        // Initialize the partial template for the weekday row cells.
+        partials.weekday_row = '';
 
         // Populate the partial template for the weekday row cells with weekday names
         for (day = firstday; day <= firstday + 6; day++) {
