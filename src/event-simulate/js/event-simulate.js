@@ -45,7 +45,8 @@ var L   = Y.Lang,
     keyEvents   = {
         keydown:    1,
         keyup:      1,
-        keypress:   1
+        keypress:   1,
+        input:      1
     },
 
     //HTML events supported
@@ -96,13 +97,14 @@ Y.mix(bubbleEvents, touchEvents);
  * the generated event object. This method does browser-equalizing
  * calculations to account for differences in the DOM and IE event models
  * as well as different browser quirks. Note: keydown causes Safari 2.x to
- * crash.
+ * crash. Note: you'll need to include 'node-event-html5' module to listen
+ * to 'input' event.
  * @method simulateKeyEvent
  * @private
  * @static
  * @param {HTMLElement} target The target of the given event.
  * @param {String} type The type of event to fire. This can be any one of
- *      the following: keyup, keydown, and keypress.
+ *      the following: keyup, keydown, keypress, and input.
  * @param {Boolean} [bubbles=true] Indicates if the event can be
  *      bubbled up. DOM Level 3 specifies that all key events bubble by
  *      default.
@@ -145,6 +147,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
             case "keyup":
             case "keydown":
             case "keypress":
+            case "input":
                 break;
             default:
                 Y.error("simulateKeyEvent(): Event type '" + type + "' not supported.");
@@ -949,4 +952,3 @@ Y.Event.simulate = function(target, type, options){
 
 
 })();
-
