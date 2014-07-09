@@ -65,7 +65,7 @@ onload = function() {
                 clz = S + clz + S;
 
                 for (i = 0, len = els.length; i < len; ++i) {
-                    if ((S + els[i].className + S).indexOf(clz)) {
+                    if ((S + els[i].className + S).indexOf(clz) !== -1) {
                         nodes.push(els[i]);
                     }
                 }
@@ -253,7 +253,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual([], $('#root-test li', Y.Dom.get('nth-test')), 'id selector w/root false pos');
 
             },
-            /*
+            
             testNthLastChild: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
                 var odd = Y.Dom.getElementsByClassName('even', 'li', 'nth-test');
@@ -267,7 +267,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-last-child(2n+1)'), '2n+1');
                 ArrayAssert.itemsAreEqual(four1, $('li:nth-last-child(4n+1)'), '4n+1');
             },
-            */
+            
             testNthType: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
                 var odd = Y.Dom.getElementsByClassName('odd', 'li', 'nth-test');
@@ -302,13 +302,12 @@ onload = function() {
                 var four3 = Y.Dom.getElementsByClassName('four-3', 'li', 'nth-test');
                 var four4 = Y.Dom.getElementsByClassName('four-4', 'li', 'nth-test');
 
-                //ArrayAssert.itemsAreEqual(even[1], $('li:nth-child(2)'), '2');
-                //ArrayAssert.itemsAreEqual(even[1], $('li:nth-child(0n+2)'), '0n+2');
-                //ArrayAssert.itemsAreEqual(three1, $('li:nth-child(3n+1)'), '3n+1');
+                ArrayAssert.itemsAreEqual(even[0], $('li:nth-child(2)'), '2');
+                ArrayAssert.itemsAreEqual(even[0], $('li:nth-child(0n+2)'), '0n+2');
+                ArrayAssert.itemsAreEqual(three1, $('li:nth-child(3n+1)'), '3n+1');
                 ArrayAssert.itemsAreEqual(all, $('li:nth-child(n+1)'), 'n+1');
 
                 //from http://www.w3.org/TR/css3-selectors/#nth-child-pseudo examples
-                /*
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-child(2n+1)'), '2n+1');
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-child(odd)'), 'odd');
                 ArrayAssert.itemsAreEqual(even, $('li:nth-child(2n+0)'), '2n+0');
@@ -318,11 +317,10 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(four2, $('li:nth-child(4n+2)'), '4n+2');
                 ArrayAssert.itemsAreEqual(four3, $('li:nth-child(4n+3)'), '4n+3');
                 ArrayAssert.itemsAreEqual(four4, $('li:nth-child(4n+4)'), '4n+4');
-                ArrayAssert.itemsAreEqual(even[0], $('li:nth-child(0n+1)'), '0n+1');
-                ArrayAssert.itemsAreEqual(even[0], $('li:nth-child(1)'), '1');
+                ArrayAssert.itemsAreEqual(odd[0], $('li:nth-child(0n+1)'), '0n+1');
+                ArrayAssert.itemsAreEqual(odd[0], $('li:nth-child(1)'), '1');
                 ArrayAssert.itemsAreEqual(all, $('li:nth-child(1n+0)'), '1n+0');
                 ArrayAssert.itemsAreEqual(all, $('li:nth-child(n+0)'), 'n+0');
-                */
 
             },
 
@@ -336,12 +334,12 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(Y.Dom.get('demo').getElementsByTagName('p'), $('.foo p'), '.foo p');
                 ArrayAssert.itemsAreEqual(Y.Dom.get('demo').getElementsByTagName('p'), $('#demo p'), '#demo p');
                 ArrayAssert.itemsAreEqual($('p > em'), [Y.Dom.getFirstChild('demo-first-child')], 'p > em');
-                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~=para]'), '[class~=para]');
-                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~="para"]'), '[class~="para"]');
+                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~=para]'), '[class~=para]');
+                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~="para"]'), '[class~="para"]');
                 ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body div p'), 'body div p');
                 ArrayAssert.itemsAreEqual([], $('#demo .madeup'), '#demo .madeup');
-                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para', 'p'), $('div .para'), 'div .para');
-                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('first', null, Y.DOM.byId(demo)), $('#demo .first'), '#demo .first');
+                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para', 'p'), $('div .para'), 'div .para');
+                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('first', null, Y.DOM.byId(demo)), $('#demo .first'), '#demo .first');
                 //ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), $('div'), 'div');
                 ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('div'), $('body div'), 'body div');
                 ArrayAssert.itemsAreEqual([Y.Dom.get('class-bar')], $('.Bar'), '.Bar');
