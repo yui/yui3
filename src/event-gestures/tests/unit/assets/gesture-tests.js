@@ -24,12 +24,14 @@ YUI.add('gesture-tests', function(Y) {
                     screenX: 100,
                     screenY: 100
                 }
-            ]
+            ],
+            _event: {}
         },
 
         eventNoTouch = {
             target: node,
-            currentTarget: node
+            currentTarget: node,
+            _event: {}
         },
         suite = new Y.Test.Suite('Gesture Event Suite');
 
@@ -87,6 +89,84 @@ YUI.add('gesture-tests', function(Y) {
                     Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
+        },
+
+        'test: stopPropagation should work as expected': function() {
+            var currentEvent,
+                mock = new Y.Mock(),
+                node1 = Y.Node.create('<div />'),
+                node2 = Y.Node.create('<div />');
+
+            node2.append(node1);
+            currentEvent = {
+                currentTarget: node1,
+                touches: event.touches,
+                target: node1,
+                _event: {}
+            };
+
+            eventData.start._start(currentEvent, node1, {
+                fire: function(e) {
+                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');
+                    e.stopped = 1;
+                }
+            });
+
+            Y.Mock.expect(mock, {
+                callCount: 1,
+                method: 'fire1',
+                args: [Y.Mock.Value.Object]
+            });
+            eventData.start._start(currentEvent, node1, {fire: Y.bind(mock.fire1, mock)});
+            Y.Mock.verify(mock);
+
+            Y.Mock.expect(mock, {
+                callCount: 0,
+                method: 'fire2',
+                args: [Y.Mock.Value.Object]
+            });
+            currentEvent.currentTarget = node2;
+            eventData.start._start(currentEvent, node2, {fire: Y.bind(mock.fire2, mock)});
+            Y.Mock.verify(mock);
+        },
+
+        'test: stopImmediatePropagation should work as expected': function() {
+            var currentEvent,
+                mock = new Y.Mock(),
+                node1 = Y.Node.create('<div />'),
+                node2 = Y.Node.create('<div />');
+
+            node2.append(node1);
+            currentEvent = {
+                currentTarget: node1,
+                touches: event.touches,
+                target: node1,
+                _event: {}
+            };
+
+            eventData.start._start(currentEvent, node1, {
+                fire: function(e) {
+                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');
+                    e.stopped = 2;
+                }
+            });
+
+            Y.Mock.expect(mock, {
+                callCount: 0,
+                method: 'fire1',
+                args: [Y.Mock.Value.Object]
+            });
+            eventData.start._start(currentEvent, node1, {fire: Y.bind(mock.fire1, mock)});
+            Y.Mock.verify(mock);
+
+            Y.Mock.expect(mock, {
+                callCount: 0,
+                method: 'fire2',
+                args: [Y.Mock.Value.Object]
+            });
+            currentEvent.currentTarget = node2;
+            eventData.start._start(currentEvent, node2, {fire: Y.bind(mock.fire2, mock)});
+            Y.Mock.verify(mock);
         }
     }));
 
@@ -392,4 +472,4 @@ YUI.add('gesture-tests', function(Y) {
 
     Y.Test.Runner.add(suite);
 
-});
+}, '', {requires:['test', 'node']});

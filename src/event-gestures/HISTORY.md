@@ -4,7 +4,7 @@ Gestures Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1901][]: stopPropagation doesn't work for gesturemovestart when minTime or minDistance is set (@mairatma)
 
 3.17.2
 ------

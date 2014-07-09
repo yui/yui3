@@ -328,10 +328,38 @@ define(GESTURE_MOVE_START, {
         }
     },
 
+    /**
+     * Checks if the given event should be fired or not.
+     *
+     * @method _shouldFireEvent
+     * @param {EventFacade}
+     * @protected
+     */
+    _shouldFireEvent: function(e) {
+        if (e._event.stopped === 2) {
+            // Don't fire the event if it has been completely stopped.
+            return false;
+        }
+
+        if (e._event.stopped === 1 &&
+            !e.currentTarget.compareTo(e._event.stoppedTarget)) {
+
+            // Don't fire the event if it has been propagated when propagation
+            // should have been stopped.
+            return false;
+        }
+
+        return true;
+    },
+
     _start : function(e, node, ce, params) {
 
         if (params) {
             this._cancel(params);
+        }
+
+        if (!this._shouldFireEvent(e)) {
+            return;
         }
 
         e.type = GESTURE_MOVE_START;
@@ -340,6 +368,14 @@ define(GESTURE_MOVE_START, {
 
         node.setData(_MOVE_START, e);
         ce.fire(e);
+
+        if (e.stopped) {
+            // If the event was stopped, add a flag to the event that triggered it,
+            // so we can prevent any subsequent events related to it from firing
+            // as well.
+            e._event.stopped = e.stopped;
+            e._event.stoppedTarget = e.currentTarget;
+        }
     },
 
     MIN_TIME : 0,
