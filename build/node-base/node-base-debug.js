@@ -7,16 +7,16 @@ YUI.add('node-base', function (Y, NAME) {
 
 var methods = [
 /**
- * Determines whether each node has the given className.
+ * Determines whether the node has the given className.
  * @method hasClass
  * @for Node
  * @param {String} className the class name to search for
- * @return {Boolean} Whether or not the element has the specified class
+ * @return {Boolean} Whether or not the node has the specified class
  */
  'hasClass',
 
 /**
- * Adds a class name to each node.
+ * Adds a class name to the node.
  * @method addClass
  * @param {String} className the class name to add to the node's class attribute
  * @chainable
@@ -24,7 +24,7 @@ var methods = [
  'addClass',
 
 /**
- * Removes a class name from each node.
+ * Removes a class name from the node.
  * @method removeClass
  * @param {String} className the class name to remove from the node's class attribute
  * @chainable
@@ -32,7 +32,7 @@ var methods = [
  'removeClass',
 
 /**
- * Replace a class with another class for each node.
+ * Replace a class with another class on the node.
  * If no oldClassName is present, the newClassName is simply added.
  * @method replaceClass
  * @param {String} oldClassName the class name to be replaced
@@ -65,7 +65,7 @@ Y.Node.importMethod(Y.DOM, methods);
  * Adds a class name to each node.
  * @method addClass
  * @see Node.addClass
- * @param {String} className the class name to add to the node's class attribute
+ * @param {String} className the class name to add to each node's class attribute
  * @chainable
  */
 
@@ -73,7 +73,7 @@ Y.Node.importMethod(Y.DOM, methods);
  * Removes a class name from each node.
  * @method removeClass
  * @see Node.removeClass
- * @param {String} className the class name to remove from the node's class attribute
+ * @param {String} className the class name to remove from each node's class attribute
  * @chainable
  */
 
@@ -88,7 +88,7 @@ Y.Node.importMethod(Y.DOM, methods);
  */
 
 /**
- * If the className exists on the node it is removed, if it doesn't exist it is added.
+ * For each node, if the className exists on the node it is removed, if it doesn't exist it is added.
  * @method toggleClass
  * @see Node.toggleClass
  * @param {String} className the class name to be toggled
@@ -107,7 +107,7 @@ var Y_Node = Y.Node,
  * Returns a new dom node using the provided markup string.
  * @method create
  * @static
- * @param {String} html The markup used to create the element
+ * @param {String} html The markup used to create the element.
  * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
  * to escape html content.
  * @param {HTMLDocument} doc An optional document context
@@ -136,7 +136,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content before the reference node.
      * @method insert
-     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @param {Int | Node | HTMLElement | String} where The position to insert at.
@@ -185,7 +185,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content as the firstChild of the node.
      * @method prepend
-     * @param {String | Node | HTMLElement} content The content to insert
+     * @param {String | Node | HTMLElement} content The content to insert.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @chainable
@@ -197,7 +197,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content as the lastChild of the node.
      * @method append
-     * @param {String | Node | HTMLElement} content The content to insert
+     * @param {String | Node | HTMLElement} content The content to insert.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @chainable
@@ -208,7 +208,7 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * @method appendChild
-     * @param {String | HTMLElement | Node} node Node to be appended
+     * @param {String | HTMLElement | Node} node Node to be appended.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @return {Node} The appended node
@@ -220,7 +220,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * @method insertBefore
      * @param {String | HTMLElement | Node} newNode Node to be appended
-     * @param {HTMLElement | Node} refNode Node to be inserted before
+     * @param {HTMLElement | Node} refNode Node to be inserted before.
      * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
      * to escape html content.
      * @return {Node} The inserted node
@@ -231,8 +231,12 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Appends the node to the given node.
+     * @example
+     *      // appendTo returns the node that has been created beforehand
+     *      Y.Node.create('<p></p>').appendTo('body').set('text', 'hello world!');
      * @method appendTo
-     * @param {Node | HTMLElement} node The node to append to
+     * @param {Node | HTMLElement | String} node The node to append to.
+     *  If `node` is a string it will be considered as a css selector and only the first matching node will be used.
      * @chainable
      */
     appendTo: function(node) {
@@ -240,38 +244,36 @@ Y.mix(Y_Node.prototype, {
         return this;
     },
 
-    /**
-     * Replaces the node's current content with the content.
-     * Note that this passes to innerHTML and is not escaped.
-     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
-     * to escape html content or `set('text')` to add as text.
-     * @method setContent
-     * @deprecated Use setHTML
-     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
-     * @chainable
-     */
+    // This method is deprecated, and is intentionally left undocumented.
+    // Use `setHTML` instead.
     setContent: function(content) {
         this._insert(content, 'replace');
         return this;
     },
 
-    /**
-     * Returns the node's current content (e.g. innerHTML)
-     * @method getContent
-     * @deprecated Use getHTML
-     * @return {String} The current content
-     */
-    getContent: function(content) {
-        return this.get('innerHTML');
+    // This method is deprecated, and is intentionally left undocumented.
+    // Use `getHTML` instead.
+    getContent: function() {
+        var node = this;
+
+        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
+            // "this", when it is a document fragment, must be cloned because
+            // the nodes contained in the fragment actually disappear once
+            // the fragment is appended anywhere
+            node = node.create("<div/>").append(node.cloneNode(true));
+        }
+
+        return node.get("innerHTML");
     }
 });
 
 /**
  * Replaces the node's current html content with the content provided.
  * Note that this passes to innerHTML and is not escaped.
- * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+ * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+ * to escape html content or `set('text')` to add as text.
  * @method setHTML
- * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+ * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
  * @chainable
  */
 Y.Node.prototype.setHTML = Y.Node.prototype.setContent;
@@ -324,28 +326,15 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'prepend',
 
-    /**
-     * Called on each Node instance
-     * Note that this passes to innerHTML and is not escaped.
-     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
-     * @for NodeList
-     * @method setContent
-     * @deprecated Use setHTML
-     */
     'setContent',
 
-    /**
-     * Called on each Node instance
-     * @for NodeList
-     * @method getContent
-     * @deprecated Use getHTML
-     */
     'getContent',
 
     /**
      * Called on each Node instance
      * Note that this passes to innerHTML and is not escaped.
-     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content or `set('text')` to add as text.
      * @for NodeList
      * @method setHTML
      * @see Node.setHTML
@@ -500,6 +489,8 @@ Y_Node.DOM_EVENTS = {
     close: 1,
     command: 1,
     contextmenu: 1,
+    copy: 1,
+    cut: 1,
     dblclick: 1,
     DOMMouseScroll: 1,
     drag: 1,
@@ -527,6 +518,7 @@ Y_Node.DOM_EVENTS = {
     mouseup: 1,
     mousewheel: 1,
     orientationchange: 1,
+    paste: 1,
     reset: 1,
     resize: 1,
     select: 1,
@@ -534,7 +526,8 @@ Y_Node.DOM_EVENTS = {
     submit: 1,
     scroll: 1,
     textInput: 1,
-    unload: 1
+    unload: 1,
+    invalid: 1
 };
 
 // Add custom event adaptors to this list.  This will make it so
@@ -772,154 +765,6 @@ Y.mix(Y.Node.prototype, {
         });
     }
 });
-/**
- * @module node
- * @submodule node-base
- */
-
-var Y_Node = Y.Node;
-
-Y.mix(Y_Node.prototype, {
-    /**
-     * Makes the node visible.
-     * If the "transition" module is loaded, show optionally
-     * animates the showing of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method show
-     * @for Node
-     * @param {String} name A named Transition effect to use as the show effect.
-     * @param {Object} config Options to use with the transition.
-     * @param {Function} callback An optional function to run after the transition completes.
-     * @chainable
-     */
-    show: function(callback) {
-        callback = arguments[arguments.length - 1];
-        this.toggleView(true, callback);
-        return this;
-    },
-
-    /**
-     * The implementation for showing nodes.
-     * Default is to toggle the style.display property.
-     * @method _show
-     * @protected
-     * @chainable
-     */
-    _show: function() {
-        this.setStyle('display', '');
-
-    },
-
-    _isHidden: function() {
-        return Y.DOM.getStyle(this._node, 'display') === 'none';
-    },
-
-    /**
-     * Displays or hides the node.
-     * If the "transition" module is loaded, toggleView optionally
-     * animates the toggling of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method toggleView
-     * @for Node
-     * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
-     * @param {Function} [callback] An optional function to run after the transition completes.
-     * @chainable
-     */
-    toggleView: function(on, callback) {
-        this._toggleView.apply(this, arguments);
-        return this;
-    },
-
-    _toggleView: function(on, callback) {
-        callback = arguments[arguments.length - 1];
-
-        // base on current state if not forcing
-        if (typeof on != 'boolean') {
-            on = (this._isHidden()) ? 1 : 0;
-        }
-
-        if (on) {
-            this._show();
-        }  else {
-            this._hide();
-        }
-
-        if (typeof callback == 'function') {
-            callback.call(this);
-        }
-
-        return this;
-    },
-
-    /**
-     * Hides the node.
-     * If the "transition" module is loaded, hide optionally
-     * animates the hiding of the node using either the default
-     * transition effect ('fadeOut'), or the given named effect.
-     * @method hide
-     * @param {String} name A named Transition effect to use as the show effect.
-     * @param {Object} config Options to use with the transition.
-     * @param {Function} callback An optional function to run after the transition completes.
-     * @chainable
-     */
-    hide: function(callback) {
-        callback = arguments[arguments.length - 1];
-        this.toggleView(false, callback);
-        return this;
-    },
-
-    /**
-     * The implementation for hiding nodes.
-     * Default is to toggle the style.display property.
-     * @method _hide
-     * @protected
-     * @chainable
-     */
-    _hide: function() {
-        this.setStyle('display', 'none');
-    }
-});
-
-Y.NodeList.importMethod(Y.Node.prototype, [
-    /**
-     * Makes each node visible.
-     * If the "transition" module is loaded, show optionally
-     * animates the showing of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method show
-     * @param {String} name A named Transition effect to use as the show effect.
-     * @param {Object} config Options to use with the transition.
-     * @param {Function} callback An optional function to run after the transition completes.
-     * @for NodeList
-     * @chainable
-     */
-    'show',
-
-    /**
-     * Hides each node.
-     * If the "transition" module is loaded, hide optionally
-     * animates the hiding of the node using either the default
-     * transition effect ('fadeOut'), or the given named effect.
-     * @method hide
-     * @param {String} name A named Transition effect to use as the show effect.
-     * @param {Object} config Options to use with the transition.
-     * @param {Function} callback An optional function to run after the transition completes.
-     * @chainable
-     */
-    'hide',
-
-    /**
-     * Displays or hides each node.
-     * If the "transition" module is loaded, toggleView optionally
-     * animates the toggling of the nodes using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method toggleView
-     * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
-     * @param {Function} [callback] An optional function to run after the transition completes.
-     * @chainable
-     */
-    'toggleView'
-]);
 
 if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
@@ -953,7 +798,7 @@ Y.Node.ATTRS.type = {
             try {
                 this._node.type = 'hidden';
             } catch(e) {
-                this.setStyle('display', 'none');
+                this._node.style.display = 'none';
                 this._inputType = 'hidden';
             }
         } else {
@@ -981,10 +826,9 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
             }
     };
 }
-
 /**
  * Provides methods for managing custom Node data.
- * 
+ *
  * @module node
  * @main node
  * @submodule node-data
@@ -1058,8 +902,9 @@ Y.mix(Y.Node.prototype, {
     },
 
     _getDataAttribute: function(name) {
-        var name = this.DATA_PREFIX + name,
-            node = this._node,
+        name = this.DATA_PREFIX + name;
+
+        var node = this._node,
             attrs = node.attributes,
             data = attrs && attrs[name] && attrs[name].value;
 
@@ -1117,7 +962,7 @@ Y.mix(Y.NodeList.prototype, {
     * @see Node
     * @param {string} name Optional name of the data field to retrieve.
     * If no name is given, all data is returned.
-    * @return {Array} An array containing all of the data for each Node instance. 
+    * @return {Array} An array containing all of the data for each Node instance.
     * or an object hash of all fields.
     */
     getData: function(name) {
@@ -1155,4 +1000,4 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base", "dom-style"]});

@@ -1,10 +1,9 @@
 /**
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
- * @module charts
- * @submodule charts-base
  * @class RightAxisLayout
  * @constructor
+ * @submodule axis
  */
 RightAxisLayout = function(){};
 
@@ -69,7 +68,7 @@ RightAxisLayout.prototype = {
      * @method drawTick
      * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt Point on the axis in which the tick will intersect.
-     * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @param {Object} tickStyle Hash of properties to apply to the tick.
      * @protected
      */
     drawTick: function(path, pt, tickStyles)
@@ -218,6 +217,7 @@ RightAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("rightTickOffset"),
             labelStyles = styles.label,
             margin = 0,
@@ -234,20 +234,21 @@ RightAxisLayout.prototype = {
         }
         if(rot === 0)
         {
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
+            topOffset = topOffset - labelHeight + labelWidth/2 - (labelWidth * offset);
         }
         else if(rot === -90)
         {
+            topOffset = topOffset + labelWidth/2 - (labelWidth * offset);
             leftOffset -= labelWidth * 0.5;
         }
         else
         {
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
             leftOffset += labelHeight/2 * absRot/90;
         }
         leftOffset += margin;

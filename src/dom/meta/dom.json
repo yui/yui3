@@ -17,20 +17,14 @@
             },
             "dom-style-ie": {
                 "requires": [
-                    "dom-style"
+                    "dom-style",
+                    "color-base"
                 ],
                 "condition": {
                    "trigger": "dom-style",
                    "test": "ie-style-test.js"
                 }
             },
-
-            "dom-deprecated": {
-                "requires": [
-                    "dom-base"
-                ]
-            },
-
             "selector-css2": {
                 "requires": [
                     "selector-native"

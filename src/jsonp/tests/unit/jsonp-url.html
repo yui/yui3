@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<p>These tests need an <code>echoecho</code> endpoint. To run them locally, run them through <code>yogi serve</code></p>
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['jsonp-url'],
+    modules: {
+        'jsonp-tests': {
+            fullpath: './assets/jsonp-tests.js',
+            requires: ['test', 'jsonp']
+        },
+        'jsonp-url-tests': {
+            fullpath: './assets/jsonp-url-tests.js',
+            requires: ['jsonp-url', 'jsonp-tests']
+        }
+    }
+}).use('test', 'test-console', 'jsonp-url-tests', function (Y) {
+
+    (new Y.Test.Console()).render("#log");
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

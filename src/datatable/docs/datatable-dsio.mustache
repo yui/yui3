@@ -42,7 +42,7 @@ dataSource.plug(Y.Plugin.DataSourceXMLSchema, {
     }
 });
 
-dataSource.sendRequest({    
+dataSource.sendRequest({
     callback: {
         success: function (e) {
             Y.log(e);
@@ -93,7 +93,7 @@ dataSource.after("response", function() {
 <p>Here's the code to run the whole example:</p>
 
 ```
-YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+YUI().use("datasource-io", "datasource-xmlschema", "datatable-datasource", function(Y) {
     var dataSource = new Y.DataSource.IO({
         source: "ylocal_proxy.php?"
     });
@@ -114,7 +114,7 @@ YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", fun
         summary: "Chinese restaurants near 98089",
         caption: "Table with XML data from same-domain script"
     });
-    
+
     table.plug(Y.Plugin.DataTableDataSource, {
         datasource: dataSource,
         initialRequest: "zip=94089&query=chinese"

@@ -28,8 +28,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('oop-test');
-    
+
     Y.Test.Runner.setName('OOP cli tests');
-    
+
 });
 

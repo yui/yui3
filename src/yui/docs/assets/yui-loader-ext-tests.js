@@ -7,7 +7,7 @@ YUI.add('yui-loader-ext-tests', function(Y) {
         name: 'Example tests',
         'external module loaded': function() {
             var test = this;
-            
+
             test.wait(function() {
                 var node = Y.one('#marker');
                 Assert.areEqual(node.get('innerHTML'), 'External Module was loaded.', 'Failed to load external module');

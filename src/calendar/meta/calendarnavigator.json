@@ -4,8 +4,7 @@
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     }

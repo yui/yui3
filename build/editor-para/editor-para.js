@@ -13,11 +13,20 @@ YUI.add('editor-para', function (Y, NAME) {
 
     var EditorPara = function() {
         EditorPara.superclass.constructor.apply(this, arguments);
-    }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange', PARENT_NODE = 'parentNode',
-    FIRST_P = BODY + ' > p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
+    }, HOST = 'host', NODE_CHANGE = 'nodeChange', PARENT_NODE = 'parentNode',
+    FIRST_P = '> p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
 
 
     Y.extend(EditorPara, Y.Plugin.EditorParaBase, {
+        /**
+        * Resolves the ROOT editor element.
+        * @method _getRoot
+        * @private
+        */
+        _getRoot: function() {
+            return this.get(HOST).getInstance().EditorSelection.ROOT;
+        },
+
         /**
         * nodeChange handler to handle fixing an empty document.
         * @private
@@ -28,7 +37,7 @@ YUI.add('editor-para', function (Y, NAME) {
                 html, txt, par , d, sel, btag = inst.EditorSelection.DEFAULT_BLOCK_TAG,
                 inHTML, txt2, childs, aNode, node2, top, n, sib, para2, prev,
                 ps, br, item, p, imgs, t, LAST_CHILD = ':last-child', para, b, dir,
-                lc, lc2, found = false, start;
+                lc, lc2, found = false, root = this._getRoot(), start;
 
             switch (e.changedType) {
                 case 'enter-up':
@@ -172,8 +181,8 @@ YUI.add('editor-para', function (Y, NAME) {
                     break;
                 case 'keyup':
                     if (Y.UA.gecko) {
-                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 20) {
-                            if (!inst.one(FIRST_P)) {
+                        if (root && root.getHTML().length < 20) {
+                            if (!root.one(FIRST_P)) {
                                 this._fixFirstPara();
                             }
                         }
@@ -183,8 +192,8 @@ YUI.add('editor-para', function (Y, NAME) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        ps = inst.all(FIRST_P);
-                        item = inst.one(BODY);
+                        ps = root.all(FIRST_P);
+                        item = root;
                         if (ps.item(0)) {
                             item = ps.item(0);
                         }
@@ -214,7 +223,7 @@ YUI.add('editor-para', function (Y, NAME) {
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous() && p.get(PARENT_NODE) && p.get(PARENT_NODE).test(BODY)) {
+                                if (!p.previous() && p.get(PARENT_NODE) && p.get(PARENT_NODE).compareTo(root)) {
                                     e.changedEvent.frameEvent.halt();
                                     e.preventDefault();
                                 }
@@ -239,17 +248,20 @@ YUI.add('editor-para', function (Y, NAME) {
                             }
                         }
                     }
+
                     if (Y.UA.gecko) {
-                        /*
+                       /*
                         * This forced FF to redraw the content on backspace.
                         * On some occasions FF will leave a cursor residue after content has been deleted.
                         * Dropping in the empty textnode and then removing it causes FF to redraw and
                         * remove the "ghost cursors"
                         */
-                        d = e.changedNode;
-                        t = inst.config.doc.createTextNode(' ');
-                        d.appendChild(t);
-                        d.removeChild(t);
+                        // d = e.changedNode;
+                        // t = inst.config.doc.createTextNode(' ');
+                        // d.appendChild(t);
+                        // d.removeChild(t);
+
+                        this._fixGeckoOnBackspace(inst);
                     }
                     break;
             }
@@ -263,6 +275,49 @@ YUI.add('editor-para', function (Y, NAME) {
             }
 
         },
+
+        //If we just backspaced into a P on FF, we have to put the cursor
+        //before the BR that FF (usually) had injected when we used <ENTER> to
+        //leave the P.
+        _fixGeckoOnBackspace: function (inst) {
+            var sel = new inst.EditorSelection(),
+                node,
+                childNodes;
+
+            //not a cursor, not in a paragraph, or anchored at paragraph start.
+            if (!sel.isCollapsed || sel.anchorNode.get('nodeName') !== 'P' ||
+                sel.anchorOffset === 0) {
+                return;
+            }
+
+            //cursor not on the injected final BR
+            childNodes = sel.anchorNode.get('childNodes');
+            node = sel.anchorNode.get('lastChild');
+            if (sel.anchorOffset !== childNodes.size() || node.get('nodeName') !== 'BR') {
+                return;
+            }
+
+            //empty P (only contains BR)
+            if (sel.anchorOffset === 1) {
+                sel.selectNode(sel.anchorNode, true);
+                return;
+            }
+
+            //We only expect injected BR behavior when last Node is text
+            node = node.get('previousSibling');
+            if (node.get('nodeType') !== Node.TEXT_NODE) {
+                return;
+            }
+
+            offset = node.get('length');
+
+            // the cursor's position is strictly
+            // at the offset when this bug occurs
+            if (sel.getEditorOffset() === offset) {
+                sel.selectNode(node, true, offset);
+            }
+        },
+
         initializer: function() {
             var host = this.get(HOST);
             if (host.editorBR) {
@@ -295,7 +350,6 @@ YUI.add('editor-para', function (Y, NAME) {
     Y.namespace('Plugin');
 
     Y.Plugin.EditorPara = EditorPara;
-
 
 
 }, '@VERSION@', {"requires": ["editor-para-base"]});

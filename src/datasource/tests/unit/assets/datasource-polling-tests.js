@@ -19,7 +19,7 @@ suite.add(new Y.Test.Case({
             ds = new Y.DataSource.Local(),
             count = 0,
             resumed, intervalId;
-        
+
         intervalId = ds.setInterval(50, {
             callback: {
                 success: function (e) {
@@ -27,7 +27,7 @@ suite.add(new Y.Test.Case({
                 }
             }
         });
-        
+
         Assert.isNumber(intervalId, "Expected interval id.");
 
         this.wait(function () {

@@ -13,11 +13,9 @@
     </p>
 
     <p>
-        <strong>Note:</strong> The <em>`Y.get()`, `node.query()`, and
-        `node.queryAll()` methods have been removed.  Use `Y.one()`,
-        `node.one()`, and `node.all()` or include the
-        "<a href="{{apiDocs}}/modules/node-deprecated.html">node-deprecated</a>"
-        module in your `use()` statement to restore them</em>.
+        <strong>Note:</strong><em>The `Y.get()`, `node.query()`, and
+        `node.queryAll()` methods have been removed. Use `Y.one()`,
+        `node.one()`, and `node.all()`.</em>
     </p>
 
 </div>
@@ -31,7 +29,7 @@
      based on the standard DOM API, and provides additional sugar properties
      and methods that make common operations easier, and implementation code
      more concise.  Developers familiar with the standard DOM API will find
-     Node instances to be very familiar.                                
+     Node instances to be very familiar.
 </p>
 
 <h3 id="using-node">Getting a Node</h3>
@@ -56,7 +54,7 @@ var bodyNode = Y.one(document.body);
     <strong>Note:</strong> CSS3 selector support is not included by default
     with Node. Add support by including the "selector-css3" module in your
     `use()` statement.
-</p> 
+</p>
 
 <h3 id="create">Creating Nodes and Modifying Content</h3>
 
@@ -73,8 +71,8 @@ bodyNode.append("<p>This is the end, beautiful friend, the end.</p>");
 
 <p>
     `Node`s have methods for
-    <a href="{{apiDocs}}/classes/Node.html#method_append">appending</a>, 
-    <a href="{{apiDocs}}/classes/Node.html#method_prepend">prepending</a>, 
+    <a href="{{apiDocs}}/classes/Node.html#method_append">appending</a>,
+    <a href="{{apiDocs}}/classes/Node.html#method_prepend">prepending</a>,
     <a href="{{apiDocs}}/classes/Node.html#method_setHTML">replacing</a>, and
     <a href="{{apiDocs}}/classes/Node.html#method_insert">inserting</a>
     content. The static method
@@ -115,7 +113,7 @@ labelNode.setHTML(thumbnail.get('title'));
 ```
 Y.one('#demo').on('click', function(e) {
     e.preventDefault();
-    alert('event: ' + e.type + ' target: ' + e.target.get('tagName')); 
+    alert('event: ' + e.type + ' target: ' + e.target.get('tagName'));
 });
 ```
 
@@ -202,7 +200,7 @@ var firstPara = node.one('p');
 
 if (firstPara) { // might be null
     // adds "bar" to the first paragraph descendant of #demo
-    firstPara.addClass('intro');
+    firstPara.addClass('bar');
 }
 
 // adds class "syntax-highlight" to all <pre> descendants of #demo
@@ -229,7 +227,7 @@ node.all('pre').addClass('syntax-highlight');
 <p>
     For more information on selector queries, see the following W3C
     specifications:
-</p> 
+</p>
 
 <ul>
     <li><a href="http://www.w3.org/TR/css3-selectors/">CSS Level 3 Selectors</a></li>
@@ -240,7 +238,7 @@ node.all('pre').addClass('syntax-highlight');
     <strong>Note:</strong> CSS3 selector support is not included by default
     with Node, you will need to include the "selector-css3" module for CSS3
     support.
-</p> 
+</p>
 
 
 <h2 id="node-aria">ARIA Support</h2>

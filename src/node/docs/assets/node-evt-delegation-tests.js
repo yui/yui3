@@ -9,7 +9,7 @@ YUI.add('node-evt-delegation-tests', function(Y) {
             var myList = Y.all('.example #demo li');
             myList.item(1).simulate('click');
             Assert.isTrue((myList.item(1).getHTML().indexOf('Thanks for the click!') > -1),'&#8226; failed to setHTML of clicked item');
-            Assert.isTrue((myList.item(2).getHTML().indexOf('What about me?') > -1),'&#8226; HTML of unclicked failed to change to clickme too please');
+            Assert.isTrue((myList.item(2).getHTML().indexOf('me') > -1),'&#8226; HTML of unclicked failed to change to clickme too please');
             Assert.areEqual('5px', Y.one('.example #demo').getComputedStyle('borderTopWidth'),'&#8226; failed to set border width of container');
             Assert.areEqual('rgb(255, 161, 0)', Y.one('.example #demo').getComputedStyle('borderTopColor'),'&#8226; failed to set border color of container');
             myList.item(3).simulate('click');

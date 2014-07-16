@@ -1,6 +1,7 @@
 YUI.add('template-test', function (Y) {
 
 var Assert = Y.Assert,
+    ObjectAssert = Y.ObjectAssert,
     Micro  = Y.Template.Micro,
 
     templateSuite = Y.TemplateTestSuite = new Y.Test.Suite('Template'),
@@ -30,14 +31,14 @@ microSuite.add(new Y.Test.Case({
 
     'precompile() should return precompiled template code': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t='test';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='test';\nreturn $t;\n}",
             Micro.precompile('test')
         );
     },
 
     'precompile() should respect compile options': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t=''+\n$e($v(data.test))+\n'';\nreturn $t;\n}",
 
             Micro.precompile('{{data.test}}', {
                 escapedOutput: /\{\{([\s\S]+?)\}\}/g
@@ -112,16 +113,32 @@ microSuite.add(new Y.Test.Case({
         Assert.areSame('at&amp;t', Micro.render('<%= data.name %>', {name: 'at&t'}));
     },
 
-    '<%= ... %> should print an empty string if given a falsy value': function () {
-        Assert.areSame('foobar', Micro.render('foo<%= data.bogus %>bar'));
+    '<%= ... %> should print an empty string if given a falsy non-numeric value': function () {
+        Assert.areSame('foobar', Micro.render('foo<%= data.value %>bar'), 'should print an empty string when the value is `undefined`');
+        Assert.areSame('foobar', Micro.render('foo<%= data.value %>bar', {value: false}), 'should print an empty string when the value is `false`');
+        Assert.areSame('foobar', Micro.render('foo<%= data.value %>bar', {value: null}), 'should print an empty string when the value is `null`');
+    },
+
+    '<%= ... %> should print "0" if given a numerical 0': function () {
+        Assert.areSame('0', Micro.render('<%= data.zero %>', {zero: 0}));
     },
 
     '<%== ... %> should be rendered as raw output': function () {
         Assert.areSame('at&t', Micro.render('<%== data.name %>', {name: 'at&t'}));
     },
 
-    '<%== ... %> should print an empty string if given a falsy value': function () {
-        Assert.areSame('foobar', Micro.render('foo<%== data.bogus %>bar'));
+    '<%== ... %> should print an empty string if given a falsy non-numeric value': function () {
+        Assert.areSame('foobar', Micro.render('foo<%== data.value %>bar'), 'should print an empty string when the value is `undefined`');
+        Assert.areSame('foobar', Micro.render('foo<%== data.value %>bar', {value: false}), 'should print an empty string when the value is `false`');
+        Assert.areSame('foobar', Micro.render('foo<%== data.value %>bar', {value: null}), 'should print an empty string when the value is `null`');
+    },
+
+    '<%== ... %> should print "0" if given a numerical 0': function () {
+        Assert.areSame('0', Micro.render('<%== data.zero %>', {zero: 0}));
+    },
+
+    'Special characters in a template string should be properly escaped for use in a string literal': function () {
+        Assert.areSame('\r\r\n\n\t\t\'\'\\\\\u2028\u2029', Micro.render('\r\r\n\n\t\t\'\'\\\\\u2028\u2029'));
     }
 }));
 
@@ -182,18 +199,17 @@ templateSuite.add(new Y.Test.Case({
 
     'precompile() should precompile a template using the selected engine': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t='test';\nreturn $t;\n}",
+            Y.Template.Micro.precompile('test'),
             (new Y.Template()).precompile('test')
         );
     },
 
     'precompile() should pass options to the selected engine': function () {
-        Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+        var escapedOutputRegex = /\{\{([\s\S]+?)\}\}/g;
 
-            (new Y.Template()).precompile('{{data.test}}', {
-                escapedOutput: /\{\{([\s\S]+?)\}\}/g
-            })
+        Assert.areSame(
+            Y.Template.Micro.precompile('{{data.test}}', {escapedOutput: escapedOutputRegex}),
+            (new Y.Template()).precompile('{{data.test}}', {escapedOutput: escapedOutputRegex})
         );
     },
 
@@ -231,6 +247,186 @@ templateSuite.add(new Y.Test.Case({
     "revive() should return the given template if the engine doesn't have a revive() method": function () {
         eval('var precompiled = ' + Micro.precompile('<%=data.a%>') + ';');
         Assert.areSame(precompiled, (new Y.Template({})).revive(precompiled));
+    }
+}));
+
+templateSuite.add(new Y.Test.Case({
+    name: 'Options',
+
+    setUp: function () {
+        // Creates a Template.Micro engine with specificed defaults.
+        this.microEngine = new Y.Template(Y.Template.Micro, {
+            code         : /\{\{%([\s\S]+?)%\}\}/g,
+            escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
+            rawOutput    : /\{\{\{([\s\S]+?)\}\}\}/g
+        });
+
+        // Creates a Handlebars engine with specificed defaults.
+        this.hbEngine = new Y.Template(Y.Handlebars, {
+            partials: {
+                foo: '!{{a}}!'
+            }
+        });
+    },
+
+    tearDown: function () {
+        delete this.microEngine;
+        delete this.hbEngine;
+    },
+
+    'compile() should compile a template using the specified `defaults`': function () {
+        Assert.areSame('foo', this.microEngine.compile('{{this.a}}')({a: 'foo'}), 'should compile Micro templates with custom syntax');
+        Assert.areSame('!foo!', this.hbEngine.compile('{{> foo}}')({a: 'foo'}, this.hbEngine.defaults), 'should compile Handlebars template with default partials');
+    },
+
+    'compile() should merge `defaults` with specificed `options`': function () {
+        Assert.areSame(
+            'foo',
+            this.microEngine.compile('<%= data.a %>', {
+                escapedOutput: /<%=([\s\S]+?)%>/g
+            })({a: 'foo'})
+        );
+    },
+
+    'precompile() should precompile a template using the specified `defaults`': function () {
+        Assert.areSame(
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t=''+\n$e($v(data.test))+\n'';\nreturn $t;\n}",
+            this.microEngine.precompile('{{data.test}}')
+        );
+    },
+
+    'precompile() should merge `defaults` with the specified `options`': function () {
+        Assert.areSame(
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t=''+\n$e($v(data.test))+\n'';\nreturn $t;\n}",
+
+            this.microEngine.precompile('<%=data.test%>', {
+                escapedOutput:  /<%=([\s\S]+?)%>/g
+            })
+        );
+    },
+
+    'render() should compile and render a template using the the specified `defaults`': function () {
+        Assert.areSame(
+            'foo',
+            this.microEngine.render('{{data.a}}', {a: 'foo'})
+        );
+    },
+
+    'render() should merge `defaults` with the specified `options`': function () {
+        Assert.areSame(
+            'foo bar',
+            this.microEngine.render('<%= data.a %> {{{ data.b }}}', {
+                a: 'foo',
+                b: 'bar'
+            }, {
+                escapedOutput:  /<%=([\s\S]+?)%>/g
+            })
+        );
+    },
+
+    'revive() should revive a precompiled template using the specified `defaults`': function () {
+        eval('var precompiled = ' + this.microEngine.precompile('{{data.a}}') + ';');
+        Assert.areSame('foo', this.microEngine.revive(precompiled)({a: 'foo'}));
+    },
+
+    'revive() should merge `defaults` with the specified `options`': function () {
+        eval('var precompiled = ' + this.microEngine.precompile('{{data.a}}') + ';');
+        Assert.areSame('foo', this.microEngine.revive(precompiled, {})({a: 'foo'}));
+    }
+}));
+
+templateSuite.add(new Y.Test.Case({
+    name: 'Registration',
+
+    _should: {
+        error: {
+            '[static] render() on an unregistered template should throw an error': 'Unregistered template: "fail"'
+        }
+    },
+
+    setUp: function () {
+        this.errorFn   = Y.config.errorFn;
+        this.throwFail = Y.config.throwFail;
+
+        eval('var precompiled =' + Micro.precompile('foo <%= data.a %>') + ';');
+        this.templateFunction = Micro.revive(precompiled);
+    },
+
+    tearDown: function () {
+        delete this.templateFunction;
+        delete Y.Template._registry;
+
+        Y.Template._registry = {};
+
+        Y.config.errorFn = this.errorFn;
+        delete this.errorFn;
+
+        Y.config.throwFail = this.throwFail;
+        delete this.throwFail;
+    },
+
+    'register() should attach a template to the registry and return it': function () {
+        var revivedTmpl = Y.Template.register('tmpl', this.templateFunction);
+
+        ObjectAssert.ownsKey('tmpl', Y.Template._registry, 'did not have `tmpl` key inside the registry');
+        Assert.areSame(this.templateFunction, Y.Template._registry['tmpl'], 'did not have the revived template inside the registry');
+        Assert.areSame(this.templateFunction, revivedTmpl, 'register() did not return the revived template');
+    },
+
+    'get() should return the registered template function with the right name': function () {
+        Y.Template.register('tmpl', this.templateFunction);
+
+        Assert.areSame(this.templateFunction, Y.Template.get('tmpl'), 'get() did not return the revived template');
+    },
+
+    'get() should return `undefined` if template is unregistered': function () {
+        var unregisteredTmpl = Y.Template.get('tmpl');
+
+        Assert.isUndefined(unregisteredTmpl, 'Unregistered template is not `undefined`');
+    },
+
+    '[static] render() should use the correct template to generate the output': function () {
+        Y.Template.register('tmpl', this.templateFunction);
+        var output = Y.Template.render('tmpl', {'a': 'bar'});
+
+        Assert.areSame('foo bar', output, 'render() did not return the correct output');
+    },
+
+    '[static] render() on an unregistered template should throw an error': function () {
+        // Should throw an error
+        var output = Y.Template.render('fail', {'a': 'bar'});
+    },
+
+    '[static] render() should always return a string': function () {
+        var test = this,
+            output;
+
+        // We don't want the uncaught error line noise because we expect an
+        // error to be thrown when trying to render the unregistered template.
+        Y.config.throwFail = false;
+        Y.config.errorFn   = function (e) {
+            Assert.areSame(e, 'Unregistered template: "not-exist"');
+            return true;
+        };
+
+        Y.Template.register('tmpl', this.templateFunction);
+        output = Y.Template.render('tmpl', {'a': 'bar'});
+        Assert.areSame('foo bar', output, 'render() did not return the correct output');
+
+        output = undefined;
+        output = Y.Template.render('not-exist', {});
+        Assert.areSame('', output);
+    },
+
+    'register() should override an existing template with the same name': function () {
+        Y.Template.register('tmpl', function (data) {
+            return 'baz qux';
+        });
+        Y.Template.register('tmpl', this.templateFunction);
+        var output = Y.Template.render('tmpl', {'a': 'bar'});
+
+        Assert.areSame(this.templateFunction, Y.Template._registry['tmpl'], 'new template function did not override the old one');
+        Assert.areSame('foo bar', output, 'new template function did not generate correct string');
     }
 }));
 

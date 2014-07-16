@@ -1,7 +1,7 @@
 YUI.add('flick-tests', function(Y) {
- 
+
     var eventData = {
-            flick: Y.Node.DOM_EVENTS.flick.eventDef,
+            flick: Y.Node.DOM_EVENTS.flick.eventDef
         },
         Assert = Y.Assert,
         noop = function() { },
@@ -54,8 +54,9 @@ YUI.add('flick-tests', function(Y) {
         'test: _onMove()': function() {
             var sub = { '_fs': { flick: { } } };
             eventData.flick._onMove(event,node, sub);
-            Assert.isTrue((sub['_fs'].flick.time > 0), 'Flick time was not set on move');
+            Assert.isTrue((sub._fs.flick.time > 0), 'Flick time was not set on move');
         },
+
         'test: _onEnd()': function() {
             var en = event;
             en.changedTouches = en.touches;
@@ -89,7 +90,7 @@ YUI.add('flick-tests', function(Y) {
                     Assert.isTrue((e.flick.time >- 3000), 'flick time is not set properly');
                     Assert.isTrue((e.flick.velocity >= 0.020), 'Failed to move in the proper velocity');
                     Assert.areSame(0, e.touches.length, 'e.touches.length should be 0');
-                    Assert.areSame(1, e.changedTouches.length), 'e.changedTouches.length should be 1';
+                    Assert.areSame(1, e.changedTouches.length, 'e.changedTouches.length should be 1');
                     Assert.areSame(node, e.target, 'Event target is not set properly');
                     Assert.areSame(node, e.currentTarget, 'Event currentTarget is not set properly');
                 }

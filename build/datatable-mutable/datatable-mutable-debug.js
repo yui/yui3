@@ -68,7 +68,7 @@ Y.mix(Mutable.prototype, {
     The `index` parameter is required if adding a nested column.
 
     This method is a convienience method for fetching the DataTable's `columns`
-    attribute, updating it, and calling 
+    attribute, updating it, and calling
     `table.set('columns', _updatedColumnsDefs_)`
 
     For example:
@@ -273,7 +273,7 @@ Y.mix(Mutable.prototype, {
     as a callback to the Model's `destroy()` method.
 
     @method removeRow
-    @param {Object|String|Number} id The Model instance or identifier 
+    @param {Object|String|Number} id The Model instance or identifier
     @param {Object} [config] Configuration to pass along
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
@@ -346,7 +346,7 @@ Y.mix(Mutable.prototype, {
     as a callback to the Model's `save()` method.
 
     @method modifyRow
-    @param {Object|String|Number} id The Model instance or identifier 
+    @param {Object|String|Number} id The Model instance or identifier
     @param {Object} data New data values for the Model
     @param {Object} [config] Configuration to pass along to `setAttrs()`
     @param {Function} [callback] Callback function for Model's `save()`
@@ -441,7 +441,7 @@ Y.mix(Mutable.prototype, {
 
         if (column) {
             Y.mix(column, e.newColumnDef, true);
-            
+
             this.set('columns', columns, { originEvent: e });
         } else { Y.log('Could not locate column index to modify column', 'warn', 'datatable');
         }

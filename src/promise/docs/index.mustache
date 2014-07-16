@@ -1,0 +1,599 @@
+<link type="text/css" rel="stylesheet" href="{{yuiBuildUrl}}/cssbutton/cssbutton-min.css">
+<div class="intro">
+    <p>
+        Promises are a tool to help write asynchronous code in a more readable
+        style that looks more like synchronous code.
+    </p>
+
+    <p>
+        In short, promises allow you to interact with a value that may or may
+        not be available yet.
+    </p>
+
+    <p>
+        Promises let wrap, and even chain, asynchronous operations using a
+        consistent API, avoiding writing nested anonymous callbacks (the
+        "pyramid of doom"). And they let you handle any errors that happen
+        during those operations.
+    </p>
+
+    <p>
+        The `Y.Promise` class is compatible with the
+        <a href="http://promises-aplus.github.com/promises-spec/">Promises/A+</a>
+        specification.
+    </p>
+
+</div>
+
+{{>getting-started}}
+
+<h2>The Basics</h2>
+
+<p>
+    As mentioned above, promises allow you to interact with a value that may or
+    may not be available yet.  In synchronous code, values are assigned to
+    variables and immediately available to use, but if you need to use or
+    assign a value that depends on an asynchronous operation to get, the
+    rest of your code needs to be wrapped in a callback that is executed when
+    that asynchronous operations completes.
+</p>
+
+<p>
+    Callbacks work, but they don't maintain any state, the APIs responsible for
+    the callbacks are likely to differ, and they might not handle errors. It's
+    also quite easy to find yourself building up multi-step transactions by
+    nesting anonymous callbacks multiple levels deep.
+</p>
+
+<p>
+    Promises address this by providing an object that can be referred to
+    immediately and any time in the future that represents the value produced
+    by the asynchronous operation. Here's how you use them:
+</p>
+
+<h3>Two Simple Methods</h3>
+
+<p>
+    Promises operate using two methods: the `Y.Promise` constructor, and the
+    promise instance's `then()` method.
+</p>
+
+```
+// Create a promise for a value
+var promise = new Y.Promise(function (resolve, reject) {
+    var promisedValue;
+    var reasonForFailure = new Error('something bad happened');
+
+    // ...do some work to assign promisedValue, most likely asynchronously
+
+    // When the work is done, fulfill the promise with the resolve function,
+    // which was passed in the arguments.
+    resolve(promisedValue);
+
+    // Or if something went wrong, reject the promise with the reject function,
+    // also passed in the arguments.
+    reject(reasonForFailure);
+});
+
+// Do something with the promised value using the then() method. then() takes
+// two functions as arguments. promise.then(onFulfilled, onRejected);
+promise.then(
+    // aka onFulfilled
+    function (promisedValue) {
+        alert("Here's that value I promised I'd get for you: " + promisedValue);
+    },
+
+    // aka onRejected
+    function (reason) {
+        alert("Oh no! I broke my promise. Here's why: " + reason);
+    });
+```
+
+<h3>Creating a Promise</h3>
+
+<p>
+    The `Y.Promise` constructor takes as its argument a function we'll call the
+    "executor function". This function is responsible for saying when the
+    promised value is ready, or notifying that something went wrong.
+</p>
+
+<p>
+    The executor function receives two customized functions as its arguments,
+    commonly called `resolve` and `reject`. If the work in the executor
+    function to get the promised value completes successfully, pass the value
+    to the `resolve()` method. If something went wrong, pass the
+    reason&mdash;commonly an `Error`&mdash;to the `reject()` method.
+</p>
+
+```
+// dataPromise represents the data parsed from the IO response,
+// or the error that occurred fetching it
+var dataPromise = new Y.Promise(function (resolve, reject) {
+    Y.io('getdata.php', {
+        on: {
+            success: function (id, response) {
+                // The IO completed, so the promise can be resolved
+                try {
+                    resolve(Y.JSON.parse(response.responseText));
+                } catch (e) {
+                    // any failure to produce the value is a rejection
+                    reject(e);
+                }
+            },
+            failure: function (id, response) {
+                // The IO failed
+                reject(new Error("getdata.php request failed: " + response));
+            }
+        }
+    });
+});
+```
+
+<h3>Resolving a Promise</h3>
+
+<p>
+    Promises can be in one of three states:
+</p>
+
+<ol>
+    <li>`pending`   - the promised value is not ready yet (default)</li>
+    <li>`fulfilled` - the value is ready</li>
+    <li>`rejected`  - something went wrong, the value can't be produced</li>
+</ol>
+
+<p>
+    "Resolving" a promise moves a `pending` promise to either `fulfilled` or
+    `rejected`, though the term is often used interchangeably with "fulfill"
+    (it's good to have a positive outlook). Once a promise is fulfilled or
+    rejected, it can't be transitioned to another state.
+</p>
+
+<p>
+    There are two ways promises get resolved. The first is using the
+    `resolve()` function passed to the executor function in the `Y.Promise`
+    constructor. We'll talk about the second way when we discuss <a
+    href="#promise-chaining">promise chaining</a>.
+</p>
+
+<h3>Getting the Promised Value</h3>
+
+<p>
+    Since the promised value probably isn't ready when you create the promise,
+    you can't synchronously consume the value. Schedule the code that will use
+    the promised value to execute with the promise's `then()` method.
+</p>
+
+<p>
+    `then()` takes two callbacks as arguments, that we call `onFulfilled` and
+    `onRejected`. As you might have guessed, the `onFulfilled` callback is
+    executed if the promise resolves to a value, and the `onRejected` callback
+    is executed if it is rejected.
+</p>
+
+<p>
+    Only one of the callbacks will be executed, and only once.
+    <a href="#omitting-onfulfilled-or-onrejected">Both callbacks are
+    optional</a>, though in practice you'll always pass at least one to
+    `then()`.
+</p>
+
+```
+var stuff;
+
+var promise = new Y.Promise(getStuff);
+
+// When getStuff says the promise is fulfilled, update the stuff variable.
+// No onRejected callback is passed, so if there was an error, do nothing.
+promise.then(function (stuffValue) {
+    stuff = stuffValue;
+});
+
+// Stuff isn't populated yet because the promise hasn't been fulfilled
+console.log("Stuff value is " + stuff); // => "Stuff value is undefined"
+```
+
+<p>
+    You can call `then()` on the promise as many times as you like. The same
+    value will be passed to each `then()` callback.
+</p>
+
+<h4>Always Asynchronous</h4>
+
+<p>
+    It's important to note that even if the `getStuff` function above resolved
+    the promise immediately, callbacks scheduled with `then` will
+    <strong>always be called asynchronously</strong>. So the example code above
+    will always log "Stuff value is undefined", regardless of whether
+    `getStuff` operates synchronously or asynchronously.
+</p>
+
+<p>
+    To limit the runtime impact of `then` callbacks always being executed
+    asynchronously, they are scheduled using
+    <a href="{{apiDocs}}/classes/YUI.html#method_soon">`Y.soon()`</a>, which
+    will attempt to avoid any minimum delay that some browsers impose on
+    `setTimeout`.
+</p>
+
+<h2>The Not-so Basics</h2>
+
+<h3>Promise Chaining</h3>
+
+<p>
+    Here's where things start getting fun. When you call `promise.then(...)`,
+    a new promise is returned. The new promise will resolve when either of the
+    original promise's `onFulfilled` or `onRejected` functions returns a value
+    or throws an error. This allows you to schedule several operations using
+    chained `then()` calls.
+</p>
+
+```
+// Verbose form
+startSpinner();
+
+// Create the initial promise
+var userDataLoaded = new Y.Promise(function (resolve, reject) {
+    Y.io('getUserData.php', {
+        data: 'id=1234',
+        on: {
+            success: function (id, response) {
+                try {
+                    resolve(Y.JSON.parse(response.responseText));
+                } catch (e) {
+                    reject(e);
+                }
+            },
+            failure: function (id, response) {
+                reject(new Error(response));
+            }
+        }
+    });
+});
+
+// after the user data is loaded, render stuff or show the loading error
+var uiUpdated = userDataLoaded.then(renderTemplates, showError);
+
+// after the UI is updated, stop the spinner
+uiUpdated.then(stopSpinner);
+
+// Concise form (more common)
+// Note Y.Promise can be called without 'new'
+Y.Promise(function (resolve, reject) { Y.io(...); })
+    .then(renderTemplates, showError) // returns another promise
+    .then(stopSpinner);               // returns another promise
+```
+
+<p>
+    A chained promise is resolved by the return value of the previous promise's
+    callbacks. Or, if an error is thrown, the chained promise is rejected.
+</p>
+
+<p>
+    Note that functions will return `undefined` if no explicit `return`
+    statement is included. That will result in the promise being fulfilled with
+    a value of `undefined`. Sometimes that's okay, but it's often helpful to pass
+    along <em>some</em> data.
+</p>
+
+```
+function renderTemplates(userData) {
+    // Update the UI
+    Y.one('#userForm').setHTML(Y.Lang.sub(MyApp.userFormTemplate, userData));
+
+    // return a value to resolve the chained promise (aka uiUpdated) and pass
+    // to the uiUpdated's then(onFulfilled) callback, stopSpinner
+    return true;
+}
+
+function stopSpinner(updated) {
+    // updated will receive the return value of the previous promise's callback
+    // In this case, the boolean true.
+    var face = updated ? happyFace : sadFace;
+
+    spinnerNode.replace(face).hide(true);
+}
+
+// Using the original promise from the example above
+userDataLoaded
+    .then(renderTemplates, showError)
+    .then(stopSpinner);
+```
+
+<h3>Handling Errors</h3>
+
+<p>
+    When a promise is rejected, the `onRejected` callback (the second argument
+    to `then()`) is executed. Like `onFulfilled`, it is called with whatever is
+    passed to the executor function's `reject()` function.
+</p>
+
+<p>
+    The `onRejected` callback can then re-throw the error to propagate the
+    failed state, or recover from the failure by returning a value. Again,
+    without an explicit `throw` or `return`, the callback will return
+    `undefined` <em>which will mark the failure as recovered</em>, but with a resolved
+    value of `undefined`. This may not be what you want!
+</p>
+
+```
+function showError(reason) {
+    Y.one('#userForm').hide(true);
+
+    Y.one('#message .details').setHTML(reason.message || reason);
+    Y.one('#message').show();
+
+    // Choosing not to re-throw the error, but consider it recovered from for
+    // the sake of this transaction. Returning false as resolved value to send
+    // to stopSpinner.
+    return false;
+}
+
+userDataLoaded
+    .then(renderTemplates, showError)
+    .then(stopSpinner);
+```
+
+<p>
+    Because `showError` returned a value, and didn't re-throw the `reason`,
+    the promise wrapping `renderTemplates` and `showError` was resolved to a
+    "fulfilled" state with a value of `false`. Since the promise was fulfilled,
+    not rejected, that promise's `onFulfilled` callback (`stopSpinner`) is
+    called with the value `false`.
+</p>
+
+<h4>Caveat: The Unhandled Rejection</h4>
+
+<p>
+    Because thrown errors are caught by the `Y.Promise` internals and used as
+    a signal to reject a promise, it's possible to write promise chains that
+    fail silently. This can be hard to debug.
+</p>
+
+<p>
+    To avoid this, it's highly recommended to <strong>always</strong> include
+    an `onRejected` callback at the end of your promise chains. The reason you
+    only need to put one at the end is discussed below.
+</p>
+
+<h3>Omitting `onFulfilled` or `onRejected`</h3>
+
+<p>
+    Both `onFulfilled` and `onRejected` callbacks are optional, though in
+    practice, you will always pass at least one. When a callback isn't provided
+    for a `then()` call in a promise chain, that promise is automatically
+    fulfilled with the value returned from the prior `onFulfilled` callback or
+    rejected with the reason thrown from the prior `onRejected` callback.
+</p>
+
+```
+getHandleFromServerA()
+    .then(null, getHandleFromServerB)
+    .then(getUserData)
+    .then(renderTemplates, showError);
+
+// Same code, commented
+// Try to get a DB handle from Server A...
+getHandleFromServerA()
+    // if that fails, try Server B, otherwise, pass through the Server A handle
+    .then(null, getHandleFromServerB)
+    // if either server provided a handle, get user data.
+    // otherwise, there was an error, so pass it along the chain
+    .then(getUserData)
+    // render the user data if everything worked.
+    // if there was an error getting a DB handle or getting user data show it
+    .then(renderTemplates, showError);
+```
+
+<p>
+    It's not uncommon to see promise chains with only `onFulfilled` callbacks,
+    then an `onRejected` callback at the very end.
+</p>
+
+<h3>Chaining Asynchronous Operations</h3>
+
+<p>
+    As mentioned above, the return value from either `onFulfilled` or
+    `onRejected` fulfills the promise with that value. <em>There is one
+    exception</em>.
+</p>
+
+<p>
+    If you return a promise instead of a regular value (call it
+    `returnedPromise`), the original promise will wait for `returnedPromise` to
+    resolve, and adopt its state when it does. So if `returnedPromise` is
+    fulfilled, the original promise is fulfilled with the same value, and if
+    `returnedPromise` is rejected, the original promise is rejected with the
+    same reason.
+</p>
+
+```
+Y.Promise(function (resolve, reject) {
+        Y.io('getDataUrl.php', {
+            on: {
+                success: function (id, response) {
+                    resolve(response.responseText);
+                },
+                failure: function () {
+                    reject(new Error("Can't reach the server"));
+                }
+            }
+        });
+    })
+    // Chain another async operation by returning a promise.
+    // Don't worry, we'll wait for you.
+    .then(function (data) {
+        return new Y.Promise(function (resolve, reject) {
+            // Do another async operation
+            Y.jsonp(data.url, {
+                on: {
+                    success: resolve,
+                    failure: reject
+                }
+            });
+        });
+    })
+    // Called after both async operations have completed. The data response
+    // from the JSONP call is passed to renderTemplates
+    .then(renderTemplates)
+    // Then wait for 2 seconds before continuing the chain
+    .then(function () {
+        return new Y.Promise(function (resolve) {
+            setTimeout(resolve, 2000);
+        });
+    })
+    .then(hideMessage, showError);
+```
+
+<p>
+    Similarly, you can pass a promise to the `resolve()` function passed to the
+    `Y.Promise` executor function.
+</p>
+
+<p>
+    <strong>Caution</strong>: Do not pass a promise to `reject()` or `throw` a
+    promise from a callback. You're definitely doing something wrong if you
+    find yourself doing that.
+</p>
+
+<h3>`Y.when()` For Promise Wrapping</h3>
+
+<p>
+    If you're unsure if a variable has a value or a promise, or you want an API
+    to support both value or promise inputs, use `Y.when(value)` to wrap
+    non-promise values in promises. Wrapped non-promise values will be
+    immediately fulfilled with the wrapped value. Passing a promise to `Y.when`
+    will return the promise.
+</p>
+
+```
+// Accept either a regular object or a promise to save
+MyDatabase.prototype.save = function (key, data) {
+    // Ensure we are dealing with a promise and call then() to get its value
+    // return the promise chained off this then() call
+    return Y.when(data).then(function (data) {
+        // Store the data somehow, for instance in localStorage
+        localStorage.set(key, data);
+    });
+};
+```
+
+<h3>Non-serial Operation Batching</h3>
+
+<p>
+    Promise chaining works great to serialize synchronous and asynchronous
+    operations, but often several asynchronous operations can be performed
+    simultaneously. This is where `Y.Promise.all()` comes in.
+</p>
+
+<p>
+    `Y.Promise.all()` takes an array of promises and returns a new promise that
+    will resolve when all the promises in the array have resolved. The
+    resolved value will be an array of values from the individual promises, in
+    the order they were passed to `Y.Promise.all()`.
+</p>
+
+<p>
+    If any one of the promises is rejected, the returned promise is
+    immediately rejected with that reason, so failures can be dealt with
+    sooner rather than later.
+</p>
+
+```
+Y.Promise.all([
+        getUserAccountInfo(userId),
+        getUserPosts(userId, { page: 1, postsPerPage: 5 }),
+        getUserRank(userId)
+    ])
+    .then(function (data) {
+        var account = data[0],
+            posts   = data[1],
+            rank    = data[2];
+
+        ...
+    }, handleError);
+```
+
+<h3>Racing promises</h3>
+
+<p>
+    Sometimes it is necessary to provide early feedback when doing several
+    transactions at the same time. It may be to send visual feedback to the user
+    in the browser or to chose the fastest service to respond in Node.js.
+    Promises provide this capability in `Y.Promise.race()`.
+</p>
+
+<p>
+    `Y.Promise.race()` takes an array of promises and resolves to the first
+    promise that is fulfilled or rejected. Contrary to `Y.Promise.all()` which
+    waits for all promises to be resolved and fulfills to an array of all the
+    corresponding values, `Y.Promise.race()` fulfills to a single value, that of
+    the first promise in the list to resolve.
+<p>
+
+```
+Y.Promise.race([
+        querySlowRemoteService(query),
+        getDataFromFastLocalCache(dataId)
+    ])
+    .then(function (raceWinner) {
+        ...
+    });
+```
+
+<h2>FAQ</h2>
+
+<ul>
+    <li>
+        <a href="#diff">What's the difference between `Y.Promise` and...?</a>
+    </li>
+    <li>
+        <a href="#plans">What are the plans for promises in the library?</a>
+    </li>
+</ul>
+
+<h3 id="diff">What's the difference between `Y.Promise` and...</h3>
+
+<h4>Events?</h4>
+
+<p>
+    Events are used to create a relationship between two objects, and better
+    represent an open communication channel. Promises represent single values,
+    and chains encapsulate transactions.
+</p>
+
+<p>
+    It's not uncommon to have event subscribers launch a promise chain, or to
+    have events fired from within operations inside a promise chain. They are
+    complementary tools.
+</p>
+
+<h4>`Y.AsyncQueue`</h4>
+
+<p>
+    `Y.AsyncQueue` is a tool for splitting up long synchronous operations into
+    asynchronous chunks to avoid blocking UI updates unnecessarily. It doesn't
+    (as yet) support asynchronous steps. It also supports conditional looping
+    and various other things that promises don't, out of the box.
+</p>
+
+<h4>`Y.Parallel`</h4>
+
+<p>
+    `Y.Parallel` is similar to `Y.Promise.all` in that it provides a mechanism
+    to execute a callback when several independent asynchronous operations have
+    completed. However, it doesn't handle errors or guarantee asynchronous
+    callback execution. It is also transactional, but the batch of operations
+    is bound to a specific callback, where `Y.Promise.all()` returns a promise
+    that represents the aggregated values of those operations. The promise can
+    be used by multiple consumers if necessary.
+</p>
+
+<h3 id="plans">What are the plans for Promises in the library?</h3>
+
+<p>
+    There are a lot of opportunities inside YUI to move transactional APIs to
+    consume and/or return promises rather than use callbacks or one-time
+    events. While there are no set plans for which APIs will be changed or in
+    what priority order, you can expect to see promises showing up across the
+    library in the near future.
+</p>

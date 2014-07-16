@@ -2,7 +2,7 @@ YUI.add('tabview-plugin', function (Y, NAME) {
 
 function TabviewPlugin() {
     TabviewPlugin.superclass.constructor.apply(this, arguments);
-};
+}
 
 TabviewPlugin.NAME = 'tabviewPlugin';
 TabviewPlugin.NS = 'tabs';

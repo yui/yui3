@@ -1,14 +1,20 @@
 /**
+ * Provides functionality for creating a column series.
+ *
+ * @module charts
+ * @submodule series-column
+ */
+/**
  * The ColumnSeries class renders columns positioned horizontally along a category or time axis. The columns'
  * lengths are proportional to the values they represent along a vertical axis.
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-column
  */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
@@ -52,17 +58,16 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     {
         if(this._markers && this._markers[i])
         {
-            var styles = Y.clone(this.get("styles").marker),
+            var styles = this._copyObject(this.get("styles").marker),
                 markerStyles,
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
                 markers,
-                graph = this.get("graph"),
                 seriesStyles,
-                seriesCollection = graph.seriesTypes[this.get("type")],
-                seriesLen = seriesCollection.length,
+                seriesCollection = this.get("seriesTypeCollection"),
+                seriesLen = seriesCollection ? seriesCollection.length : 0,
                 seriesSize = 0,
                 offset = 0,
                 renderer,
@@ -70,7 +75,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xs = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
+            markerStyles = state === "off" || !styles[state] ? this._copyObject(styles) : this._copyObject(styles[state]);
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);

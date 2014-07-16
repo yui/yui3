@@ -49,7 +49,7 @@ Y.mix(Message.prototype, {
     Template used to generate the node that will be used to report messages.
 
     @property MESSAGE_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default <tbody class="{className}"><td class="{contentClass}" colspan="{colspan}"></td></tbody>
     @since 3.5.0
     **/
@@ -117,7 +117,7 @@ Y.mix(Message.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterMessageColumnsChange: function (e) {
+    _afterMessageColumnsChange: function () {
         var contentNode;
 
         if (this._messageNode) {
@@ -140,7 +140,7 @@ Y.mix(Message.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterMessageDataChange: function (e) {
+    _afterMessageDataChange: function () {
         this._uiSetMessage();
     },
 
@@ -195,7 +195,7 @@ Y.mix(Message.prototype, {
         this._initMessageStrings();
 
         if (this.get('showMessages')) {
-            this.after('renderBody', Y.bind('_initMessageNode', this));
+            this.after('table:renderBody', Y.bind('_initMessageNode', this));
         }
 
         this.after(Y.bind('_bindMessageUI', this), this, 'bindUI');
@@ -225,14 +225,14 @@ Y.mix(Message.prototype, {
 
     /**
     Add the messaging related strings to the `strings` map.
-    
+
     @method _initMessageStrings
     @protected
     @since 3.5.0
     **/
     _initMessageStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
-        this.set('strings', Y.mix((this.get('strings') || {}), 
+        this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-message')));
     },
 
@@ -287,4 +287,4 @@ if (Y.Lang.isFunction(Y.DataTable)) {
 }
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "hu", "it"], "skinnable": true});

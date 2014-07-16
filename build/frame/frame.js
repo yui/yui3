@@ -12,12 +12,18 @@ YUI.add('frame', function (Y, NAME) {
      * @submodule frame
      */
 
-    var Frame = function() {
+    var Lang = Y.Lang,
+
+        EVENT_CONTENT_READY = 'contentready',
+
+        HOST = 'host',
+
+    Frame = function() {
         Frame.superclass.constructor.apply(this, arguments);
     };
 
 
-    Y.extend(Frame, Y.Base, {
+    Y.extend(Frame, Y.Plugin.Base, {
         /**
         * @private
         * @property _ready
@@ -57,7 +63,7 @@ YUI.add('frame', function (Y, NAME) {
                 //if the src attr is different than the default, don't create the document
                 create = (this.get('src') === Frame.ATTRS.src.value),
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
-            
+
             this._iframe = Y.one(Y.config.doc.createElement('iframe'));
             this._iframe.setAttrs(Frame.IFRAME_ATTRS);
 
@@ -133,7 +139,7 @@ YUI.add('frame', function (Y, NAME) {
         * takes the current EventFacade and augments it to fire on the Frame host. It adds two new properties
         * to the EventFacade called frameX and frameY which adds the scroll and xy position of the iframe
         * to the original pageX and pageY of the event so external nodes can be positioned over the frame.
-        * @param {Event.Facade} e
+        * @param {EventFacade} e
         */
         _onDomEvent: function(e) {
             var xy, node;
@@ -161,6 +167,12 @@ YUI.add('frame', function (Y, NAME) {
             this.fire('dom:' + e.type, e);
         },
         initializer: function() {
+            var host = this.get(HOST);
+
+            if (host) {
+                host.frame = this;
+            }
+
             this.publish('ready', {
                 emitFacade: true,
                 defaultFn: this._defReadyFn
@@ -177,7 +189,7 @@ YUI.add('frame', function (Y, NAME) {
         * @private
         * @method _DOMPaste
         * @description Simple pass thru handler for the paste event so we can do content cleanup
-        * @param {Event.Facade} e
+        * @param {EventFacade} e
         */
         _DOMPaste: function(e) {
             var inst = this.getInstance(),
@@ -429,18 +441,15 @@ YUI.add('frame', function (Y, NAME) {
                 var inst = this.getInstance();
                 inst.one('body').set('innerHTML', html);
             } else {
-                //This needs to be wrapped in a contentready callback for the !_ready state
-                this.on('contentready', Y.bind(function(html) {
-                    var inst = this.getInstance();
-                    inst.one('body').set('innerHTML', html);
-                }, this, html));
+                this.once(EVENT_CONTENT_READY, Y.bind(this._setHTML, this, html));
             }
+
             return html;
         },
         /**
         * @private
-        * @method _setLinkedCSS
-        * @description Set's the linked CSS on the instance..
+        * @method _getLinkedCSS
+        * @description Get the linked CSS on the instance.
         */
         _getLinkedCSS: function(urls) {
             if (!Y.Lang.isArray(urls)) {
@@ -449,7 +458,7 @@ YUI.add('frame', function (Y, NAME) {
             var str = '';
             if (!this._ready) {
                 Y.each(urls, function(v) {
-                    if (v !== '') {
+                    if (v) {
                         str += '<link rel="stylesheet" href="' + v + '" type="text/css">';
                     }
                 });
@@ -461,7 +470,7 @@ YUI.add('frame', function (Y, NAME) {
         /**
         * @private
         * @method _setLinkedCSS
-        * @description Set's the linked CSS on the instance..
+        * @description Sets the linked CSS on the instance..
         */
         _setLinkedCSS: function(css) {
             if (this._ready) {
@@ -480,9 +489,16 @@ YUI.add('frame', function (Y, NAME) {
                 var inst = this.getInstance(),
                     node = inst.one('#extra_css');
 
-                node.remove();
+                if (node) {
+                    node.remove();
+                }
+
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');
+            } else {
+                //This needs to be wrapped in a contentready callback for the !_ready state
+                this.once(EVENT_CONTENT_READY, Y.bind(this._setExtraCSS, this, css));
             }
+
             return css;
         },
         /**
@@ -528,7 +544,8 @@ YUI.add('frame', function (Y, NAME) {
 
                 });
             }
-            inst.__use.apply(inst, args);
+
+            return inst.__use.apply(inst, args);
         },
         /**
         * @method delegate
@@ -589,7 +606,7 @@ YUI.add('frame', function (Y, NAME) {
                     fn = Y.bind(function() {
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
-                        inst.host = this.get('host'); //Cross reference to Editor
+                        inst.host = this.get(HOST); //Cross reference to Editor
 
                         try {
                             inst.use('node-base', cb);
@@ -657,6 +674,15 @@ YUI.add('frame', function (Y, NAME) {
                     }
                 }
             }
+        },
+        /**
+        * Validates linkedcss property
+        *
+        * @method _validateLinkedCSS
+        * @private
+        */
+        _validateLinkedCSS: function(value) {
+            return Lang.isString(value) || Lang.isArray(value);
         },
         /**
         * @method focus
@@ -859,6 +885,15 @@ YUI.add('frame', function (Y, NAME) {
         * @type String
         */
         NAME: 'frame',
+        /**
+        * The namespace on which Frame plugin will reside.
+        *
+        * @property NS
+        * @type String
+        * @default 'frame'
+        * @static
+        */
+        NS: 'frame',
         ATTRS: {
             /**
             * @attribute title
@@ -909,6 +944,7 @@ YUI.add('frame', function (Y, NAME) {
             * @type String
             */
             content: {
+                validator: Lang.isString,
                 value: '<br>',
                 setter: '_setHTML',
                 getter: '_getHTML'
@@ -973,10 +1009,10 @@ YUI.add('frame', function (Y, NAME) {
             /**
             * @attribute linkedcss
             * @description An array of url's to external linked style sheets
-            * @type String
+            * @type String|Array
             */
             linkedcss: {
-                value: '',
+                validator: '_validateLinkedCSS',
                 getter: '_getLinkedCSS',
                 setter: '_setLinkedCSS'
             },
@@ -986,16 +1022,8 @@ YUI.add('frame', function (Y, NAME) {
             * @type String
             */
             extracss: {
-                value: '',
+                validator: Lang.isString,
                 setter: '_setExtraCSS'
-            },
-            /**
-            * @attribute host
-            * @description A reference to the Editor instance
-            * @type Object
-            */
-            host: {
-                value: false
             },
             /**
             * @attribute defaultblock
@@ -1008,9 +1036,12 @@ YUI.add('frame', function (Y, NAME) {
         }
     });
 
+    Y.namespace('Plugin');
+
+    Y.Plugin.Frame = Frame;
 
     Y.Frame = Frame;
 
 
 
-}, '@VERSION@', {"requires": ["base", "node", "selector-css3", "yui-throttle"]});
+}, '@VERSION@', {"requires": ["base", "node", "plugin", "selector-css3", "yui-throttle"]});

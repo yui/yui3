@@ -4,29 +4,18 @@
 <title>YUI: GetXY</title>
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="./assets/dom-xy-test.js"></script>
-<script type="text/javascript">
-YUI({
-    coverage: ['dom-screen'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-}).use('test-console', 'dom-xy-test', function (Y) {
-        Y.DOM._testXY();
-        new Y.Test.Console().render();
-        Y.Test.Runner.setName('Dom: XY');
-        Y.Test.Runner.run();
-});
-</script>
 <style type="text/css" media="screen">
     .yui3-console {
         position: absolute;
         right: 0;
         top: 0;
     }
-    
+
     html {
         border: 10px solid #000;
         Xmargin: 20px; /* manual test: false negative */
     }
-    
+
     body {
         /*background-image: url( grid.png );*/
         background-position: -12.5px -12.5px;
@@ -35,6 +24,11 @@ YUI({
         margin: 50px;
         padding: 10px;
     }
+
+    table {
+        border-collapse: collapse;
+    }
+
     .node {
         height: 50px;
         width: 50px;
@@ -147,8 +141,8 @@ YUI({
         <div id="static3" class="node">S3</div>
         <div id="abs3" class="node">A3</div>
         <div id="rel3" class="node">R3</div>
-        Lorem ipsum dolor sit amet, <span id="p2-is" class="node st">P2 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est. 
-        Morbi non dolor. <span  id="p2-ir" class="node rel">P2 Rel Inline</span> Donec ut est <span id="p2-ia" class="node abs">P2 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl. 
+        Lorem ipsum dolor sit amet, <span id="p2-is" class="node st">P2 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est.
+        Morbi non dolor. <span  id="p2-ir" class="node rel">P2 Rel Inline</span> Donec ut est <span id="p2-ia" class="node abs">P2 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl.
     </div>
 </div>
 
@@ -163,8 +157,8 @@ YUI({
         <div id="static5" class="node">S5</div>
         <div id="abs4" class="node">A4</div>
         <div id="rel4" class="node">R4</div>
-        Lorem ipsum dolor sit amet, <span id="p4-is" class="node st">P4 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est. 
-        Morbi non dolor. <span id="p4-ir" class="node rel">P4 Rel Inline</span> Donec ut est <span id="p4-ia" class="node abs">P4 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl. 
+        Lorem ipsum dolor sit amet, <span id="p4-is" class="node st">P4 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est.
+        Morbi non dolor. <span id="p4-ir" class="node rel">P4 Rel Inline</span> Donec ut est <span id="p4-ia" class="node abs">P4 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl.
     </div>
 </div>
 
@@ -198,5 +192,16 @@ YUI({
         </tr>
     </tbody>
 </table>
+<script type="text/javascript">
+YUI({
+    coverage: ['dom-screen'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test-console', 'dom-xy-test', function (Y) {
+        Y.DOM._testXY();
+        new Y.Test.Console().render();
+        Y.Test.Runner.setName('Dom: XY');
+        Y.Test.Runner.run();
+});
+</script>
 </body>
 </html>

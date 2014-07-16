@@ -22,7 +22,9 @@ var re_tag = /<([a-z]+)/i,
     re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
 
     TABLE_OPEN = '<table>',
-    TABLE_CLOSE = '</table>';
+    TABLE_CLOSE = '</table>',
+
+    selectedIndex;
 
 Y.mix(Y.DOM, {
     _fragClones: {},
@@ -54,7 +56,7 @@ Y.mix(Y.DOM, {
                 hasComments = children.tags('!').length;
             }
         }
-        
+
         if (!children || (!children.tags && tag) || hasComments) {
             childNodes = children || node.childNodes;
             children = [];
@@ -71,11 +73,11 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Creates a new dom node using the provided markup string. 
+     * Creates a new dom node using the provided markup string.
      * @method create
      * @param {String} html The markup used to create the element
-     * @param {HTMLDocument} doc An optional document context 
-     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * @param {HTMLDocument} doc An optional document context
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement
      * when creating one node, and a documentFragment when creating
      * multiple nodes.
      */
@@ -90,28 +92,30 @@ Y.mix(Y.DOM, {
             create = Y_DOM._create,
             custom = creators,
             ret = null,
-            creator,
-            tag, nodes;
+            creator, tag, node, nodes;
 
         if (html != undefined) { // not undefined or null
             if (m && m[1]) {
                 creator = custom[m[1].toLowerCase()];
                 if (typeof creator === 'function') {
-                    create = creator; 
+                    create = creator;
                 } else {
                     tag = creator;
                 }
             }
 
-            nodes = create(html, doc, tag).childNodes;
+            node = create(html, doc, tag);
+            nodes = node.childNodes;
 
             if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
-                ret = nodes[0].parentNode.removeChild(nodes[0]);
+                ret = node.removeChild(nodes[0]);
             } else if (nodes[0] && nodes[0].className === 'yui3-big-dummy') { // using dummy node to preserve some attributes (e.g. OPTION not selected)
+                selectedIndex = node.selectedIndex;
+
                 if (nodes.length === 2) {
                     ret = nodes[0].nextSibling;
                 } else {
-                    nodes[0].parentNode.removeChild(nodes[0]); 
+                    node.removeChild(nodes[0]);
                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
@@ -128,7 +132,7 @@ Y.mix(Y.DOM, {
             i, len;
 
         if (nodes && (nodes.push || nodes.item) && nodes[0]) {
-            doc = doc || nodes[0].ownerDocument; 
+            doc = doc || nodes[0].ownerDocument;
             ret = doc.createDocumentFragment();
 
             if (nodes.item) { // convert live list to static array
@@ -136,17 +140,17 @@ Y.mix(Y.DOM, {
             }
 
             for (i = 0, len = nodes.length; i < len; i++) {
-                ret.appendChild(nodes[i]); 
+                ret.appendChild(nodes[i]);
             }
         } // else inline with log for minification
         return ret;
     },
 
     /**
-     * Inserts content in a node at the given location 
+     * Inserts content in a node at the given location
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted 
+     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted
      * @param {HTMLElement} where Where to insert the content
      * If no "where" is given, content is appended to the node
      * Possible values for "where"
@@ -169,14 +173,14 @@ Y.mix(Y.DOM, {
             item,
             ret = content,
             newNode;
-            
+
 
         if (content != undefined) { // not null or undefined (maybe 0)
             if (content.nodeType) { // DOM node, just add it
                 newNode = content;
             } else if (typeof content == 'string' || typeof content == 'number') {
                 ret = newNode = Y_DOM.create(content);
-            } else if (content[0] && content[0].nodeType) { // array or collection 
+            } else if (content[0] && content[0].nodeType) { // array or collection
                 newNode = Y.config.doc.createDocumentFragment();
                 while ((item = content[i++])) {
                     newNode.appendChild(item); // append to fragment for insertion
@@ -221,6 +225,12 @@ Y.mix(Y.DOM, {
             node.appendChild(newNode);
         }
 
+        // `select` elements are the only elements with `selectedIndex`.
+        // Don't grab the dummy `option` element's `selectedIndex`.
+        if (node.nodeName == "SELECT" && selectedIndex > 0) {
+            node.selectedIndex = selectedIndex - 1;
+        }
+
         return ret;
     },
 
@@ -232,7 +242,7 @@ Y.mix(Y.DOM, {
             parent = nodes[nodes.length - 1];
         }
 
-        if (node.parentNode) { 
+        if (node.parentNode) {
             node.parentNode.replaceChild(parent, node);
         }
         parent.appendChild(node);
@@ -323,11 +333,11 @@ if (!testFeature('innerhtml-div', 'tr')) {
 
         td: function(html, doc) {
             return Y_DOM.create('<tr>' + html + '</tr>', doc);
-        }, 
+        },
 
         col: function(html, doc) {
             return Y_DOM.create('<colgroup>' + html + '</colgroup>', doc);
-        }, 
+        },
 
         tbody: 'table'
     });

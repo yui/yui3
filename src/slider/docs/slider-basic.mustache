@@ -1,4 +1,4 @@
-<style scoped>
+<style>
     #demo input {
         width: 2em;
     }
@@ -46,7 +46,7 @@ function updateInput( e ) {
 
 var xInput = Y.one( "#horiz_value" );
 // Subscribe to the Slider's valueChange event, passing the input as the 'this'
-xSlider.on( "valueChange", updateInput, xInput );
+xSlider.after( "valueChange", updateInput, xInput );
 ```
 
 <h3>Linking the input with the Slider</h3>

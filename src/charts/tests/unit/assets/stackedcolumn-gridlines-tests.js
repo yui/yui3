@@ -1,5 +1,9 @@
 YUI.add('stackedcolumn-gridlines-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: StackedColumnGridlines"),
+        GridlinesTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     GridlinesTestTemplate = function(cfg, globalCfg)
     {
@@ -20,11 +24,9 @@ YUI.add('stackedcolumn-gridlines-tests', function(Y) {
 
     Y.extend(GridlinesTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:800px;height:600px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         testDefault: function()
         {
             var chart = this.chart.get("graph"),
@@ -40,18 +42,18 @@ YUI.add('stackedcolumn-gridlines-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
 
-    var basicDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    var basicDataValues = [
+            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
-    
+
     styledGridlines = {
         styles: {
             line: {
@@ -66,7 +68,7 @@ YUI.add('stackedcolumn-gridlines-tests', function(Y) {
             stacked: true,
             type: chartType,
             dataProvider: basicDataValues,
-            render: "#mychart"
+            render: "#testdiv"
         },
         globalCfg = {
             hasHorizontal: false,
@@ -88,7 +90,7 @@ YUI.add('stackedcolumn-gridlines-tests', function(Y) {
         }
         return new GridlinesTestTemplate(cfg, globalCfg);
     };
-    
+
     suite.add(getGridlinesTest("column", null, true, false));
     suite.add(getGridlinesTest("column", null, true, true));
     suite.add(getGridlinesTest("column", null, false, true));
@@ -107,6 +109,6 @@ YUI.add('stackedcolumn-gridlines-tests', function(Y) {
     suite.add(getGridlinesTest("column", "time", true, styledGridlines));
     suite.add(getGridlinesTest("column", "time", true, styledGridlines));
     suite.add(getGridlinesTest("column", "time", false, styledGridlines));
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

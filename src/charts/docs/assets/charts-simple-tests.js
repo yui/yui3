@@ -19,24 +19,24 @@ YUI.add('charts-simple-tests', function(Y) {
         name: "Charts Simple Tests",
 
         dataProvider: [
-            {category:"5/1/2010", values:2000}, 
-            {category:"5/2/2010", values:50}, 
-            {category:"5/3/2010", values:400}, 
-            {category:"5/4/2010", values:200}, 
+            {category:"5/1/2010", values:2000},
+            {category:"5/2/2010", values:50},
+            {category:"5/3/2010", values:400},
+            {category:"5/4/2010", values:200},
             {category:"5/5/2010", values:5000}
         ],
 
         _should: {
             ignore: {
-                testMouseEvents:  isTouch//,
-              //  testTouchEvents: isMouse
+                testMouseEvents:  isTouch,
+                testTouchEvents: isMouse
             }
         },
-        
+
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -51,7 +51,7 @@ YUI.add('charts-simple-tests', function(Y) {
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
-                handleEvent = function(event) 
+                handleEvent = function(event)
                 {
                     result = event;
                 },
@@ -78,7 +78,6 @@ YUI.add('charts-simple-tests', function(Y) {
                 Y.Assert.areEqual(contents.toString(), tooltip.get("innerHTML").toString(), "The contents of the tooltip should be " + contents);
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
-            /*
         },
 
         testTouchEvents: function()
@@ -109,8 +108,8 @@ YUI.add('charts-simple-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },
@@ -127,7 +126,6 @@ YUI.add('charts-simple-tests', function(Y) {
                     Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
                 };
             checkAndFireEvent(seriesMarkers);
-            */
         }
     }));
 

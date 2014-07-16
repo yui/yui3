@@ -1,82 +1,53 @@
 /**
-* A Button Widget
-*
-* @module button
-* @since 3.5.0
-*/
+ * A Button Widget
+ *
+ * @module button
+ * @since 3.5.0
+ */
 
-var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
-    ARIA_STATES = Y.ButtonCore.ARIA_STATES,
-    ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
+var ButtonCore = Y.ButtonCore,
+    CLASS_NAMES = ButtonCore.CLASS_NAMES,
+    ARIA_STATES = ButtonCore.ARIA_STATES,
+    ARIA_ROLES = ButtonCore.ARIA_ROLES;
 
 /**
-* Creates a Button
-*
-* @class Button
-* @extends Widget
-* @param config {Object} Configuration object
-* @constructor
-*/
-function Button(config) {
+ * Creates a Button
+ *
+ * @class Button
+ * @extends Widget
+ * @uses ButtonCore
+ * @param config {Object} Configuration object
+ * @constructor
+ */
+function Button() {
     Button.superclass.constructor.apply(this, arguments);
 }
 
 /* Button extends Widget */
 Y.extend(Button, Y.Widget,  {
 
-    BOUNDING_TEMPLATE: Y.ButtonCore.prototype.TEMPLATE,
-
-    CONTENT_TEMPLATE: null,
+    // Y.Button prototype properties
 
     /**
-    * @method initializer
-    * @description Internal init() handler.
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        this._host = this.get('boundingBox');
-    },
-
-    /**
-     * bindUI implementation
+     * Bounding box template that will contain the Button's DOM subtree.
      *
-     * @description Hooks up events for the widget
-     * @method bindUI
+     * @property BOUNDING_TEMPLATE
+     * @type {String}
+     * @default <button/>
      */
-    bindUI: function() {
-        var button = this;
-        button.after('labelChange', button._afterLabelChange);
-        button.after('disabledChange', button._afterDisabledChange);
-    },
+    BOUNDING_TEMPLATE : ButtonCore.prototype.TEMPLATE,
 
     /**
-     * @method syncUI
-     * @description Updates button attributes
+     * Content box template
+     *
+     * @property CONTENT_TEMPLATE
+     * @type {String}
+     * @default null
      */
-    syncUI: function() {
-        var button = this;
-        button._uiSetLabel(button.get('label'));
-        button._uiSetDisabled(button.get('disabled'));
-    },
-
-    /**
-    * @method _afterLabelChange
-    * @private
-    */
-    _afterLabelChange: function(e) {
-        this._uiSetLabel(e.newVal);
-    },
-
-    /**
-    * @method _afterDisabledChange
-    * @private
-    */
-    _afterDisabledChange: function(e) {
-        this._uiSetDisabled(e.newVal);
-    }
+    CONTENT_TEMPLATE : null
 
 }, {
+
     // Y.Button static properties
 
     /**
@@ -89,46 +60,54 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    NAME: 'button',
+    NAME: ButtonCore.NAME,
 
     /**
-    * Static property used to define the default attribute configuration of
-    * the Widget.
-    *
-    * @property ATTRS
-    * @type {Object}
-    * @protected
-    * @static
-    */
-    ATTRS: {
-        label: {
-            value: Y.ButtonCore.ATTRS.label.value
-        },
-
-        disabled: {
-            value: false
-        }
-    },
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property ATTRS
+     * @type {Object}
+     * @protected
+     * @static
+     */
+    ATTRS: ButtonCore.ATTRS,
 
     /**
-    * @property HTML_PARSER
-    * @type {Object}
-    * @protected
-    * @static
-    */
+     * The text of the button's label
+     *
+     * @attribute label
+     * @type String
+     */
+
+    /**
+     * The HTML of the button's label
+     *
+     * This attribute accepts HTML and inserts it into the DOM **without**
+     * sanitization.  This attribute should only be used with HTML that has
+     * either been escaped (using `Y.Escape.html`), or sanitized according to
+     * the requirements of your application.
+     *
+     * If all you need is support for text labels, please use the `label`
+     * attribute instead.
+     *
+     * @attribute labelHTML
+     * @type HTML
+     */
+
+    /**
+     * @property HTML_PARSER
+     * @type {Object}
+     * @protected
+     * @static
+     */
     HTML_PARSER: {
-        label: function(node) {
-            this._host = node; // TODO: remove
-            return this._getLabel();
-        },
-
-        disabled: function(node) {
-            return node.getDOMNode().disabled;
-        }
+        labelHTML: ButtonCore._getHTMLFromNode,
+        disabled: ButtonCore._getDisabledFromNode
     },
 
     /**
-     * List of class names used in the ButtonGroup's DOM
+     * List of class names used in the Button's DOM
      *
      * @property CLASS_NAMES
      * @type Object
@@ -137,45 +116,68 @@ Y.extend(Button, Y.Widget,  {
     CLASS_NAMES: CLASS_NAMES
 });
 
-Y.mix(Button.prototype, Y.ButtonCore.prototype);
+Y.mix(Button.prototype, ButtonCore.prototype);
 
 /**
-* Creates a ToggleButton
-*
-* @class ToggleButton
-* @extends Button
-* @param config {Object} Configuration object
-* @constructor
-*/
-function ToggleButton(config) {
+ * Creates a ToggleButton
+ *
+ * @class ToggleButton
+ * @extends Button
+ * @param config {Object} Configuration object
+ * @constructor
+ */
+function ToggleButton() {
     Button.superclass.constructor.apply(this, arguments);
 }
 
 // TODO: move to ButtonCore subclass to enable toggle plugin, widget, etc.
 /* ToggleButton extends Button */
 Y.extend(ToggleButton, Button,  {
-    
+
+    /**
+     *
+     *
+     * @property trigger
+     * @type {String}
+     * @default
+     */
     trigger: 'click',
+
+    /**
+     *
+     *
+     * @property selectedAttrName
+     * @type {String}
+     * @default
+     */
     selectedAttrName: '',
-    
+
+    /**
+     *
+     * @method initializer
+     */
     initializer: function (config) {
         var button = this,
             type = button.get('type'),
             selectedAttrName = (type === "checkbox" ? 'checked' : 'pressed'),
             selectedState = config[selectedAttrName] || false;
-        
+
         // Create the checked/pressed attribute
         button.addAttr(selectedAttrName, {
             value: selectedState
         });
-        
+
         button.selectedAttrName = selectedAttrName;
     },
-    
+
+    /**
+     *
+     * @method destructor
+     */
     destructor: function () {
         delete this.selectedAttrName;
     },
-    
+
     /**
      * @method bindUI
      * @description Hooks up events for the widget
@@ -183,9 +185,9 @@ Y.extend(ToggleButton, Button,  {
     bindUI: function() {
          var button = this,
              cb = button.get('contentBox');
-        
+
         ToggleButton.superclass.bindUI.call(button);
-        
+
         cb.on(button.trigger, button.toggle, button);
         button.after(button.selectedAttrName + 'Change', button._afterSelectedChange);
     },
@@ -203,76 +205,87 @@ Y.extend(ToggleButton, Button,  {
             selectedAttrName = button.selectedAttrName;
 
         ToggleButton.superclass.syncUI.call(button);
-        
+
         cb.set('role', role);
         button._uiSetSelected(button.get(selectedAttrName));
     },
-    
+
+    /**
+     * @method _afterSelectedChange
+     * @private
+     */
     _afterSelectedChange: function(e){
         this._uiSetSelected(e.newVal);
     },
-    
+
     /**
-    * @method _uiSetSelected
-    * @private
-    */
+     * @method _uiSetSelected
+     * @private
+     */
     _uiSetSelected: function(value) {
         var button = this,
             cb = button.get('contentBox'),
             STATES = ToggleButton.ARIA_STATES,
             type = button.get('type'),
             ariaState = (type === 'checkbox' ? STATES.CHECKED : STATES.PRESSED);
-        
+
         cb.toggleClass(Button.CLASS_NAMES.SELECTED, value);
         cb.set(ariaState, value);
     },
-    
+
     /**
-    * @method toggle
-    * @description Toggles the selected/pressed/checked state of a ToggleButton
-    * @public
-    */
+     * @method toggle
+     * @description Toggles the selected/pressed/checked state of a ToggleButton
+     * @public
+     */
     toggle: function() {
         var button = this;
         button._set(button.selectedAttrName, !button.get(button.selectedAttrName));
     }
 
 }, {
-    
+
     /**
-    * The identity of the widget.
-    *
-    * @property NAME
-    * @type {String}
-    * @default 'buttongroup'
-    * @readOnly
-    * @protected
-    * @static
-    */
+     * The identity of the widget.
+     *
+     * @property NAME
+     * @type {String}
+     * @default 'buttongroup'
+     * @readOnly
+     * @protected
+     * @static
+     */
     NAME: 'toggleButton',
-    
+
     /**
-    * Static property used to define the default attribute configuration of
-    * the Widget.
-    *
-    * @property ATTRS
-    * @type {Object}
-    * @protected
-    * @static
-    */
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property ATTRS
+     * @type {Object}
+     * @protected
+     * @static
+     */
     ATTRS: {
+
+       /**
+        *
+        *
+        * @attribute type
+        * @type String
+        */
         type: {
             value: 'toggle',
             writeOnce: 'initOnly'
         }
     },
-    
+
     /**
-    * @property HTML_PARSER
-    * @type {Object}
-    * @protected
-    * @static
-    */
+     * @property HTML_PARSER
+     * @type {Object}
+     * @protected
+     * @static
+     */
     HTML_PARSER: {
         checked: function(node) {
             return node.hasClass(CLASS_NAMES.SELECTED);
@@ -281,21 +294,21 @@ Y.extend(ToggleButton, Button,  {
             return node.hasClass(CLASS_NAMES.SELECTED);
         }
     },
-    
+
     /**
-    * @property ARIA_STATES
-    * @type {Object}
-    * @protected
-    * @static
-    */
+     * @property ARIA_STATES
+     * @type {Object}
+     * @protected
+     * @static
+     */
     ARIA_STATES: ARIA_STATES,
 
     /**
-    * @property ARIA_ROLES
-    * @type {Object}
-    * @protected
-    * @static
-    */
+     * @property ARIA_ROLES
+     * @type {Object}
+     * @protected
+     * @static
+     */
     ARIA_ROLES: ARIA_ROLES,
 
     /**
@@ -306,7 +319,7 @@ Y.extend(ToggleButton, Button,  {
      * @static
      */
     CLASS_NAMES: CLASS_NAMES
-    
+
 });
 
 // Export

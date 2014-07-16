@@ -136,7 +136,7 @@ WordBreak = {
 
             // If there's a word boundary between the current character and the
             // next character, append the current word to the words array and
-            // start building a new word. 
+            // start building a new word.
             if (WordBreak._isWordBoundary(map, i)) {
                 word = word.join(EMPTY_STRING);
 

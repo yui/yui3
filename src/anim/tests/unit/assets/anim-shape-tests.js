@@ -72,7 +72,7 @@ Y.extend(RoundedRect, Y.Shape, {
             value: 4
         }
     }, Y.Shape.ATTRS)
-}); 
+});
 Y.RoundedRect = RoundedRect;
 
 function AnimAttrTest()
@@ -103,7 +103,7 @@ Y.extend(AnimAttrTest, ShapeTestTemplate, {
             anim = new Y.Anim({
                 node: this.shape,
                 duration: .5,
-                to: to 
+                to: to
             }),
             endStops,
             endStop,
@@ -178,12 +178,12 @@ Y.extend(AnimAttrTest, ShapeTestTemplate, {
                             Y.Assert.areEqual(endProp, prop, "The " + key + " value should be " + endProp + ".");
                         }
                     }
-                
+
                 });
             });
-            
+
             anim.run();
-            test.wait(2000);
+            test.wait(5000);
     }
 });
 
@@ -195,7 +195,7 @@ var genericFill = {
         color: "#00f",
         weight: 1
     },
-    
+
     endFill = {
         color: "#00f",
         opacity: 0.3
@@ -206,7 +206,7 @@ var genericFill = {
         weight: 2,
         opacity: 1
     },
-                
+
     linearFill = {
         type: "linear",
         rotation: 45,
@@ -216,7 +216,7 @@ var genericFill = {
             {color: "#000000", opacity: 1, offset: 1}
         ]
     },
-                    
+
     endLinearFill = {
         stops: [
             {color: "#fccdd3", offset: 0},
@@ -225,7 +225,7 @@ var genericFill = {
         ],
         rotation: 271
     },
-    
+
     radialFill = {
         type: "radial",
         stops: [
@@ -237,7 +237,7 @@ var genericFill = {
         cy: .5,
         fx: 0.9,
         fy: 0.9,
-        r: 0.2 
+        r: 0.2
     },
 
     endRadialFill = {
@@ -249,9 +249,9 @@ var genericFill = {
         fx: 0.5,
         fy: 0.5
     },
-    
-    strokeAndFillTest = function(shape) 
-    {  
+
+    strokeAndFillTest = function(shape)
+    {
         return new AnimAttrTest({
             type: shape,
             fill: genericFill,
@@ -266,8 +266,8 @@ var genericFill = {
         });
     },
 
-    strokeAndLinearFillTest = function(shape) 
-    {  
+    strokeAndLinearFillTest = function(shape)
+    {
         return new AnimAttrTest({
             type: shape,
             fill: linearFill,
@@ -282,8 +282,8 @@ var genericFill = {
         });
     },
 
-    strokeAndRadialFillTest = function(shape) 
-    {  
+    strokeAndRadialFillTest = function(shape)
+    {
         return new AnimAttrTest({
             type: shape,
             fill: radialFill,

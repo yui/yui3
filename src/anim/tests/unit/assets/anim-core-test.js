@@ -2,6 +2,71 @@ YUI.add('anim-core-test', function(Y) {
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Basic Tests',
 
+        'should animate instance via static Y.Anim.run()': function() {
+            var node = Y.one('.demo'),
+                anim = new Y.Anim({
+                    node: node,
+                    from: {
+                        top: function() {
+                            return 200;
+                        }
+                    },
+
+                    to: {
+                        left: 100,
+                        top: 200
+                    }
+                }),
+
+                test = this,
+                start;
+
+            anim.on('end', function() {
+                test.resume(function() {
+                    Y.Assert.isTrue(new Date() - start > 900);
+                    Y.Assert.isTrue(new Date() - start < 1100);
+                    Y.Assert.areEqual('100px', node.getStyle('left'));
+                    Y.Assert.areEqual('200px', node.getStyle('top'));
+                    node.setStyle('left', '');
+                    node.setStyle('top', '');
+                });
+            });
+
+            start = new Date();
+            Y.Anim.run();
+            test.wait(1500);
+        },
+
+        'should pause the animation when static Y.Anim.pause() is called': function() {
+            var node = Y.one('.demo'),
+                test = this;
+
+            var anim = new Y.Anim({
+                node: node,
+                to: {
+                    height: 0
+                },
+
+                duration: 0.5
+            });
+            anim.run();
+            Y.Anim.pause();
+            Y.Assert.isTrue(anim.get('paused'));
+        },
+
+        'should set "running" to false when static Y.Anim.stop() is called': function() {
+            var node = Y.one('.demo'),
+                test = this;
+
+            var anim = new Y.Anim({
+                node: node,
+                duration: 0.1
+            });
+            anim.run();
+            Y.Anim.stop();
+            Y.Assert.isFalse(anim.get('running'));
+        },
+
         'should find node via selector string': function() {
             var anim = new Y.Anim({
                 node: '.demo'
@@ -33,7 +98,189 @@ YUI.add('anim-core-test', function(Y) {
             start = new Date();
             anim.run();
             test.wait(1500);
+        },
+
+        'should set "running" to true when run is called': function() {
+            var node = Y.one('.demo'),
+                test = this;
+
+            var anim = new Y.Anim({
+                node: node,
+                duration: 0.1
+            });
+            anim.run();
+            Y.Assert.isTrue(anim.get('running'));
+        },
+
+        'should set "running" to false when stop is called': function() {
+            var node = Y.one('.demo'),
+                test = this;
+
+            var anim = new Y.Anim({
+                node: node,
+                duration: 0.1
+            });
+            anim.run();
+            anim.stop();
+            Y.Assert.isFalse(anim.get('running'));
+        },
+
+        'should animate DOM properties': function() {
+            var node = Y.one('.demo'),
+                test = this,
+                onend = function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual('100', node.get('scrollLeft'));
+                        Y.Assert.areEqual('50', node.get('scrollTop'));
+                    });
+                };
+
+            new Y.Anim({
+                node: node,
+                to: {
+                    scrollLeft: '100',
+                    scrollTop: 50
+                },
+
+                duration: 0.5,
+
+                on: {
+                    end: onend
+                }
+            }).run();
+
+            test.wait(1000);
+
+        },
+
+        'should animate HTML attributes': function() {
+            var node = Y.one('#demo-attribute'),
+                test = this,
+                onend = function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual('100', node.get('value'));
+                    });
+                };
+
+            new Y.Anim({
+                node: node,
+                to: {
+                    value: '100'
+                },
+
+                duration: 0.5,
+
+                on: {
+                    end: onend
+                }
+            }).run();
+
+            test.wait(1000);
+
+        },
+
+        'should animate HTML attributes': function() {
+            var node = Y.one('#demo-attribute'),
+                test = this,
+                onend = function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual('100', node.get('value'));
+                    });
+                };
+
+            new Y.Anim({
+                node: node,
+                to: {
+                    value: '100'
+                },
+
+                duration: 0.5,
+
+                on: {
+                    end: onend
+                }
+            }).run();
+
+            test.wait(1000);
+
+        },
+
+        'should animate ATTRS via Y.Attribute': function() {
+            function DemoClass(config) {
+                DemoClass.superclass.constructor.apply(this, arguments);
+            }
+
+            DemoClass.NAME = 'demo';
+
+            DemoClass.ATTRS = {
+                foo: {value: 0}
+            };
+
+            Y.extend(DemoClass, Y.Base);
+            var node = new DemoClass({}),
+                test = this,
+                onend = function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual('100', node.get('foo'));
+                    });
+                };
+
+            new Y.Anim({
+                node: node,
+                to: {
+                    'foo': '100'
+                },
+
+                duration: 0.5,
+
+                on: {
+                    end: onend
+                }
+            }).run();
+
+            test.wait(1000);
+
+        },
+
+        'should animate object properties': function() {
+            var node = {foo: 0},
+                test = this,
+                onend = function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual('100', node.foo);
+                    });
+                };
+
+            new Y.Anim({
+                node: node,
+                to: {
+                    'foo': '100'
+                },
+
+                duration: 0.5,
+
+                on: {
+                    end: onend
+                }
+            }).run();
+
+            test.wait(1000);
+
+        },
+
+        'should destroy instance': function() {
+            var anim = new Y.Anim({
+                node: '.demo',
+                to: {
+                    'foo': '100'
+                }
+            });
+
+            Y.Assert.isNotUndefined(Y.Anim._instances[Y.stamp(anim)]);
+            anim.destroy();
+            Y.Assert.isUndefined(Y.Anim._instances[Y.stamp(anim)]);
         }
+
 
     }));
 
@@ -85,7 +332,7 @@ YUI.add('anim-core-test', function(Y) {
                 duration: 0.5,
                 on: {
                     tween: function() {
-                        this.detach('tween'); 
+                        this.detach('tween');
                         test.resume(function() {
                             Y.Assert.isTrue(true);
                         });
@@ -140,7 +387,7 @@ YUI.add('anim-core-test', function(Y) {
                 }
             });
             anim.run();
-            anim.pause(); 
+            anim.pause();
         },
         'should fire the end event when stop is called': function() {
             var node = Y.one('.demo'),
@@ -161,7 +408,7 @@ YUI.add('anim-core-test', function(Y) {
                 }
             });
             anim.run();
-            anim.stop(); 
+            anim.stop();
         },
 
         'should run in reverse': function() {
@@ -169,7 +416,7 @@ YUI.add('anim-core-test', function(Y) {
                 test = this;
 
             var anim = new Y.Anim({
-                reverse: true, 
+                reverse: true,
                 node: node,
                 to: {
                     height: 0
@@ -209,7 +456,7 @@ YUI.add('anim-core-test', function(Y) {
             });
             anim.run();
 
-            anim.stop(true); 
+            anim.stop(true);
         },
 
         'should fire the resume event when run called while paused': function() {
@@ -227,7 +474,7 @@ YUI.add('anim-core-test', function(Y) {
             });
             anim.run();
             anim.pause();
-            anim.run(); 
+            anim.run();
         },
 
         'should run the onstart prior to setting target values': function() {
@@ -252,62 +499,28 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     start: onstart
                 }
-            }).run(); 
+            }).run();
 
         },
 
-        'should set "running" to true when run is called': function() {
+        'should fire the iteration event when running multiple iterations': function() {
             var node = Y.one('.demo'),
                 test = this;
 
             var anim = new Y.Anim({
                 node: node,
-                duration: 0.1
-            });
-            anim.run();
-            Y.Assert.isTrue(anim.get('running'));
-        },
-
-        'should set "running" to false when stop is called': function() {
-            var node = Y.one('.demo'),
-                test = this;
-
-            var anim = new Y.Anim({
-                node: node,
-                duration: 0.1
-            });
-            anim.run();
-            anim.stop(); 
-            Y.Assert.isFalse(anim.get('running'));
-        },
-
-        'should animate DOM properties': function() {
-            var node = Y.one('.demo'),
-                test = this,
-                onend = function() {
-                    test.resume(function() {
-                        Y.Assert.areEqual('100', node.get('scrollLeft'));
-                        Y.Assert.areEqual('50', node.get('scrollTop'));
-                    });
-                };
-
-            new Y.Anim({
-                node: node,
-                to: {
-                    scrollLeft: '100',
-                    scrollTop: 50
-                },
-
-                duration: 0.5,
-
+                duration: 0.1,
+                direction: 'alternate',
+                iterations: 2,
                 on: {
-                    end: onend
+                    iteration: function() {
+                        Y.Assert.isTrue(true);
+                    }
                 }
-            }).run(); 
-
-            test.wait(1000);
-
+            });
+            anim.run();
+            anim.pause();
+            anim.run();
         }
-
     }));
-}, '@VERSION@' ,{requires:['anim-base', 'test']});
+}, '@VERSION@' ,{requires:['anim-base', 'node-screen', 'test']});

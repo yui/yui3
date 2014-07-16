@@ -1,0 +1,8 @@
+{
+    "series-combo-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-combo"
+        ]
+    }
+}

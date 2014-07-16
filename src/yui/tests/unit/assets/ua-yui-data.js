@@ -265,6 +265,29 @@ Y.UAData["YUI Internal"] = [
                 }
         },
         {
+                "ua": "Mozilla/5.0 (Linux; U; en-us; KFTT Build/IML74K) AppleWebKit/535.19 (KHTML, like Gecko) Silk/3.4 Safari/535.19 Silk-Accelerated=true",
+                "data": {
+                        "webkit": 535.19,
+                        "safari": 535.19,
+                        "android": 2.34,
+                        "silk": 3.4,
+                        "accel": true,
+                        "os": "Android"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; KFTT Build/IML74K) AppleWebKit/535.19 (KHTML, like Gecko) Silk/3.4 Mobile Safari/535.19 Silk-Accelerated=true",
+                "data": {
+                        "webkit": 535.19,
+                        "safari": 535.19,
+                        "mobile": "Android",
+                        "android": 4.03,
+                        "silk": 3.4,
+                        "accel": true,
+                        "os": "android"
+                }
+        },
+        {
                 "ua": "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5",
                 "data": {
                         "webkit": 533.179,
@@ -568,6 +591,32 @@ Y.UAData["YUI Internal"] = [
                         "iphone": 6,
                         "ios": 6,
                         "os": "ios"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (Android; Mobile; rv:13.0) Gecko/13.0 Firefox/13.0",
+                "data": {
+                        "gecko": 13,
+                        "os": "android",
+                        "mobile": "ffos"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (Android; Tablet; rv:13.0) Gecko/13.0 Firefox/13.0",
+                "data": {
+                        "gecko": 13,
+                        "os": "android",
+                        "mobile": "ffos"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (Linux; Ubuntu 14.04 like Android 4.4) WebKit/537.36 Chromium/35.0.1870.2 Mobile",
+                "data": {
+                        "webkit": 537.36,
+                        "chrome": 35.0187,
+                        "mobile": "Ubuntu",
+                        "ubuntu": 14.04,
+                        "os": "linux"
                 }
         }
 ];

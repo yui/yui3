@@ -23,7 +23,7 @@ YUI({ filter:'raw' }).use("io-xdr", "node",
         //Configure the cross-domain transport:
         var xdrConfig = {
             id:'flash', //We'll reference this id in the xdr configuration of our transaction.
-            src:'../../build/io-xdr/io.swf' //Relative path to the .swf file from the current page.
+            src:'io.swf' //Relative path to the .swf file from the current page.
         };
         Y.io.transport(xdrConfig);
 
@@ -72,7 +72,7 @@ YUI({ filter:'raw' }).use("io-xdr", "node",
                 xdr: {
                     use:'flash', //This is the xdrConfig id we referenced above.
                     dataType:'xml' //Indicate the data are XML, not string.
-                },              
+                },
                 on:
                     {
                         success:successHandler,

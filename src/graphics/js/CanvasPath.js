@@ -9,7 +9,7 @@
  * @class CanvasPath
  * @extends CanvasShape
  */
-CanvasPath = function(cfg)
+CanvasPath = function()
 {
 	CanvasPath.superclass.constructor.apply(this, arguments);
 };
@@ -58,7 +58,15 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 		node.setAttribute("id", id);
 		id = "#" + id;
 		host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
+		host.addClass(
+            _getClassName(SHAPE) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+            " " +
+            _getClassName(name) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, name))
+        );
 	},
 
     /**
@@ -69,6 +77,7 @@ Y.extend(CanvasPath, Y.CanvasShape, {
     end: function()
     {
         this._draw();
+        return this;
     }
 });
 

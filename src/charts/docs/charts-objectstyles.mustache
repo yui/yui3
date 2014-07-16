@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #mychart {
     margin:10px 10px 10px 10px;
     width:90%;
@@ -14,22 +14,38 @@
 </div>
 <h3>Defining the axes and series for a `Chart` instance</h3>
 
-<p>As we have seen from previous examples, the `Chart` class allows you to create and customize multiple chart types with very little code. Sometimes you'll want more control 
+<p>As we have seen from previous examples, the `Chart` class allows you to create and customize multiple chart types with very little code. Sometimes you'll want more control
 over the `Chart`. Suppose you want to place your value axis on the right or you need different series types in the same chart. Charts allows you to explicitly define your series and axes objects. You can either declare
 an axis or series directly or define them with an object literal and allow the `Chart` instance to build them for you. In this example, we are going to define our axes and series with
 object literals. This will allow us to place our value axis on the right and build a chart with columns and lines.</p>
 
+<h4>CSS</h4>
 ```
-YUI().use('charts', function (Y) 
-{ 
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+```
+
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+
+<h4>JavaScript</h4>
+```
+YUI().use('charts', function (Y)
+{
     //dataProvider source
-    var myDataValues = [ 
-        {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100}, 
-        {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500}, 
-        {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800}, 
+    var myDataValues = [
+        {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+        {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100},
+        {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500},
+        {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800},
         {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
-        {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200} 
+        {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}
     ];
 
     //Define our axes for the chart.
@@ -60,7 +76,7 @@ YUI().use('charts', function (Y)
         }
     };
 
-    //define the series 
+    //define the series
     var seriesCollection = [
      {
             type:"column",
@@ -69,7 +85,6 @@ YUI().use('charts', function (Y)
             xKey:"date",
             xDisplayName:"Date",
             yKey:"miscellaneous",
-            xDisplayName:"Date",
             yDisplayName:"Miscellaneous",
             styles: {
                 border: {
@@ -94,7 +109,7 @@ YUI().use('charts', function (Y)
             styles: {
                 marker:{
                     fill: {
-                        color: "#e0ddd0" 
+                        color: "#e0ddd0"
                     },
                     border: {
                         weight: 1,
@@ -115,11 +130,10 @@ YUI().use('charts', function (Y)
             xKey:"date",
             xDisplayName:"Date",
             yKey:"revenue",
-            xDisplayName:"Date",
             yDisplayName:"Deductions",
-                line: {
-                    color: "#ff7200"
-                },
+            line: {
+                color: "#ff7200"
+            },
             marker: {
                 fill: {
                     color: "#ff9f3b"
@@ -137,12 +151,12 @@ YUI().use('charts', function (Y)
             }
         }
     ];
-    
+
     //instantiate the chart
     var myChart = new Y.Chart({
-                        dataProvider:myDataValues, 
-                        axes:myAxes, 
-                        seriesCollection:seriesCollection, 
+                        dataProvider:myDataValues,
+                        axes:myAxes,
+                        seriesCollection:seriesCollection,
                         horizontalGridlines: true,
                         verticalGridlines: true,
                         render:"#mychart"

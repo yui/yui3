@@ -1,6 +1,99 @@
 ValueChange Change History
 ==========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* Updated ValueChange to support `<select>` and `[contenteditable="true"]`
+  elements as well. ([#1184][])
+
+[#1184]: https://github.com/yui/yui3/issues/1184
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* Added support for `stopPropagation()` and `stopImmediatePropagation()` on the
+  `valuechange` event facade. [Wei Wang]
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+* No changes.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 

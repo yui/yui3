@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #mychart {
     margin:10px 10px 10px 10px;
     width:90%;
@@ -17,12 +17,29 @@
 
 <p>In the previous example, we made a line/marker combination chart with multiple series. In this example, we're going use the type attribute to change it to a Column Chart.</p>
 
+<h4>CSS</h4>
 ```
-var myDataValues = [ 
-    {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-    {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-    {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-    {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+```
+
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+
+<h4>JavaScript</h4>
+
+```
+var myDataValues = [
+    {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+    {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+    {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+    {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
     {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
 ];
 

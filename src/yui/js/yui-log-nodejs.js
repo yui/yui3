@@ -22,13 +22,13 @@ Y.consoleColor = function(str, num) {
 
 
 var logFn = function(str, t, m) {
-    var id = '';
+    var id = '', lvl, mLvl;
     if (this.id) {
         id = '[' + this.id + ']:';
     }
     t = t || 'info';
     m = (m) ? this.consoleColor(' (' +  m.toLowerCase() + '):', 35) : '';
-    
+
     if (str === null) {
         str = 'null';
     }
@@ -46,7 +46,8 @@ var logFn = function(str, t, m) {
         }
     }
 
-    var lvl = '37;40', mLvl = ((str) ? '' : 31);
+    lvl = '37;40';
+    mLvl = ((str) ? '' : 31);
     t = t+''; //Force to a string..
     switch (t.toLowerCase()) {
         case 'error':

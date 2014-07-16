@@ -51,6 +51,17 @@
             "tags"       : ["cssgrids"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "newWindow"  : "true",
+            "name"       : "cssgrids-magazine",
+            "displayName": "Responsive Newspaper Layout",
+            "description": "A responsive layout that looks like a newspaper",
+            "modules"    : ["cssgrids"],
+            "tags"       : ["cssgrids"],
+
+            "hideTableOfContents": true
         }
 
     ],
@@ -78,6 +89,11 @@
             "name"       : "cssgrids-align",
             "displayName": "CSS Grids Alignment Example",
             "layout"     : "cssgrids-align-example"
+        },
+        "cssgrids-magazine-example": {
+            "name"       : "cssgrids-magazine",
+            "displayName": "CSS Grids Responsive Magazine Example",
+            "layout"     : "cssgrids-magazine-example"
         }
     }
 }

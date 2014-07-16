@@ -153,7 +153,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          *
          * @method _valueToOffset
          * @param val { Number } The value to map to pixel X or Y position
-         * @return { Number } The pixel offset 
+         * @return { Number } The pixel offset
          * @protected
          */
         _valueToOffset: function ( value ) {
@@ -250,12 +250,11 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             var val = e.newVal;
             Y.log("Positioning thumb after set('value',x)","info","slider");
             this._setPosition( val, { source: 'set' } );
-            this.thumb.set('aria-valuenow', val);
-            this.thumb.set('aria-valuetext', val);
         },
 
         /**
-         * Positions the thumb in accordance with the translated value.
+         * Positions the thumb and its ARIA attributes in accordance with the
+         * translated value.
          *
          * @method _setPosition
          * @param value {Number} Value to translate to a pixel position
@@ -264,6 +263,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          */
         _setPosition: function ( value, options ) {
             this._uiMoveThumb( this._valueToOffset( value ), options );
+            this.thumb.set('aria-valuenow', value);
+            this.thumb.set('aria-valuetext', value);
         },
 
         /**
@@ -303,7 +304,10 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _setNewValue: function ( value ) {
-            return round( this._nearestValue( value ) );
+            if ( Y.Lang.isNumber( value ) ) {
+                return round( this._nearestValue( value ) );
+            }
+            return Y.Attribute.INVALID_VALUE;
         },
 
         /**
@@ -372,7 +376,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             value    : 100,
             validator: '_validateNewMax'
         },
-        
+
         /**
          * amount to increment/decrement the Slider value
          * when the arrow up/down/left/right keys are pressed

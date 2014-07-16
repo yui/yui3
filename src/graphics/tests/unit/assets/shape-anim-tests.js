@@ -1,6 +1,10 @@
 YUI.add('shape-anim-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Graphics: Shape Anim Transform"),
+var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
+    DOC = Y.config.doc,
+    suite = new Y.Test.Suite("Graphics: Shape Anim Transform"),
+    ShapeTestTemplate;
+DOC.body.appendChild(parentDiv);
 ShapeTestTemplate = function(cfg, globalCfg) {
     var i;
     ShapeTestTemplate.superclass.constructor.apply(this);
@@ -24,16 +28,15 @@ Y.extend(ShapeTestTemplate, Y.Test.Case, {
             contentBounds,
             nodewidth,
             nodeheight;
-        Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
-        graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic = new Y.Graphic({render: "#testdiv"});
         this.graphic = graphic;
         this.shape = graphic.addShape(this.attrCfg);
     },
 
     tearDown: function () {
         this.graphic.destroy();
-        Y.one("#testbed").remove(true);
+        this.anim.destroy(true);
+        Y.Event.purgeElement(DOC, false);
     }
 });
 
@@ -72,7 +75,7 @@ Y.extend(RoundedRect, Y.Shape, {
             value: 4
         }
     }, Y.Shape.ATTRS)
-}); 
+});
 Y.RoundedRect = RoundedRect;
 
 function AnimTransformTest()
@@ -95,7 +98,7 @@ Y.extend(AnimTransformTest, ShapeTestTemplate, {
                 duration: .5,
                 easing: "easeNone",
                 to: {
-                    transform: this.endTransform 
+                    transform: this.endTransform
                 }
             }),
             test = this,
@@ -139,6 +142,7 @@ Y.extend(AnimTransformTest, ShapeTestTemplate, {
                 });
             });
 
+            this.anim = anim;
             start = new Date();
             anim.run();
             test.wait(2000);
@@ -154,8 +158,8 @@ var genericFill = {
         weight: 1
     },
 
-    translateTest = function(shape) 
-    {  
+    translateTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -167,8 +171,8 @@ var genericFill = {
         });
     },
 
-    rotateTest = function(shape) 
-    {  
+    rotateTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -180,8 +184,8 @@ var genericFill = {
         });
     },
 
-    skewXTest = function(shape) 
-    {  
+    skewXTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -193,8 +197,8 @@ var genericFill = {
         });
     },
 
-    skewYTest = function(shape) 
-    {  
+    skewYTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -206,8 +210,8 @@ var genericFill = {
         });
     },
 
-    scaleTest = function(shape) 
-    {  
+    scaleTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -219,8 +223,8 @@ var genericFill = {
         });
     },
 
-    scaleRotateTest = function(shape) 
-    { 
+    scaleRotateTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -232,8 +236,8 @@ var genericFill = {
         });
     },
 
-    scaleRotateTranslateTest = function(shape) 
-    { 
+    scaleRotateTranslateTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -245,8 +249,8 @@ var genericFill = {
         });
     },
 
-    scaleSkewXTranslateTest = function(shape) 
-    { 
+    scaleSkewXTranslateTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -258,8 +262,8 @@ var genericFill = {
         });
     },
 
-    scaleSkewYTranslateTest = function(shape) 
-    { 
+    scaleSkewYTranslateTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,
@@ -271,8 +275,8 @@ var genericFill = {
         });
     },
 
-    matrixTest = function(shape) 
-    { 
+    matrixTest = function(shape)
+    {
         return new AnimTransformTest({
             type: shape,
             fill: genericFill,

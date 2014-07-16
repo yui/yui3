@@ -1,0 +1,13 @@
+{
+    "builds": {
+        "timers": {
+            "jsfiles": [
+                "prologue.js",
+                "queue.js",
+                "asap.js",
+                "epilogue.js"
+            ]
+        }
+    },
+    "name": "timers"
+}

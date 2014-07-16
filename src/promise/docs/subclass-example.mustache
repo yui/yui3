@@ -1,0 +1,67 @@
+{{>subclass-css}}
+{{>github-mock-config}}
+
+<div class="intro">
+    <p>
+        This example expands on the <a href="basic-example.html">Wrapping async transactions with promises</a> example to illustrate how to create your own Promise subclass for performing operations on arrays.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <div id="demo"></div>
+    {{>subclass-js}}
+</div>
+
+<h2>Subclassing Y.Promise</h2>
+
+<p>
+    You can subclass a YUI promise with <a href="../yui/yui-extend.html">Y.extend</a> the same way you would any other class. Keep in mind that Promise constructors take a function as a parameter so you need to call the superclass constructor in order for it to work.
+</p>
+
+```
+function ArrayPromise() {
+    ArrayPromise.superclass.constructor.apply(this, arguments);
+}
+Y.extend(ArrayPromise, Y.Promise);
+```
+
+<h2>Method Chaining</h2>
+
+<p>
+    Chaining promise methods is done by returning the result of calling the promise's `then()` method. `then()` <strong>always returns a promise of its same kind</strong>, so this will allow us to chain array operations as if they were real arrays.
+</p>
+<p>
+    For the purpose of this example we will only add the `each`, `filter` and `map` methods from the `array-extras` module.
+</p>
+
+```
+{{>subclass-array-methods}}
+```
+
+<p>
+    Finally we need a simple way to take a promise that we know contains an array and create an ArrayPromise with its value.
+</p>
+
+```
+{{>subclass-toarray-fn}}
+```
+
+<h3>Putting our Class to Action</h3>
+
+<p>
+    There are many cases in which you would want to work on asynchronous array values. Performing more than one async operation at a time and dealing with the result is one common use case. `Y.Promise.all` waits for many operations and returns a promise representing an array with the result of all the operations, so you could wrap it in an ArrayPromise to modify all those results.
+</p>
+
+<p>
+    We will use the JSONP Cache from <a href="jsonp-cache.html">the previous example</a> and make several simultaneous requests.
+</p>
+
+```
+{{>subclass-array-operations}}
+```
+
+<h2>Full Example Code</h2>
+
+```
+{{>subclass-js}}
+```

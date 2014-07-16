@@ -3,7 +3,7 @@
 <head>
     <title>Test Page</title>
     <style type="text/css">
-        .markup { 
+        .markup {
             margin: 10px 0 0 300px;
         }
     </style>
@@ -48,12 +48,19 @@ s.set('min', 10);
 s.render('#slider');
 
 s.on('railMouseDown', function (e) {
-    console.log(e);
+    /*removing this because IE9 just stops here if you don't have the developer tools open,
+    * it makes you think mousedown on the rail is broken in a manual test,
+    * but it's just that it doesn't know what to do when there's
+    * a console command with no console. Y.log() doesn't have this problem.
+    */
+    //console.log(e);
+    Y.log(e + 'this is a Y.log');
 });
 
 s.rail.on(['mousedown', 'mouseup', 'click'], function (e) {
     e.type;
-    console.log(e);
+    //console.log(e); // using Y.log() instead for IE 9
+    Y.log(e + 'this is a Y.log');
 });
 
 report.set('innerHTML',s.get('value'));

@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 #mygraphiccontainer {
@@ -18,7 +18,7 @@ This example shows how to use the `Graphics` to create a custom shape. Currently
     <li>path</li>
 </ul>
 <p>
-You can also create your own custom shapes. If you need to have reusable shapes, you can do this by extending the `Shape` class. Once you have created a custom class, you can instantiate it by passing 
+You can also create your own custom shapes. If you need to have reusable shapes, you can do this by extending the `Shape` class. Once you have created a custom class, you can instantiate it by passing
 a reference of your class in the `type` attribute of your config to the `addShape` method. In this example, we will create shape called `RoundedRect`.
 </p>
 </div>
@@ -78,7 +78,7 @@ a reference of your class in the `type` attribute of your config to the `addShap
                 value: 4
             }
         }, Y.Shape.ATTRS)
-    }); 
+    });
     Y.RoundedRect = RoundedRect;
 ```
 <p>Create a `Graphic` instance and render it to an `HTMLElement`</p>

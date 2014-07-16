@@ -17,7 +17,7 @@
 <p>Since we want to use the base ScrollView, along with the ScrollViewScrollbars plugin, which provides the scrollbar indicator we use the `scrollview` module, instead of the `scrollview-base` module we used for the basic ScrollView example:</p>
 
 ```
-// Pulls in scrollview-base and scrollview-scrollbars plugin 
+// Pulls in scrollview-base and scrollview-scrollbars plugin
 // and plugs it in (at the class level)
 
 YUI().use('scrollview', function(Y) {
@@ -83,11 +83,11 @@ YUI().use('scrollview', function(Y) {
 <p>As discussed in the <a href="index.html#scrollbars">ScrollBar Plugin</a> documentation, the API to control scrollbars is available on the scrollview instance, through the `scrollView.scrollbars` property. The ScrollBar plugin doesn't have too complex of an api, just a few methods to hide and show the scrollbars:</p>
 
 ```
-    /* 
-      scrollView.scrollbars is an instance of the ScrollViewScrollbars plugin 
+    /*
+      scrollView.scrollbars is an instance of the ScrollViewScrollbars plugin
     */
     scrollView.scrollbars.hide();
-    scrollView.scrollbars.show(); 
+    scrollView.scrollbars.show();
     scrollView.scrollbars.flash();
 });
 ```
@@ -97,7 +97,7 @@ YUI().use('scrollview', function(Y) {
 <p>In this example, the scrolling surface is populated with links. To prevent links' default action (page navigation) from taking place after a scroll, we look at the `lastScrolledAmt` property of our ScrollView instance; on a simple click, that number will be very close to zero, whereas after scroll that number will be much higher.  In this case, we're using a 2px threshold.</p>
 
 ```
-var content = scrollView.get("contentBox"); 
+var content = scrollView.get("contentBox");
 
 content.delegate("click", function(e) {
     // Prevent links from navigating as part of a scroll gesture
@@ -112,7 +112,7 @@ content.delegate("click", function(e) {
 
 ```
 content.delegate("mousedown", function(e) {
-    // Prevent default anchor drag behavior, on browsers 
+    // Prevent default anchor drag behavior, on browsers
     // which let you drag anchors to the desktop
     e.preventDefault();
 }, "a");

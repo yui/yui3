@@ -1,0 +1,88 @@
+    FlickrSearch.PaginatorPages = Y.Base.create('pager-pages', Y.View, [], {
+
+        // We modify the the containerTemplate so our page items are contained in
+        // their proper parent
+        containerTemplate: '<ul/>',
+
+        // Our page numbers are in a list element (<li>) and contain data about
+        // the page (`data-page`) and control type (`data-type`)
+        pageTemplate: '<li class="control page page-{page}{selected}"' +
+                      ' data-type="page" data-page="{page}">{page}</li>',
+
+        // We delegate our .page element clicks
+        events: {
+            '.page': {
+                'click': '_pageClick'
+            }
+        },
+
+        // We listen to our model's `change` event to know what page controls to
+        // display and which page item to activate
+        initializer: function () {
+            this.get('model').after('change', this._afterChange, this);
+        },
+
+        // When we render, we simply call _buildPageList to render the page items
+        render: function () {
+            this.get('container').setHTML(this._buildPageList());
+
+            return this;
+        },
+
+        // Generates a string of page items based on the current page number and
+        // the number of items we can display at one time. The current page of the
+        // model will be given the "selected" class name.
+        //
+        // For example, if our current page is 20, we have a total of 50 pages
+        // and we can only display 10, our paginator should display pages
+        // 15 thru 24
+        //
+        // Given the same scenario, if we have a total of 20 pages, our paginator
+        // should display 11 thru 20
+        _buildPageList: function () {
+            var data = this.get('model').toJSON(),
+                pages = data.totalPages,
+                pagesNode = '',
+                display = this.get('display'),
+                min = Math.max(1, data.page - Math.floor(display / 2)),
+                max = min + display - 1;
+
+            if (max > pages) {
+                min -= max - pages;
+            }
+
+            min = Math.max(1, min);
+            max = Math.min(pages, max);
+
+            for (; min <= max; min++) {
+                pagesNode += Y.Lang.sub(this.pageTemplate, {
+                    page: min,
+                    selected: (data.page === min) ? ' selected' : ''
+                });
+            }
+
+            return pagesNode;
+        },
+
+        // When a page is clicked, we need to push that data to the model
+        _pageClick: function (e) {
+            var page = e.currentTarget.getData('page');
+
+            this.get('model').set('page', parseInt(page, 10));
+        },
+
+        // When the model's `page` or `totalItems` changes, we need to re-render
+        // all the page nodes to ensure we are displaying the correct number
+        _afterChange: function (e) {
+            this.render();
+        }
+
+    }, {
+        ATTRS: {
+
+            // Maximum number of items to display at one time
+            display: {
+                value: 10
+            }
+        }
+    });

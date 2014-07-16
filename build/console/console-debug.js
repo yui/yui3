@@ -13,10 +13,6 @@ YUI.add('console', function (Y, NAME) {
  * configured logLevel.
  *
  * @module console
- * @class Console
- * @extends Widget
- * @param conf {Object} Configuration object (see Configuration attributes)
- * @constructor
  */
 var getCN = Y.ClassNameManager.getClassName,
     CHECKED        = 'checked',
@@ -67,7 +63,7 @@ var getCN = Y.ClassNameManager.getClassName,
     ESC_AMP = '&#38;',
     ESC_GT  = '&#62;',
     ESC_LT  = '&#60;',
-    
+
     ENTRY_TEMPLATE_STR =
         '<div class="{entry_class} {cat_class} {src_class}">'+
             '<p class="{entry_meta_class}">'+
@@ -89,8 +85,15 @@ var getCN = Y.ClassNameManager.getClassName,
     isString   = L.isString,
     merge      = Y.merge,
     substitute = Y.Lang.sub;
-    
 
+/**
+A basic console that displays messages logged throughout your application.
+
+@class Console
+@constructor
+@extends Widget
+@param [config] {Object} Object literal specifying widget configuration properties.
+**/
 function Console() {
     Console.superclass.constructor.apply(this,arguments);
 }
@@ -198,7 +201,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      */
     reset : function () {
         this.fire(RESET);
-        
+
         return this;
     },
 
@@ -232,7 +235,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * print loop).  The number of buffered messages output to the Console is
      * limited to the number provided as an argument.  If no limit is passed,
      * all buffered messages are rendered.
-     * 
+     *
      * @method printBuffer
      * @param limit {Number} (optional) max number of buffered entries to write
      * @chainable
@@ -251,7 +254,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         }
 
         limit = Math.min(messages.length, (limit || messages.length));
-        
+
         // turn off logging system
         Y.config.debug = false;
 
@@ -286,11 +289,11 @@ Y.Console = Y.extend(Console, Y.Widget,
         return this;
     },
 
-    
+
     /**
      * Constructor code.  Set up the buffer and entry template, publish
      * internal events, and subscribe to the configured logEvent.
-     * 
+     *
      * @method initializer
      * @protected
      */
@@ -307,7 +310,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * behavior defined in _defEntryFn.
          *
          * @event entry
-         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         * @param event {EventFacade} An Event Facade object with the following attribute specific properties added:
          *  <dl>
          *      <dt>message</dt>
          *          <dd>The message data normalized into an object literal (see _normalizeMessage)</dd>
@@ -320,7 +323,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * Triggers the reset behavior via the default logic in _defResetFn.
          *
          * @event reset
-         * @param event {Event.Facade} Event Facade object
+         * @param event {EventFacade} Event Facade object
          * @preventable _defResetFn
          */
         this.publish(RESET, { defaultFn: this._defResetFn });
@@ -340,7 +343,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         this._cancelPrintLoop();
 
         this.get('logSource').detach(this._evtCat + '*');
-        
+
         bb.purge(true);
     },
 
@@ -400,7 +403,7 @@ Y.Console = Y.extend(Console, Y.Widget,
             this._afterCollapsedChange);
     },
 
-    
+
     /**
      * Create the DOM structure for the header elements.
      *
@@ -516,7 +519,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
                                 RegExp.$1 : m.sourceAndDetail;
-        m.localTime       = m.time.toLocaleTimeString ? 
+        m.localTime       = m.time.toLocaleTimeString ?
                             m.time.toLocaleTimeString() : (m.time + '');
         m.elapsedTime     = m.time - this.get(LAST_TIME);
         m.totalTime       = m.time - this.get(START_TIME);
@@ -748,7 +751,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         if (isString(v)) {
             v = v.toLowerCase();
         }
-        
+
         return (v === WARN || v === ERROR) ? v : INFO;
     },
 
@@ -814,13 +817,13 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Over-ride default content box sizing to do nothing, since we're sizing
      * the body section to fill out height ourselves.
-     * 
+     *
      * @method _uiSizeCB
      * @protected
      */
     _uiSizeCB : function() {
         // Do Nothing. Ideally want to move to Widget-StdMod, which accounts for
-        // _uiSizeCB        
+        // _uiSizeCB
     },
 
     /**
@@ -889,7 +892,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Calls this._trimOldEntries() in response to changes in the configured
      * consoleLimit attribute.
-     * 
+     *
      * @method _afterConsoleLimitChange
      * @param e {Event} Custom event for the attribute change
      * @protected
@@ -962,7 +965,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Responds to log events by normalizing qualifying messages and passing
      * them along through the entry event for buffering etc.
-     * 
+     *
      * @method _onLogEvent
      * @param msg {String} the log message
      * @param cat {String} OPTIONAL the category or logLevel of the message
@@ -1475,7 +1478,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * By default this is set to false, which will disable logging to the
          * browser console when a Console instance is created.  If the
          * logSource is not a YUI instance, this has no effect.
-         * 
+         *
          * @attribute useBrowserConsole
          * @type {Boolean}
          * @default false
@@ -1493,7 +1496,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
          /**
           * Allows the Console to flow in the document.  Available values are
-          * 'inline', 'block', and 'separate' (the default).  
+          * 'inline', 'block', and 'separate' (the default).
           *
           * @attribute style
           * @type {String}
@@ -1511,4 +1514,4 @@ Y.Console = Y.extend(Console, Y.Widget,
 });
 
 
-}, '@VERSION@', {"requires": ["yui-log", "widget"], "skinnable": true, "lang": ["en", "es", "ja"]});
+}, '@VERSION@', {"requires": ["yui-log", "widget"], "skinnable": true, "lang": ["en", "es", "hu", "it", "ja"]});

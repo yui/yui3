@@ -12,10 +12,9 @@ var CAMEL_VENDOR_PREFIX = '',
     VENDOR_PREFIX = '',
     DOCUMENT = Y.config.doc,
     DOCUMENT_ELEMENT = 'documentElement',
-    TRANSITION = 'transition',
+    DOCUMENT_STYLE = DOCUMENT[DOCUMENT_ELEMENT].style,
     TRANSITION_CAMEL = 'transition',
     TRANSITION_PROPERTY_CAMEL = 'transitionProperty',
-    TRANSFORM_CAMEL = 'transform',
     TRANSITION_PROPERTY,
     TRANSITION_DURATION,
     TRANSITION_TIMING_FUNCTION,
@@ -45,6 +44,9 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
+// One off handling of transform-prefixing.
+Transition._TRANSFORM = 'transform';
+
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
         return m1.toUpperCase();
@@ -72,7 +74,12 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition.useNative = false;
 
-if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
+// Map transition properties to vendor-specific versions.
+if ('transition' in DOCUMENT_STYLE
+    && 'transitionProperty' in DOCUMENT_STYLE
+    && 'transitionDuration' in DOCUMENT_STYLE
+    && 'transitionTimingFunction' in DOCUMENT_STYLE
+    && 'transitionDelay' in DOCUMENT_STYLE) {
     Transition.useNative = true;
     Transition.supported = true; // TODO: remove
 } else {
@@ -89,10 +96,20 @@ if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
     });
 }
 
+// Map transform property to vendor-specific versions.
+// One-off required for cssText injection.
+if (typeof DOCUMENT_STYLE.transform === 'undefined') {
+    Y.Array.each(VENDORS, function(val) { // then vendor specific
+        var property = val + 'Transform';
+        if (typeof DOCUMENT_STYLE[property] !== 'undefined') {
+            Transition._TRANSFORM = property;
+        }
+    });
+}
+
 if (CAMEL_VENDOR_PREFIX) {
     TRANSITION_CAMEL          = CAMEL_VENDOR_PREFIX + 'Transition';
     TRANSITION_PROPERTY_CAMEL = CAMEL_VENDOR_PREFIX + 'TransitionProperty';
-    TRANSFORM_CAMEL           = CAMEL_VENDOR_PREFIX + 'Transform';
 }
 
 TRANSITION_PROPERTY        = VENDOR_PREFIX + 'transition-property';
@@ -185,13 +202,13 @@ Transition.prototype = {
         anim._count++; // properties per transition
 
         // make 0 async and fire events
-        dur = ((typeof config.duration != 'undefined') ? config.duration :
+        dur = ((typeof config.duration !== 'undefined') ? config.duration :
                     anim._duration) || 0.0001;
 
         attrs[prop] = {
             value: val,
             duration: dur,
-            delay: (typeof config.delay != 'undefined') ? config.delay :
+            delay: (typeof config.delay !== 'undefined') ? config.delay :
                     anim._delay,
 
             easing: config.easing || anim._easing,
@@ -230,8 +247,8 @@ Transition.prototype = {
         var attr,
             node = this._node;
 
-        if (config.transform && !config[TRANSFORM_CAMEL]) {
-            config[TRANSFORM_CAMEL] = config.transform;
+        if (config.transform && !config[Transition._TRANSFORM]) {
+            config[Transition._TRANSFORM] = config.transform;
             delete config.transform; // TODO: copy
         }
 
@@ -292,7 +309,7 @@ Transition.prototype = {
         return dur + 'ms';
     },
 
-    _runNative: function(time) {
+    _runNative: function() {
         var anim = this,
             node = anim._node,
             uid = Y.stamp(node),
@@ -490,7 +507,7 @@ Y.Node.prototype.transition = function(name, config, callback) {
 
         fxConfig = Transition.fx[name];
 
-        if (config && typeof config !== 'boolean') {
+        if (config && typeof config === 'object') {
             config = Y.clone(config);
 
             for (prop in fxConfig) {
@@ -535,12 +552,26 @@ Y.Node.prototype.show = function(name, config, callback) {
     return this;
 };
 
+Y.NodeList.prototype.show = function(name, config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).show(name, config, callback);
+    }
+
+    return this;
+};
+
+
+
 var _wrapCallBack = function(anim, fn, callback) {
     return function() {
         if (fn) {
             fn.call(anim);
         }
-        if (callback) {
+        if (callback && typeof callback === 'function') {
             callback.apply(anim._node, arguments);
         }
     };
@@ -569,6 +600,18 @@ Y.Node.prototype.hide = function(name, config, callback) {
     return this;
 };
 
+Y.NodeList.prototype.hide = function(name, config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).hide(name, config, callback);
+    }
+
+    return this;
+};
+
 /**
  *   Animate one or more css properties to a given value. Requires the "transition" module.
  *   <pre>example usage:
@@ -593,15 +636,23 @@ Y.Node.prototype.hide = function(name, config, callback) {
  *   @param {Object} config An object containing one or more style properties, a duration and an easing.
  *   @param {Function} callback A function to run after the transition has completed. The callback fires
  *       once per item in the NodeList.
+ *   @param {Boolean} callbackOnce If true, the callback will be called only after the
+ *       last transition has completed
  *   @chainable
 */
-Y.NodeList.prototype.transition = function(config, callback) {
+Y.NodeList.prototype.transition = function(config, callback, callbackOnce) {
     var nodes = this._nodes,
-        i = 0,
+        size = this.size(),
+         i = 0,
+        callbackOnce = callbackOnce === true,
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).transition(config, callback);
+        if (i < size && callbackOnce){
+            Y.one(node).transition(config);
+        } else {
+            Y.one(node).transition(config, callback);
+        }
     }
 
     return this;
@@ -611,14 +662,17 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
     callback = arguments[arguments.length - 1];
 
-    if (typeof name == 'boolean') { // no transition, just toggle
+    if (typeof name !== 'string') { // no transition, just toggle
         on = name;
-        name = null;
+        this._toggleView(on, callback); // call original _toggleView in Y.Node
+        return;
     }
 
-    name = name || Y.Transition.DEFAULT_TOGGLE;
+    if (typeof on === 'function') { // Ignore "on" if used for callback argument.
+        on = undefined;
+    }
 
-    if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
+    if (typeof on === 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
@@ -641,7 +695,8 @@ Y.NodeList.prototype.toggleView = function(name, on, callback) {
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(name, on, callback);
+        node = Y.one(node);
+        node.toggleView.apply(node, arguments);
     }
 
     return this;
@@ -700,9 +755,6 @@ Y.mix(Transition.toggles, {
     size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
-
-Transition.DEFAULT_TOGGLE = 'fade';
-
 
 
 }, '@VERSION@', {"requires": ["node-style"]});

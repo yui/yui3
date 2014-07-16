@@ -1,0 +1,28 @@
+<script>
+YUI().use('promise', 'jsonp', 'node', 'array-extras', function (Y) {
+
+function ArrayPromise() {
+    ArrayPromise.superclass.constructor.apply(this, arguments);
+}
+Y.extend(ArrayPromise, Y.Promise);
+
+{{>subclass-array-methods}}
+{{>subclass-toarray-fn}}
+
+{{>github-cache}}
+
+var demoNode = Y.one('#demo');
+
+function log(text) {
+    demoNode.append(Y.Node.create('<div></div>').set('text', text));
+}
+
+function showError(message) {
+    demoNode.setHTML(
+        'Looks like the service might be down - would you like to <a href="?mock=true">try this example with mock data</a>?'
+    );
+}
+
+{{>subclass-array-operations}}
+});
+</script>

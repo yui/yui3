@@ -75,6 +75,16 @@
         },
 
         {
+            "name": "datatable-colorsort",
+            "displayName": "Color Sorting and Filtering",
+            "modules": ["datatable", "color"],
+            "description": "Color Sorting with DataTable and Y.Color.",
+            "useModules": ["datatable-sort", "color-harmony"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name": "datatable-scroll",
             "displayName": "Scrolling DataTable",
             "modules": ["datatable"],
@@ -109,6 +119,16 @@
             "modules": ["datatable"],
             "description": "Checkbox column that retains checked state when sorting.",
             "useModules": ["datatable"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-paginator",
+            "displayName": "DataTable with Paginator",
+            "modules": ["datatable", "paginator"],
+            "description": "Using the paginator.",
+            "useModules": ["datatable", "datatable-paginator"],
 
             "hideTableOfContents": true
         }

@@ -1,4 +1,4 @@
-<style type="text/css" scoped>
+<style>
 /* Hide overlay markup while loading, if js is enabled */
 .yui3-js-enabled .yui3-overlay-loading {
     top:-1000em;
@@ -12,7 +12,7 @@
 
 </style>
 
-<div class="intro">    
+<div class="intro">
     <p>This example demonstrates a lightweight and flexible setup for display
     of tooltips.</p>
     <p>This displays the tooltip adjacent to the cursor
@@ -35,7 +35,7 @@ have tooltips.</p>
 
 ```
     <div id="tooltip"></div>
-    
+
     <ul class="list">
         <li class="wrench"><img src="{{{componentAssets}}}/img/wrench.png"/></li>
         <li class="calipers"><img src="{{{componentAssets}}}/img/calipers.png"/></li>
@@ -50,7 +50,7 @@ have tooltips.</p>
 
 <p>We'll use the `Overlay` module to provide shimming for correctly covering
 `<select>` elements in IE. We'll use `Event` for its `onmouseleave` event, and
-`widget-anim` as a plugin to provide the fade-in for the tooltip.  
+`widget-anim` as a plugin to provide the fade-in for the tooltip.
 </p>
 
 ```
@@ -61,7 +61,7 @@ YUI().use('overlay', 'event', 'widget-anim', function (Y) {
 <h3>Declare some variables</h3>
 
 <p>These variables include an array of strings for various tooltips.
-If a DOM element has a class matching one of the `name` values in the `tipText` array, 
+If a DOM element has a class matching one of the `name` values in the `tipText` array,
 it will display the corresponding text value in its tooltip when the cursor moves
 over it.
 </p>
@@ -72,7 +72,7 @@ over it.
 
 <h3>Instantiating The Tooltip</h3>
 
-<p>To create an overlay instance for the tooltip, 
+<p>To create an overlay instance for the tooltip,
 we use the overlay constructor `Y.Overlay`, specifying the source node
 as the selector of the tooltip element.
 </p>
@@ -84,7 +84,7 @@ as the selector of the tooltip element.
 <h3>Event Handlers</h3>
 
 <p>
-Create event handlers for the mouse events 
+Create event handlers for the mouse events
 and place them above the listeners code.
 </p>
 ```
@@ -95,7 +95,7 @@ and place them above the listeners code.
 <h3>Event Listeners</h3>
 
 <p>
-Add listeners for `mousemove` and `mouseout` events 
+Add listeners for `mousemove` and `mouseout` events
 to whatever elements you want to have tooltips.
 Using `mousemove` instead of `mouseover`, and using a `delay` in the `transition`
 makes the tooltip fade in adjacent to the cursor.

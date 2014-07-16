@@ -1,5 +1,6 @@
 /**
- * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
+ * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module,
+ * <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
  *
  * @module yui
  * @submodule yui-later
@@ -13,7 +14,7 @@ var NO_ARGS = [];
  * single time unless periodic is set to true.
  * @for YUI
  * @method later
- * @param when {int} the number of milliseconds to wait until the fn
+ * @param when {Number} the number of milliseconds to wait until the fn
  * is executed.
  * @param o the context object.
  * @param fn {Function|String} the function to execute or the name of

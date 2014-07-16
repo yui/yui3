@@ -1020,6 +1020,79 @@ If you're sending and receiving content other than JSON, you can override these 
 For more information on the `Y.ModelSync.REST` extension, refer to its <a href="{{apiDocs}}/classes/ModelSync.REST.html">API docs</a>.
 </p>
 
+<h3>Local Storage Synchronization</h3>
+
+<p>
+`Y.ModelSync.Local` is an extension which provides a sync implementation through locally stored key value pairs, either through the HTML localStorage API or falling back onto an in-memory cache, that can be mixed into a Model or ModelList subclass.
+</p>
+
+<p>
+This follows a similar API as `Y.ModelSync.REST`, so in most cases, you'll again only need to provide a value for `root` when sub-classing `Y.Model`.
+</p>
+
+```javascript
+// Create `Y.User`, a `Y.Model` subclass and mix-in the Local Storage sync layer
+Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
+    // The root key for local storage or the in-memory cache
+    root: 'users'
+});
+
+var existingUser = new Y.User({id: 'users-1'}),
+    oldUser      = new Y.User({id: 'users-2'}),
+    newUser      = new Y.User({name: 'Eric Ferraiuolo'});
+
+// Get the existing user data from: "{'users': 'users-1': { /* data */ }}"
+existingUser.load(function () {
+    Y.log(existingUser.get('name')); // => "Ron Swannson"
+
+    // Correct the user's `name` and update the set of key-value pairs
+    existingUser.set('name', 'Ron Swanson').save();
+});
+
+// Destroy the old user data at: "{'users': 'users-2': { /* data */ }}"
+oldUser.destroy({remove: true});
+
+// Set the new user data to "{'users'}"
+newUser.save(function () {
+    // The sync layer can return the user data with an `id` assigned.
+    // By default, this uses the root and Y.guid() internally
+    Y.log(newUser.get('id'));
+    // => "users_yui_3_8_0_1_1357185522298_106"
+});
+```
+
+<p>
+As mentioned in the example, the IDs that are automatically generated and used inside of either Local Storage or the in-memory cache are provided by Y.guid() internally.  If you would like to use your own method of generating unique IDs with this sync layer, you can override the `generateID` method to do so.
+</p>
+
+<p>
+For Model Lists, the `root` property is by convention inherited from the `root` property found in the default Model class that can be provided as a configuration parameter.  Otherwise, it defaults to an empty string.
+</p>
+
+```
+Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
+    root: 'users'
+});
+
+Y.Users = Y.Base.create('users', Y.ModelList, [Y.ModelSync.Local], {
+    // By convention `Y.User`'s `root` will be used for `Y.Users` as well.
+    model: Y.User
+});
+
+var users = new Y.Users();
+
+// Get users list from: {"users": /* data */ }
+users.load(function () {
+    var firstUser = users.item(0);
+
+    Y.log(firstUser.get('id'));
+    // => "users-1"
+
+    // Update user data at "users-1"
+    firstUser.set('name', 'Eric').save();
+});
+```
+
 <h3>Implementing a Model Sync Layer</h3>
 
 <p>

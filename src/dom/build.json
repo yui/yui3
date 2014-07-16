@@ -3,8 +3,7 @@
     "builds": {
         "dom-style": {
             "jsfiles": [
-                "dom-style.js",
-                "color.js"
+                "dom-style.js"
             ]
         },
         "dom-style-ie": {
@@ -36,11 +35,6 @@
             "jsfiles": [
                 "dom-screen.js",
                 "dom-region.js"
-            ]
-        },
-        "dom-deprecated": {
-            "jsfiles": [
-                "dom-deprecated.js"
             ]
         },
         "dom-core": {

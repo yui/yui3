@@ -15,7 +15,7 @@
  *
  * @class Node
  * @constructor
- * @param {DOMNode} node the DOM node to be mapped to the Node instance.
+ * @param {HTMLElement} node the DOM node to be mapped to the Node instance.
  * @uses EventTarget
  */
 
@@ -60,7 +60,7 @@ var DOT = '.',
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
-         * @type DOMNode
+         * @type HTMLElement
          * @private
          */
         this._node = node;
@@ -137,8 +137,8 @@ Y_Node._instances = {};
  * @method getDOMNode
  * @static
  *
- * @param {Node | HTMLNode} node The Node instance or an HTMLNode
- * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
+ * @param {Node|HTMLElement} node The Node instance or an HTMLElement
+ * @return {HTMLElement} The DOM node bound to the Node instance.  If a DOM node is passed
  * as the node argument, it is simply returned.
  */
 Y_Node.getDOMNode = function(node) {
@@ -156,7 +156,7 @@ Y_Node.getDOMNode = function(node) {
  * @method scrubVal
  * @static
  *
- * @param {any} node The Node instance or an HTMLNode
+ * @param {HTMLElement|HTMLElement[]|Node} node The Node instance or an HTMLElement
  * @return {Node | NodeList | Any} Depends on what is returned from the DOM node.
  */
 Y_Node.scrubVal = function(val, node) {
@@ -205,7 +205,7 @@ Y_Node.addMethod = function(name, fn, context) {
             }
             args.unshift(node._node);
 
-            ret = fn.apply(node, args);
+            ret = fn.apply(context || node, args);
 
             if (ret) { // scrub truthy
                 ret = Y_Node.scrubVal(ret, node);
@@ -520,10 +520,15 @@ Y.mix(Y_Node.prototype, {
      */
     inDoc: function(doc) {
         var node = this._node;
-        doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
-        if (doc.documentElement) {
-            return Y_DOM.contains(doc.documentElement, node);
+
+        if (node) {
+            doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
+            if (doc.documentElement) {
+                return Y_DOM.contains(doc.documentElement, node);
+            }
         }
+
+        return false;
     },
 
     getById: function(id) {
@@ -582,6 +587,8 @@ Y.mix(Y_Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
+     * just element nodes will be returned(default)
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -594,6 +601,8 @@ Y.mix(Y_Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
+     * just element nodes will be returned(default)
      * @return {Node} Node instance or null if not found
      */
     next: function(fn, all) {
@@ -613,13 +622,13 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a single Node instance, the first element matching the given 
+     * Retrieves a single Node instance, the first element matching the given
      * CSS selector.
      * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * @return {Node | null} A Node instance for the matching HTMLElement or null
      * if no match found.
      */
     one: function(selector) {
@@ -634,10 +643,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test
@@ -680,7 +694,7 @@ Y.mix(Y_Node.prototype, {
      * and does not change the node bound to the Node instance.
      * Shortcut for myNode.get('parentNode').replaceChild(newNode, myNode);
      * @method replace
-     * @param {Node | HTMLNode} newNode Node to be inserted
+     * @param {Node | HTMLElement} newNode Node to be inserted
      * @chainable
      *
      */
@@ -750,8 +764,8 @@ Y.mix(Y_Node.prototype, {
      * Invokes a method on the Node instance
      * @method invoke
      * @param {String} method The name of the method to invoke
-     * @param {Any}  a, b, c, etc. Arguments to invoke the method with.
-     * @return Whatever the underly method returns.
+     * @param {any} [args*] Arguments to invoke the method with.
+     * @return {any} Whatever the underly method returns.
      * DOM Nodes and Collections return values
      * are converted to Node/NodeList instances.
      *
@@ -826,7 +840,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns the DOM node bound to the Node instance
      * @method getDOMNode
-     * @return {DOMNode}
+     * @return {HTMLElement}
      */
     getDOMNode: function() {
         return this._node;

@@ -1,13 +1,16 @@
 YUI.add('charts-ariaevent-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: AriaEvents"),
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert,
         UP = 38,
         DOWN = 40,
         LEFT = 37,
         RIGHT = 39;
-        
-        
+    DOC.body.appendChild(parentDiv);
+
+
     //-------------------------------------------------------------------------
     // Chart AriaEvent Test Case
     //-------------------------------------------------------------------------
@@ -23,31 +26,29 @@ YUI.add('charts-ariaevent-tests', function(Y) {
         //---------------------------------------------------------------------
         // Setup and teardown of test harnesses
         //---------------------------------------------------------------------
-        
+
         /*
          * Sets up several event handlers used to test UserAction mouse events.
          */
-        setUp : function() 
+        setUp : function()
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
             this.contentBox = this.chart.get("contentBox");
             this.result = null;
             this.handler = Y.on("keydown", Y.bind(this.handleEvent, this), this.contentBox);
         },
-        
+
         /*
          * Removes event handlers that were used during the test.
          */
-        tearDown : function() 
+        tearDown : function()
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
-       
-        _seriesIndex: -1, 
+
+        _seriesIndex: -1,
 
         _itemIndex: -1,
 
@@ -58,27 +59,27 @@ YUI.add('charts-ariaevent-tests', function(Y) {
             });
             return [liveRegion.get("innerHTML").toString(), this.getLiveRegionMessage(this.result).toString()];
         },
-        
+
         //---------------------------------------------------------------------
         // Event handler
         //---------------------------------------------------------------------
-        
+
         /*
          * Uses to trap and assign the event object for interrogation.
          * @param {Event} event The event object created from the event.
          */
-        handleEvent : function(event) 
+        handleEvent : function(event)
         {
             this.result = event;
         }
     });
-    Y.ChartAriaEventTestCase = ChartAriaEventTestCase; 
+    Y.ChartAriaEventTestCase = ChartAriaEventTestCase;
 
     function CartesianChartAriaEventTestCase()
     {
         CartesianChartAriaEventTestCase.superclass.constructor.apply(this, arguments);
     }
-    
+
     Y.extend(CartesianChartAriaEventTestCase, ChartAriaEventTestCase, {
         testDefault: function()
         {
@@ -90,8 +91,8 @@ YUI.add('charts-ariaevent-tests', function(Y) {
                 target = Y.one(cb),
                 values;
             Y.one(cb).simulate("keydown", {
-                keyCode: DOWN    
-            }); 
+                keyCode: DOWN
+            });
             Y.Assert.isTrue(liveRegion.get("innerHTML") == this.getLiveRegionMessage(this.result));
             for(; i < len; ++i)
             {
@@ -99,8 +100,8 @@ YUI.add('charts-ariaevent-tests', function(Y) {
                 Y.Assert.isTrue(values[0] == values[1]);
             }
             Y.one(cb).simulate("keydown", {
-                keyCode: DOWN    
-            }); 
+                keyCode: DOWN
+            });
             Y.Assert.isTrue(liveRegion.get("innerHTML") == this.getLiveRegionMessage(this.result));
             for(i = 0; i < len; ++i)
             {
@@ -108,8 +109,8 @@ YUI.add('charts-ariaevent-tests', function(Y) {
                 Y.Assert.isTrue(values[0] == values[1]);
             }
             Y.one(cb).simulate("keydown", {
-                keyCode: DOWN    
-            }); 
+                keyCode: DOWN
+            });
             Y.Assert.isTrue(liveRegion.get("innerHTML") == this.getLiveRegionMessage(this.result));
             for(i = 0; i < len; ++i)
             {
@@ -183,7 +184,7 @@ YUI.add('charts-ariaevent-tests', function(Y) {
                 if(categoryItem && valueItem && categoryItem.value && valueItem.value)
                 {
                     msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
-                    msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
+                    msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", ";
                 }
                 else
                 {
@@ -200,7 +201,7 @@ YUI.add('charts-ariaevent-tests', function(Y) {
     {
         PieChartAriaEventTestCase.superclass.constructor.apply(this, arguments);
     }
-    
+
     Y.extend(PieChartAriaEventTestCase, ChartAriaEventTestCase, {
         testDefault: function()
         {
@@ -257,8 +258,8 @@ YUI.add('charts-ariaevent-tests', function(Y) {
             if(categoryItem && valueItem)
             {
                 msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
-                msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
-                msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,"; 
+                msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", ";
+                msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,";
             }
             else
             {
@@ -271,114 +272,113 @@ YUI.add('charts-ariaevent-tests', function(Y) {
     Y.PieChartAriaEventTestCase = PieChartAriaEventTestCase;
 
     var DataProvider = [
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
     ],
     PieDataProvider = [
-        {category:"5/1/2010", revenue:2200}, 
-        {category:"5/2/2010", revenue:100}, 
-        {category:"5/3/2010", revenue:1500}, 
-        {category:"5/4/2010", revenue:2800}, 
+        {category:"5/1/2010", revenue:2200},
+        {category:"5/2/2010", revenue:100},
+        {category:"5/3/2010", revenue:1500},
+        {category:"5/4/2010", revenue:2800},
         {category:"5/5/2010", revenue:2650}
     ],
-    suite  = new Y.Test.Suite("Charts: Aria Events"),
     columnTests = new Y.CartesianChartAriaEventTestCase({
         type: "column",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Column"),
     barTests = new Y.CartesianChartAriaEventTestCase({
         type: "bar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Bar"),
     stackedColumnTests = new Y.CartesianChartAriaEventTestCase({
         type: "column",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedColumn"),
     stackedBarTests = new Y.CartesianChartAriaEventTestCase({
         type: "bar",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedBar"),
     comboTests = new Y.CartesianChartAriaEventTestCase({
         type: "combo",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Combo"),
     stackedComboTests = new Y.CartesianChartAriaEventTestCase({
         type: "combo",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedCombo"),
     areaTests = new Y.CartesianChartAriaEventTestCase({
         type: "area",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Area"),
     stackedAreaTests = new Y.CartesianChartAriaEventTestCase({
         type: "area",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedArea"),
     splineTests = new Y.CartesianChartAriaEventTestCase({
         type: "spline",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Spline"),
     stackedSplineTests = new Y.CartesianChartAriaEventTestCase({
         type: "spline",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedSpline"),
     comboSplineTests = new Y.CartesianChartAriaEventTestCase({
         type: "combospline",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "ComboSpline"),
     stackedComboSplineTests = new Y.CartesianChartAriaEventTestCase({
         type: "combospline",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedComboSpline"),
     lineTests = new Y.CartesianChartAriaEventTestCase({
         type: "line",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Line"),
     stackedLineTests = new Y.CartesianChartAriaEventTestCase({
         type: "line",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedLine"),
     markerTests = new Y.CartesianChartAriaEventTestCase({
         type: "markerseries",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Marker"),
     stackedMarkerTests = new Y.CartesianChartAriaEventTestCase({
         type: "markerseries",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedMarker"),
     pieTests = new Y.PieChartAriaEventTestCase({
         type: "pie",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: PieDataProvider
     }, "Pie");
-    
+
     suite.add(columnTests);
     suite.add(barTests);
     suite.add(stackedColumnTests);
@@ -396,6 +396,6 @@ YUI.add('charts-ariaevent-tests', function(Y) {
     suite.add(markerTests);
     suite.add(stackedMarkerTests);
     suite.add(pieTests);
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['node-event-simulate', 'event-focus','charts', 'test']});

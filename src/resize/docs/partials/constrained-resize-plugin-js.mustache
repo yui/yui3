@@ -3,7 +3,7 @@
       var weatherWidget;
 
       var getWeather = function() {
-        
+
         Y.YQL('select * from wunderground.forecast where location="Toronto,ON";', processWeather);
       };
 
@@ -26,7 +26,7 @@
         futureHTML = '<div id="futureDays">';
 
         currentHTML = Y.Lang.sub(template.currentTemp, currentData);
-        
+
 
         for (var i = 1; i < weather.length; i++) {
 
@@ -36,7 +36,7 @@
             dayForecast: weather[i].high.fahrenheit
           };
           futureHTML += Y.Lang.sub(template.otherDays, futureData);
-          
+
         }
 
         futureHTML += "</div>";
@@ -47,7 +47,7 @@
     };
 
     var createOverlay = function() {
-      
+
       weatherWidget = new Y.Overlay({
          width: "370px",
          height:"245px",
@@ -76,7 +76,7 @@
     getWeather();
 
     Y.one("#launchOverlay").on('click', function() {
-       weatherWidget.set('visible', true); 
+       weatherWidget.set('visible', true);
     });
 
 });

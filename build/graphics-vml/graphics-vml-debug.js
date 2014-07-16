@@ -3,11 +3,10 @@ YUI.add('graphics-vml', function (Y, NAME) {
 var IMPLEMENTATION = "vml",
     SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
-    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
     IS_ARRAY = Y_LANG.isArray,
-    IS_STRING = Y_LANG.isString,
     Y_DOM = Y.DOM,
     Y_SELECTOR = Y.Selector,
     DOCUMENT = Y.config.doc,
@@ -122,9 +121,11 @@ VMLDrawing.prototype = {
      * @param {Number} cp2y y-coordinate for the second control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     curveTo: function() {
         this._curveTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -137,9 +138,11 @@ VMLDrawing.prototype = {
      * @param {Number} cp2y y-coordinate for the second control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     relativeCurveTo: function() {
         this._curveTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -184,7 +187,18 @@ VMLDrawing.prototype = {
             {
                 path = path + ", ";
             }
-            path = path + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y);
+            path = path +
+                    this._round(cp1x) +
+                    ", " +
+                    this._round(cp1y) +
+                    ", " +
+                    this._round(cp2x) +
+                    ", " +
+                    this._round(cp2y) +
+                    ", " +
+                    this._round(x) +
+                    ", " +
+                    this._round(y);
             cp1x = cp1x + relativeX;
             cp1y = cp1y + relativeY;
             cp2x = cp2x + relativeX;
@@ -213,9 +227,11 @@ VMLDrawing.prototype = {
      * @param {Number} cpy y-coordinate for the control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     quadraticCurveTo: function() {
         this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -226,9 +242,11 @@ VMLDrawing.prototype = {
      * @param {Number} cpy y-coordinate for the control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     relativeQuadraticCurveTo: function() {
         this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -283,6 +301,7 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @chainable
      */
     drawRect: function(x, y, w, h) {
         this.moveTo(x, y);
@@ -305,6 +324,7 @@ VMLDrawing.prototype = {
      * @param {Number} h height
      * @param {Number} ew width of the ellipse used to draw the rounded corners
      * @param {Number} eh height of the ellipse used to draw the rounded corners
+     * @chainable
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
         this.moveTo(x, y + eh);
@@ -326,6 +346,7 @@ VMLDrawing.prototype = {
      * @param {Number} x y-coordinate
      * @param {Number} y x-coordinate
      * @param {Number} r radius
+     * @chainable
      * @protected
      */
 	drawCircle: function(x, y, radius) {
@@ -337,7 +358,20 @@ VMLDrawing.prototype = {
         this._drawingComplete = false;
         this._trackSize(x + circum, y + circum);
         this.moveTo((x + circum), (y + radius));
-        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(y + radius) + ", " + this._round(radius) + ", " + this._round(radius) + ", " + startAngle + ", " + endAngle);
+        this._addToPath(
+            " ae " +
+            this._round(x + radius) +
+            ", " +
+            this._round(y + radius) +
+            ", " +
+            this._round(radius) +
+            ", " +
+            this._round(radius) +
+            ", " +
+            startAngle +
+            ", " +
+            endAngle
+        );
         return this;
     },
 
@@ -349,6 +383,7 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @chainable
      * @protected
      */
 	drawEllipse: function(x, y, w, h) {
@@ -360,7 +395,22 @@ VMLDrawing.prototype = {
         this._drawingComplete = false;
         this._trackSize(x + w, y + h);
         this.moveTo((x + w), (y + yRadius));
-        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(x + radius) + ", " + this._round(y + yRadius) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " + startAngle + ", " + endAngle);
+        this._addToPath(
+            " ae " +
+            this._round(x + radius) +
+            ", " +
+            this._round(x + radius) +
+            ", " +
+            this._round(y + yRadius) +
+            ", " +
+            this._round(radius) +
+            ", " +
+            this._round(yRadius) +
+            ", " +
+            startAngle +
+            ", " +
+            endAngle
+        );
         return this;
     },
 
@@ -372,6 +422,7 @@ VMLDrawing.prototype = {
      * @param {Number} y x-coordinate
      * @param {Number} width width
      * @param {Number} height height
+     * @chainable
      * @protected
      */
     drawDiamond: function(x, y, width, height)
@@ -396,6 +447,7 @@ VMLDrawing.prototype = {
      * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
      * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
      * @param {Number} yRadius [optional] y radius for wedge.
+     * @chainable
      * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius)
@@ -412,7 +464,20 @@ VMLDrawing.prototype = {
         startAngle = Math.round(startAngle);
         arc = Math.round(arc);
         this.moveTo(x, y);
-        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + " " + this._round(radius) + ", " +  startAngle + ", " + arc);
+        this._addToPath(
+            " ae " +
+            this._round(x) +
+            ", " +
+            this._round(y) +
+            ", " +
+            this._round(radius) +
+            " " +
+            this._round(radius) +
+            ", " +
+            startAngle +
+            ", " +
+            arc
+        );
         this._trackSize(diameter, diameter);
         return this;
     },
@@ -423,10 +488,12 @@ VMLDrawing.prototype = {
      * @method lineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
+     * @chainable
      */
     lineTo: function()
     {
         this._lineTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -435,10 +502,12 @@ VMLDrawing.prototype = {
      * @method relativeLineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
+     * @chainable
      */
     relativeLineTo: function()
     {
         this._lineTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -458,7 +527,7 @@ VMLDrawing.prototype = {
             path = relative ? " r " : " l ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        if (typeof point1 == "string" || typeof point1 == "number") {
+        if (typeof point1 === "string" || typeof point1 === "number") {
             len = args.length - 1;
             for (i = 0; i < len; i = i + 2) {
                 x = parseFloat(args[i]);
@@ -495,10 +564,12 @@ VMLDrawing.prototype = {
      * @method moveTo
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     moveTo: function()
     {
         this._moveTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -507,10 +578,12 @@ VMLDrawing.prototype = {
      * @method relativeMoveTo
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     relativeMoveTo: function()
     {
         this._moveTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -585,26 +658,31 @@ VMLDrawing.prototype = {
      * Completes a drawing operation.
      *
      * @method end
+     * @chainable
      */
     end: function()
     {
         this._closePath();
+        return this;
     },
 
     /**
      * Ends a fill and stroke
      *
      * @method closePath
+     * @chainable
      */
     closePath: function()
     {
         this._addToPath(" x e");
+        return this;
     },
 
     /**
      * Clears the path.
      *
      * @method clear
+     * @chainable
      */
     clear: function()
     {
@@ -616,6 +694,7 @@ VMLDrawing.prototype = {
         this._top = 0;
         this._path = "";
         this._movePath = null;
+        return this;
     },
 
     /**
@@ -806,7 +885,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.VMLGraphic({
                 render: render
             });
@@ -865,12 +943,37 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fill,
 			fillstring;
 			id = this.get("id");
-		type = this._type == "path" ? "shape" : this._type;
-        classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type;
+		type = this._type === "path" ? "shape" : this._type;
+        classString = _getClassName(SHAPE) +
+                    " " +
+                    _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+                    " " +
+                    _getClassName(name) +
+                    " " +
+                    _getClassName(concat(IMPLEMENTATION, name)) +
+                    " " +
+                    IMPLEMENTATION +
+                    type;
         stroke = this._getStrokeProps();
         fill = this._getFillProps();
 
-		nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;visibility:' + visibility + '"';
+		nodestring  = '<' +
+                        type +
+                        '  xmlns="urn:schemas-microsft.com:vml" id="' +
+                        id +
+                        '" class="' +
+                        classString +
+                        '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' +
+                        x +
+                        'px;top:' +
+                        y +
+                        'px;width:' +
+                        w +
+                        'px;height:' +
+                        h +
+                        'px;visibility:' +
+                        visibility +
+                        '"';
 
         if(stroke && stroke.weight && stroke.weight > 0)
         {
@@ -881,8 +984,11 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             dashstyle = stroke.dashstyle;
             nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
 
-            strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
-            strokestring += ' opacity="' + opacity + '"';
+            strokestring = '<stroke class="vmlstroke"' +
+                            ' xmlns="urn:schemas-microsft.com:vml"' +
+                            ' on="t"' +
+                            ' style="behavior:url(#default#VML);display:inline-block;"' +
+                            ' opacity="' + opacity + '"';
             if(endcap)
             {
                 strokestring += ' endcap="' + endcap + '"';
@@ -940,7 +1046,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 */
 	addClass: function(className)
 	{
-		var node = this.node;
+        var node = this.node;
 		Y_DOM.addClass(node, className);
 	},
 
@@ -952,7 +1058,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 */
 	removeClass: function(className)
 	{
-		var node = this.node;
+        var node = this.node;
 		Y_DOM.removeClass(node, className);
 	},
 
@@ -995,7 +1101,8 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -1006,8 +1113,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @return {Boolean} True if the nodes match, false if they do not.
 	 */
 	compareTo: function(refNode) {
-		var node = this.node;
-
+        var node = this.node;
 		return node === refNode;
 	},
 
@@ -1048,7 +1154,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			props = {};
 			linecap = stroke.linecap || "flat";
 			linejoin = stroke.linejoin || "round";
-            if(linecap != "round" && linecap != "square")
+            if(linecap !== "round" && linecap !== "square")
             {
                 linecap = "flat";
             }
@@ -1072,7 +1178,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					dash[i] = val / stroke.weight;
 				}
 			}
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				props.joinstyle = linejoin;
 			}
@@ -1096,13 +1202,13 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method _strokeChangeHandler
 	 * @private
 	 */
-	_strokeChangeHandler: function(e)
+	_strokeChangeHandler: function()
 	{
         if(!this._strokeFlag)
         {
             return;
         }
-		var node = this.node,
+        var node = this.node,
 			stroke = this.get("stroke"),
 			strokeOpacity,
 			dashstyle,
@@ -1116,7 +1222,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 		{
 			linecap = stroke.linecap || "flat";
 			linejoin = stroke.linejoin || "round";
-			if(linecap != "round" && linecap != "square")
+			if(linecap !== "round" && linecap !== "square")
 			{
 				linecap = "flat";
 			}
@@ -1145,7 +1251,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					dash[i] = val / stroke.weight;
 				}
 			}
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				this._strokeNode.joinstyle = linejoin;
 			}
@@ -1193,13 +1299,15 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 		{
 			props = {};
 
-			if(fill.type == "radial" || fill.type == "linear")
+			if(fill.type === "radial" || fill.type === "linear")
 			{
 				fillOpacity = parseFloat(fill.opacity);
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
 				filled = true;
 				gradient = this._getGradientFill(fill);
-				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '"';
+				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                            ' class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"' +
+                            ' opacity="' + fillOpacity + '"';
 				for(i in gradient)
 				{
 					if(gradient.hasOwnProperty(i))
@@ -1221,7 +1329,9 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                     props.opacity = fillOpacity;
                     if(fillOpacity < 1)
                     {
-                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
+                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                        ' class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"' +
+                        ' type="solid" opacity="' + fillOpacity + '"/>';
                     }
                 }
 			}
@@ -1236,7 +1346,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method _fillChangeHandler
 	 * @private
 	 */
-	_fillChangeHandler: function(e)
+	_fillChangeHandler: function()
 	{
         if(!this._fillFlag)
         {
@@ -1251,7 +1361,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             gradient;
 		if(fill)
 		{
-			if(fill.type == "radial" || fill.type == "linear")
+			if(fill.type === "radial" || fill.type === "linear")
 			{
 				filled = true;
 				gradient = this._getGradientFill(fill);
@@ -1261,7 +1371,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                     {
                         if(gradient.hasOwnProperty(i))
                         {
-                            if(i == "colors")
+                            if(i === "colors")
                             {
                                 this._fillNode.colors.value = gradient[i];
                             }
@@ -1274,7 +1384,9 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 }
                 else
                 {
-                    fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"';
+                    fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                                ' class="vmlfill"' +
+                                ' style="behavior:url(#default#VML);display:inline-block;"';
                     for(i in gradient)
                     {
                         if(gradient.hasOwnProperty(i))
@@ -1297,7 +1409,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					fill.opacity = fillOpacity;
                     if(this._fillNode)
 					{
-                        if(this._fillNode.getAttribute("type") != "solid")
+                        if(this._fillNode.getAttribute("type") !== "solid")
                         {
                             this._fillNode.type = "solid";
                         }
@@ -1305,7 +1417,12 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					}
 					else
 					{
-                        fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
+                        fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                        ' class="vmlfill"' +
+                        ' style="behavior:url(#default#VML);display:inline-block;"' +
+                        ' type="solid"' +
+                        ' opacity="' + fillOpacity + '"' +
+                        '/>';
                         this._fillNode = DOCUMENT.createElement(fillstring);
                         node.appendChild(this._fillNode);
 					}
@@ -1496,7 +1613,13 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         {
             if(!this._skew)
             {
-                this._skew = DOCUMENT.createElement( '<skew class="vmlskew" xmlns="urn:schemas-microsft.com:vml" on="false" style="behavior:url(#default#VML);display:inline-block;" />');
+                this._skew = DOCUMENT.createElement(
+                    '<skew class="vmlskew"' +
+                    ' xmlns="urn:schemas-microsft.com:vml"' +
+                    ' on="false"' +
+                    ' style="behavior:url(#default#VML);display:inline-block;"' +
+                    '/>'
+                );
                 this.node.appendChild(this._skew);
             }
             this._skew.matrix = transform;
@@ -1504,7 +1627,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             //this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
             this._skew.origin = tx + ", " + ty;
         }
-        if(this._type != "path")
+        if(this._type !== "path")
         {
             this._transforms = [];
         }
@@ -1603,7 +1726,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-    skew: function(x, y)
+    skew: function()
     {
         this._addTransform("skew", arguments);
     },
@@ -1614,7 +1737,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-     skewX: function(x)
+     skewX: function()
      {
         this._addTransform("skewX", arguments);
      },
@@ -1625,7 +1748,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-     skewY: function(y)
+     skewY: function()
      {
         this._addTransform("skewY", arguments);
      },
@@ -1636,7 +1759,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-     rotate: function(deg)
+     rotate: function()
      {
         this._addTransform("rotate", arguments);
      },
@@ -1647,7 +1770,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-    scale: function(x, y)
+    scale: function()
     {
         this._addTransform("scale", arguments);
     },
@@ -1665,7 +1788,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -1686,7 +1809,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @method _updateHandler
 	 * @private
 	 */
-	_updateHandler: function(e)
+	_updateHandler: function()
 	{
 		var host = this,
             node = host.node;
@@ -1709,7 +1832,13 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_createGraphicNode: function(type)
 	{
 		type = type || this._type;
-		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
+		return DOCUMENT.createElement(
+                '<' + type +
+                ' xmlns="urn:schemas-microsft.com:vml"' +
+                ' style="behavior:url(#default#VML);display:inline-block;"' +
+                ' class="vml' + type + '"' +
+                '/>'
+            );
 	},
 
 	/**
@@ -1950,7 +2079,12 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 this.node.removeChild(this._strokeNode);
                 this._strokeNode = null;
             }
-            Y.one(this.node).remove(true);
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
 }, Y.VMLDrawing.prototype));
@@ -2179,10 +2313,18 @@ VMLShape.ATTRS = {
 			fill = tmpl;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
-					fill.color = null;
+                    fill.color = null;
 				}
+                else
+                {
+                    if(fill.color.toLowerCase().indexOf("rgba") > -1)
+                    {
+                        fill.opacity = Y.Color._getAlpha(fill.color);
+                        fill.color =  Y.Color.toHex(fill.color);
+                    }
+                }
 			}
 			this._fillFlag = true;
             return fill;
@@ -2244,6 +2386,11 @@ VMLShape.ATTRS = {
 					}
 				}
 			}
+            if(tmpl.color && tmpl.color.toLowerCase().indexOf("rgba") > -1)
+            {
+               tmpl.opacity = Y.Color._getAlpha(tmpl.color);
+               tmpl.color =  Y.Color.toHex(tmpl.color);
+            }
 			stroke = tmpl;
             this._strokeFlag = true;
 			return stroke;
@@ -2494,7 +2641,7 @@ Y.VMLEllipse = VMLEllipse;
  * @class VMLCircle
  * @constructor
  */
-VMLCircle = function(cfg)
+VMLCircle = function()
 {
 	VMLCircle.superclass.constructor.apply(this, arguments);
 };
@@ -2596,7 +2743,7 @@ Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
 	 * @private
 	 * @method _updateHandler
 	 */
-	_draw: function(e)
+	_draw: function()
 	{
         var x = this.get("cx"),
             y = this.get("cy"),
@@ -2916,9 +3063,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value)
+	set: function()
 	{
 		var host = this,
+            attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
                 autoSize: true,
@@ -2984,7 +3132,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             xy;
         if(node)
         {
-            xy = Y.one(node).getXY();
+            xy = Y.DOM.getXY(node);
             xy[0] += x;
             xy[1] += y;
         }
@@ -3001,7 +3149,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @method initializer
      * @private
      */
-    initializer: function(config) {
+    initializer: function() {
         var render = this.get("render"),
             visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
@@ -3029,11 +3177,21 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var parentNode = Y.one(render),
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._node);
+        var parentNode = render || DOCUMENT.body,
+            node = this._node,
+            w,
+            h;
+        if(render instanceof Y.Node)
+        {
+            parentNode = render._node;
+        }
+        else if(Y.Lang.isString(render))
+        {
+            parentNode = Y.Selector.query(render, DOCUMENT.body, true);
+        }
+        w = this.get("width") || parseInt(Y.DOM.getComputedStyle(parentNode, "width"), 10);
+        h = this.get("height") || parseInt(Y.DOM.getComputedStyle(parentNode, "height"), 10);
+        parentNode.appendChild(node);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
@@ -3047,8 +3205,16 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     destroy: function()
     {
-        this.clear();
-        Y.one(this._node).remove(true);
+        this.removeAllShapes();
+        if(this._node)
+        {
+            this._removeChildren(this._node);
+            if(this._node.parentNode)
+            {
+                this._node.parentNode.removeChild(this._node);
+            }
+            this._node = null;
+        }
     },
 
     /**
@@ -3065,8 +3231,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         shape._appendStrokeAndFill();
         return shape;
@@ -3083,7 +3249,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
-        if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic")
+        if(this.get("autoDraw") || this.get("autoSize") === "sizeContentToGraphic")
         {
             parentNode.appendChild(node);
         }
@@ -3238,7 +3404,11 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @private
      */
     _createGraphic: function() {
-        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
+        var group = DOCUMENT.createElement(
+            '<group xmlns="urn:schemas-microsft.com:vml"' +
+            ' style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;"' +
+            '/>'
+        );
         return group;
     },
 
@@ -3253,7 +3423,13 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     _createGraphicNode: function(type)
     {
-        return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
+        return DOCUMENT.createElement(
+            '<' +
+            type +
+            ' xmlns="urn:schemas-microsft.com:vml"' +
+            ' style="behavior:url(#default#VML);display:inline-block;zoom:1;"' +
+            '/>'
+        );
 
     },
 
@@ -3373,8 +3549,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var autoSize = this.get("autoSize"),
             preserveAspectRatio,
             node = this.parentNode,
-            nodeWidth = parseFloat(node.getComputedStyle("width")),
-            nodeHeight = parseFloat(node.getComputedStyle("height")),
+            nodeWidth = parseFloat(Y.DOM.getComputedStyle(node, "width")),
+            nodeHeight = parseFloat(Y.DOM.getComputedStyle(node, "height")),
             xCoordOrigin = 0,
             yCoordOrigin = 0,
             box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
@@ -3393,10 +3569,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         this._node.style.visibility = "hidden";
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 preserveAspectRatio = this.get("preserveAspectRatio");
-                if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
+                if(preserveAspectRatio === "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
                 {
                     xCoordOrigin = left;
                     yCoordOrigin = top;
@@ -3574,4 +3750,4 @@ Y.VMLGraphic = VMLGraphic;
 
 
 
-}, '@VERSION@', {"requires": ["graphics"]});
+}, '@VERSION@', {"requires": ["graphics", "color-base"]});

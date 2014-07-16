@@ -70,6 +70,78 @@ suite.add(new Y.Test.Case({
 
         modal1.destroy();
         modal2.destroy();
+    },
+
+    'WidgetModality should not set mask node zindex to its own when hidden': function () {
+        var modal1, modal2, StackedTestWidget;
+
+        StackedTestWidget = Y.Base.create('stackedTestWidget', Y.Widget, [Y.WidgetModality], {}, {
+                ATTRS: {
+                    zIndex: {value : 0}
+                }});
+
+        modal1 = new StackedTestWidget({
+            bodyContent: 'Content',
+            zIndex : 7,
+            modal : true,
+            visible : true,
+            render: '#test'
+        });
+
+        // A hidden modal instantiated after a visible modal shouldn't reset the mask z-index. It once did.
+        modal2 = new StackedTestWidget({
+            zIndex : 8,
+            modal: true,
+            visible : false,
+            render: '#test'
+        });
+
+        /* IE7 returns a string, whereas Chrome returns a number. */
+        Assert.areEqual(7, modal1.get('maskNode').getStyle('zIndex'), 'widget mask got wrong zIndex.');
+
+        modal1.destroy();
+        modal2.destroy();
+    },
+
+    'WidgetModality should not get distracted by cloned masks': function () {
+        var modal,
+            widget,
+            before_clone,
+            after_clone,
+            orig_mask,
+            test = Y.one('#test'),
+            test_orig = Y.Node.create('<div/>');
+
+        test.append(test_orig);
+
+        this.widget = new TestWidget({
+            modal : true,
+            render: test_orig
+        });
+
+        this.widget.hide();
+        orig_mask = Y.one('.yui3-widget-mask');
+        Assert.areSame(orig_mask, this.widget.get('maskNode'));
+
+        // clone the widget
+        // typically this would happen because other code clones the
+        // widget and does not clean up. i.e. a drag-drop proxy
+        before_clone = test_orig.cloneNode(true);
+        test.prepend(before_clone);
+
+        after_clone = test_orig.cloneNode(true);
+        test.append(after_clone);
+
+        Assert.areNotSame(orig_mask, Y.one('.yui3-widget-mask'));
+        Assert.areSame(orig_mask, this.widget.get('maskNode'));
+
+        // if we show the widget, only the original mask is shown
+        this.widget.show();
+
+        Assert.areSame('block', orig_mask.getStyle('display'));
+        Assert.areSame('none', before_clone.one('.yui3-widget-mask').getStyle('display'));
+        Assert.areSame('none', after_clone.one('.yui3-widget-mask').getStyle('display'));
+
     }
 }));
 

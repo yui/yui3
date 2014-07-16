@@ -1,16 +1,16 @@
 <link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
 <div class="intro">
-    <p>This example demonstrates how to retrieve and use a `Node` instance 
+    <p>This example demonstrates how to retrieve and use a `Node` instance
     and access DOM properties.</p>
-    <p>Press a button to get or set the `offsetWidth` of the `div` 
+    <p>Press a button to get or set the `offsetWidth` of the `div`
     containing the corn image.</p>
 </div>
 
 <div class="example">
 {{>properties-source}}
-<div style="color:#aaa; display:block; font-size:90%; margin-top:1em;">Image derived from 
+<div style="color:#aaa; display:block; font-size:90%; margin-top:1em;">Image derived from
 <a href="http://www.flickr.com/photos/29278394@N00/3934433763/" target="_blank">
-"ear of corn"</a>, by normanack</div> 
+"ear of corn"</a>, by normanack</div>
 </div>
 
 <h2>Setting up the HTML</h2>
@@ -18,7 +18,7 @@
 ```
     <div id="ruler"></div>
     <div id="corn">
-        <div class="ruler-marker"></div>                
+        <div class="ruler-marker"></div>
         <div id="output">? px</div>
     </div>
     <label>Width:</label>
@@ -28,8 +28,8 @@
 ```
 
 <h2>Getting a Node Instance</h2>
-<p>The `Y.one` method accepts a Selector or HTML element and 
-returns a Node instance.  First we'll set up some variables 
+<p>The `Y.one` method accepts a Selector or HTML element and
+returns a Node instance.  First we'll set up some variables
 for the node's representing our HTML.</p>
 
 ```
@@ -39,15 +39,15 @@ for the node's representing our HTML.</p>
 ```
 
 <h2>Accessing Node Properties</h2>
-<p>The properties of a node can be accessed via its `set` and 
+<p>The properties of a node can be accessed via its `set` and
 `get` methods.</p>
-<p>In most cases, simple type of properties (strings, numbers, Booleans) 
-pass directly to/from the underlying DOM node, however properties representing 
+<p>In most cases, simple type of properties (strings, numbers, Booleans)
+pass directly to/from the underlying DOM node, however properties representing
 other DOM nodes return `Node` or `NodeList` instances.</p>
 
 <h3>The Get Method</h3>
-<p>We can use the `get` method to read the `offsetWidth` of the `div` 
-containing the corn image, 
+<p>We can use the `get` method to read the `offsetWidth` of the `div`
+containing the corn image,
 which includes the style width, padding, and border.</p>
 
 ```
@@ -61,8 +61,8 @@ width = corn.get('offsetWidth');
 input.set('value', 237);
 ```
 
-<p>The `offsetWidth` property of an HTML element is read only, however YUI 
-makes this writeable.  This assures that the final `offsetWidth` 
+<p>The `offsetWidth` property of an HTML element is read only, however YUI
+makes this writeable.  This assures that the final `offsetWidth`
 matches the value that is set, regardless of borders, padding, or box model.</p>
 
 ```
@@ -70,8 +70,8 @@ corn.set('offsetWidth', value);
 ```
 
 <h2>Listening for Node Events</h2>
-<p>We will update the value `offsetWidth` property of the `div` 
-containing the corn image when the Set button is pressed. 
+<p>We will update the value `offsetWidth` property of the `div`
+containing the corn image when the Set button is pressed.
 </p>
 
 ```

@@ -11,9 +11,9 @@
         to the native implementation.
     </p>
 </div>
-                
+
 {{>getting-started}}
-                
+
 <h2 id="using">Using the JSON Utility</h2>
 
 <h3 id="modules">JSON module overview</h3>
@@ -182,7 +182,7 @@ YUI().use("json-stringify", function (Y) {
             { name: "Ashley", age: 12 },
             { name: "Abby", age:9 }
         ]
-    }; 
+    };
 
     var jsonStr = Y.JSON.stringify(myData);
 
@@ -330,7 +330,7 @@ var myData = {
         { name: "Ashley", age: 12 },
         { name: "Abby", age:9 }
     ]
-}; 
+};
 
 // Create a cyclical reference
 myData.troop[0]["NEWKEY"] = myData;
@@ -343,29 +343,28 @@ try {
 }
 ```
 
-<h3 id="native">Notes about current native JSON support</h3>
+<h3 id="native">Notes about native JSON support</h3>
 
 <p>
     Native JSON support in JavaScript is defined in the ECMAScript 5
     specification, which was finalized in September 2009.  However, most of the
-    major browser vendors had already implemented this feature in recent
-    versions of their JavaScript engines while the spec was still in draft.  As
+    major browser vendors had already implemented this feature in their
+    JavaScript engines while the spec was still in draft.  As
     a result of the timing and the fact that native JSON is a new feature,
     there are gotchas involved in leveraging the disparate native
-    behaviors.
+    behaviors in certain browsers.
 </p>
 
 <p>
     In general, it is preferable to use the native behavior for
     <code>JSON.parse</code> as it is much faster and safer than any JavaScript
-    implementation.  There are also very few known critical issues with
+    implementation. There are also very few known critical issues with
     supporting browsers.
 </p>
 
-
 <p>
     Stringify has more pitfalls and inconsistencies, but they may not affect
-    your use cases.  As with <code>parse</code>, the native implementation of
+    your use cases. As with <code>parse</code>, the native implementation of
     <code>stringify</code> is faster, but only marginally so with reasonably
     sized input.  In most cases, choosing the JavaScript implementation will
     not affect performance and may be preferable for its cross browser
@@ -377,20 +376,47 @@ try {
     As noted above, the JSON module will leverage native behavior in
     implementing browsers by default.  However, you can choose to opt out of
     leveraging native <code>parse</code> or <code>stringify</code> by setting
-    the <code>Y.JSON.useNativeParse</code> and
-    <code>Y.JSON.useNativeStringify</code> static properties.
+    the <code>useNativeJSONParse</code> and
+    <code>useNativeJSONStringify</code> configuration options.
 </p>
 
-
 ```
-YUI().use('json', function (Y) {
-
+YUI({
     // Always use the JavaScript implementation for parsing
-    Y.JSON.useNativeParse = false;
+    useNativeJSONParse: false,
 
     // Always use the JavaScript implementation for stringifying
-    Y.JSON.useNativeStringify = false;
-
+    useNativeJSONStringify: false
+}).use('json', function (Y) {
     //...
 });
 ```
+
+<h4>Changes in 3.9.0</h4>
+
+<p>
+    As of version 3.9.0 YUI has changed to loading the JavaScript
+    implementation of JSON only when the browser does not provide a native
+    API. You can no longer change the desired implementation at run-time
+    by changing `Y.JSON.useNativeParse`. Since native JSON implementations
+    have become much more stable this results in a smaller download
+    for most users. You can still chose to use the JavaScript fallback
+    by calling `Y.use('json-parse-shim')` or `Y.use('json-stringify-shim')`.
+</p>
+<h2 id="issues">Known Issues</h2>
+<ul class="spaced">
+    <li>
+        <p>Native JSON.stringify treats regex values as a function on Android 2.3.</p>
+        ```
+Y.JSON.stringify([{
+    "str" : "string",
+    "arr" : [5, /some regex/]
+}]);
+//modern browsers return
+[{"str":"string","arr":[5,{}]}]
+//Android 2.3.4 returns
+[{"str":"string","arr":[5,null]}]
+
+        ```
+    </li>
+</ul>

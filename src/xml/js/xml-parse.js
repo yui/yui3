@@ -6,46 +6,34 @@
  * @for XML
  */
 
-var LANG = Y.Lang;
-
 Y.mix(Y.namespace("XML"), {
     /**
      * Converts data to type XMLDocument.
      *
      * @method parse
      * @param data {String} Data to convert.
-     * @return {XMLDoc} XML Document.
+     * @return {XMLDocument} XML Document.
      */
     parse: function(data) {
-        var xmlDoc = null;
-        if(LANG.isString(data)) {
-            try {
-                if(!LANG.isUndefined(ActiveXObject)) {
-                        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-                        xmlDoc.async = false;
-                        xmlDoc.loadXML(data);
-                }
-            }
-            catch(ee) {
-                try {
-                    if (!LANG.isUndefined(DOMParser)) {
-                        xmlDoc = new DOMParser().parseFromString(data, "text/xml");
-                    }
-                    if (!LANG.isUndefined(Windows.Data.Xml.Dom)) {
-                        xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
-                        xmlDoc.loadXml(data);
-                    }
-                }
-                catch(e) {
-                }
-                    Y.log(ee.message + " (Could not initialize the ActiveX control for XML parsing)", "warn", "xml");
+        var xmlDoc = null, win;
+        if (typeof data === "string") {
+            win = Y.config.win;
+            if (win.ActiveXObject !== undefined) {
+                xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async = false;
+                xmlDoc.loadXML(data);
+            } else if (win.DOMParser !== undefined) {
+                xmlDoc = new DOMParser().parseFromString(data, "text/xml");
+            } else if (win.Windows !== undefined) {
+                xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+                xmlDoc.loadXml(data);
             }
         }
-        
-        if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
+
+        if (xmlDoc === null || xmlDoc.documentElement === null || xmlDoc.documentElement.nodeName === "parsererror") {
             Y.log("Could not parse data to type XML Document", "warn", "xml");
         }
-        
+
         return xmlDoc;
     }
 });

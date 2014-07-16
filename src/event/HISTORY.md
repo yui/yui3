@@ -1,10 +1,145 @@
 Event Infrastructure Change History
 ===================================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Added the spacebar key mapping to ensure correct ARIA and WCAG compliance. ([#1642][]: @andrewnicols)
+
+[#1642]: https://github.com/yui/yui3/issues/1642
+
+3.15.0
+------
+
+* Reduced categories of certain noisy log events in the `event` module and added
+  categories for those that were missing some. ([#1605][]: @andrewnicols)
+
+* Fixed the `event.returnValue is deprecated` warning in chrome. ([#1460][]: @zhiyelee)
+
+[#1605]: https://github.com/yui/yui3/issues/1605
+[#1460]: https://github.com/yui/yui3/issues/1460
+
+* Added support for W3C Pointer events in the `tap` event. This fixes an issue in IE11 where the `type` of pointer event objects was changed from 'MSPointerDown' to 'pointerdown' to comply with their proposed W3C standard.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* Delegated focus and blur events now behave the same way other events do when
+  a delegate sub from a container closer to the target calls
+  `e.stopPropagation()`. Delegate subs from containers higher in the parent
+  axis are not notified. [#1145](https://github.com/yui/yui3/issues/1145)
+
+3.12.0
+------
+
+* Fixed: YUI no longer breaks the browser back/forward cache by attaching an
+  unnecessary `unload` event handler. [Ryan Grove]
+
+* `event-tap` allows you to prevent default browser behavior on `tap` via
+  `e.preventDefault()` [#682](https://github.com/yui/yui3/issues/682)
+
+* `event-tap` now has a `sensitivity` property that can be passed as an option.
+  This allows you to customize when `tap` fires, based on the difference in `px`
+  between a the corresponding start and end event. [#631](https://github.com/yui/yui3/pull/631)
+
+* `event-tap` has dual-listener support, and works properly on devices that support
+  both mouse and touch input. [#683](https://github.com/yui/yui3/issues/683)
+
+* `event-tap` works more reliably on Android 4.0.x (Ice cream sandwich).
+
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* Fixed `nodelist.on()` for rare custom module use cases.
+
+  In certain rare custom module loading circumstances [#2533242,
+  https://github.com/yui/yui3/pull/689] dom-core is attached after
+  event-base, which resulted in the `YDOM = Y.DOM` module level reference
+  being undefined [1].
+
+  This would break things like `nodelist.on()` which used the reference
+  under the hood.
+
+  [1] Added in 3.7.3, as part of the Win8 `isWindow()` fix.
+
+* Fixed DOM event facade, when Y instance was set to emitFacade:true.
+
+  With the Y instance's emitFacade set to true, DOM event subscriptions
+  would receive a Y.EventFacade instance instead of a Y.DOMEventFacade
+  instance, and as a result target and currentTarget would be set to
+  the Y instance, instead of a Y.Node instance.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* `delegate()` now silences events originating from disabled form controls in
+  IE, like it does natively in other browsers. [#2532677]
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
 
 3.7.3
 -----

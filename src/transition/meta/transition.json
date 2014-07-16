@@ -10,9 +10,9 @@
                     "transition"
                 ],
 
-                "condition": { 
-                   "trigger": "transition", 
-                   "test": "transition-test.js" 
+                "condition": {
+                   "trigger": "transition",
+                   "test": "transition-test.js"
                 }
             }
         }

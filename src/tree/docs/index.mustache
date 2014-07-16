@@ -1,0 +1,754 @@
+<div class="intro">
+<p>
+The Tree component provides a generic tree data structure, which is good for efficiently representing hierarchical data.
+</p>
+
+<p>
+A tree has a root node, which may contain any number of child nodes, which may themselves contain child nodes, <i>ad infinitum</i>. Child nodes are lightweight function instances which delegate to the tree for all significant functionality, so trees remain performant and memory-efficient even when they contain thousands and thousands of nodes.
+</p>
+
+<p>
+The Tree component itself is purely a data structure and doesn't expose any UI, but it works well as a base class for a <a href="../view/index.html">View</a> or a <a href="../widget/index.html">Widget</a>.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using Tree</h2>
+
+<h3>Creating a Tree</h3>
+
+<p>
+Create an empty Tree by instantiating `Y.Tree` without any options.
+</p>
+
+```js
+// Create a new empty Tree.
+var tree = new Y.Tree();
+```
+
+<p>
+Trees always have a single root node, so an "empty" tree is really just a tree without any child nodes.
+</p>
+
+<p>
+To populate a tree with an initial set of nodes at instantiation time, pass an array of node configuration objects to Tree's constructor.
+</p>
+
+```js
+// Create a new tree with some child nodes.
+var tree = new Y.Tree({
+    nodes: [
+        {id: 'node 1'},
+        {id: 'node 2', children: [
+            {id: 'node 2.1'},
+            {id: 'node 2.2'}
+        ]},
+        {id: 'node 3'}
+    ]
+});
+```
+
+<p>
+This creates a tree structure that looks like this:
+</p>
+
+<pre>
+        root node
+       /    |    \
+  node 1  node 2  node 3
+           /  \
+    node 2.1  node 2.2
+</pre>
+
+<p>
+The `id` property of node objects is optional. If not specified, a unique node id will be generated automatically.
+</p>
+
+```js
+// Use empty objects to create child nodes with auto-generated ids.
+var tree = new Y.Tree({
+    nodes: [{}, {children: [{}, {}]}, {}]
+});
+```
+
+<p>
+If you do choose to provide custom node ids, be sure that they're unique. No two nodes in a tree may share the same id.
+</p>
+
+<h3>Tree Properties</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>`children`</td>
+            <td>Array</td>
+            <td>
+                Reference to the `children` property of the Tree's `rootNode`. This is a convenience property to allow you to type `tree.children` instead of `tree.rootNode.children`.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`nodeClass`</td>
+            <td>String / Tree.Node</td>
+            <td>
+                The `Y.Tree.Node` class or subclass that should be used for nodes created by the tree. You may specify an actual class reference or a string that resolves to a class reference at runtime. By default this is a reference to `Y.Tree.Node`.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`nodeExtensions`</td>
+            <td>Array</td>
+            <td>
+                <p>
+                Optional array containing one or more extension classes that should be mixed into the `nodeClass` when the Tree is instantiated. The resulting composed node class will be unique to the Tree instance and will not affect any other instances, nor will it modify the defined `nodeClass` itself.
+                </p>
+
+                <p>
+                This provides a late-binding extension mechanism for nodes that doesn't require them to extend `Y.Base`, which would incur a significant performance hit.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>`rootNode`</td>
+            <td>Tree.Node</td>
+            <td>
+                The root node of the tree.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Working with Tree Nodes</h3>
+
+<h4>Tree Node Properties</h4>
+
+<p>Tree nodes use properties exclusively rather than using attributes as many YUI classes do. This ensures that `Y.Tree.Node` instances are lightweight and extremely fast to create. Using attributes would require extending <a href="../attribute/index.html">`Y.Attribute`</a>, which incurs significant instantiation and memory cost.</p>
+
+<p>All nodes have the following built-in properties:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>canHaveChildren</td>
+            <td>Boolean</td>
+            <td>
+                <p>Whether or not the node can contain child nodes.</p>
+
+                <p>This value is falsy by default unless child nodes are added at instantiation time, in which case it will be automatically set to `true`. You can also manually set it to `true` to indicate that a node <i>can</i> have children even though it might not currently have any children.</p>
+
+                <p>Note that regardless of the value of this property, appending, prepending, or inserting a node into this node will cause `canHaveChildren` to be set to true automatically.</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>children</td>
+            <td>Array</td>
+            <td>
+                Child nodes contained within this node.
+            </td>
+        </tr>
+
+        <tr>
+            <td>data</td>
+            <td>Object</td>
+            <td>
+                Arbitrary serializable data related to the node. Use this property to store any data that should accompany a node when that node is serialized to JSON.
+            </td>
+        </tr>
+
+        <tr>
+            <td>id</td>
+            <td>String</td>
+            <td>
+                Unique id for the node. If you don't specify a custom id when creating a node, one will be generated automatically.
+            </td>
+        </tr>
+
+        <tr>
+            <td>parent</td>
+            <td>Tree.Node</td>
+            <td>
+                Parent node of the node, or `undefined` for an unattached node or the root node.
+            </td>
+        </tr>
+
+        <tr>
+            <td>state</td>
+            <td>Object</td>
+            <td>
+                Arbitrary serializable state information related to the node. Use this property to store state-specific info &mdash; such as whether a node is "open", "selected", or any other arbitrary state &mdash; that should accompany a node when that node is serialized to JSON.
+            </td>
+        </tr>
+
+        <tr>
+            <td>tree</td>
+            <td>Tree</td>
+            <td>
+                Reference to the Tree instance with which the node is associated.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>When creating a node, any properties you specify in the node's config object will be applied to the created `Y.Tree.Node` instance. These can be built-in `Y.Tree.Node` properties or arbitrary properties for your own use.</p>
+
+```js
+// Create a tree with some nodes containing arbitrary properties.
+var tree = new Y.Tree({
+    nodes: [
+        {foo: 'bar'},
+        {baz: 'quux'}
+    ]
+});
+
+console.log(tree.children[0].foo); // => 'bar'
+console.log(tree.children[1].baz); // => 'quux'
+```
+
+<p>Note that arbitrary properties placed on the node itself won't be serialized if you call the node's <a href="{{apiDocs}}/classes/Tree.Node.html#method_toJSON">`toJSON()`</a> method or pass it to `JSON.stringify()`. If you want to store serializable data on a node, store it in the node's `data` property.</p>
+
+<h4>Creating Unattached Nodes</h4>
+
+<p>An unattached node is a node that has been created, but hasn't yet been added to a tree. Unattached nodes can be created using a tree's `createNode()` method.</p>
+
+```js
+// Create an unattached node.
+var node = tree.createNode();
+```
+
+<p>A node created using `createNode()` is associated with the tree that created it, so the node's `tree` property is a reference to that tree, but since it isn't yet a child of a node in that tree, its `parent` property will be `undefined`.</p>
+
+```js
+console.log(node.tree);   // => the Y.Tree instance that created the node
+console.log(node.parent); // => undefined
+```
+
+<p>An unattached node may have children. Children of an unattached node have a `parent`, but are still considered unattached because the top-most parent node is not the `rootNode` of a tree.</p>
+
+```js
+// Create an unattached node with children.
+var node = tree.createNode({
+    children: [
+        {id: 'unattached child 1'},
+        {id: 'unattached child 2'},
+        {id: 'unattached child 3'}
+    ]
+});
+```
+
+<p>To test whether a node is attached, call the node's `isInTree()` method.</p>
+
+```js
+var node = tree.createNode();
+console.log(node.isInTree()); // => false
+
+tree.rootNode.append(node);
+console.log(node.isInTree()); // => true
+```
+
+<p>An unattached node that was created in one tree can be moved to another tree by passing it to the second tree's `createNode()` method. The node and all its children will lose their association to the original tree and become associated with the second tree, but will remain unattached.</p>
+
+```js
+// Create two trees.
+var treeA = new Y.Tree(),
+    treeB = new Y.Tree();
+
+// Create an unattached node in Tree A.
+var node = treeA.createNode();
+console.log(node.tree); // => treeA
+
+// Move the node to Tree B.
+treeB.createNode(node);
+console.log(node.tree); // => treeB
+```
+
+<h4>Adding Nodes To a Tree</h4>
+
+<p>Use `Y.Tree.Node`'s <a href="{{apiDocs}}/classes/Tree.Node.html#method_append">`append()`</a>, <a href="{{apiDocs}}/classes/Tree.Node.html#method_insert">`insert()`</a>, and <a href="{{apiDocs}}/classes/Tree.Node.html#method_prepend">`prepend()`</a> methods to add nodes to other nodes as children. Each method accepts a `Y.Tree.Node` instance, a node config object, or an array of Node instances or config objects.</p>
+
+<p>After adding the node, each method returns the node that was added.</p>
+
+```js
+var tree   = new Y.Tree(),
+    parent = tree.rootNode;
+
+// Append a node (it becomes the parent's last child).
+parent.append({id: 'appended'});
+
+// Prepend a node (it becomes the parent's first child).
+parent.prepend({id: 'prepended'});
+
+// Insert a node at a specific zero-based index.
+parent.insert({id: 'inserted'}, {index: 1});
+```
+
+<p>You may also pass a `Y.Tree.Node` instance instead of a config object.</p>
+
+```js
+// Append a previously created Tree.Node instance.
+var node = tree.createNode();
+parent.append(node);
+```
+
+<p>To add multiple nodes at once, pass an array of nodes or config objects.</p>
+
+```js
+// Append multiple nodes at once.
+parent.append([
+    {id: 'zero'},
+    {id: 'one'},
+    {id: 'two'}
+]);
+```
+
+<p>
+If you add an existing node that's already a child of another node, the node will be removed from its current parent and moved under the new parent. Similarly, if you add a node that's associated with another tree, the node will be removed from that tree and associated with the new tree.
+</p>
+
+<h4>Getting Nodes From a Tree</h4>
+
+<p>Use `Y.Tree`'s <a href="{{apiDocs}}/classes/Tree.html#method_getNodeById">`getNodeById()`</a> method to look up any node in the tree (including [[#Creating Unattached Nodes|unattached nodes]]) by its `id`.</p>
+
+```js
+tree.rootNode.append({id: 'foo'});
+
+// Look up a node by its id.
+var node = tree.getNodeById('foo'); // returns the previously added node
+```
+
+<p>Use `Y.Tree.Node`'s <a href="{{apiDocs}}/classes/Tree.Node.html#method_next">`next()`</a> and <a href="{{apiDocs}}/classes/Tree.Node.html#method_previous">`previous()`</a> methods to get the next and previous siblings of a node, respectively.</p>
+
+```js
+tree.rootNode.append([
+    {id: 'zero'},
+    {id: 'one'},
+    {id: 'two'}
+]);
+
+// Get the next/previous siblings of a node.
+tree.children[1].next();     // => node 'two'
+tree.children[1].previous(); // => node 'one'
+```
+
+<p>If you know the numerical index of a node, you can retrieve it directly from the parent's `children` array.</p>
+
+```js
+// Look up a child node by numerical index.
+parent.children[0]; // returns the first child of `parent`
+```
+
+<h4>Removing Nodes From a Tree</h4>
+
+<p>Use `Y.Tree.Node`'s <a href="{{apiDocs}}/classes/Tree.Node.html#method_empty">`empty()`</a> and <a href="{{apiDocs}}/classes/Tree.Node.html#method_remove">`remove()`</a> methods to remove nodes from a tree.</p>
+
+```js
+// Remove all of this node's children.
+node.empty(); // returns an array of removed child nodes
+
+// Remove this node (and its children, if any) from its parent node.
+node.remove(); // chainable
+```
+
+<p>Removing a node causes it to become [[#Creating Unattached Nodes|unattached]], but doesn't destroy it entirely. A removed node can still be re-added to the tree later.</p>
+
+<p>To both remove a node and ensure that it can't be reused (freeing up memory in the process), set the `destroy` option to `true` when calling `empty()` or `remove()`.</p>
+
+```js
+// Remove and destroy all of this node's children.
+node.empty({destroy: true});
+
+// Remove and destroy this node and all of its children.
+node.remove({destroy: true});
+```
+
+<p>Use `Y.Tree`'s <a href="{{apiDocs}}/classes/Tree.html#method_clear">`clear()`</a> method to completely clear a tree by destroying all its nodes (including the root node) and then creating a new root node.</p>
+
+```js
+// Remove and destroy all the tree's nodes, including the root node.
+tree.clear();
+```
+
+<p>Note that while it's possible to manually remove a tree's root node by calling its `remove()` method, this will just cause another root node to be created automatically, since a tree must always have a root node.</p>
+
+<h3>Tree Events</h3>
+
+<p>`Y.Tree` instances expose the following events:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>When</th>
+            <th>Payload</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>`add`</td>
+            <td>A node is added to the tree.</td>
+            <td>
+                <dl>
+                    <dt>index (<em>Number</em>)</dt>
+                    <dd>Index at which the node will be added.</dd>
+
+                    <dt>node (<em>Tree.Node</em>)</dt>
+                    <dd>Node being added.</dd>
+
+                    <dt>parent (<em>Tree.Node</em>)</dt>
+                    <dd>Parent node to which the node will be added.</dd>
+
+                    <dt>src (<em>String</em>)</dt>
+                    <dd>Source of the event ("append", "prepend", "insert", etc.)</dd>
+                </dl>
+            </td>
+        </tr>
+
+        <tr>
+            <td>`clear`</td>
+            <td>The tree is cleared.</td>
+            <td>
+                <dl>
+                    <dt>rootNode (<em>Tree.Node</em>)</dt>
+                    <dd>The tree's new root node.</dd>
+                </dl>
+            </td>
+        </tr>
+
+        <tr>
+            <td>`remove`</td>
+            <td>A node is removed from the tree.</td>
+            <td>
+                <dl>
+                    <dt>destroy (<em>Boolean</em>)</dt>
+                    <dd>Whether or not the node will be destroyed after being removed.</dd>
+
+                    <dt>node (<em>Tree.Node</em>)</dt>
+                    <dd>Node being removed.</dd>
+
+                    <dt>parent (<em>Tree.Node</em>)</dt>
+                    <dd>Parent node from which the node will be removed.</dd>
+                </dl>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>All events exposed by `Y.Tree` are preventable, which means that the "on" phase of the event occurs before the event's default action takes place. You can prevent the default action from taking place by calling the `preventDefault()` method on the event fa&ccedil;ade.</p>
+
+<p>If you're only interested in being notified of an event after its default action has occurred, subscribe to the event's "after" phase.</p>
+
+<h2>Plugins &amp; Extensions</h2>
+
+<p>While the base functionality of Tree is kept intentionally simple and generic, extensions and plugins can be used to provide additional features. This makes it easy to adapt the Tree component to a variety of use cases.</p>
+
+<p>Each extension is described here individually, but a custom Tree class can mix in multiple extensions to compose a class with the perfect set of features to meet your needs.</p>
+
+<h3>Labelable Extension</h3>
+
+<p>The Labelable extension adds support for a serializable `label` property on `Y.Tree.Node` instances. This can be useful when a tree is the backing data structure for a widget with labeled nodes, such as a treeview or menu.</p>
+
+<p>To use the Labelable extension, include the <a href="{{apiDocs}}/modules/tree-labelable.html">`tree-labelable`</a> module, then create a class that extends `Y.Tree` and mixes in `Y.Tree.Labelable`.</p>
+
+```js
+// Load the tree-labelable module.
+YUI().use('tree-labelable', function (Y) {
+    // Create a custom Tree class that mixes in the Labelable extension.
+    Y.PieTree = Y.Base.create('pieTree', Y.Tree, [Y.Tree.Labelable]);
+
+    // ... additional implementation code here ...
+});
+```
+
+<p>Tree nodes created by this custom class can now take advantage of the `label` property.</p>
+
+```js
+// Create a new tree with some labeled nodes.
+var tree = new Y.PieTree({
+    nodes: [
+        {label: 'fruit pies', children: [
+            {label: 'apple'},
+            {label: 'peach'},
+            {label: 'marionberry'}
+        ]},
+
+        {label: 'custard pies', children: [
+            {label: 'maple custard'},
+            {label: 'pumpkin'}
+        ]}
+    ]
+});
+```
+
+<h3>Openable Extension</h3>
+
+<p>The Openable extension adds the concept of an "open" and "closed" state for tree nodes, along with related methods and events.</p>
+
+<p>To use the Openable extension, include the <a href="{{apiDocs}}/modules/tree-openable.html">`tree-openable`</a> module, then create a class that extends `Y.Tree` and mixes in <a href="{{apiDocs}}/classes/Tree.Openable.html">`Y.Tree.Openable`</a>.</p>
+
+```js
+// Load the tree-openable module.
+YUI().use('tree-openable', function (Y) {
+    // Create a custom Tree class that mixes in the Openable extension.
+    Y.MenuTree = Y.Base.create('menuTree', Y.Tree, [Y.Tree.Openable]);
+
+    // ... additional implementation code here ...
+});
+```
+
+<p>Tree nodes created by this custom class are now considered closed by default, but can be opened either by setting the `state.open` property to `true` at creation time or by calling the node's <a href="{{apiDocs}}/classes/Tree.Node.Openable.html#method_open">`open()`</a> method.</p>
+
+```js
+// Create a new tree with some openable nodes.
+var tree = new Y.MenuTree({
+    nodes: [
+        {id: 'file', children: [
+            {id: 'new'},
+            {id: 'open'},
+            {id: 'save'}
+        ]},
+
+        {id: 'edit', state: {open: true}, children: [
+            {id: 'copy'},
+            {id: 'cut'},
+            {id: 'paste'}
+        ]}
+    ]
+});
+
+// Close the "edit" node.
+tree.getNodeById('edit').close();
+
+// Open the "file" node.
+tree.getNodeById('file').open();
+```
+
+<p>Tree instances that mix in the Openable extension receive two new events: <a href="{{apiDocs}}/classes/Tree.Openable.html#event_open">`open`</a> and <a href="{{apiDocs}}/classes/Tree.Openable.html#event_close">`close`</a>. These events fire when a node is opened or closed, respectively.</p>
+
+<p>See the <a href="{{apiDocs}}/modules/tree-openable.html">API docs</a> for more details on the methods and events added by the Openable extension.</p>
+
+<h4>Lazy Tree Plugin</h4>
+
+<p>The Lazy Tree plugin is a companion for the Openable extension that makes it easy to load and populate a node's children on demand the first time that node is opened. This can help improve performance in very large trees by avoiding populating the children of closed nodes until they're needed.</p>
+
+<p>To use the Lazy Tree plugin, include the <a href="{{apiDocs}}/modules/tree-lazy.html">`tree-lazy`</a> and <a href="{{apiDocs}}/modules/tree-openable.html">`tree-openable`</a> modules and create a custom tree class that mixes in the [[#Openable Extension|Openable extension]], as described above.</p>
+
+```js
+// Load the tree-lazy and tree-openable modules. In this example we'll also
+// load the jsonp module to demonstrate how to load node data via JSONP.
+YUI().use('jsonp', 'tree-lazy', 'tree-openable', function (Y) {
+    // Create a custom Tree class that mixes in the Openable extension.
+    Y.LazyTree = Y.Base.create('lazyTree', Y.Tree, [Y.Tree.Openable]);
+
+    // ... additional implementation code here ...
+});
+```
+
+<p>Next, create an instance of your tree class, and plug <a href="{{apiDocs}}/classes/Plugin.Tree.Lazy.html">`Y.Plugin.Tree.Lazy`</a> into it. Provide a custom `load()` function that will be called the first time a node is opened. This callback is responsible for populating the node with children if necessary.</p>
+
+```js
+// Create a new tree instance.
+var tree = new Y.LazyTree();
+
+// Plug in the Lazy Tree plugin and provide a load() callback that will
+// populate child nodes on demand.
+tree.plug(Y.Plugin.Tree.Lazy, {
+
+    // Custom function that Y.Plugin.Tree.Lazy will call when it needs to
+    // load the children for a node.
+    load: function (node, callback) {
+        // Request child nodes via JSONP.
+        Y.jsonp('http://example.com/data?callback={callback}', function (data) {
+            // If we didn't get any data back, treat this as an error.
+            if (!data) {
+                callback(new Error('No data!'));
+                return;
+            }
+
+            // Append the loaded children to the node (for the sake of this
+            // example, assume that data.children is an array of node config
+            // objects).
+            node.append(data.children);
+
+            // Call the callback function to tell Y.Plugin.Tree.Lazy that
+            // we're done loading data.
+            callback();
+        });
+    },
+
+    // Handle events.
+    on: {
+        // Called before the load() function is executed for a node.
+        beforeLoad: function () { /* ... */ },
+
+        // Called if the load() method passes an error to its callback.
+        error: function () { /* ... */ },
+
+        // Called when the load() method executes its callback without an
+        // error.
+        load: function () { /* ... */ }
+    }
+
+});
+```
+
+<p>The first time any node with a truthy `canHaveChildren` property is opened, the Lazy Tree plugin will fire a <a href="{{apiDocs}}/classes/Plugin.Tree.Lazy.html#event_beforeLoad">`beforeLoad`</a> event and then call your custom `load()` function, passing in the node being opened and a callback that you should call once you've finished populating the node with children.</p>
+
+<p>How you load your node data is entirely up to you. You could use JSONP, XHR, pull it out of localStorage, or use any number of other techniques. All the Lazy Tree plugin cares about is that you populate the node and call the provided callback when you're done.</p>
+
+<p>If you pass an error to the callback, the plugin will fire an <a href="{{apiDocs}}/classes/Plugin.Tree.Lazy.html#event_error">`error`</a> event.</p>
+
+<p>If you call the callback without an error, the plugin will fire a <a href="{{apiDocs}}/classes/Plugin.Tree.Lazy.html#event_load">`load`</a> event to indicate that the node's children were loaded successfully.</p>
+
+<h3>Selectable Extension</h3>
+
+<p>The Selectable extension adds the concept of a "selected" state for tree nodes, along with related methods, events, and tree attributes.</p>
+
+<p>To use the Selectable extension, include the <a href="{{apiDocs}}/modules/tree-selectable.html">`tree-selectable`</a> module, then create a class that extends `Y.Tree` and mixes in <a href="{{apiDocs}}/classes/Tree.Selectable.html">`Y.Tree.Selectable`</a>.</p>
+
+```js
+// Load the tree-selectable module.
+YUI().use('tree-selectable', function (Y) {
+    // Create a custom Tree class that mixes in the Selectable extension.
+    Y.OptionTree = Y.Base.create('optionTree', Y.Tree, [Y.Tree.Selectable]);
+
+    // ... additional implementation code here ...
+});
+```
+
+<p>Tree nodes created by this custom class are now considered unselected by default, but can be selected either by setting the `state.selected` property to `true` at creation time or by calling the node's <a href="{{apiDocs}}/classes/Tree.Node.Selectable.html#method_select">`select()`</a> method.</p>
+
+
+```js
+// Create a new tree with selectable nodes.
+var tree = new Y.OptionTree({
+    nodes: [
+        {id: 'kittens', children: [
+            {id: 'chartreux', state: {selected: true}},
+            {id: 'maine coon'},
+            {id: 'british shorthair'}
+        ]},
+
+        {id: 'puppies', children: [
+            {id: 'pug'},
+            {id: 'dachshund'},
+            {id: 'miniature schnauzer'}
+        ]}
+    ]
+});
+
+// Select a puppy.
+tree.getNodeById('pug').select();
+```
+
+<p>By default, only one node in the tree may be selected at a time. Selecting a node when another node is already selected will cause the original node to be unselected. To allow multiple selection, set the tree's <a href="{{apiDocs}}/classes/Tree.Selectable.html#attr_multiSelect">`multiSelect`</a> attribute to `true`.</p>
+
+<p>When a node is selected, the Selectable extension fires a <a href="{{apiDocs}}/classes/Tree.Selectable.html#event_select">`select`</a> event. When a node is unselected, it fires an <a href="{{apiDocs}}/classes/Tree.Selectable.html#event_unselect">`unselect`</a> event.</p>
+
+<p>See the <a href="{{apiDocs}}/modules/tree-selectable.html">API docs</a> for more details.</p>
+
+<h3>Sortable Extension</h3>
+
+<p>The Sortable extension makes it possible to sort the children of any node using custom sorting logic, and also ensures that inserted nodes are added at the appropriate index to maintain the current sort order.</p>
+
+<p>To use the Sortable extension, include the <a href="{{apiDocs}}/modules/tree-sortable.html">`tree-sortable`</a> module, then create a class that extends `Y.Tree` and mixes in <a href="{{apiDocs}}/classes/Tree.Sortable.html">`Y.Tree.Sortable`</a>.</p>
+
+```js
+// Load the tree-sortable module.
+YUI().use('tree-sortable', function (Y) {
+    // Create a custom Tree class that mixes in the Sortable extension.
+    Y.SortableTree = Y.Base.create('sortableTree', Y.Tree, [Y.Tree.Sortable]);
+
+    // ... additional implementation code here ...
+});
+```
+
+<p>Nodes will now be sorted automatically as they're inserted in this tree, or you can manually re-sort all children of a specific node by calling that node's <a href="{{apiDocs}}/classes/Tree.Node.Sortable.html#method_sort">`sort()`</a> method.</p>
+
+<p>By default, nodes are sorted in insertion order, meaning that the first node you insert gets index 0, the second node inserted gets index 1, and so on. To customize the sort criteria, pass a custom `sortComparator` function to the tree's constructor, or set it on the tree's prototype. This function will receive a node as an argument, and should return a value by which that node should be sorted.</p>
+
+<p>Here's a `sortComparator` function that sorts nodes by id:</p>
+
+```js
+var tree = new Y.SortableTree({
+    sortComparator: function (node) {
+        return node.id;
+    }
+});
+```
+
+<p>To sort nodes in descending order instead of ascending order, set the tree's <a href="{{apiDocs}}/classes/Tree.Sortable.html#property_sortReverse">`sortReverse`</a> property to `true`.</p>
+
+<p>Each node in a tree may optionally have its own custom `sortComparator` and/or `sortReverse` properties to govern the sort order of its children. This makes it possible to use different sort criteria for different nodes in the tree. Setting these properties on a node will override the tree's `sortComparator` and `sortReverse` properties for that node's children (but not for its children's children).</p>
+
+<p>Tree instances that mix in the Sortable extension receive a <a href="{{apiDocs}}/classes/Tree.Sortable.html#event_sort">`sort`</a> event that fires when a node's children are manually re-sorted by calling the `sort()` method.</p>
+
+<p>See the <a href="{{apiDocs}}/modules/tree-sortable.html">API docs</a> for more details on the methods and events added by the Sortable extension.</p>
+
+<h2>Creating Custom Tree Extensions</h2>
+
+<p>`Y.Tree` extends <a href="../base/index.html">`Y.Base`</a>, so a Tree extension begins just like any other Base extension class. However, since `Y.Tree.Node` doesn't extend `Y.Base` for performance reasons, a special composition mechanism is used to allow for lightweight `Y.Tree.Node` extensions.</p>
+
+<p>For a simple example, let's look at the implementation of the [[#Labelable extension]].</p>
+
+<p>The `Y.Tree.Labelable` class, which will be mixed into a Tree as a Base extension, looks like this:</p>
+
+```js
+// Y.Tree.Labelable extension class.
+function Labelable() {}
+
+Labelable.prototype = {
+    initializer: function () {
+        this.nodeExtensions = this.nodeExtensions.concat(Y.Tree.Node.Labelable);
+    }
+};
+
+Y.Tree.Labelable = Labelable;
+```
+
+<p>In the `initializer()` method, the Labelable extension creates a copy of the tree's <a href="{{apiDocs}}/classes/Tree.html#property_nodeExtensions">`nodeExtensions`</a> array, then adds the `Y.Tree.Node.Labelable` class to it.</p>
+
+<p>The `Y.Tree.Node.Labelable` class looks like this:</p>
+
+```js
+// Y.Tree.Node.Labelable class.
+function NodeLabelable(tree, config) {
+    this._serializable = this._serializable.concat('label');
+
+    if ('label' in config) {
+        this.label = config.label;
+    }
+}
+
+NodeLabelable.prototype = {
+    label: ''
+};
+
+Y.Tree.Node.Labelable = NodeLabelable;
+```
+
+<p>The specific implementation here isn't important, but it illustrates how node extensions work.</p>
+
+<p>When a Tree instance is created, `Y.Tree` extensions have a chance to add their custom `Y.Tree.Node` extension classes to the `nodeExtensions` array. Once all the tree extension initializers have run, a "composed" Tree Node class is created.</p>
+
+<p>This composed Tree Node class mixes in all the prototype properties of every class in `nodeExtensions` and automatically chains their constructor functions. This is similar in some ways to how `Y.Base` extensions work, but much lighter and faster, so composed nodes remain very efficient.</p>
+
+<p>For more detailed examples of Tree and Tree Node extensions, take a look at the <a href="https://github.com/yui/yui3/tree/dev-3.x/src/tree/js/extensions">source code</a> for the Openable and Selectable extensions.</p>

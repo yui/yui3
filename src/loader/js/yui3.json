@@ -19,7 +19,8 @@
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style"
+            "node-style",
+            "color-base"
         ]
     },
     "anim-color": {
@@ -76,6 +77,7 @@
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -239,7 +241,10 @@
             "autocomplete-sources"
         ],
         "lang": [
-            "en"
+            "en",
+            "es",
+            "hu",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -281,6 +286,85 @@
             "autocomplete-base"
         ]
     },
+    "axes": {
+        "use": [
+            "axis-numeric",
+            "axis-category",
+            "axis-time",
+            "axis-stacked"
+        ]
+    },
+    "axes-base": {
+        "use": [
+            "axis-numeric-base",
+            "axis-category-base",
+            "axis-time-base",
+            "axis-stacked-base"
+        ]
+    },
+    "axis": {
+        "requires": [
+            "dom",
+            "widget",
+            "widget-position",
+            "widget-stack",
+            "graphics",
+            "axis-base"
+        ]
+    },
+    "axis-base": {
+        "requires": [
+            "classnamemanager",
+            "datatype-number",
+            "datatype-date",
+            "base",
+            "event-custom"
+        ]
+    },
+    "axis-category": {
+        "requires": [
+            "axis",
+            "axis-category-base"
+        ]
+    },
+    "axis-category-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
+    "axis-numeric": {
+        "requires": [
+            "axis",
+            "axis-numeric-base"
+        ]
+    },
+    "axis-numeric-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
+    "axis-stacked": {
+        "requires": [
+            "axis-numeric",
+            "axis-stacked-base"
+        ]
+    },
+    "axis-stacked-base": {
+        "requires": [
+            "axis-numeric-base"
+        ]
+    },
+    "axis-time": {
+        "requires": [
+            "axis",
+            "axis-time-base"
+        ]
+    },
+    "axis-time-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
     "base": {
         "use": [
             "base-base",
@@ -307,7 +391,8 @@
     },
     "base-observable": {
         "requires": [
-            "attribute-observable"
+            "attribute-observable",
+            "base-core"
         ]
     },
     "base-pluginhost": {
@@ -327,7 +412,8 @@
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
     "button-group": {
@@ -369,20 +455,6 @@
         ]
     },
     "calendar": {
-        "lang": [
-            "de",
-            "en",
-            "es",
-            "es-AR",
-            "fr",
-            "it",
-            "ja",
-            "nb-NO",
-            "nl",
-            "pt-BR",
-            "ru",
-            "zh-HANT-TW"
-        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -396,17 +468,21 @@
             "es",
             "es-AR",
             "fr",
+            "hu",
             "it",
             "ja",
             "nb-NO",
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -418,28 +494,41 @@
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
     "charts": {
-        "requires": [
+        "use": [
             "charts-base"
         ]
     },
     "charts-base": {
         "requires": [
             "dom",
-            "datatype-number",
-            "datatype-date",
-            "event-custom",
             "event-mouseenter",
             "event-touch",
-            "widget",
-            "widget-position",
-            "widget-stack",
-            "graphics"
+            "graphics-group",
+            "axes",
+            "series-pie",
+            "series-line",
+            "series-marker",
+            "series-area",
+            "series-spline",
+            "series-column",
+            "series-bar",
+            "series-areaspline",
+            "series-combo",
+            "series-combospline",
+            "series-line-stacked",
+            "series-marker-stacked",
+            "series-area-stacked",
+            "series-spline-stacked",
+            "series-column-stacked",
+            "series-bar-stacked",
+            "series-areaspline-stacked",
+            "series-combo-stacked",
+            "series-combospline-stacked"
         ]
     },
     "charts-legend": {
@@ -497,6 +586,8 @@
         "lang": [
             "en",
             "es",
+            "hu",
+            "it",
             "ja"
         ],
         "requires": [
@@ -511,6 +602,14 @@
             "console"
         ],
         "skinnable": true
+    },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
     },
     "controller": {
         "use": [
@@ -560,26 +659,39 @@
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
+        ],
+        "type": "css"
+    },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssnormalize"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
         ],
         "type": "css"
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
         ],
+        "type": "css"
+    },
+    "cssnormalize": {
+        "type": "css"
+    },
+    "cssnormalize-context": {
         "type": "css"
     },
     "cssreset": {
@@ -725,15 +837,6 @@
         ],
         "skinnable": true
     },
-    "datatable-base-deprecated": {
-        "requires": [
-            "recordset-base",
-            "widget",
-            "substitute",
-            "event-mouseenter"
-        ],
-        "skinnable": true
-    },
     "datatable-body": {
         "requires": [
             "datatable-core",
@@ -760,19 +863,18 @@
             "datasource-local"
         ]
     },
-    "datatable-datasource-deprecated": {
+    "datatable-foot": {
         "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "datasource-local"
+            "datatable-core",
+            "view"
         ]
     },
-    "datatable-deprecated": {
-        "use": [
-            "datatable-base-deprecated",
-            "datatable-datasource-deprecated",
-            "datatable-sort-deprecated",
-            "datatable-scroll-deprecated"
+    "datatable-formatters": {
+        "requires": [
+            "datatable-body",
+            "datatype-number-format",
+            "datatype-date-format",
+            "escape"
         ]
     },
     "datatable-head": {
@@ -782,9 +884,25 @@
             "classnamemanager"
         ]
     },
+    "datatable-highlight": {
+        "requires": [
+            "datatable-base",
+            "event-hover"
+        ],
+        "skinnable": true
+    },
+    "datatable-keynav": {
+        "requires": [
+            "datatable-base"
+        ]
+    },
     "datatable-message": {
         "lang": [
-            "en"
+            "en",
+            "fr",
+            "es",
+            "hu",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -796,6 +914,25 @@
             "datatable-base"
         ]
     },
+    "datatable-paginator": {
+        "lang": [
+            "en",
+            "fr"
+        ],
+        "requires": [
+            "model",
+            "view",
+            "paginator-core",
+            "datatable-foot",
+            "datatable-paginator-templates"
+        ],
+        "skinnable": true
+    },
+    "datatable-paginator-templates": {
+        "requires": [
+            "template"
+        ]
+    },
     "datatable-scroll": {
         "requires": [
             "datatable-base",
@@ -804,30 +941,17 @@
         ],
         "skinnable": true
     },
-    "datatable-scroll-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin"
-        ]
-    },
     "datatable-sort": {
         "lang": [
-            "en"
+            "en",
+            "fr",
+            "es",
+            "hu"
         ],
         "requires": [
             "datatable-base"
         ],
         "skinnable": true
-    },
-    "datatable-sort-deprecated": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "recordset-sort"
-        ]
     },
     "datatable-table": {
         "requires": [
@@ -898,6 +1022,7 @@
             "fr-FR",
             "hi",
             "hi-IN",
+            "hu",
             "id",
             "id-ID",
             "it",
@@ -949,7 +1074,11 @@
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",
@@ -1052,7 +1181,8 @@
     "dial": {
         "lang": [
             "en",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "widget",
@@ -1085,11 +1215,6 @@
             "features"
         ]
     },
-    "dom-deprecated": {
-        "requires": [
-            "dom-base"
-        ]
-    },
     "dom-screen": {
         "requires": [
             "dom-base",
@@ -1108,7 +1233,8 @@
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style"
+            "dom-style",
+            "color-base"
         ]
     },
     "dump": {
@@ -1146,6 +1272,12 @@
     "editor-br": {
         "requires": [
             "editor-base"
+        ]
+    },
+    "editor-inline": {
+        "requires": [
+            "editor-base",
+            "content-editable"
         ]
     },
     "editor-lists": {
@@ -1375,6 +1507,7 @@
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -1407,7 +1540,8 @@
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-canvas-default": {
@@ -1416,6 +1550,11 @@
             "test": "graphics-canvas.js",
             "trigger": "graphics"
         }
+    },
+    "graphics-group": {
+        "requires": [
+            "graphics"
+        ]
     },
     "graphics-svg": {
         "condition": {
@@ -1441,7 +1580,8 @@
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-vml-default": {
@@ -1457,9 +1597,7 @@
         ]
     },
     "handlebars-base": {
-        "requires": [
-            "escape"
-        ]
+        "requires": []
     },
     "handlebars-compiler": {
         "requires": [
@@ -1490,7 +1628,6 @@
         "use": [
             "history-base",
             "history-hash",
-            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -1608,9 +1745,29 @@
             "yui-base"
         ]
     },
+    "json-parse-shim": {
+        "condition": {
+            "name": "json-parse-shim",
+            "test": "parse-native-test.js",
+            "trigger": "json-parse"
+        },
+        "requires": [
+            "json-parse"
+        ]
+    },
     "json-stringify": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "json-stringify-shim": {
+        "condition": {
+            "name": "json-stringify-shim",
+            "test": "stringify-native-test.js",
+            "trigger": "json-stringify"
+        },
+        "requires": [
+            "json-stringify"
         ]
     },
     "jsonp": {
@@ -1675,6 +1832,12 @@
             "model"
         ]
     },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
+        ]
+    },
     "model-sync-rest": {
         "requires": [
             "model",
@@ -1695,18 +1858,14 @@
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
         "requires": [
             "dom-core",
             "selector"
-        ]
-    },
-    "node-deprecated": {
-        "requires": [
-            "node-base"
         ]
     },
     "node-event-delegate": {
@@ -1775,11 +1934,12 @@
     },
     "node-scroll-info": {
         "requires": [
+            "array-extras",
             "base-build",
-            "dom-screen",
             "event-resize",
             "node-pluginhost",
-            "plugin"
+            "plugin",
+            "selector"
         ]
     },
     "node-style": {
@@ -1803,6 +1963,21 @@
             "widget-position-constrain"
         ],
         "skinnable": true
+    },
+    "paginator": {
+        "requires": [
+            "paginator-core"
+        ]
+    },
+    "paginator-core": {
+        "requires": [
+            "base"
+        ]
+    },
+    "paginator-url": {
+        "requires": [
+            "paginator"
+        ]
     },
     "panel": {
         "requires": [
@@ -1871,9 +2046,9 @@
             "pluginhost-base"
         ]
     },
-    "profiler": {
+    "promise": {
         "requires": [
-            "yui-base"
+            "timers"
         ]
     },
     "querystring": {
@@ -2071,6 +2246,163 @@
             "dom-base"
         ]
     },
+    "series-area": {
+        "requires": [
+            "series-cartesian",
+            "series-fill-util"
+        ]
+    },
+    "series-area-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-area"
+        ]
+    },
+    "series-areaspline": {
+        "requires": [
+            "series-area",
+            "series-curve-util"
+        ]
+    },
+    "series-areaspline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-areaspline"
+        ]
+    },
+    "series-bar": {
+        "requires": [
+            "series-marker",
+            "series-histogram-base"
+        ]
+    },
+    "series-bar-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-bar"
+        ]
+    },
+    "series-base": {
+        "requires": [
+            "graphics",
+            "axis-base"
+        ]
+    },
+    "series-candlestick": {
+        "requires": [
+            "series-range"
+        ]
+    },
+    "series-cartesian": {
+        "requires": [
+            "series-base"
+        ]
+    },
+    "series-column": {
+        "requires": [
+            "series-marker",
+            "series-histogram-base"
+        ]
+    },
+    "series-column-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-column"
+        ]
+    },
+    "series-combo": {
+        "requires": [
+            "series-cartesian",
+            "series-line-util",
+            "series-plot-util",
+            "series-fill-util"
+        ]
+    },
+    "series-combo-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-combo"
+        ]
+    },
+    "series-combospline": {
+        "requires": [
+            "series-combo",
+            "series-curve-util"
+        ]
+    },
+    "series-combospline-stacked": {
+        "requires": [
+            "series-combo-stacked",
+            "series-curve-util"
+        ]
+    },
+    "series-curve-util": {},
+    "series-fill-util": {},
+    "series-histogram-base": {
+        "requires": [
+            "series-cartesian",
+            "series-plot-util"
+        ]
+    },
+    "series-line": {
+        "requires": [
+            "series-cartesian",
+            "series-line-util"
+        ]
+    },
+    "series-line-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-line"
+        ]
+    },
+    "series-line-util": {},
+    "series-marker": {
+        "requires": [
+            "series-cartesian",
+            "series-plot-util"
+        ]
+    },
+    "series-marker-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-marker"
+        ]
+    },
+    "series-ohlc": {
+        "requires": [
+            "series-range"
+        ]
+    },
+    "series-pie": {
+        "requires": [
+            "series-base",
+            "series-plot-util"
+        ]
+    },
+    "series-plot-util": {},
+    "series-range": {
+        "requires": [
+            "series-cartesian"
+        ]
+    },
+    "series-spline": {
+        "requires": [
+            "series-line",
+            "series-curve-util"
+        ]
+    },
+    "series-spline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-spline"
+        ]
+    },
+    "series-stacked": {
+        "requires": [
+            "axis-stacked"
+        ]
+    },
     "shim-plugin": {
         "requires": [
             "node-style",
@@ -2151,8 +2483,7 @@
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -2219,6 +2550,11 @@
             "text-data-wordbreak"
         ]
     },
+    "timers": {
+        "requires": [
+            "yui-base"
+        ]
+    },
     "transition": {
         "requires": [
             "node-style"
@@ -2234,30 +2570,55 @@
             "transition"
         ]
     },
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ]
+    },
+    "tree-labelable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+    "tree-node": {},
+    "tree-openable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-sortable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
             "uploader-flash"
         ]
     },
-    "uploader-deprecated": {
-        "requires": [
-            "event-custom",
-            "node",
-            "base",
-            "swf"
-        ]
-    },
     "uploader-flash": {
         "requires": [
-            "swf",
+            "swfdetect",
+            "escape",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
             "event-custom",
-            "file-flash",
             "uploader-queue"
         ]
     },
@@ -2265,7 +2626,6 @@
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -2349,11 +2709,6 @@
             "widget-base"
         ]
     },
-    "widget-locale": {
-        "requires": [
-            "widget-base"
-        ]
-    },
     "widget-modality": {
         "requires": [
             "base-build",
@@ -2412,6 +2767,17 @@
     },
     "yql": {
         "requires": [
+            "oop"
+        ]
+    },
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": "jsonp.js",
+            "trigger": "yql"
+        },
+        "requires": [
+            "yql",
             "jsonp",
             "jsonp-url"
         ]
@@ -2420,17 +2786,21 @@
         "condition": {
             "name": "yql-nodejs",
             "trigger": "yql",
-            "ua": "nodejs",
-            "when": "after"
-        }
+            "ua": "nodejs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yql-winjs": {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs",
-            "when": "after"
-        }
+            "ua": "winjs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yui": {},
     "yui-base": {},

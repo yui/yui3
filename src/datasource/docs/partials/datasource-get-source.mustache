@@ -3,32 +3,41 @@
     <h6>Data</h6>
     <pre>
 {
-    "query":{
-        "count":"10",
-        "created":"2011-06-15T04:36:13Z",
-        "lang":"en-US",
-        "results":{
-            "event":[
+    "query": {
+        "count": 51,
+        "created": "2013-06-04T22:50:08Z",
+        "lang": "en-US",
+        "results": {
+            "place": [
                 {
-                 "id": "6826736",
-                 "name": "PGA Fall Expo 2011",
-                 "start_date": "2011-08-01",
-                 "venue_name": "The Venetian Congress and Sands Expo Convention Center",
-                 ...
+                    "lang": "en-US",
+                    "uri": "http://where.yahooapis.com/v1/place/2347575",
+                    "woeid": "2347575",
+                    "placeTypeName": {
+                        "code": "8",
+                        "content": "State"
+                    },
+                    "name": "Kansas"
                 },
                 {
-                 "id": "7228592",
-                 "name": "NAHC 30th Annual Meeting & Exposition",
-                 "start_date": "2011-10-01",
-                 "venue_name": "Mandalay Bay Resort",
-                 ...
+                    "lang": "en-US",
+                    "uri": "http://where.yahooapis.com/v1/place/2347595",
+                    "woeid": "2347595",
+                    "placeTypeName": {
+                        "code": "8",
+                        "content": "State"
+                    },
+                    "name": "Oklahoma"
                 },
                 {
-                 "id": "7238009",
-                 "name": "Water and Society 2011-First International Conference on Water and Society",
-                 "start_date": "2011-12-05",
-                 "venue_name": "Richard Tam Alumni Center",
-                 ...
+                    "lang": "en-US",
+                    "uri": "http://where.yahooapis.com/v1/place/2347584",
+                    "woeid": "2347584",
+                    "placeTypeName": {
+                        "code": "8",
+                        "content": "State"
+                    },
+                    "name": "Missouri"
                 },
                 ...
             ]
@@ -40,7 +49,7 @@
     <h6>Schema</h6>
     <pre>
 {
-    resultListLocator: "query.results.event",
+    resultListLocator: "query.results.place",
     resultFields: ["name"]
 }
     </pre>
@@ -58,15 +67,15 @@ YUI().use("json-stringify", "node", "datasource-get", "datasource-jsonschema", f
 
     myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
         schema: {
-            resultListLocator: "query.results.event",
+            resultListLocator: "query.results.place",
             resultFields: ["name"]
         }
     });
 
     Y.on("click", function(e){
-        // See what's happening in Las Vegas (woeid 2436704)
+        // See what states are in the United States
         myDataSource.sendRequest({
-            request: "q=select%20*%20from%20upcoming.events.bestinplace%20where%20woeid=2436704",
+            request: 'q=select * from geo.states where place="United States"',
             callback: {
                 success: function(e){
                     Y.one("#demo_output_json")
@@ -78,8 +87,7 @@ YUI().use("json-stringify", "node", "datasource-get", "datasource-jsonschema", f
                                 "</pre>");
                 },
                 failure: function(e){
-                    Y.one("#demo_output_json")
-                        .setHTML("Could not retrieve data: " + e.error.message);
+                    Y.one("#demo_output_json").setHTML('The data could not be retrieved. Please <a href="?mock=true">try this example with mocked data</a> instead.');
                 }
             }
         });

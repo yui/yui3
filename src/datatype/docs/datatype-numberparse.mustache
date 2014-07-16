@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 /* custom styles for this example */
 #demo label {display:block;}
 #demo fieldset {margin:1em;}
@@ -39,3 +39,40 @@ YUI().use("datatype-number", function(Y) {
 
 });
 ```
+<p>A configuration argument can be added to deal with these numbers.</p>
+```
+YUI().use("datatype-number", function(Y) {
+    var output = Y.Number.parse("$100", {
+        prefix:'$'
+    });
+    // output is 100
+
+    output = Y.Number.parse("20 dollars", {
+        suffix: 'dollars'
+    });
+    // output is 20
+
+    output = Y.Number.parse("3,000,000.12" ,{
+        thousandsSeparator: ','
+    });
+    // output is 3000000.12
+
+    output = Y.Number.parse(new Date("Jan 1, 2000"));
+    // output is 946713600000
+
+});
+```
+<p>
+The following example uses the following configuration:
+</p>
+```
+{
+    decimalSeparator: ',',
+    thousandsSeparator: '.',
+    prefix: '€',
+    suffix: '(EUR)'
+}
+```
+<div class="example yui3-skin-sam">
+    {{>datatype-numberparseconfig-source}}
+</div>

@@ -49,7 +49,7 @@ YUI.add('calendar-simple-tests', function(Y) {
             while(!Y.one(".yui3-calendar-prevmonth-day:not(.yui3-calendar-column-hidden)")) {
                 nextMonthButton.simulate('click');
             }
-            
+
             var firstPrevMonthDate = Y.one(".yui3-calendar-prevmonth-day:not(.yui3-calendar-column-hidden)");
             Assert.isNotNull(firstPrevMonthDate);
 
@@ -63,7 +63,7 @@ YUI.add('calendar-simple-tests', function(Y) {
             while(!Y.one(".yui3-calendar-nextmonth-day:not(.yui3-calendar-column-hidden)")) {
                 nextMonthButton.simulate('click');
             }
-            
+
             var firstNextMonthDate = Y.one(".yui3-calendar-nextmonth-day:not(.yui3-calendar-column-hidden)");
             Assert.isNotNull(firstNextMonthDate);
 

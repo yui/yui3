@@ -1,0 +1,10 @@
+{
+    "axes": {
+        "use":[
+            "axis-numeric",
+            "axis-category",
+            "axis-time",
+            "axis-stacked"
+        ]
+    }
+}

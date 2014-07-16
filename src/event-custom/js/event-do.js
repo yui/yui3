@@ -1,4 +1,3 @@
-
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
@@ -22,12 +21,12 @@ DO = {
      * Cache of objects touched by the utility
      * @property objs
      * @static
-     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object 
-     * replaces the role of this property, but is considered to be private, and 
+     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object
+     * replaces the role of this property, but is considered to be private, and
      * is only mentioned to provide a migration path.
-     * 
-     * If you have a use case which warrants migration to the _yuiaop property, 
-     * please file a ticket to let us know what it's used for and we can see if 
+     *
+     * If you have a use case which warrants migration to the _yuiaop property,
+     * please file a ticket to let us know what it's used for and we can see if
      * we need to expose hooks for that functionality more formally.
      */
     objs: null,
@@ -56,7 +55,7 @@ DO = {
      * @param c The execution context for fn
      * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {string} handle for the subscription
+     * @return {EventHandle} handle for the subscription
      * @static
      */
     before: function(fn, obj, sFn, c) {
@@ -94,7 +93,7 @@ DO = {
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
      * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return {string} handle for the subscription
+     * @return {EventHandle} handle for the subscription
      * @static
      */
     after: function(fn, obj, sFn, c) {
@@ -117,7 +116,7 @@ DO = {
      * @param obj the object hosting the method to displace
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
-     * @return {string} handle for the subscription
+     * @return {EventHandle} handle for the subscription
      * @private
      * @static
      */
@@ -155,16 +154,13 @@ DO = {
      * Detach a before or after subscription.
      *
      * @method detach
-     * @param handle {string} the subscription handle
+     * @param handle {EventHandle} the subscription handle
      * @static
      */
     detach: function(handle) {
         if (handle.detach) {
             handle.detach();
         }
-    },
-
-    _unload: function(e, me) {
     }
 };
 
@@ -291,10 +287,10 @@ DO.Method.prototype.exec = function () {
         if (af.hasOwnProperty(i)) {
             newRet = af[i].apply(this.obj, args);
             // Stop processing if a Halt object is returned
-            if (newRet && newRet.constructor == DO.Halt) {
+            if (newRet && newRet.constructor === DO.Halt) {
                 return newRet.retVal;
             // Check for a new return value
-            } else if (newRet && newRet.constructor == DO.AlterReturn) {
+            } else if (newRet && newRet.constructor === DO.AlterReturn) {
                 ret = newRet.newRetVal;
                 // Update the static retval state
                 DO.currentRetVal = ret;
@@ -378,6 +374,3 @@ DO.Error = DO.Halt;
 
 
 //////////////////////////////////////////////////////////////////////////
-
-// Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
-

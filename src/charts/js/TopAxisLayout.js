@@ -1,10 +1,9 @@
 /**
  * Contains algorithms for rendering a top axis.
  *
- * @module charts
- * @submodule charts-base
  * @class TopAxisLayout
  * @constructor
+ * @submodule axis
  */
 TopAxisLayout = function(){};
 
@@ -216,6 +215,7 @@ TopAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             totalTitleSize = this._totalTitleSize,
             maxLabelSize = host._maxLabelSize,
             leftOffset = pt.x,
@@ -227,27 +227,29 @@ TopAxisLayout.prototype = {
             labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
-            leftOffset -= labelWidth * 0.5;
+            leftOffset -= labelWidth * offset;
             topOffset -= labelHeight;
         }
         else
         {
             if(rot === 90)
             {
-                leftOffset -= labelWidth;
+                leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
                 topOffset -= (labelHeight * 0.5);
             }
             else if (rot === -90)
             {
+                leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
                 topOffset -= (labelHeight * 0.5);
             }
             else if(rot > 0)
             {
-                leftOffset -= labelWidth;
+                leftOffset = leftOffset - labelWidth + labelHeight/2 - (labelHeight * offset);
                 topOffset -= labelHeight - (labelHeight * rot/180);
             }
             else
             {
+                leftOffset = leftOffset + labelHeight/2 - (labelHeight * offset);
                 topOffset -= labelHeight - (labelHeight * absRot/180);
             }
         }
@@ -348,7 +350,7 @@ TopAxisLayout.prototype = {
      * @param {Node} cb contentBox of the axis
      * @protected
      */
-    offsetNodeForTick: function(cb)
+    offsetNodeForTick: function()
     {
     },
 
@@ -370,7 +372,7 @@ TopAxisLayout.prototype = {
             ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
         if(this._explicitHeight)
         {
-           ttl = this._explicitWidth;
+           ttl = this._explicitHeight;
         }
         host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);

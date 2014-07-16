@@ -18,20 +18,20 @@ var Widget = Y.Widget,
  * markup contained in the widget's content box. e.g.:
  * <pre>
  *   {
- *       // Set single Node references using selector syntax 
+ *       // Set single Node references using selector syntax
  *       // (selector is run through node.one)
  *       titleNode: "span.yui-title",
- *       // Set NodeList references using selector syntax 
+ *       // Set NodeList references using selector syntax
  *       // (array indicates selector is to be run through node.all)
  *       listNodes: ["li.yui-item"],
- *       // Set other attribute types, using a parse function. 
+ *       // Set other attribute types, using a parse function.
  *       // Context is set to the widget instance.
  *       label: function(contentBox) {
  *           return contentBox.one("span.title").get("innerHTML");
  *       }
  *   }
  * </pre>
- * 
+ *
  * @property HTML_PARSER
  * @type Object
  * @static
@@ -42,7 +42,7 @@ Widget.HTML_PARSER = {};
  * The build configuration for the Widget class.
  * <p>
  * Defines the static fields which need to be aggregated,
- * when this class is used as the main class passed to 
+ * when this class is used as the main class passed to
  * the <a href="Base.html#method_build">Base.build</a> method.
  * </p>
  * @property _buildCfg
@@ -81,6 +81,44 @@ Y.mix(Widget.prototype, {
     },
 
     /**
+     * Implement the BaseCore _preAddAttrs method hook, to add
+     * the srcNode and related attributes, so that HTML_PARSER
+     * (which relies on `this.get("srcNode")`) can merge in it's
+     * results before the rest of the attributes are added.
+     *
+     * @method _preAddAttrs
+     * @protected
+     *
+     * @param attrs {Object} The full hash of statically defined ATTRS
+     * attributes being added for this instance
+     *
+     * @param userVals {Object} The hash of user values passed to
+     * the constructor
+     *
+     * @param lazy {boolean} Whether or not to add the attributes lazily
+     */
+    _preAddAttrs : function(attrs, userVals, lazy) {
+
+        var preAttrs = {
+            id : attrs.id,
+            boundingBox : attrs.boundingBox,
+            contentBox : attrs.contentBox,
+            srcNode : attrs.srcNode
+        };
+
+        this.addAttrs(preAttrs, userVals, lazy);
+
+        delete attrs.boundingBox;
+        delete attrs.contentBox;
+        delete attrs.srcNode;
+        delete attrs.id;
+
+        if (this._applyParser) {
+            this._applyParser(userVals);
+        }
+    },
+
+    /**
      * @method _applyParsedConfig
      * @protected
      * @return {Object} The merged configuration literal
@@ -90,12 +128,12 @@ Y.mix(Widget.prototype, {
     },
 
     /**
-     * Utility method used to apply the <code>HTML_PARSER</code> configuration for the 
+     * Utility method used to apply the <code>HTML_PARSER</code> configuration for the
      * instance, to retrieve config data values.
      *
      * @method _applyParser
      * @protected
-     * @param config {Object} User configuration object (will be populated with values from Node) 
+     * @param config {Object} User configuration object (will be populated with values from Node)
      */
     _applyParser : function(config) {
 
@@ -133,10 +171,10 @@ Y.mix(Widget.prototype, {
 
     /**
      * Determines whether we have a node reference which we should try and parse.
-     * 
+     *
      * The current implementation does not parse nodes generated from CONTENT_TEMPLATE,
      * only explicitly set srcNode, or contentBox attributes.
-     * 
+     *
      * @method _getNodeToParse
      * @return {Node} The node reference to apply HTML_PARSER to.
      * @private

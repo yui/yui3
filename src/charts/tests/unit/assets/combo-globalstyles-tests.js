@@ -1,5 +1,9 @@
 YUI.add('combo-globalstyles-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: ComboGlobalStyles"),
+        GlobalStylesTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {
@@ -20,11 +24,9 @@ YUI.add('combo-globalstyles-tests', function(Y) {
 
     Y.extend(GlobalStylesTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:800px;height:600px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
-       
+
         testGlobalStyles: function()
         {
             var chart = this.chart,
@@ -36,12 +38,10 @@ YUI.add('combo-globalstyles-tests', function(Y) {
                 axesStyles = styles.axes,
                 seriesStyles = styles.series,
                 graphStyles = styles.graph,
-                i,
-                testStyles,
-                styles;
-            Y.Assert.areEqual(axesTestStyles.values.label.rotation, axesStyles.values.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + "."); 
-            Y.Assert.areEqual(axesTestStyles.date.label.rotation, axesStyles.date.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
-            Y.Assert.areEqual(graphTestStyles.background.color, graphStyles.background.color, "The background color should be " + graphTestStyles.background.color + ".");
+                i;
+            Y.Assert.areEqual(axesTestStyles.values.label.rotation, axesStyles.values.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + ".");
+            Y.Assert.areEqual(axesTestStyles.date.label.rotation, axesStyles.date.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + ".");
+            Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
             for(i in seriesTestStyles)
             {
                 if(seriesTestStyles.hasOwnProperty(i))
@@ -69,12 +69,11 @@ YUI.add('combo-globalstyles-tests', function(Y) {
                 categoryAxisStyles = chart.getAxisByKey("date").get("styles"),
                 graphStyles = chart.get("graph").get("styles"),
                 series,
-                testStyles,
                 styles,
                 i;
             Y.Assert.areEqual(axesTestStyles.values.label.rotation, valueAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + ".");
-            Y.Assert.areEqual(axesTestStyles.date.label.rotation, categoryAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
-            Y.Assert.areEqual(graphTestStyles.background.color, graphStyles.background.color, "The background color should be " + graphTestStyles.background.color + ".");
+            Y.Assert.areEqual(axesTestStyles.date.label.rotation, categoryAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + ".");
+            Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
             for(i in seriesTestStyles)
             {
                 if(seriesTestStyles.hasOwnProperty(i))
@@ -94,18 +93,18 @@ YUI.add('combo-globalstyles-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
 
-    var basicDataValues = [ 
-        {date:"5/1/2010", international:2000, expenses:3700, domestic:2200}, 
-        {date:"5/2/2010", international:50, expenses:9100, domestic:100}, 
-        {date:"5/3/2010", international:400, expenses:1100, domestic:1500}, 
-        {date:"5/4/2010", international:200, expenses:1900, domestic:2800}, 
+    var basicDataValues = [
+        {date:"5/1/2010", international:2000, expenses:3700, domestic:2200},
+        {date:"5/2/2010", international:50, expenses:9100, domestic:100},
+        {date:"5/3/2010", international:400, expenses:1100, domestic:1500},
+        {date:"5/4/2010", international:200, expenses:1900, domestic:2800},
         {date:"5/5/2010", international:5000, expenses:5000, domestic:2650}
     ],
-    
+
     hashSeriesStyles = {
         international:{
             marker:{
@@ -171,7 +170,7 @@ YUI.add('combo-globalstyles-tests', function(Y) {
             }
         }
     },
-    
+
     arraySeriesStyles = [
         {
             marker:{
@@ -237,7 +236,7 @@ YUI.add('combo-globalstyles-tests', function(Y) {
             }
         }
     ],
-    
+
     axesStyles = {
         values:{
             label:{
@@ -252,7 +251,7 @@ YUI.add('combo-globalstyles-tests', function(Y) {
             }
         }
     },
-    
+
     graphStyles = {
         background: {
             fill:{
@@ -270,7 +269,7 @@ YUI.add('combo-globalstyles-tests', function(Y) {
         var cfg = {
             type: chartType,
             dataProvider: basicDataValues,
-            render: "#mychart",
+            render: "#testdiv",
             horizontalGridlines: true,
             verticalGridlines: true,
             showAreaFill: showAreaFill,
@@ -301,7 +300,7 @@ YUI.add('combo-globalstyles-tests', function(Y) {
         }
         return new GlobalStylesTestTemplate(cfg, globalCfg);
     };
-    
+
     suite.add(getGlobalStylesTest("combo", null, hashSeriesStyles, null, false, false));
     suite.add(getGlobalStylesTest("combo", null, arraySeriesStyles, null, false, false));
     suite.add(getGlobalStylesTest("combo", null, hashSeriesStyles, null, true, false));

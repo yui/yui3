@@ -1,14 +1,14 @@
 YUI.add('node-menunav', function (Y, NAME) {
 
 /**
-* <p>The MenuNav Node Plugin makes it easy to transform existing list-based 
-* markup into traditional, drop down navigational menus that are both accessible 
+* <p>The MenuNav Node Plugin makes it easy to transform existing list-based
+* markup into traditional, drop down navigational menus that are both accessible
 * and easy to customize, and only require a small set of dependencies.</p>
-* 
-* 
-* <p>To use the MenuNav Node Plugin, simply pass a reference to the plugin to a 
+*
+*
+* <p>To use the MenuNav Node Plugin, simply pass a reference to the plugin to a
 * Node instance's <code>plug</code> method.</p>
-* 
+*
 * <p>
 * <code>
 * &#60;script type="text/javascript"&#62; <br>
@@ -34,15 +34,15 @@ YUI.add('node-menunav', function (Y, NAME) {
 * 				this.plug(Y.Plugin.NodeMenuNav); <br>
 * <br>
 * 			}, "#menu-1"); <br>
-* <br>		
+* <br>
 * 		}); <br>
-* <br>	
+* <br>
 * 	&#60;/script&#62; <br>
 * </code>
 * </p>
 *
-* <p>The MenuNav Node Plugin has several configuration properties that can be 
-* set via an object literal that is passed as a second argument to a Node 
+* <p>The MenuNav Node Plugin has several configuration properties that can be
+* set via an object literal that is passed as a second argument to a Node
 * instance's <code>plug</code> method.
 * </p>
 *
@@ -71,14 +71,17 @@ YUI.add('node-menunav', function (Y, NAME) {
 * 				this.plug(Y.Plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
 * <br><br>
 * 			}, "#menu-1"); <br>
-* <br>		
+* <br>
 * 		}); <br>
-* <br>	
+* <br>
 * 	&#60;/script&#62; <br>
 * </code>
 * </p>
-* 
-* @module node-menunav
+*
+DEPRECATED. The MenuNav Node Plugin has been deprecated as of YUI 3.9.0. This module will be removed from the library in a future version. If you require functionality similar to the one provided by this module, consider taking a look at the various modules in the YUI Gallery <http://yuilibrary.com/gallery/>.
+
+@module node-menunav
+@deprecated 3.9.0
 */
 
 
@@ -125,7 +128,7 @@ var UA = Y.UA,
 
 
 	//	Attribute keys
-	
+
 	AUTO_SUBMENU_DISPLAY = "autoSubmenuDisplay",
 	MOUSEOUT_HIDE_DELAY = "mouseOutHideDelay",
 
@@ -143,7 +146,7 @@ var UA = Y.UA,
 
 
 	//	CSS selectors
-	
+
 	MENU_SELECTOR = PERIOD + CSS_MENU,
 	MENU_TOGGLE_SELECTOR = (PERIOD + getClassName(MENU, "toggle")),
     MENU_CONTENT_SELECTOR = PERIOD + getClassName(MENU, CONTENT),
@@ -164,7 +167,8 @@ var getPreviousSibling = function (node) {
 		oChildren = node.get(PARENT_NODE).get(CHILDREN);
 		oPrevious = oChildren.item(oChildren.size() - 1);
 	}
-	
+
+
 	return oPrevious;
 
 };
@@ -175,24 +179,24 @@ var getNextSibling = function (node) {
 	var oNext = node.next();
 
 	if (!oNext) {
-		oNext = node.get(PARENT_NODE).get(CHILDREN).item(0);		
+		oNext = node.get(PARENT_NODE).get(CHILDREN).item(0);
 	}
-	
+
 	return oNext;
 
 };
 
 
 var isAnchor = function (node) {
-	
+
 	var bReturnVal = false;
-	
+
 	if (node) {
 		bReturnVal = node.get("nodeName").toLowerCase() === LOWERCASE_A;
 	}
-	
+
 	return bReturnVal;
-	
+
 };
 
 
@@ -234,19 +238,19 @@ var getItemAnchor = function (node) {
 var getNodeWithClass = function (node, className, searchAncestors) {
 
 	var oItem;
-	
+
 	if (node) {
-		
+
 		if (node.hasClass(className)) {
 			oItem = node;
 		}
-		
+
 		if (!oItem && searchAncestors) {
 			oItem = node.ancestor((PERIOD + className));
 		}
-	
+
 	}
-	
+
 	return oItem;
 
 };
@@ -255,7 +259,7 @@ var getNodeWithClass = function (node, className, searchAncestors) {
 var getParentMenu = function (node) {
 
 	return node.ancestor(MENU_SELECTOR);
-	
+
 };
 
 
@@ -269,11 +273,11 @@ var getMenu = function (node, searchAncestors) {
 var getMenuItem = function (node, searchAncestors) {
 
 	var oItem;
-	
+
 	if (node) {
 		oItem = getNodeWithClass(node, CSS_MENUITEM, searchAncestors);
 	}
-	
+
 	return oItem;
 
 };
@@ -282,19 +286,19 @@ var getMenuItem = function (node, searchAncestors) {
 var getMenuLabel = function (node, searchAncestors) {
 
 	var oItem;
-	
+
 	if (node) {
-	
+
 		if (searchAncestors) {
 			oItem = getNodeWithClass(node, CSS_MENU_LABEL, searchAncestors);
 		}
 		else {
-			oItem = getNodeWithClass(node, CSS_MENU_LABEL) || 
+			oItem = getNodeWithClass(node, CSS_MENU_LABEL) ||
 				node.one((PERIOD + CSS_MENU_LABEL));
 		}
-		
+
 	}
-	
+
 	return oItem;
 
 };
@@ -303,19 +307,19 @@ var getMenuLabel = function (node, searchAncestors) {
 var getItem = function (node, searchAncestors) {
 
 	var oItem;
-	
+
 	if (node) {
-		oItem = getMenuItem(node, searchAncestors) || 
+		oItem = getMenuItem(node, searchAncestors) ||
 			getMenuLabel(node, searchAncestors);
 	}
-	
-	return oItem;	
+
+	return oItem;
 
 };
 
 
 var getFirstItem = function (menu) {
-	
+
 	return getItem(menu.one("li"));
 
 };
@@ -330,7 +334,7 @@ var getActiveClass = function (node) {
 
 var handleMouseOverForNode = function (node, target) {
 
-	return node && !node[HANDLED_MOUSEOVER] && 
+	return node && !node[HANDLED_MOUSEOVER] &&
 		(node.compareTo(target) || node.contains(target));
 
 };
@@ -338,14 +342,14 @@ var handleMouseOverForNode = function (node, target) {
 
 var handleMouseOutForNode = function (node, relatedTarget) {
 
-	return node && !node[HANDLED_MOUSEOUT] && 
+	return node && !node[HANDLED_MOUSEOUT] &&
 		(!node.compareTo(relatedTarget) && !node.contains(relatedTarget));
 
 };
 
 /**
-* The NodeMenuNav class is a plugin for a Node instance.  The class is used via  
-* the <a href="Node.html#method_plug"><code>plug</code></a> method of Node and 
+* The NodeMenuNav class is a plugin for a Node instance.  The class is used via
+* the <a href="Node.html#method_plug"><code>plug</code></a> method of Node and
 * should not be instantiated directly.
 * @namespace plugin
 * @class NodeMenuNav
@@ -360,10 +364,10 @@ NodeMenuNav.NAME = "nodeMenuNav";
 NodeMenuNav.NS = "menuNav";
 
 
-/** 
+/**
 * @property SHIM_TEMPLATE_TITLE
-* @description String representing the value for the <code>title</code> 
-* attribute for the shim used to prevent <code>&#60;select&#62;</code> elements 
+* @description String representing the value for the <code>title</code>
+* attribute for the shim used to prevent <code>&#60;select&#62;</code> elements
 * from poking through menus in IE 6.
 * @default "Menu Stacking Shim"
 * @type String
@@ -371,52 +375,52 @@ NodeMenuNav.NS = "menuNav";
 NodeMenuNav.SHIM_TEMPLATE_TITLE = "Menu Stacking Shim";
 
 
-/** 
+/**
 * @property SHIM_TEMPLATE
-* @description String representing the HTML used to create the 
-* <code>&#60;iframe&#62;</code> shim used to prevent 
+* @description String representing the HTML used to create the
+* <code>&#60;iframe&#62;</code> shim used to prevent
 * <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
-* @default &#34;&#60;iframe frameborder=&#34;0&#34; tabindex=&#34;-1&#34; 
-* class=&#34;yui-shim&#34; title=&#34;Menu Stacking Shim&#34; 
+* @default &#34;&#60;iframe frameborder=&#34;0&#34; tabindex=&#34;-1&#34;
+* class=&#34;yui-shim&#34; title=&#34;Menu Stacking Shim&#34;
 * src=&#34;javascript:false;&#34;&#62;&#60;/iframe&#62;&#34;
 * @type String
 */
 
 //	<iframe> shim notes:
 //
-//	1) Need to set the "frameBorder" property to 0 to suppress the default 
-//	<iframe> border in IE.  (Setting the CSS "border" property alone doesn't  
-//	suppress it.) 
+//	1) Need to set the "frameBorder" property to 0 to suppress the default
+//	<iframe> border in IE.  (Setting the CSS "border" property alone doesn't
+//	suppress it.)
 //
-//	2) The "src" attribute of the <iframe> is set to "javascript:false;" so 
-//	that it won't load a page inside it, preventing the secure/nonsecure 
+//	2) The "src" attribute of the <iframe> is set to "javascript:false;" so
+//	that it won't load a page inside it, preventing the secure/nonsecure
 //	warning in IE when using HTTPS.
 //
-//	3) Since the role of the <iframe> shim is completely presentational, its 
-//	"tabindex" attribute is set to "-1" and its title attribute is set to 
-//	"Menu Stacking Shim".  Both strategies help users of screen readers to 
+//	3) Since the role of the <iframe> shim is completely presentational, its
+//	"tabindex" attribute is set to "-1" and its title attribute is set to
+//	"Menu Stacking Shim".  Both strategies help users of screen readers to
 //	avoid mistakenly interacting with the <iframe> shim.
 
-NodeMenuNav.SHIM_TEMPLATE = '<iframe frameborder="0" tabindex="-1" class="' + 
-							getClassName("shim") + 
-							'" title="' + NodeMenuNav.SHIM_TEMPLATE_TITLE + 
+NodeMenuNav.SHIM_TEMPLATE = '<iframe frameborder="0" tabindex="-1" class="' +
+							getClassName("shim") +
+							'" title="' + NodeMenuNav.SHIM_TEMPLATE_TITLE +
 							'" src="javascript:false;"></iframe>';
 
 
 NodeMenuNav.ATTRS = {
 
 	/**
-	* Boolean indicating if use of the WAI-ARIA Roles and States should be 
+	* Boolean indicating if use of the WAI-ARIA Roles and States should be
 	* enabled for the menu.
 	*
 	* @attribute useARIA
 	* @readOnly
-	* @writeOnce	
+	* @writeOnce
 	* @default true
 	* @type boolean
 	*/
 	useARIA: {
-		
+
 		value: true,
 		writeOnce: true,
 		lazyAdd: false,
@@ -470,88 +474,88 @@ NodeMenuNav.ATTRS = {
 
 						oSubmenu.set("aria-labelledby", sID);
 						oSubmenu.set(ARIA_HIDDEN, true);
-						
+
 					}
 
 				});
-				
+
 			}
 
 		}
-		
+
 	},
 
 
 	/**
-	* Boolean indicating if submenus are automatically made visible when the 
+	* Boolean indicating if submenus are automatically made visible when the
 	* user mouses over the menu's items.
 	*
 	* @attribute autoSubmenuDisplay
 	* @readOnly
-	* @writeOnce	
+	* @writeOnce
 	* @default true
 	* @type boolean
-	*/	
+	*/
 	autoSubmenuDisplay: {
-		
+
 		value: true,
 		writeOnce: true
-		
+
 	},
 
 
 	/**
-	* Number indicating the time (in milliseconds) that should expire before a 
+	* Number indicating the time (in milliseconds) that should expire before a
 	* submenu is made visible when the user mouses over the menu's label.
 	*
 	* @attribute submenuShowDelay
 	* @readOnly
-	* @writeOnce	
+	* @writeOnce
 	* @default 250
 	* @type Number
 	*/
 	submenuShowDelay: {
-		
+
 		value: 250,
 		writeOnce: true
-		
+
 	},
 
 
 	/**
-	* Number indicating the time (in milliseconds) that should expire before a 
-	* submenu is hidden when the user mouses out of a menu label heading in the 
-	* direction of a submenu.  
+	* Number indicating the time (in milliseconds) that should expire before a
+	* submenu is hidden when the user mouses out of a menu label heading in the
+	* direction of a submenu.
 	*
 	* @attribute submenuHideDelay
 	* @readOnly
-	* @writeOnce	
+	* @writeOnce
 	* @default 250
 	* @type Number
 	*/
 	submenuHideDelay: {
-		
+
 		value: 250,
 		writeOnce: true
-		
+
 	},
 
 
 	/**
-	* Number indicating the time (in milliseconds) that should expire before a 
+	* Number indicating the time (in milliseconds) that should expire before a
 	* submenu is hidden when the user mouses out of it.
-	* 
+	*
 	* @attribute mouseOutHideDelay
 	* @readOnly
-	* @writeOnce	
+	* @writeOnce
 	* @default 750
 	* @type Number
-	*/	
+	*/
 	mouseOutHideDelay: {
-		
+
 		value: 750,
 		writeOnce: true
-		
+
 	}
 
 };
@@ -561,30 +565,30 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	//	Protected properties
 
-	/** 
+	/**
 	* @property _rootMenu
 	* @description Node instance representing the root menu in the menu.
 	* @default null
 	* @protected
 	* @type Node
 	*/
-	_rootMenu: null,	
+	_rootMenu: null,
 
 
-	/** 
+	/**
 	* @property _activeItem
-	* @description Node instance representing the menu's active descendent: 
+	* @description Node instance representing the menu's active descendent:
 	* the menuitem or menu label the user is currently interacting with.
 	* @default null
 	* @protected
 	* @type Node
 	*/
-	_activeItem: null, 
+	_activeItem: null,
 
 
-	/** 
+	/**
 	* @property _activeMenu
-	* @description Node instance representing the menu that is the parent of 
+	* @description Node instance representing the menu that is the parent of
 	* the menu's active descendent.
 	* @default null
 	* @protected
@@ -593,7 +597,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_activeMenu: null,
 
 
-	/** 
+	/**
 	* @property _hasFocus
 	* @description Boolean indicating if the menu has focus.
 	* @default false
@@ -603,17 +607,17 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_hasFocus: false,
 
 
-	//	In gecko-based browsers a mouseover and mouseout event will fire even 
-	//	if a DOM element moves out from under the mouse without the user 
-	//	actually moving the mouse.  This bug affects NodeMenuNav because the  
-	//	user can hit the Esc key to hide a menu, and if the mouse is over the  
-	//	menu when the user presses Esc, the _onMenuMouseOut handler will be 
-	//	called.  To fix this bug the following flag (_blockMouseEvent) is used 
+	//	In gecko-based browsers a mouseover and mouseout event will fire even
+	//	if a DOM element moves out from under the mouse without the user
+	//	actually moving the mouse.  This bug affects NodeMenuNav because the
+	//	user can hit the Esc key to hide a menu, and if the mouse is over the
+	//	menu when the user presses Esc, the _onMenuMouseOut handler will be
+	//	called.  To fix this bug the following flag (_blockMouseEvent) is used
 	// to block the code in the _onMenuMouseOut handler from executing.
 
-	/** 
+	/**
 	* @property _blockMouseEvent
-	* @description Boolean indicating whether or not to handle the 
+	* @description Boolean indicating whether or not to handle the
 	* "mouseover" event.
 	* @default false
 	* @protected
@@ -622,9 +626,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_blockMouseEvent: false,
 
 
-	/** 
+	/**
 	* @property _currentMouseX
-	* @description Number representing the current x coordinate of the mouse 
+	* @description Number representing the current x coordinate of the mouse
 	* inside the menu.
 	* @default 0
 	* @protected
@@ -633,9 +637,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_currentMouseX: 0,
 
 
-	/** 
+	/**
 	* @property _movingToSubmenu
-	* @description Boolean indicating if the mouse is moving from a menu 
+	* @description Boolean indicating if the mouse is moving from a menu
 	* label to its corresponding submenu.
 	* @default false
 	* @protected
@@ -644,7 +648,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_movingToSubmenu: false,
 
 
-	/** 
+	/**
 	* @property _showSubmenuTimer
 	* @description Timer used to show a submenu.
 	* @default null
@@ -654,7 +658,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_showSubmenuTimer: null,
 
 
-	/** 
+	/**
 	* @property _hideSubmenuTimer
 	* @description Timer used to hide a submenu.
 	* @default null
@@ -664,7 +668,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_hideSubmenuTimer: null,
 
 
-	/** 
+	/**
 	* @property _hideAllSubmenusTimer
 	* @description Timer used to hide a all submenus.
 	* @default null
@@ -674,9 +678,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_hideAllSubmenusTimer: null,
 
 
-	/** 
+	/**
 	* @property _firstItem
-	* @description Node instance representing the first item (menuitem or menu 
+	* @description Node instance representing the first item (menuitem or menu
 	* label) in the root menu of a menu.
 	* @default null
 	* @protected
@@ -695,6 +699,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			aHandlers = [],
 			oDoc;
 
+		Y.log("WARNING: Node-MenuNav is a deprecated module as of YUI 3.9.0. This module will be removed from a later version of the library.", "warn");
 
 		if (oRootMenu) {
 
@@ -728,7 +733,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			menuNav._initFocusManager();
 
 		}
-		
+
 
     },
 
@@ -745,9 +750,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			this._eventHandlers = null;
 
 		}
-		
+
 		this.get(HOST).unplug("focusManager");
-		
+
     },
 
 
@@ -756,11 +761,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _isRoot
-	* @description Returns a boolean indicating if the specified menu is the 
+	* @description Returns a boolean indicating if the specified menu is the
 	* root menu in the menu.
 	* @protected
 	* @param {Node} menu Node instance representing a menu.
-	* @return {Boolean} Boolean indicating if the specified menu is the root 
+	* @return {Boolean} Boolean indicating if the specified menu is the root
 	* menu in the menu.
 	*/
 	_isRoot: function (menu) {
@@ -778,7 +783,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	* @return {Node} Node instance representing a menu.
 	*/
 	_getTopmostSubmenu: function (menu) {
-	
+
 		var menuNav = this,
 			oMenu = getParentMenu(menu),
 			returnVal;
@@ -793,9 +798,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		else {
 			returnVal = menuNav._getTopmostSubmenu(oMenu);
 		}
-	
+
 		return returnVal;
-	
+
 	},
 
 
@@ -808,19 +813,19 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		var menuNav = this,
 			oActiveItem = menuNav._activeItem;
-		
+
 		if (oActiveItem) {
 			oActiveItem.removeClass(getActiveClass(oActiveItem));
 		}
 
 		menuNav._activeItem = null;
-	
+
 	},
 
 
 	/**
 	* @method _setActiveItem
-	* @description Sets the specified menuitem or menu label as the menu's 
+	* @description Sets the specified menuitem or menu label as the menu's
 	* active descendent.
 	* @protected
 	* @param {Node} item Node instance representing a menuitem or menu label.
@@ -828,17 +833,17 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_setActiveItem: function (item) {
 
 		var menuNav = this;
-	
+
 		if (item) {
-			
+
 			menuNav._clearActiveItem();
-	
+
 			item.addClass(getActiveClass(item));
-			
+
 			menuNav._activeItem = item;
-		
+
 		}
-	
+
 	},
 
 
@@ -849,11 +854,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	* @param {Node} item Node instance representing a menuitem or menu label.
 	*/
 	_focusItem: function (item) {
-	
+
 		var menuNav = this,
 			oMenu,
 			oItem;
-	
+
 		if (item && menuNav._hasFocus) {
 
 			oMenu = getParentMenu(item);
@@ -863,11 +868,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				menuNav._activeMenu = oMenu;
 				menuNav._initFocusManager();
 			}
-		
+
 			menuNav._focusManager.focus(oItem);
 
 		}
-	
+
 	},
 
 
@@ -895,13 +900,13 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		else {
 			aXY[0] = aXY[0] + oLI.get(OFFSET_WIDTH);
 		}
-		
+
 		menu.setXY(aXY);
 
-		if (UA.ie < 8) {
+		if (UA.ie && UA.ie < 8) {
 
 			if (UA.ie === 6 && !menu.hasIFrameShim) {
-	
+
 				menu.appendChild(Y.Node.create(NodeMenuNav.SHIM_TEMPLATE));
 				menu.hasIFrameShim = true;
 
@@ -911,16 +916,16 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			menu.setStyles({ height: EMPTY_STRING, width: EMPTY_STRING });
 
-			//	Set the width and height of the menu's bounding box - this is 
-			//	necessary for IE 6 so that the CSS for the <iframe> shim can 
-			//	simply set the <iframe>'s width and height to 100% to ensure 
-			//	that dimensions of an <iframe> shim are always sync'd to the 
-			//	that of its parent menu.  Specifying a width and height also 
-			//	helps when positioning decorator elements (for creating effects 
+			//	Set the width and height of the menu's bounding box - this is
+			//	necessary for IE 6 so that the CSS for the <iframe> shim can
+			//	simply set the <iframe>'s width and height to 100% to ensure
+			//	that dimensions of an <iframe> shim are always sync'd to the
+			//	that of its parent menu.  Specifying a width and height also
+			//	helps when positioning decorator elements (for creating effects
 			//	like rounded corners) inside a menu's bounding box in IE 7.
-			
-			menu.setStyles({ 
-				height: (menu.get(OFFSET_HEIGHT) + PX), 
+
+			menu.setStyles({
+				height: (menu.get(OFFSET_HEIGHT) + PX),
 				width: (menu.get(OFFSET_WIDTH) + PX) });
 
 		}
@@ -929,15 +934,15 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		menu.removeClass(CSS_MENU_HIDDEN);
 
 	},
-	
+
 
 	/**
-	* @method _hideMenu 
+	* @method _hideMenu
 	* @description Hides the specified menu.
 	* @protected
 	* @param {Node} menu Node instance representing a menu.
-	* @param {Boolean} activateAndFocusLabel Boolean indicating if the label 
-	* for the specified 
+	* @param {Boolean} activateAndFocusLabel Boolean indicating if the label
+	* for the specified
 	* menu should be focused and set as active.
 	*/
 	_hideMenu: function (menu, activateAndFocusLabel) {
@@ -951,7 +956,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		if (activateAndFocusLabel) {
 			menuNav._focusItem(oLabel);
-			menuNav._setActiveItem(oLabel);			
+			menuNav._setActiveItem(oLabel);
 		}
 
 		oActiveItem = menu.one((PERIOD + CSS_MENUITEM_ACTIVE));
@@ -960,18 +965,18 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oActiveItem.removeClass(CSS_MENUITEM_ACTIVE);
 		}
 
-		//	Clear the values for top and left that were set by the call to 
-		//	"setXY" when the menu was shown so that the hidden position 
+		//	Clear the values for top and left that were set by the call to
+		//	"setXY" when the menu was shown so that the hidden position
 		//	specified in the core CSS file will take affect.
 
 		menu.setStyles({ left: EMPTY_STRING, top: EMPTY_STRING });
-		
+
 		menu.addClass(CSS_MENU_HIDDEN);
 
 		if (menuNav.get(USE_ARIA)) {
 			menu.set(ARIA_HIDDEN, true);
-		}	
-		
+		}
+
 	},
 
 
@@ -986,11 +991,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		var menuNav = this;
 
 		menu.all(MENU_SELECTOR).each(Y.bind(function (submenuNode) {
-		
+
 			menuNav._hideMenu(submenuNode);
-		
+
 		}, menuNav));
-	
+
 	},
 
 
@@ -1008,7 +1013,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oShowSubmenuTimer.cancel();
 			menuNav._showSubmenuTimer = null;
 		}
-	
+
 	},
 
 
@@ -1027,13 +1032,13 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oHideSubmenuTimer.cancel();
 			menuNav._hideSubmenuTimer = null;
 		}
-	
+
 	},
 
 
 	/**
 	* @method _initFocusManager
-	* @description Initializes and updates the Focus Manager so that is is 
+	* @description Initializes and updates the Focus Manager so that is is
 	* always managing descendants of the active menu.
 	* @protected
 	*/
@@ -1042,7 +1047,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		var menuNav = this,
 			oRootMenu = menuNav._rootMenu,
 			oMenu = menuNav._activeMenu || oRootMenu,
-			sSelectorBase = 
+			sSelectorBase =
 				menuNav._isRoot(oMenu) ? EMPTY_STRING : ("#" + oMenu.get("id")),
 			oFocusManager = menuNav._focusManager,
 			sKeysVal,
@@ -1051,11 +1056,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		if (isHorizontalMenu(oMenu)) {
 
-			sDescendantSelector = sSelectorBase + STANDARD_QUERY + "," + 
+			sDescendantSelector = sSelectorBase + STANDARD_QUERY + "," +
 				sSelectorBase + EXTENDED_QUERY;
-			
+
 			sKeysVal = { next: "down:39", previous: "down:37" };
-			
+
 		}
 		else {
 
@@ -1067,7 +1072,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		if (!oFocusManager) {
 
-			oRootMenu.plug(Y.Plugin.NodeFocusManager, { 
+			oRootMenu.plug(Y.Plugin.NodeFocusManager, {
 				descendants: sDescendantSelector,
 				keys: sKeysVal,
 				circular: true
@@ -1075,26 +1080,26 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oFocusManager = oRootMenu.focusManager;
 
-			sQuery = "#" + oRootMenu.get("id") + MENU_SELECTOR + " a," + 
+			sQuery = "#" + oRootMenu.get("id") + MENU_SELECTOR + " a," +
 							MENU_TOGGLE_SELECTOR;
 
 			oRootMenu.all(sQuery).set("tabIndex", -1);
 
-			oFocusManager.on(ACTIVE_DESCENDANT_CHANGE, 
+			oFocusManager.on(ACTIVE_DESCENDANT_CHANGE,
 				this._onActiveDescendantChange, oFocusManager, this);
 
-			oFocusManager.after(ACTIVE_DESCENDANT_CHANGE, 
+			oFocusManager.after(ACTIVE_DESCENDANT_CHANGE,
 				this._afterActiveDescendantChange, oFocusManager, this);
-			
+
 			menuNav._focusManager = oFocusManager;
-			
+
 		}
 		else {
 
 			oFocusManager.set(ACTIVE_DESCENDANT, -1);
 			oFocusManager.set(DESCENDANTS, sDescendantSelector);
 			oFocusManager.set("keys", sKeysVal);
-			
+
 		}
 
 	},
@@ -1105,7 +1110,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onActiveDescendantChange
-	* @description "activeDescendantChange" event handler for menu's 
+	* @description "activeDescendantChange" event handler for menu's
 	* Focus Manager.
 	* @protected
 	* @param {Object} event Object representing the Attribute change event.
@@ -1113,19 +1118,19 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	*/
 	_onActiveDescendantChange: function (event, menuNav) {
 
-		if (event.src === UI && menuNav._activeMenu && 
+		if (event.src === UI && menuNav._activeMenu &&
 				!menuNav._movingToSubmenu) {
 
 			menuNav._hideAllSubmenus(menuNav._activeMenu);
 
 		}
-		
+
 	},
 
 
 	/**
 	* @method _afterActiveDescendantChange
-	* @description "activeDescendantChange" event handler for menu's 
+	* @description "activeDescendantChange" event handler for menu's
 	* Focus Manager.
 	* @protected
 	* @param {Object} event Object representing the Attribute change event.
@@ -1139,7 +1144,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oItem = getItem(this.get(DESCENDANTS).item(event.newVal), true);
 			menuNav._setActiveItem(oItem);
 		}
-	
+
 	},
 
 
@@ -1150,50 +1155,50 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	* @param {Object} event Object representing the DOM event.
 	*/
 	_onDocFocus: function (event) {
-	
+
 		var menuNav = this,
 			oActiveItem = menuNav._activeItem,
 			oTarget = event.target,
 			oMenu;
-	
+
 
 		if (menuNav._rootMenu.contains(oTarget)) {	//	The menu has focus
 
-			if (menuNav._hasFocus) {	
+			if (menuNav._hasFocus) {
 
 				oMenu = getParentMenu(oTarget);
 
-				//	If the element that was focused is a descendant of the 
-				//	root menu, but is in a submenu not currently being 
-				//	managed by the Focus Manager, update the Focus Manager so 
-				//	that it is now managing the submenu that is the parent of  
+				//	If the element that was focused is a descendant of the
+				//	root menu, but is in a submenu not currently being
+				//	managed by the Focus Manager, update the Focus Manager so
+				//	that it is now managing the submenu that is the parent of
 				//	the element that was focused.
-				
+
 				if (!menuNav._activeMenu.compareTo(oMenu)) {
 
 					menuNav._activeMenu = oMenu;
 					menuNav._initFocusManager();
 					menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
 					menuNav._setActiveItem(getItem(oTarget, true));
-					
+
 				}
-			
+
 			}
 			else { //	Initial focus
 
-				//	First time the menu has been focused, need to setup focused 
+				//	First time the menu has been focused, need to setup focused
 				//	state and established active active descendant
-	
+
 				menuNav._hasFocus = true;
-	
+
 				oActiveItem = getItem(oTarget, true);
-	
-				if (oActiveItem) {	
+
+				if (oActiveItem) {
 					menuNav._setActiveItem(oActiveItem);
 				}
-				
+
 			}
-		
+
 		}
 		else {	//	The menu has lost focus
 
@@ -1204,13 +1209,13 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			menuNav._activeMenu = menuNav._rootMenu;
 			menuNav._initFocusManager();
-			
+
 			menuNav._focusManager.set(ACTIVE_DESCENDANT, 0);
-			
+
 			menuNav._hasFocus = false;
 
 		}
-	
+
 	},
 
 
@@ -1233,10 +1238,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		menuNav._cancelHideSubmenuTimer();
 
-		//	Need to update the FocusManager in advance of focus a new 
-		//	Menu in order to avoid the FocusManager thinking that 
+		//	Need to update the FocusManager in advance of focus a new
+		//	Menu in order to avoid the FocusManager thinking that
 		//	it has lost focus
-		
+
 		if (menu && !menu.compareTo(menuNav._activeMenu)) {
 			menuNav._activeMenu = menu;
 
@@ -1255,7 +1260,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _hideAndFocusLabel
-	* @description Hides all of the submenus of the root menu and focuses the 
+	* @description Hides all of the submenus of the root menu and focuses the
 	* label of the topmost submenu
 	* @protected
 	*/
@@ -1264,7 +1269,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		var	menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			oSubmenu;
-	
+
 		menuNav._hideAllSubmenus(menuNav._rootMenu);
 
 		if (oActiveMenu) {
@@ -1274,7 +1279,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			menuNav._focusItem(oSubmenu.previous());
 
 		}
-	
+
 	},
 
 
@@ -1296,9 +1301,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 
 		if (oActiveMenu && !oActiveMenu.contains(oRelatedTarget)) {
-		
+
 			oParentMenu = getParentMenu(oActiveMenu);
-			
+
 
 			if (oParentMenu && !oParentMenu.contains(oRelatedTarget)) {
 
@@ -1306,26 +1311,26 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 					menuNav._cancelShowSubmenuTimer();
 
-					menuNav._hideAllSubmenusTimer = 
+					menuNav._hideAllSubmenusTimer =
 
-						later(menuNav.get(MOUSEOUT_HIDE_DELAY), 
+						later(menuNav.get(MOUSEOUT_HIDE_DELAY),
 							menuNav, menuNav._hideAndFocusLabel);
-						
+
 				}
-			
+
 			}
 			else {
-			
+
 				if (oActiveItem) {
-				
+
 					oMenu = getParentMenu(oActiveItem);
 
-					if (!menuNav._isRoot(oMenu)) { 
+					if (!menuNav._isRoot(oMenu)) {
 						menuNav._focusItem(oMenu.previous());
 					}
-				
+
 				}
-			
+
 			}
 
 		}
@@ -1345,11 +1350,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			bIsRoot = menuNav._isRoot(oActiveMenu),
-			bUseAutoSubmenuDisplay = 
+			bUseAutoSubmenuDisplay =
 				(menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot),
-            submenuShowDelay = menuNav.get("submenuShowDelay"),	
+            submenuShowDelay = menuNav.get("submenuShowDelay"),
 			oSubmenu;
-				
+
 
         var showSubmenu = function (delay) {
 
@@ -1366,7 +1371,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				}
 
 			}
-            
+
         };
 
 
@@ -1375,27 +1380,27 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 
 		if (bUseAutoSubmenuDisplay) {
-	
+
 	        if (menuNav._movingToSubmenu) {
-	            
-	            //  If the user is moving diagonally from a submenu to 
+
+	            //  If the user is moving diagonally from a submenu to
 	            //  another submenu and they then stop and pause on a
-	            //  menu label for an amount of time equal to the amount of 
-	            //  time defined for the display of a submenu then show the 
+	            //  menu label for an amount of time equal to the amount of
+	            //  time defined for the display of a submenu then show the
 	            //  submenu immediately.
 	            //  http://yuilibrary.com/projects/yui3/ticket/2528316
-	            
+
 	            //Y.message("Pause path");
-	            
+
 	            menuNav._hoverTimer = later(submenuShowDelay, menuNav, function () {
                     showSubmenu(0);
 	            });
-	            
+
 	        }
 	        else {
                 showSubmenu(submenuShowDelay);
 	        }
-		
+
 		}
 
 	},
@@ -1412,7 +1417,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		var menuNav = this,
 			bIsRoot = menuNav._isRoot(menuNav._activeMenu),
-			bUseAutoSubmenuDisplay = 
+			bUseAutoSubmenuDisplay =
 				(menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot),
 
 			oRelatedTarget = event.relatedTarget,
@@ -1427,26 +1432,26 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		if (bUseAutoSubmenuDisplay) {
 
-			if (menuNav._movingToSubmenu && 
+			if (menuNav._movingToSubmenu &&
 					!menuNav._showSubmenuTimer && oSubmenu) {
 
-				//	If the mouse is moving diagonally toward the submenu and 
-				//	another submenu isn't in the process of being displayed 
+				//	If the mouse is moving diagonally toward the submenu and
+				//	another submenu isn't in the process of being displayed
 				//	(via a timer), then hide the submenu via a timer to give
 				//	the user some time to reach the submenu.
-			
-				menuNav._hideSubmenuTimer = 
-					later(menuNav.get("submenuHideDelay"), menuNav, 
+
+				menuNav._hideSubmenuTimer =
+					later(menuNav.get("submenuHideDelay"), menuNav,
 						menuNav._hideMenu, oSubmenu);
-			
+
 			}
-			else if (!menuNav._movingToSubmenu && oSubmenu && (!oRelatedTarget || 
-			        (oRelatedTarget && 
-			            !oSubmenu.contains(oRelatedTarget) && 
+			else if (!menuNav._movingToSubmenu && oSubmenu && (!oRelatedTarget ||
+			        (oRelatedTarget &&
+			            !oSubmenu.contains(oRelatedTarget) &&
 			            !oRelatedTarget.compareTo(oSubmenu)))) {
 
-				//	If the mouse is not moving toward the submenu, cancel any 
-				//	submenus that might be in the process of being displayed 
+				//	If the mouse is not moving toward the submenu, cancel any
+				//	submenus that might be in the process of being displayed
 				//	(via a timer) and hide this submenu immediately.
 
 				menuNav._cancelShowSubmenuTimer();
@@ -1458,7 +1463,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		}
 
 	},
-	
+
 
 	/**
 	* @method _onMenuItemMouseOver
@@ -1472,7 +1477,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			bIsRoot = menuNav._isRoot(oActiveMenu),
-			bUseAutoSubmenuDisplay = 
+			bUseAutoSubmenuDisplay =
 				(menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot);
 
 
@@ -1487,7 +1492,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		}
 
 	},
-	
+
 
 	/**
 	* @method _onMenuItemMouseOut
@@ -1530,17 +1535,17 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				oParentMenu = getParentMenu(oActiveMenu);
 
 				if (oParentMenu && isHorizontalMenu(oParentMenu)) {
-				
+
 					menuNav._hideMenu(oActiveMenu);
 					oLI = getPreviousSibling(oActiveMenu.get(PARENT_NODE));
 					oItem = getItem(oLI);
-					
+
 					if (oItem) {
 
 						if (isMenuLabel(oItem)) {	//	Menu label
-						
+
 							oSubmenu = oItem.next();
-						
+
 
 							if (oSubmenu) {
 
@@ -1550,12 +1555,12 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 							}
 							else {
-	
+
 								menuNav._focusItem(oItem);
 								menuNav._setActiveItem(oItem);
-	
+
 							}
-						
+
 						}
 						else {	//	MenuItem
 
@@ -1563,7 +1568,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 							menuNav._setActiveItem(oItem);
 
 						}
-					
+
 					}
 
 				}
@@ -1579,7 +1584,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			case 39:	//	right arrow
 
 				if (isMenuLabel(oTarget)) {
-					
+
 					oSubmenu = oTarget.next();
 
 					if (oSubmenu) {
@@ -1589,7 +1594,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 						menuNav._setActiveItem(getFirstItem(oSubmenu));
 
 					}
-				
+
 				}
 				else if (isHorizontalMenu(oRootMenu)) {
 
@@ -1615,39 +1620,39 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 							else {
 
 								menuNav._focusItem(oItem);
-								menuNav._setActiveItem(oItem);	
+								menuNav._setActiveItem(oItem);
 
 							}
-						
+
 						}
 						else {	//	MenuItem
 
 							menuNav._focusItem(oItem);
 							menuNav._setActiveItem(oItem);
 
-						}							
+						}
 
 					}
-				
+
 				}
 
 				bPreventDefault = true;
 
 			break;
 
-		}	
+		}
 
 
 		if (bPreventDefault) {
 
 			//	Prevent the browser from scrolling the window
 
-			event.preventDefault();			
+			event.preventDefault();
 
 		}
-	
+
 	},
-	
+
 
 	/**
 	* @method _onHorizontalMenuKeyDown
@@ -1671,7 +1676,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			menuNav._hideAllSubmenus(oActiveMenu);
 
 			if (isMenuLabel(oFocusedItem)) {
-			
+
 				oSubmenu = oFocusedItem.next();
 
 				if (oSubmenu) {
@@ -1683,20 +1688,20 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				}
 
 				bPreventDefault = true;
-			
+
 			}
 
-		}		
+		}
 
 
 		if (bPreventDefault) {
 
 			//	Prevent the browser from scrolling the window
 
-			event.preventDefault();			
+			event.preventDefault();
 
 		}
-	
+
 	},
 
 
@@ -1713,16 +1718,16 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		var menuNav = this;
 
-		//	Using a timer to set the value of the "_currentMouseX" property 
-		//	helps improve the reliability of the calculation used to set the 
+		//	Using a timer to set the value of the "_currentMouseX" property
+		//	helps improve the reliability of the calculation used to set the
 		//	value of the "_movingToSubmenu" property - especially in Opera.
 
 		later(10, menuNav, function () {
 
 			menuNav._currentMouseX = event.pageX;
-		
+
 		});
-	
+
 	},
 
 
@@ -1766,9 +1771,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 					oParentMenu[HANDLED_MOUSEOUT] = true;
 					oParentMenu[HANDLED_MOUSEOVER] = false;
-		
+
 				}
-			
+
 			}
 
 			if (handleMouseOverForNode(oMenuLabel, oTarget)) {
@@ -1777,16 +1782,16 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 				oMenuLabel[HANDLED_MOUSEOVER] = true;
 				oMenuLabel[HANDLED_MOUSEOUT] = false;
-	
+
 			}
 
 			if (handleMouseOverForNode(oMenuItem, oTarget)) {
-	
+
 				menuNav._onMenuItemMouseOver(oMenuItem, event);
 
 				oMenuItem[HANDLED_MOUSEOVER] = true;
 				oMenuItem[HANDLED_MOUSEOUT] = false;
-				
+
 			}
 
 		}
@@ -1801,7 +1806,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	* @param {Object} event Object representing the DOM event.
 	*/
 	_onMouseOut: function (event) {
-			
+
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			bMovingToSubmenu = false,
@@ -1813,10 +1818,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oMenuItem;
 
 
-		menuNav._movingToSubmenu = 
-					(oActiveMenu && !isHorizontalMenu(oActiveMenu) && 
+		menuNav._movingToSubmenu =
+					(oActiveMenu && !isHorizontalMenu(oActiveMenu) &&
 						((event.pageX - 5) > menuNav._currentMouseX));
-		
+
 		oTarget = event.target;
 		oRelatedTarget = event.relatedTarget;
 		oMenu = getMenu(oTarget, true);
@@ -1839,7 +1844,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oMenuItem[HANDLED_MOUSEOUT] = true;
 			oMenuItem[HANDLED_MOUSEOVER] = false;
-			
+
 		}
 
 
@@ -1847,32 +1852,32 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oSubmenu = oMenuLabel.next();
 
-			if (oSubmenu && oRelatedTarget && 
-				(oRelatedTarget.compareTo(oSubmenu) || 
+			if (oSubmenu && oRelatedTarget &&
+				(oRelatedTarget.compareTo(oSubmenu) ||
 					oSubmenu.contains(oRelatedTarget))) {
 
 				bMovingToSubmenu = true;
 
 			}
-		
+
 		}
-		
+
 
 		if (handleMouseOutForNode(oMenu, oRelatedTarget) || bMovingToSubmenu) {
 
-			menuNav._onMenuMouseOut(oMenu, event);				
+			menuNav._onMenuMouseOut(oMenu, event);
 
 			oMenu[HANDLED_MOUSEOUT] = true;
 			oMenu[HANDLED_MOUSEOVER] = false;
-		
+
 		}
-	
+
 	},
 
 
 	/**
 	* @method _toggleSubmenuDisplay
-	* @description "mousedown," "keydown," and "click" event handler for the 
+	* @description "mousedown," "keydown," and "click" event handler for the
 	* menu used to toggle the display of a submenu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
@@ -1894,12 +1899,12 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		if (oMenuLabel) {
 
 			oAnchor = isAnchor(oTarget) ? oTarget : oTarget.ancestor(isAnchor);
-			
+
 
 			if (oAnchor) {
 
-				//	Need to pass "2" as a second argument to "getAttribute" for 
-				//	IE otherwise IE will return a fully qualified URL for the 
+				//	Need to pass "2" as a second argument to "getAttribute" for
+				//	IE otherwise IE will return a fully qualified URL for the
 				//	value of the "href" attribute.
 				//	http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
 
@@ -1915,10 +1920,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 					if (oSubmenu && (oSubmenu.get(ID) === sId)) {
 
 						if (sType === MOUSEDOWN || sType === KEYDOWN) {
-							
+
 							if ((UA.opera || UA.gecko || UA.ie) && sType === KEYDOWN && !menuNav._preventClickHandle) {
 
-								//	Prevent the browser from following the URL of 
+								//	Prevent the browser from following the URL of
 								//	the anchor element
 
 								menuNav._preventClickHandle = menuNav._rootMenu.on("click", function (event) {
@@ -1931,67 +1936,67 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 								});
 
 							}
-							
+
 							if (sType == MOUSEDOWN) {
 
-								//	Prevent the target from getting focused by 
+								//	Prevent the target from getting focused by
 								//	default, since the element to be focused will
 								//	be determined by weather or not the submenu
 								//	is visible.
 								event.preventDefault();
 
-								//	FocusManager will attempt to focus any 
+								//	FocusManager will attempt to focus any
 								//	descendant that is the target of the mousedown
-								//	event.  Since we want to explicitly control 
-	 							//	where focus is going, we need to call 
-								//	"stopImmediatePropagation" to stop the 
+								//	event.  Since we want to explicitly control
+	 							//	where focus is going, we need to call
+								//	"stopImmediatePropagation" to stop the
 								//	FocusManager from doing its thing.
-								event.stopImmediatePropagation();	
+								event.stopImmediatePropagation();
 
-								//	The "_focusItem" method relies on the 
+								//	The "_focusItem" method relies on the
 								//	"_hasFocus" property being set to true.  The
-								//	"_hasFocus" property is normally set via a 
-								//	"focus" event listener, but since we've 
-								//	blocked focus from happening, we need to set 
+								//	"_hasFocus" property is normally set via a
+								//	"focus" event listener, but since we've
+								//	blocked focus from happening, we need to set
 								//	this property manually.
 								menuNav._hasFocus = true;
 
 							}
 
-								
+
 							if (menuNav._isRoot(getParentMenu(oTarget))) {	//	Event target is a submenu label in the root menu
-							
+
 								//	Menu label toggle functionality
-							
+
 								if (hasVisibleSubmenu(oMenuLabel)) {
-							
+
 									menuNav._hideMenu(oSubmenu);
-									menuNav._focusItem(oMenuLabel);	
+									menuNav._focusItem(oMenuLabel);
 									menuNav._setActiveItem(oMenuLabel);
-									
+
 								}
 								else {
-							
+
 									menuNav._hideAllSubmenus(menuNav._rootMenu);
 									menuNav._showMenu(oSubmenu);
 
 									menuNav._focusItem(getFirstItem(oSubmenu));
 									menuNav._setActiveItem(getFirstItem(oSubmenu));
-									
+
 								}
-							
+
 							}
 							else {	//	Event target is a submenu label within a submenu
-							
+
 								if (menuNav._activeItem == oMenuLabel) {
-							
+
 									menuNav._showMenu(oSubmenu);
 									menuNav._focusItem(getFirstItem(oSubmenu));
-									menuNav._setActiveItem(getFirstItem(oSubmenu));										
-							
+									menuNav._setActiveItem(getFirstItem(oSubmenu));
+
 								}
 								else {
-							
+
 									if (!oMenuLabel._clickHandle) {
 
 										oMenuLabel._clickHandle = oMenuLabel.on("click", function () {
@@ -2003,40 +2008,40 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 
 											oMenuLabel._clickHandle.detach();
-											
+
 											oMenuLabel._clickHandle = null;
 
 										});
-										
+
 									}
-									
+
 								}
-								
+
 							}
 
 						}
 
 
 						if (sType === CLICK) {
-						
-							//	Prevent the browser from following the URL of 
+
+							//	Prevent the browser from following the URL of
 							//	the anchor element
-							
+
 							event.preventDefault();
-						
+
 						}
-					
+
 					}
-				
-				}				
+
+				}
 
 
 			}
-		
+
 		}
-	
+
 	},
-	
+
 
 	/**
 	* @method _onKeyPress
@@ -2045,7 +2050,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	* @param {Object} event Object representing the DOM event.
 	*/
 	_onKeyPress: function (event) {
-	
+
 		switch (event.keyCode) {
 
 			case 37:	//	left arrow
@@ -2059,9 +2064,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			break;
 
-		}						
+		}
 
-	},	
+	},
 
 
 	/**
@@ -2097,10 +2102,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 					if (UA.opera) {
 						later(0, menuNav, function () {
 							menuNav._hideMenu(oActiveMenu, true);
-						});						
+						});
 					}
 					else {
-						menuNav._hideMenu(oActiveMenu, true);						
+						menuNav._hideMenu(oActiveMenu, true);
 					}
 
 					event.stopPropagation();
@@ -2109,9 +2114,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				}
 				else if (oActiveItem) {
 
-					if (isMenuLabel(oActiveItem) && 
+					if (isMenuLabel(oActiveItem) &&
 							hasVisibleSubmenu(oActiveItem)) {
-					
+
 						oSubmenu = oActiveItem.next();
 
 						if (oSubmenu) {
@@ -2123,28 +2128,28 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 						menuNav._focusManager.blur();
 
-						//	This is necessary for Webkit since blurring the 
-						//	active menuitem won't result in the document 
-						//	gaining focus, meaning the that _onDocFocus 
+						//	This is necessary for Webkit since blurring the
+						//	active menuitem won't result in the document
+						//	gaining focus, meaning the that _onDocFocus
 						//	listener won't clear the active menuitem.
 
-						menuNav._clearActiveItem();	
-						
+						menuNav._clearActiveItem();
+
 						menuNav._hasFocus = false;
 
 					}
 
 				}
-			
+
 			}
-		
+
 		}
-	
+
 	},
-	
+
 	/**
 	* @method _onDocMouseDown
-	* @description "mousedown" event handler for the owner document of 
+	* @description "mousedown" event handler for the owner document of
 	* the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
@@ -2160,8 +2165,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			menuNav._hideAllSubmenus(oRoot);
 
-			//	Document doesn't receive focus in Webkit when the user mouses 
-			//	down on it, so the "_hasFocus" property won't get set to the 
+			//	Document doesn't receive focus in Webkit when the user mouses
+			//	down on it, so the "_hasFocus" property won't get set to the
 			//	correct value.  The following line corrects the problem.
 
 			if (UA.webkit) {
@@ -2172,7 +2177,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		}
 
 	}
-	
+
 });
 
 

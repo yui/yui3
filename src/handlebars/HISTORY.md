@@ -1,10 +1,111 @@
 Handlebars Change History
 =========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* Upgraded Handlebars.js to v1.0.12. See [Handlebars' release notes][v1.0.12].
+
+[v1.0.12]: https://github.com/wycats/handlebars.js/blob/master/release-notes.md#v1012--100---may-31-2013
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* Upgraded Handlebars.js to v1.0.11. See [Handlebars' release notes][v1.0.11].
+
+[v1.0.11]: https://github.com/wycats/handlebars.js/blob/master/release-notes.md#v1011
+
+
+3.10.1
+------
+
+* No changes.
+
+
+3.10.0
+------
+
+* Remove "BEGIN/END(BROWSER)" comments from imported Handlebars source.
+
+
+3.9.1
+-----
+
+* Upgraded Handlebars.js to v1.0.10 to fix regression with nested blocks.
+
+
+3.9.0
+-----
+
+* Upgraded Handlebars.js to 1.0.0-rc.3. [Issue #440]
+
+
+3.8.1
+-----
+
+* No changes.
+
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
+
 
 3.7.3
 -----

@@ -221,7 +221,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         any.
       @param {Boolean} [options.remove=false] If `true`, the model will be
         deleted via the sync layer in addition to the instance being destroyed.
-    @param {callback} [callback] Called after the model has been destroyed (and
+    @param {Function} [callback] Called after the model has been destroyed (and
         deleted via the sync layer if `options.remove` is `true`).
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. Otherwise _err_ will be `null`.
@@ -376,7 +376,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {Object} [options] Options to be passed to `sync()` and to `set()`
       when setting the loaded attributes. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         `null`.
@@ -594,7 +594,9 @@ Y.Model = Y.extend(Model, Y.Base, {
         var idAttribute = this.idAttribute,
             changed, e, key, lastChange, transaction;
 
-        options || (options = {});
+        // Makes a shallow copy of the `options` object before adding the
+        // `_transaction` object to it so we don't modify someone else's object.
+        options     = Y.merge(options);
         transaction = options._transaction = {};
 
         // When a custom id attribute is in use, always keep the default `id`
@@ -642,7 +644,9 @@ Y.Model = Y.extend(Model, Y.Base, {
                     });
                 }
 
-                this.fire(EVT_CHANGE, Y.merge(options, {changed: lastChange}));
+                options.changed = lastChange;
+
+                this.fire(EVT_CHANGE, options);
             }
         }
 
@@ -653,7 +657,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     Override this method to provide a custom persistence implementation for this
     model. The default just calls the callback without actually doing anything.
 
-    This method is called internally by `load()`, `save()`, and `destroy()`.
+    This method is called internally by `load()`, `save()`, and `destroy()`, and
+    their implementations rely on the callback being called. This effectively
+    means that when a callback is provided, it must be called at some point for
+    the class to operate correctly.
 
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
@@ -726,7 +733,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     it will simply do nothing.
 
     @method undo
-    @param {Array} [attrNames] Array of specific attribute names to revert. If
+    @param {String[]} [attrNames] Array of specific attribute names to revert. If
       not specified, all attributes modified in the last change will be
       reverted.
     @param {Object} [options] Data to be mixed into the event facade of the
@@ -914,31 +921,45 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
     },
 
-    // -- Protected Event Handlers ---------------------------------------------
+    // -- Private Methods ----------------------------------------------------
 
     /**
-    Duckpunches the `_defAttrChangeFn()` provided by `Y.Attribute` so we can
-    have a single global notification when a change event occurs.
+     Overrides AttributeCore's `_setAttrVal`, to register the changed value if it's part
+     of a Model `setAttrs` transaction.
 
-    @method _defAttrChangeFn
-    @param {EventFacade} e
-    @protected
-    **/
-    _defAttrChangeFn: function (e) {
-        var attrName = e.attrName;
+     NOTE: AttributeCore's `_setAttrVal` is currently private, but until we support coalesced
+     change events in attribute, we need this override.
 
-        if (!this._setAttrVal(attrName, e.subAttrName, e.prevVal, e.newVal)) {
-            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + attrName + ' , value:' + e.newVal, 'warn', 'attribute');
-            // Prevent "after" listeners from being invoked since nothing changed.
-            e.stopImmediatePropagation();
-        } else {
-            e.newVal = this.get(attrName);
+     @method _setAttrVal
+     @private
+     @param {String} attrName The attribute name.
+     @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
+     @param {Any} prevVal The currently stored value of the attribute.
+     @param {Any} newVal The value which is going to be stored.
+     @param {Object} [opts] Optional data providing the circumstances for the change.
+     @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
+     where the calling method has already obtained the config from state.
 
-            if (e._transaction) {
-                e._transaction[attrName] = e;
-            }
+     @return {boolean} true if the new attribute value was stored, false if not.
+     **/
+    _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
+
+        var didChange = Model.superclass._setAttrVal.apply(this, arguments),
+            transaction = opts && opts._transaction,
+            initializing = attrCfg && attrCfg.initializing;
+
+        // value actually changed inside a model setAttrs transaction
+        if (didChange && transaction && !initializing) {
+            transaction[attrName] = {
+                newVal: this.get(attrName), // newVal may be impacted by getter
+                prevVal: prevVal,
+                src: opts.src || null
+            };
         }
+
+        return didChange;
     }
+
 }, {
     NAME: 'model',
 

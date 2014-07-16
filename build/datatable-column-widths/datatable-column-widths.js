@@ -100,7 +100,7 @@ To add a liner to all columns, either provide a custom `bodyView` to the
 DataTable constructor or update the default `bodyView`'s `CELL_TEMPLATE` like
 so:
 
-<pre><code>table.on('renderBody', function (e) {
+<pre><code>table.on('table:renderBody', function (e) {
     e.view.CELL_TEMPLATE = e.view.CELL_TEMPLATE.replace(/\{content\}/,
             '&lt;div class="yui3-datatable-liner">{content}&lt;/div>');
 });
@@ -121,7 +121,7 @@ Y.mix(ColumnWidths.prototype, {
     The HTML template used to create the table's `<col>`s.
 
     @property COL_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<col/>'
     @since 3.5.0
     **/
@@ -131,7 +131,7 @@ Y.mix(ColumnWidths.prototype, {
     The HTML template used to create the table's `<colgroup>`.
 
     @property COLGROUP_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<colgroup/>'
     @since 3.5.0
     **/
@@ -193,7 +193,7 @@ Y.mix(ColumnWidths.prototype, {
     @protected
     @since 3.5.0
     **/
-    initializer: function (config) {
+    initializer: function () {
         this.after(['renderView', 'columnsChange'], this._uiSetColumnWidths);
     },
 
@@ -234,10 +234,10 @@ Y.mix(ColumnWidths.prototype, {
             // td.style.width === col.style.width
             if  (width && Y.Features.test('table', 'badColWidth')) {
                 cell = this.getCell([0, colIndex]);
-                
+
                 if (cell) {
                     getCStyle = function (prop) {
-                        return parseInt(cell.getComputedStyle(prop), 10)|0;
+                        return parseInt(cell.getComputedStyle(prop), 10)||0;
                     };
 
                     col.setStyle('width',
@@ -294,6 +294,30 @@ Y.mix(ColumnWidths.prototype, {
 Y.DataTable.ColumnWidths = ColumnWidths;
 
 Y.Base.mix(Y.DataTable, [ColumnWidths]);
+/**
+Adds a style `width` setting to an associated `<col>`
+element for the column.
+
+Note, the assigned width will not truncate cell content, and
+it will not preserve the configured width if doing so would
+compromise either the instance's `width` configuration or
+the natural width of the table's containing DOM elements.
+
+If absolute widths are required, it can be accomplished with
+some custom CSS and the use of a `cellTemplate`, or
+`formatter`.
+
+See the description of
+[datatable-column-widths](DataTable.ColumnWidths.html)
+for an example of how to do this.
+
+    { key: 'a', width: '400px' },
+    { key: 'b', width: '10em' }
+
+@property width
+@type String
+@for DataTable.Column
+ */
 
 
 }, '@VERSION@', {"requires": ["datatable-base"]});

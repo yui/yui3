@@ -1,17 +1,11 @@
 language: node_js
 node_js:
-    - 0.6
-    - 0.8
-    - 0.9
-branches:
-    only:
-        - master
-        - 3.x
-        - dev-master
-        - dev-3.x
-before_install:
-    - ./src/common/travis/before.sh
-install:
-    - ./src/common/travis/install.sh
+    - "0.8"
+    - "0.10"
 script:
-    - ./src/common/travis/test.sh
+    - grunt travis
+git:
+    depth: 30
+branches:
+    except:
+        - live-docs

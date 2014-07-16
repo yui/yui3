@@ -6,7 +6,7 @@ YUI.add('graphics-path-manual-tests', function(Y) {
 
         "Test paths loaded" : function()
         {
-            Y.Assert.isTrue((false), "Ensure there are two black bordered red diamonds connected by a dashed line segment on the page."); 
+            Y.Assert.isTrue((false), "Ensure there are two black bordered red diamonds connected by a dashed line segment on the page.");
         }
     }));
 

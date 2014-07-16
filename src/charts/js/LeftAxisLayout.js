@@ -1,10 +1,24 @@
 /**
- * Algorithmic strategy for rendering a left axis.
+ * Provides base functionality for drawing chart axes.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule axis
+ */
+var CONFIG = Y.config,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    LeftAxisLayout,
+    RightAxisLayout,
+    BottomAxisLayout,
+    TopAxisLayout;
+/**
+ * Algorithmic strategy for rendering a left axis.
+ *
  * @class LeftAxisLayout
  * @constructor
+ * @submodule axis
  */
 LeftAxisLayout = function() {};
 
@@ -217,6 +231,7 @@ LeftAxisLayout.prototype = {
     positionLabel: function(label, pt, styles, i)
     {
         var host = this,
+            offset = parseFloat(styles.label.offset),
             tickOffset = host.get("leftTickOffset"),
             totalTitleSize = this._totalTitleSize,
             leftOffset = pt.x + totalTitleSize - tickOffset,
@@ -230,21 +245,22 @@ LeftAxisLayout.prototype = {
         if(rot === 0)
         {
             leftOffset -= labelWidth;
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
+            topOffset = topOffset + labelWidth/2 - (labelWidth * offset);
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
+            topOffset = topOffset - labelHeight + labelWidth/2 - (labelWidth * offset);
         }
         else
         {
             leftOffset -= labelWidth + (labelHeight * absRot/360);
-            topOffset -= labelHeight * 0.5;
+            topOffset -= labelHeight * offset;
         }
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;
@@ -327,10 +343,10 @@ LeftAxisLayout.prototype = {
      * Adjust the position of the Axis widget's content box for internal axes.
      *
      * @method offsetNodeForTick
-     * @param {Node} cb Content box of the Axis.
+     * @param {Node} cb contentBox of the axis
      * @protected
      */
-    offsetNodeForTick: function(cb)
+    offsetNodeForTick: function()
     {
     },
 

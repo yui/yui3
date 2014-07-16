@@ -31,6 +31,20 @@ YUI.add('base-base', function (Y, NAME) {
      * </p>
      *
      * <p>
+     * **NOTE:** Prior to version 3.11.0, ATTRS would get added a class at a time. That is,
+     * Base would loop through each class in the hierarchy, and add the class' ATTRS, and
+     * then call it's initializer, and move on to the subclass' ATTRS and initializer. As of
+     * 3.11.0, ATTRS from all classes in the hierarchy are added in one `addAttrs` call before
+     * any initializers are called. This fixes subtle edge-case issues with subclass ATTRS overriding
+     * superclass `setter`, `getter` or `valueFn` definitions and being unable to get/set attributes
+     * defined by the subclass. This order of operation change may impact `setter`, `getter` or `valueFn`
+     * code which expects a superclass' initializer to have run. This is expected to be rare, but to support
+     * it, Base supports a `_preAddAttrs()`, method hook (same signature as `addAttrs`). Components can
+     * implement this method on their prototype for edge cases which do require finer control over
+     * the order in which attributes are added (see widget-htmlparser).
+     * </p>
+     *
+     * <p>
      * The static <a href="#property_NAME">NAME</a> property of each class extending
      * from Base will be used as the identifier for the class, and is used by Base to prefix
      * all events fired by instances of that class.
@@ -54,14 +68,18 @@ YUI.add('base-base', function (Y, NAME) {
      * </p>
      *
      * <dl>
-     *     <dt>on</dt>
-     *     <dd>An event name to listener function map, to register event listeners for the "on" moment of the event. A constructor convenience property for the <a href="Base.html#method_on">on</a> method.</dd>
-     *     <dt>after</dt>
-     *     <dd>An event name to listener function map, to register event listeners for the "after" moment of the event. A constructor convenience property for the <a href="Base.html#method_after">after</a> method.</dd>
-     *     <dt>bubbleTargets</dt>
-     *     <dd>An object, or array of objects, to register as bubble targets for bubbled events fired by this instance. A constructor convenience property for the <a href="EventTarget.html#method_addTarget">addTarget</a> method.</dd>
-     *     <dt>plugins</dt>
-     *     <dd>A plugin, or array of plugins to be plugged into the instance (see PluginHost's plug method for signature details). A constructor convenience property for the <a href="Plugin.Host.html#method_plug">plug</a> method.</dd>
+     *   <dt>on</dt>
+     *   <dd>An event name to listener function map, to register event listeners for the "on" moment of the event.
+     *       A constructor convenience property for the <a href="Base.html#method_on">on</a> method.</dd>
+     *   <dt>after</dt>
+     *   <dd>An event name to listener function map, to register event listeners for the "after" moment of the event.
+     *       A constructor convenience property for the <a href="Base.html#method_after">after</a> method.</dd>
+     *   <dt>bubbleTargets</dt>
+     *   <dd>An object, or array of objects, to register as bubble targets for bubbled events fired by this instance.
+     *       A constructor convenience property for the <a href="EventTarget.html#method_addTarget">addTarget</a> method.</dd>
+     *   <dt>plugins</dt>
+     *   <dd>A plugin, or array of plugins to be plugged into the instance (see PluginHost's plug method for signature details).
+     *       A constructor convenience property for the <a href="Plugin.Host.html#method_plug">plug</a> method.</dd>
      * </dl>
      */
     function Base() {
@@ -129,6 +147,27 @@ YUI.add('base-base', function (Y, NAME) {
      * @static
      */
     Base.ATTRS = AttributeCore.protectAttrs(BaseCore.ATTRS);
+
+    /**
+    Provides a way to safely modify a `Y.Base` subclass' static `ATTRS` after
+    the class has been defined or created.
+
+    Base-based classes cache information about the class hierarchy in order to
+    efficiently create instances. This cache includes includes the aggregated
+    `ATTRS` configs. If the static `ATTRS` configs need to be modified after the
+    class has been defined or create, then use this method which will make sure
+    to clear any cached data before making any modifications.
+
+    @method modifyAttrs
+    @param {Function} [ctor] The constructor function whose `ATTRS` should be
+        modified. If a `ctor` function is not specified, then `this` is assumed
+        to be the constructor which hosts the `ATTRS`.
+    @param {Object} configs The collection of `ATTRS` configs to mix with the
+        existing attribute configurations.
+    @static
+    @since 3.10.0
+    **/
+    Base.modifyAttrs = BaseCore.modifyAttrs;
 
     Y.mix(Base, BaseCore, false, null, 1);
     Y.mix(Base, AttributeExtras, false, null, 1);

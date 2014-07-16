@@ -1,10 +1,10 @@
 {
     "console": {
         "requires": [
-            "yui-log", 
+            "yui-log",
             "widget"
-        ], 
+        ],
         "skinnable": true,
-        "lang": ["en", "es", "ja"]
+        "lang": ["en", "es", "hu", "it", "ja"]
     }
 }

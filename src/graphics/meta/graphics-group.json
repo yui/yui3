@@ -1,0 +1,7 @@
+{
+    "graphics-group": {
+        "requires": [
+            "graphics"
+        ]
+    }
+}

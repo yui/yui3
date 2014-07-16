@@ -23,6 +23,9 @@
             <li>item</li>
         </ul>
     </div>
+    <div id="radio">
+        <input type="radio" name="test" checked></input>
+    </div>
 <script>
 
 YUI({
@@ -31,13 +34,13 @@ YUI({
     modules: {
         'dd-tests': {
             fullpath: './assets/dd-tests.js',
-            requires: [ 'event-synthetic', 'event-gestures', 'dd', 'dd-plugin', 'panel', 'console', 'test', 'substitute', 'selector-css3' ]
+            requires: [ 'event-synthetic', 'event-gestures', 'dd', 'dd-plugin', 'panel', 'console', 'test', 'selector-css3' ]
         },
         'dd-base': {
             fullpath: './assets/dd-base.js',
             requires: [ 'dd-drag', 'dd-ddm-base', 'test' ]
         }
-        
+
     }
 }).use('dd-base', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');

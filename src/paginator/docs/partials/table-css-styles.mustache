@@ -1,0 +1,117 @@
+<style>
+#demo {
+    color: #333;
+    font-size: 11pt;
+    font-family: 'Segoe UI Semilight', 'Open Sans', 'Helvetica Neue', Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+}
+
+/** TABLE **/
+#demo table {
+    border-bottom: 1px solid #ddd;
+}
+#demo caption {
+    padding-bottom: 10px;
+    font-size: 0.9em;
+}
+#demo th,
+#demo td {
+    background: none;
+    border: none;
+}
+#demo th {
+    font-weight: 500;
+    height: 20px;
+    line-height: 20px;
+    padding: 5px 10px;
+}
+#demo th + th,
+#demo td + td {
+    border-left: 1px solid #ddd;
+}
+#demo tbody tr td {
+    border-top: 1px solid #ddd;
+}
+#demo td {
+    padding: 3px 10px;
+}
+#demo tr:hover td {
+    background: #eee;
+}
+
+/** CONTROLS **/
+#demo .controls {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    position: relative;
+}
+#demo .controls ul {
+    margin: 0;
+    padding: 0;
+}
+#demo .controls li {
+    list-style: none;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+#demo .controls ul,
+#demo .controls div {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    vertical-align: middle;
+}
+#demo .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    border: solid 1px #ddd;
+    text-decoration: none;
+    line-height: 1.7em;
+    padding: 0 8px;
+    color: #4A4A4A;
+    background: #fff;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#demo .controls a:hover {
+    background-color: #eee;
+    color: #000;
+}
+#demo .controls a:active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+#demo .controls a.disabled,
+#demo .controls a.disabled:hover {
+    color: #f2f2f2;
+    border-color: #f2f2f2;
+    background: #fff;
+    cursor: default;
+}
+#demo .currentPage {
+    padding-left: 20px;
+}
+#demo .rowsPerPage {
+    position: absolute;
+    right: 0;
+    line-height: 1.8em;
+    background: red;
+}
+#demo .controls select {
+/*
+    background: none;
+    font-size: 12px;
+    line-height: 1.7em;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding-left: 8px;
+    margin-left: 5px;
+    -webkit-appearance: none;
+*/
+}
+</style>

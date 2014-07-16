@@ -5,8 +5,10 @@ var suite = new Y.Test.Suite("Graphics: Graphic");
     DOCUMENT = Y.config.doc,
 	svg = DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
     canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-    DEFAULTENGINE = Y.config.defaultGraphicEngine;
-
+    DEFAULTENGINE = Y.config.defaultGraphicEngine,
+    parentDiv = Y.DOM.create('<div style="position:absolute;top:0px;left:0px;" id="testdiv"></div>'),
+    DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
 {
     ENGINE = "canvas";
@@ -51,13 +53,13 @@ Y.extend(RoundedRect, Y.Shape, {
             value: 4
         }
     }, Y.Shape.ATTRS)
-}); 
+});
 Y.RoundedRect = RoundedRect;
 var GraphicTestTemplate = function(cfg, globalCfg) {
     var i;
     GraphicTestTemplate.superclass.constructor.apply(this);
     this.attrCfg = cfg;
-    cfg.render = "#graphiccontainer";
+    cfg.render = "#testdiv";
     for(i in globalCfg)
     {
         if(globalCfg.hasOwnProperty(i))
@@ -73,14 +75,17 @@ Y.extend(GraphicTestTemplate, Y.Test.Case, {
     graphicHeight: 400,
 
     setUp: function () {
-        Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:' + this.graphicWidth + 'px;height:' + this.graphicHeight + 'px" id="graphiccontainer"></div>');
+        Y.DOM.setStyle(parentDiv, "width", this.graphicWidth + "px");
+        Y.DOM.setStyle(parentDiv, "height", this.graphicHeight + "px");
         this.graphic = new Y.Graphic(this.attrCfg);
     },
 
     tearDown: function () {
         this.graphic.destroy();
-        Y.one("#testbed").remove(true);
+        Y.DOM.setStyle(parentDiv, "width", "0px");
+        Y.DOM.setStyle(parentDiv, "height", "0px");
+        //remove the focus event from the document as its not related to graphics.
+        Y.Event.purgeElement(DOC, false);
     }
 });
 
@@ -183,15 +188,15 @@ Y.extend(AddAndRemoveShapesTemplate, GraphicTestTemplate, {
             mygraphic.removeShape(this.circle);
             counter = Y.Object.size(mygraphic.get("shapes"));
             Y.Assert.areEqual(2, counter, "There should be 2 shapes.");
-            mygraphic.removeShape(this.ellipse); 
+            mygraphic.removeShape(this.ellipse);
             counter = Y.Object.size(mygraphic.get("shapes"));
             Y.Assert.areEqual(1, counter, "There should be 1 shapes.");
-            mygraphic.removeShape(this.roundrect); 
+            mygraphic.removeShape(this.roundrect);
             counter = Y.Object.size(mygraphic.get("shapes"));
             Y.Assert.areEqual(0, counter, "There should be 0 shapes.");
         }
     });
-    Y.AddAndRemoveShapesTemplate = AddAndRemoveShapesTemplate; 
+    Y.AddAndRemoveShapesTemplate = AddAndRemoveShapesTemplate;
 
 var AddAndRemoveShapesByIdTemplate = function()
 {
@@ -210,10 +215,10 @@ Y.extend(AddAndRemoveShapesByIdTemplate, AddAndRemoveShapesTemplate, {
         mygraphic.removeShape(this.circle.get("id"));
         counter = Y.Object.size(mygraphic.get("shapes"));
         Y.Assert.areEqual(2, counter, "There should be 2 shapes.");
-        mygraphic.removeShape(this.ellipse.get("id")); 
+        mygraphic.removeShape(this.ellipse.get("id"));
         counter = Y.Object.size(mygraphic.get("shapes"));
         Y.Assert.areEqual(1, counter, "There should be 1 shapes.");
-        mygraphic.removeShape(this.roundrect.get("id")); 
+        mygraphic.removeShape(this.roundrect.get("id"));
         counter = Y.Object.size(mygraphic.get("shapes"));
         Y.Assert.areEqual(0, counter, "There should be 0 shapes.");
     }
@@ -284,7 +289,7 @@ addAndRemoveShapesById = function(name, attrs)
 {
     attrs = attrs || {};
     return new Y.AddAndRemoveShapesByIdTemplate(attrs, {
-        name: name 
+        name: name
     });
 },
 
@@ -321,7 +326,7 @@ toggleVisibleTest = function(name, attrs)
                     Y.Assert.areEqual("visible", shape.get("node").style.visibility, "The visibility style of the shape's node should be visible.");
                 }
             }
-            
+
             this.removeShapes();
         }
     });
@@ -396,7 +401,7 @@ graphicTestXY = new Y.GraphicTestTemplate({}, {
         var mygraphic = this.graphic,
             x = 20,
             y = 30,
-            parentXY = Y.one("#graphiccontainer").getXY(),
+            parentXY = Y.DOM.getXY(parentDiv),
             xy,
             testX = parentXY[0] + x,
             testY = parentXY[1] + y;
@@ -421,25 +426,25 @@ GETDIMENSIONS = function(graphic)
         matrix;
     if(ENGINE == "anvas")
     {
-        node = Y.one(graphic.get("node"));
-        transform = node.getStyle("transform");
-        w = parseFloat(node.getComputedStyle("width"));
-        h = parseFloat(node.getComputedStyle("height"));
+        node = graphic.get("node");
+        transform = Y.DOM.getStyle(node, "transform");
+        w = parseFloat(Y.DOM.getComputedStyle(node, "width"));
+        h = parseFloat(Y.DOM.getComputedStyle(node, "height"));
         matrix = new Y.Matrix();
         matrix.applyCSSText(transform);
         bounds = matrix.getContentRect(w, h);
         dimensions = {
             //width: bounds.right - bounds.left,
             //height: bounds.bottom - bounds.top
-            width: node.get("offsetWidth"),
-            height: node.get("offsetHeight")
+            width: Y.DOM.getAttribute(node, "offsetWidth"),
+            height: Y.DOM.getAttribute(node, "offsetHeight")
         }
     }
     else
     {
-        node = Y.one(graphic._contentNode);
-        w = parseFloat(node.getComputedStyle("width"));
-        h = parseFloat(node.getComputedStyle("height"));
+        node = graphic._contentNode;
+        w = parseFloat(Y.DOM.getComputedStyle(node, "width"));
+        h = parseFloat(Y.DOM.getComputedStyle(node, "height"));
         dimensions = {
             width: w,
             height : h
@@ -462,7 +467,7 @@ autoSizeContentToGraphic = function(name, w, h)
         testDefault: function()
         {
             var mygraphic = this.graphic,
-                node = (ENGINE == "svg") ? Y.one(mygraphic._contentNode) : Y.one(mygraphic.get("node")),
+                node = (ENGINE == "svg") ? mygraphic._contentNode : mygraphic.get("node"),
                 width,
                 height;
                 rect= mygraphic.addShape({
@@ -478,8 +483,8 @@ autoSizeContentToGraphic = function(name, w, h)
                     }
                 });
             mygraphic.set("autoSize", "sizeContentToGraphic");
-            width = parseFloat(node.getComputedStyle("width"));
-            height = parseFloat(node.getComputedStyle("height"));
+            width = parseFloat(Y.DOM.getComputedStyle(node, "width"));
+            height = parseFloat(Y.DOM.getComputedStyle(node, "height"));
             Y.Assert.areEqual(this.graphicWidth, width, "The graphic width should be " + this.graphicWidth + ". The actual value is " + width + ".");
             Y.Assert.areEqual(this.graphicHeight, height, "The graphic height should be " + this.graphicHeight + ". The actual value is " + height + ".");
         }
@@ -503,7 +508,7 @@ autoSizeContentToGraphicOverloadedSetter = function(name, w, h, preserveAspectRa
         testDefault: function()
         {
             var mygraphic = this.graphic,
-                node = (ENGINE == "svg") ? Y.one(mygraphic._contentNode) : Y.one(mygraphic.get("node")),
+                node = (ENGINE == "svg") ? mygraphic._contentNode : mygraphic.get("node"),
                 width,
                 height;
                 rect= mygraphic.addShape({
@@ -523,8 +528,8 @@ autoSizeContentToGraphicOverloadedSetter = function(name, w, h, preserveAspectRa
                 resizeDown: this.resizeDown,
                 preserveAspectRatio: this.preserveAspectRatio
             });
-            width = parseFloat(node.getComputedStyle("width"));
-            height = parseFloat(node.getComputedStyle("height"));
+            width = parseFloat(Y.DOM.getComputedStyle(node, "width"));
+            height = parseFloat(Y.DOM.getComputedStyle(node, "height"));
             Y.Assert.areEqual(this.graphicWidth, width, "The graphic width should be " + this.graphicWidth + ". The actual value is " + width + ".");
             Y.Assert.areEqual(this.graphicHeight, height, "The graphic height should be " + this.graphicHeight + ". The actual value is " + height + ".");
         }

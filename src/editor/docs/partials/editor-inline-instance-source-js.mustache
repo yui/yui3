@@ -1,0 +1,51 @@
+YUI().use('editor-inline', function(Y) {
+
+    var log = function(str) {
+        Y.one('#out').set('innerHTML', str);
+    };
+
+    //Create the Base Editor
+    var editor = new Y.InlineEditor({
+        content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
+        extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+    });
+    //Rendering the Editor
+    editor.render('#editor');
+
+    Y.on('click', function(e) {
+        var inst = editor.getInstance(),
+            bs = inst.all('b'),
+            count = bs.size();
+
+        log(Y.Lang.sub('There {verb} ({count}) B {type} in the inline editor.', {
+            verb: count === 1 ? 'is' : 'are',
+            count: count,
+            type: count === 1 ? 'tag' : 'tags'
+        }));
+    }, '#btags');
+
+    Y.on('click', function(e) {
+        var inst = editor.getInstance(),
+            bs = inst.all('i'),
+            count = bs.size();
+
+        log(Y.Lang.sub('There {verb} ({count}) I {type} in the inline editor.', {
+            verb: count === 1 ? 'is' : 'are',
+            count: count,
+            type: count === 1 ? 'tag' : 'tags'
+        }));
+    }, '#itags');
+
+    Y.on('click', function(e) {
+        var inst = editor.getInstance(),
+            bs = inst.all('.foo'),
+            count = bs.size();
+
+        log(Y.Lang.sub('There {verb} ({count}) {type} with class foo in the inline editor.', {
+            verb: count === 1 ? 'is' : 'are',
+            count: count,
+            type: count === 1 ? 'item' : 'items'
+        }));
+    }, '#ctags');
+
+});

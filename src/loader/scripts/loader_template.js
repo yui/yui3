@@ -2,12 +2,6 @@
 * This file was assembled by ../scripts/build_loader_tests.js
 */
 
-if (process.versions.node < '0.5.0') {
-    //This is a hack for global modules in npm 1.0
-    require.paths.push(process.env.NODE_ENV);
-}
-
-
 var path = require('path'),
     YUI = require(path.join(__dirname, '../../../../', 'build/yui/yui.js')).YUI;
     Y = YUI(),

@@ -1,10 +1,110 @@
 JSON Utility Change History
 ===========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.2
+------
+
+* YUICompressor was unable to minify the json-parse code because it contained `eval`.
+  It had inserted a placeholder `EVAL_TOKEN` which to allow minification,
+  then used a post-minify script to replace `EVAL_TOKEN` with `eval`.
+  This appears not to be necessary any more, and caused a problem with the
+  3.10.0 CDN deployed files and was removed.  [lsmith]
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* The JavaScript fallback version is only loaded when the environment doesn't
+  provide a native implementation.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
 
 3.7.3
 -----

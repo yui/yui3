@@ -48,7 +48,7 @@
         table such as sorting and scrolling.
     </p>
 </div>
-				
+
 {{>getting-started}}
 
 {{>need-skin-note}}
@@ -60,7 +60,7 @@
         DataTable was refactored for 3.5.0.  Some APIs were changed in backward
         incompatible ways.
     </p>
-    
+
     <p>
         Read the <a href="migration.html">3.5.0 Migration Guide</a> for tips to
         avoid unpleasant surprises.  If you still run into issues, please
@@ -323,7 +323,28 @@ var table = new Y.DataTable({
 </ul>
 
 <p>
-    `formatter`s are expected to return the string content to populate each
+    When the `formatter` configuration setting contains a string it will be assumed
+    to be the key into the hash of formatting functions at `Y.DataTable.BodyView.Formatters`.
+    If any such function is found, it will be used, otherwise, the string will be
+    presumed to be a template which may contain placeholders for data enclosed
+    in curly braces.   The `{value}` placeholder would use the value destined for
+    the current cell.  The values of other fields in the record corresponding
+    to the current row can be shown by providing their name enclosed in curly braces.
+    These other fields
+    don't need to have column definitions of their own, they will simply be read
+    from the underlying Model instance.
+</p>
+<p>
+    The `Y.DataTable.BodyView.Formatters` is empty for the developers to provide
+    their own formatting functions.  A basic set is provided in module
+    `datatable-formatters` that has to be explicitly loaded.  Some of these
+    named formatters accept extra configuration settings in the column definition,
+    as described in their
+    <a href="{{apiDocs}}/classes/DataTable.BodyView.Formatters.html">
+        API docs</a>.
+</p>
+<p>
+    `formatter` functions are expected to return the string content to populate each
     cell in that column, and `nodeFormatter`s are provided with the cell Nodes
     and expected to populate them using the Node API.
 </p>
@@ -381,6 +402,7 @@ var columns = [
             }
 
             o.cell.set('text', prefix + profit.toFixed(2));
+            return false;
         }
     }
 ];
@@ -389,7 +411,7 @@ var columns = [
 <p>This code produces this table:</p>
 
 <div id="formatter-example" class="yui3-skin-sam">
-    <style scoped>
+    <style>
         .yui3-datatable .yui3-datatable-data .expensive {
             background-color: #ffe;
         }
@@ -524,7 +546,45 @@ var cols = [
     { key: "price", formatter: currency, decimalPlaces: 3 },
     ...
 ```
-
+<p>
+    If such a formatter will be used regularly, it is best to store it in the
+    `Y.DataTable.BodyView.Formatters` hash. The formatter can later be used
+    by its name.
+</p>
+<p>
+    Named formatters are structured slightly differently in
+    order to improve performance:
+</p>
+```
+Y.DataTable.BodyView.Formatters.currency = function (col) {
+    // This is done just once per rendering cycle:
+    var fn = Y.DataType.Number.format,
+        format = {
+            prefix            : col.currencySymbol     || '$',
+            decimalPlaces     : col.decimalPlaces      || 2,
+            decimalSeparator  : col.decimalSeparator   || '.',
+            thousandsSeparator: col.thousandsSeparator || ','
+        };
+    return function (o) {
+        // This is done once per row:
+        return fn(o.value, format);
+    }
+}
+```
+<p>
+    The function stored in the `Formatters` table is not the formatter function
+    itself, instead, it returns the formatting function.  The outer function is called just
+    once per rendering cycle and does any preliminary setup usually based on the
+    column configuration which it receives as its only argument, storing any
+    information in local variables.  The returned formatting function is then
+    run once per row accessing all the setup information via closure.
+</p>
+<p>
+    An optional `datatable-formatters` module provides
+    a collection of such formatters.
+    See the <a href="../api/classes/DataTable.BodyView.Formatters.html">API docs</a>
+    for more information on them.
+</p>
 <p>
     See <a href="#formatter-props">Appendix B</a> for a list of all properties
     passed to `formatter` functions.
@@ -541,7 +601,7 @@ var cols = [
 
 <p>
     <strong>`nodeFormatter`s should return `false`</strong>.
-    <a href="formatter-vs-nodeformatter">See below</a> for details.
+    <a href="#formatter-vs-nodeformatter">See below</a> for details.
 </p>
 
 <p>
@@ -557,7 +617,7 @@ var cols = [
     the record data, the record Model instance, and the column configuration
     object.
 </p>
-    
+
 <p>
     See <a href="#nodeformatter-props">Appendix C</a> for a list of all
     properties passed to `nodeFormatter` functions.
@@ -952,7 +1012,7 @@ table.datasource.load({
     <tr>
         <td><a href="{{apiDocs}}/modules/datatable-column-widths.html">`datatable-column-widths`</a></td>
         <td>
-            Creates the `Y.DataTable.ColumnWidths` class extension, and adds 
+            Creates the `Y.DataTable.ColumnWidths` class extension, and adds
             support for the `width` property in column configuration objects
             to `Y.DataTable`.
         </td>
@@ -990,6 +1050,29 @@ table.datasource.load({
             Creates the `Y.DataTable.Scroll` class extension and adds attribute
             `scrollable` to `Y.DataTable`.  Adds support for vertically and/or
             horizontally scrolling table rows within fixed table dimensions.
+        </td>
+        <td>no</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-formatters.html">`datatable-formatters`</a></td>
+        <td>
+            Populates `Y.DataTable.BodyView.Formatters` with a collection of
+            cell formatting functions.
+        </td>
+        <td>no</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-paginator.html">`datatable-paginator`</a></td>
+        <td>
+            Adds paginator functionality to the DataTable. Can also add paginator
+            UIs to the DataTable or any other specified `Y.Node`.
+        </td>
+        <td>no</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-keynav.html">`datatable-keynav`</a></td>
+        <td>
+            Provides keyboard navigation within the DataTable.
         </td>
         <td>no</td>
     </tr>
@@ -1234,6 +1317,10 @@ YUI({ filter: 'raw' }).use('datatable-sort', function (Y) {
 
 <p>
     Disable header-click sorting by setting `sortable` to `false`.
+</p>
+<p>
+    The default sort order is case insensitive, the sort order can be set to case sensitive
+    by using the `caseSensitive` attribute, see <a href="#column-config">Appendix A</a> below.
 </p>
 
 <h4 id="customsort">Custom Sorting</h4>
@@ -1493,7 +1580,7 @@ pies.data.load(function () {
 ```
 
 <h3 id="scrolling">Scrolling</h3>
-				
+
 <p>
     <strong>Note:</strong> Scrolling is not currently supported on the Android
     WebKit browser.
@@ -1591,6 +1678,265 @@ var table = new Y.DataTable({
 }).render("#scroll-example");
 });
 </script>
+<h3 id="paginator">DataTable Paginator</h3>
+
+<p>Paginator for DataTable brings the simpliciy of Y.Paginator to DataTable
+ready to help you manage the amount of data displayed on the screen at on time.
+This will keep readability up and render time down.</p>
+
+<h4>Paginator Methods</h4>
+
+<p>Out of the box, DataTable Paginator will add four methods to DataTable to
+navigate pages of data being displayed. All of these methods are chainable.</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>firstPage</td>
+        <td>Sets the defined `paginatorModel` to the first page.</td>
+    </tr>
+    <tr>
+        <td>lastPage</td>
+        <td>Sets the defined `paginatorModel` to the last page.</td>
+    </tr>
+    <tr>
+        <td>prevPage</td>
+        <td>Sets the defined `paginatorModel` to the prev page.</td>
+    </tr>
+    <tr>
+        <td>nextPage</td>
+        <td>Sets the defined `paginatorModel` to the next page.</td>
+    </tr>
+</tbody>
+</table>
+
+<h4>Paginator Attributes</h4>
+
+<p>There are also a handful of attributes to apply to the DataTable configuration
+when you have `datatable-paginator` included in your sandbox. The default
+configurations will keep the UI hidden until `rowsPerPage` is set to a number
+greater than zero. When `rowPerPage` is null, the UI is hidden.</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Attribute</th>
+        <th>Data Type</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`pageSizes`</td>
+        <td>Array</td>
+        <td>Array of values used to populate the values in the Paginator UI allowing the end user to select the number of items to display per page.</td>
+        <td>[10, 50, 100, <br>{ label: 'Show All', value: -1 }<br>]</td>
+    </tr>
+    <tr>
+        <td>`paginatorLocation`</td>
+        <td>String|Array|Y.Node</td>
+        <td>String of `footer` or `header`, a Y.Node, or an Array or any combination of those values.</td>
+        <td>`"footer"`</td>
+    </tr>
+    <tr>
+        <td>`paginatorModel`</td>
+        <td>Y.Model|Object</td>
+        <td>A model instance or a configuration object for the Model.</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>`paginatorModelType`</td>
+        <td>Y.Model|String</td>
+        <td>A pointer to a Model object to be instantiated, or a String off of the Y namespace.<br><br>This is only used if the pagiantorModel is a configuration object or is null.</td>
+        <td>`"DataTable.Paginator.Model"`</td>
+    </tr>
+    <tr>
+        <td>`paginatorView`</td>
+        <td>Y.Model|String</td>
+        <td>A pointer to a Y.View object to be instantiated. A new view will be created for each location provided. Each view created will be given the same model instance.</td>
+        <td>`"DataTable.Paginator.View"`</td>
+    </tr>
+    <tr>
+        <td>`rowsPerPage`</td>
+        <td>Number|null</td>
+        <td>Number of rows to display per page. As the UI changes the number of pages to display, this will update to reflect the value selected in the UI</td>
+        <td>null</td>
+    </tr>
+</tbody>
+</table>
+
+<h4>Paginator UI</h4>
+
+<p>The Paginator UI out of the box consists of:</p>
+<ul>
+    <li>Four (4) buttons &mdash; first, previous, next and last</li>
+    <li>A page selector to go to a specific page</li>
+    <li>A select box to change the number of rows to display per page</li>
+</ul>
+
+<p>The UI is set up in a template located under `Y.DataTable.Templates.Paginator`
+and can be updated any time before the UI is rendered to the page. The template
+has a few points of interest that can be updated.</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Key</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`rowWrapper`</td>
+        <td>Template used to create the containing row when placed inside the table.</td>
+    </tr>
+    <tr>
+        <td>`content`</td>
+        <td>Template used to place and order the content</td>
+    </tr>
+    <tr>
+        <td>`button`</td>
+        <td>Template used to create a button</td>
+    </tr>
+    <tr>
+        <td>`buttons`</td>
+        <td>Template used to place buttons in a button group</td>
+    </tr>
+    <tr>
+        <td>`gotoPage`</td>
+        <td>Template used to display the Go To Page control</td>
+    </tr>
+    <tr>
+        <td>`perPage`</td>
+        <td>Template used to display the Rows Per Page select option</td>
+    </tr>
+</tbody>
+</table>
+
+<h4>Paginator in action</h4>
+<p>Paginator for DataTable has introduced a few things, but let's take a look
+and see it in action.</p>
+
+```
+    var dt = new Y.DataTable({
+            columns: ['name', 'qty'],
+            data: [
+                { name: 'Apple',  qty: 16 },
+                { name: 'Banana', qty: 10 },
+                { name: 'Carrot', qty: 34 },
+                { name: 'Date',   qty: 92 },
+                { name: 'Grape',  qty: 14 },
+                { name: 'Orange', qty: 74 },
+                { name: 'Rasin',  qty: 39 }
+            ],
+            rowsPerPage: 4,
+            pageSizes: [ 4, 'Show All' ]
+        });
+
+    dt.render();
+```
+<p>This code produces this table:</p>
+<div id="dt-pg-ex" class="yui3-skin-sam"></div>
+<script>
+YUI().use('datatable', 'datatable-paginator', function (Y){
+    var dt = new Y.DataTable({
+            columns: ['name', 'qty'],
+            data: [
+                { name: 'Apple',  qty: 16 },
+                { name: 'Banana', qty: 10 },
+                { name: 'Carrot', qty: 34 },
+                { name: 'Date',   qty: 92 },
+                { name: 'Grape',  qty: 14 },
+                { name: 'Orange', qty: 74 },
+                { name: 'Rasin',  qty: 39 }
+            ],
+            rowsPerPage: 4,
+            pageSizes: [ 4, 'Show All' ]
+        });
+
+    dt.render('#dt-pg-ex');
+});
+</script>
+
+<h3 id="keynav">Keyboard Navigation</h3>
+
+<p>
+    The `datatable-keynav` optional module provides navigation within the DataTable using
+    the keyboard. It is based on the WAI-ARIA suggested keyboard interaction for
+    the <a href="http://www.w3.org/WAI/PF/aria-practices/#grid">Grid Widget</a>,
+    though it does not assign aria roles, states or other accessibility features
+    to the table.
+</p>
+
+<p>
+    Two attributes control the behaviour of the module.  The `keyActions` property
+    contains a mapping of keys to actions to be performed.  It is initially loaded
+    with a copy of the set of actions stored in the static `Y.DataTable.KeyNav.ARIA_ACTIONS`
+    table but can easily be modified or completely replaced.
+</p>
+<p>
+    As a key, each entry in the table uses a key code or any of the predefined strings in the
+    static <a href="{{apiDocs}}/classes/DataTable.html#property_KEY_NAMES">
+    `Y.DataTable.KeyNav.KEY_NAMES`</a> table, optionally preceeded by the
+    `alt`, `ctrl`, `meta` or `shift` modifier keys, each followed by a hyphen.
+    Multiple modifier keys can be specified, but they always have to be given
+    in alphabetical order, for example: `'ctrl-shift-up': `.
+    When a key has an alias in `KEY_NAMES` the alias must be used and not the numerical keycode.
+</p>
+<p>
+    Each entry in the `keyActions` table contains either a function or a string.
+    The function will be executed when the key combination used as the key for the entry
+    is detected.  It will receive the Event Facade of the `keydown` event as its
+    only argument.   If the argument is a string it will try to resolve it to
+    a method within that DataTable instance by that name and execute it, ie.: `this[name].call(this, e)`.
+</p>
+<p>
+    If the entry is a string and cannot be resolved into a method, it will assume
+    it is the name of an event to fire.  The event listener will be provided with
+    references to the focused cell (a Node instance), the row (the `tr` Node)
+    and column where it is contained.  If the cell is a data cell it will also
+    contain a reference to the record while for header rows it will be null.
+    The listener will also receive the original EventFacade of the `keydown`
+    event as its second argument.
+</p>
+```
+var dt = new Y.DataTable({...});
+
+// Add an event in response to pressing shift-space
+dt.keyActions['shift-space'] = 'shiftSpaceEvent';
+
+// You can now subscribe to that event
+dt.on('shiftSpaceEvent', function (ev, keyEv) {
+    // The first event facade will contain the following properties:
+    console.log(ev.cell, ev.row, ev.column, ev.record);
+
+    // The second event facade is the original for keydown:
+    console.log(keyEv.keyCode, keyEv.shiftKey);
+
+    // The listener may call the keydown event facade methods:
+    keyEv.preventDefault();
+});
+```
+<p>
+    The `keyIntoHeaders` attribute determines whether navigating into the header
+    cells is possible.  If set, the default, the first header cell will initially
+    receive the focus and navigation in between the header and data sections of
+    the table is possible.  If false, the first data cell will be initially
+    focused and navigation into the header section is not possible.
+</p>
+<p>
+    The `focusedCell` attribute holds a reference to the cell that has the focus
+    or that would have the focus if the DataTable gets tabbed into.
+    Setting `focusedCell` will bring the focus into that cell.
+</p>
+
 
 <h2 id="events">DataTable Events</h2>
 
@@ -1716,11 +2062,11 @@ pies.on('pie:slicesChange', function (e) {
                 ```
                 { name: 'fullname', formatter: ... }
                 ```
-                
+
                 <p>
                     Use this to assign a name to pass to `table.getColumn(NAME)`
                     or style columns with class "yui3-datatable-col-NAME" if a
-                    column isn't assigned a `key`.  
+                    column isn't assigned a `key`.
                 </p>
                 <p>
                     The value is used for the `_id` property.
@@ -1734,7 +2080,7 @@ pies.on('pie:slicesChange', function (e) {
                 ```
                 { field: 'fullname', formatter: ... }
                 ```
-                
+
                 <p>An alias for `name` for backward compatibility.</p>
             </td>
             <td>`datatable-base`</td>
@@ -1875,7 +2221,7 @@ pies.on('pie:slicesChange', function (e) {
                 <p>
                     Overrides the default
                     <a href="{{apiDocs}}/classes/DataTable.BodyView.html#property_CELL_TEMPLATE">CELL_TEMPLATE</a>
-                    used by `Y.DataTable.BodyView` to render the data cells 
+                    used by `Y.DataTable.BodyView` to render the data cells
                     for this column.  This is necessary when more control is
                     needed over the markup for the `<td>` itself, rather than
                     its content.
@@ -1890,7 +2236,7 @@ pies.on('pie:slicesChange', function (e) {
                     Used to customize the content of the data cells for this
                     column.
                 </p>
-                
+
                 <p>
                     <a href="#formatters">See the example above</a>
                 </p>
@@ -1904,7 +2250,7 @@ pies.on('pie:slicesChange', function (e) {
                     Used to customize the content of the data cells for this
                     column.
                 </p>
-                
+
                 <p>
                     <a href="#formatters">See the example above</a>
                 </p>
@@ -2020,8 +2366,26 @@ pies.on('pie:slicesChange', function (e) {
                     user sorting by clicking on the header.
                 </p>
                 <p>
-                    If the instance's `sortable` attribute is set, this
+                    If the instance's `key` attribute is not set, this
                     configuration is ignored.
+                </p>
+            </td>
+            <td>`datatable-sort`</td>
+        </tr>
+        <tr>
+            <td>caseSensitive</td>
+            <td>
+                ```
+                { key: 'lastLogin', sortable: true, caseSensitive: true }
+                ```
+
+                <p>
+                    When the instance's `caseSensitive` attribute is set to
+                    "true" the sort order is case sensitive (relevant to string columns only).
+                </p>
+                <p>
+                    Case sensitive sort is marginally more efficient and should be considered
+                    for large data sets when case insensitive sort is not required.
                 </p>
             </td>
             <td>`datatable-sort`</td>
@@ -2207,7 +2571,7 @@ pies.on('pie:slicesChange', function (e) {
                     return o.data.lname + ', ' + o.data.fname;
                 }
                 ```
-                
+
                 <p>
                     The Model data for this row in simple object format.
                 </p>
@@ -2222,7 +2586,7 @@ pies.on('pie:slicesChange', function (e) {
                         o.value + '</a>';
                 }
                 ```
-                
+
                 <p>
                     The Model for this row.
                 </p>
@@ -2239,7 +2603,7 @@ pies.on('pie:slicesChange', function (e) {
                     return Y.DataType.Data.format(o.value, format);
                 }
                 ```
-                
+
                 <p>
                     The column configuration object.
                 </p>
@@ -2255,7 +2619,7 @@ pies.on('pie:slicesChange', function (e) {
                     }
                 }
                 ```
-                
+
                 <p>
                     A string of class names to add `<td class="HERE">` in
                     addition to the column class and any classes in the
@@ -2271,7 +2635,7 @@ pies.on('pie:slicesChange', function (e) {
                     return (o.rowIndex + 1) + ' - ' + o.value;
                 }
                 ```
-                
+
                 <p>
                     The index of the current Model in the ModelList.
                     <em>Typically</em> correlates to the row index as well.
@@ -2288,7 +2652,7 @@ pies.on('pie:slicesChange', function (e) {
                     }
                 }
                 ```
-                
+
                 <p>
                     A string of css classes to add `<tr class="HERE"><td...`.
                 </p>
@@ -2327,6 +2691,7 @@ nodeFormatter: function (o) {
     }
 
     o.cell.setHTML(o.value);
+    return false;
 }
 ```
 
@@ -2407,7 +2772,7 @@ YUI.add('datatable-node', function (Y) {
                 count   = columns.length,
                 data    = [],
                 i;
-                
+
             config.host.all('tbody td').each(function (node, i) {
                 var record = (i % count) ?
                         data[data.length - 1] :

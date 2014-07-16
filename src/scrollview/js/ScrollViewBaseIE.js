@@ -8,7 +8,7 @@ Y.mix(Y.ScrollView.prototype, {
 
     /**
      * Internal method to fix text selection in IE
-     * 
+     *
      * @method _fixIESelect
      * @for ScrollView
      * @private

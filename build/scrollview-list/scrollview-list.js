@@ -10,13 +10,11 @@ SCROLLVIEW = 'scrollview',
 LIST_CLASS = getCN(SCROLLVIEW, 'list'),
 ITEM_CLASS = getCN(SCROLLVIEW, 'item'),
 CONTENT_BOX = "contentBox",
-RENDERED = 'rendered',
-RENDER_UI = 'renderUI',
 HOST = "host";
 
 /**
- * ScrollView plugin that adds class names to immediate descendant "<li>" to 
- * allow for easier styling through CSS
+ * ScrollView plugin that adds class names to immediate descendant "<li>" to
+ *  allow for easier styling through CSS
  *
  * @class ScrollViewList
  * @namespace Plugin
@@ -27,7 +25,7 @@ function ListPlugin() {
     ListPlugin.superclass.constructor.apply(this, arguments);
 }
 
- 
+
 /**
  * The identity of the plugin
  *
@@ -37,7 +35,7 @@ function ListPlugin() {
  * @static
  */
 ListPlugin.NAME = 'pluginList';
-    
+
 /**
  * The namespace on which the plugin will reside.
  *
@@ -57,9 +55,11 @@ ListPlugin.NS = 'list';
  * @static
  */
 ListPlugin.ATTRS = {
-    
+
     /**
-     * Specifies whether the list elements (the immediate <ul>'s and the immediate <li>'s inside those <ul>'s) have class names attached to them or not
+     * Specifies whether the list elements (the immediate <ul>'s and the
+     *  immediate <li>'s inside those <ul>'s) have class names attached to
+     *  them or not
      *
      * @attribute isAttached
      * @type boolean
@@ -105,10 +105,10 @@ Y.namespace("Plugin").ScrollViewList = Y.extend(ListPlugin, Y.Plugin.Base, {
                 });
 
                 this.set('isAttached', true);
-                
-                // We need to call this again, since sv-list 
-                // relies on the "-vert" class, to apply padding.
-                // [ 1st syncUI pass applies -vert, 2nd pass re-calcs dims ] 
+
+                // We need to call this again, since sv-list
+                //  relies on the "-vert" class, to apply padding.
+                //  [ 1st syncUI pass applies -vert, 2nd pass re-calcs dims ]
                 this._host.syncUI();
             }
         }

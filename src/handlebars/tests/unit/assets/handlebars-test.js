@@ -6,7 +6,7 @@ var Assert = Y.Assert,
     suite;
 
 suite = new Y.Test.Suite({
-    name: 'Handlebars',
+    name: 'Handlebars'
 });
 
 // -- Sanity -------------------------------------------------------------------
@@ -114,7 +114,11 @@ suite.add(new Y.Test.Case({
     },
 
     'isEmpty() should be false for all strings': function () {
-        Assert.isFalse(H.Utils.isEmpty(''));
+        // Ignoring this test to match the following change in Handlebars:
+        // https://github.com/wycats/handlebars.js/commit/5f56d6
+        //
+        // Assert.isFalse(H.Utils.isEmpty(''));
+
         Assert.isFalse(H.Utils.isEmpty('foo'));
         Assert.isFalse(H.Utils.isEmpty(new String('')));
         Assert.isFalse(H.Utils.isEmpty(new String('foo')));
@@ -158,6 +162,49 @@ suite.add(new Y.Test.Case({
             "&<>\"'`",
             H.render('{{safe}}', {safe: new Y.Handlebars.SafeString("&<>\"'`")})
         );
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: 'Scope',
+
+    'this and . should refer to the context object in a with block': function() {
+        var data = { test: "test" },
+            expectedOutput = "test";
+
+        Assert.areSame(expectedOutput, H.render('{{#with test}}{{this}}{{/with}}', data));
+        Assert.areSame(expectedOutput, H.render('{{#with test}}{{.}}{{/with}}', data));
+    },
+
+    'this and . should refer to the context object in a with block when used within a call to a helper function': function() {
+        var data = { author: { firstName: "Bob", lastName: "McTest" } },
+            expectedOutput = "Bob McTest";
+
+        H.registerHelper('formatName', function(person) {
+            return person.firstName + " " + person.lastName;
+        });
+        Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName this}}{{/with}}', data));
+        Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName .}}{{/with}}', data));
+    },
+
+    'Arrays as context objects should be supported': function () {
+        var data           = [1, 2, 3],
+            expectedOutput = "123";
+
+        Assert.areSame(expectedOutput, H.render('{{#each .}}{{.}}{{/each}}', data));
+    },
+
+    'Nested blocks should be rendered correctly with the correct scope': function () {
+        var template =
+                '{{#with this}}{{#with this}}FOO{{/with}}{{/with}}' +
+                '{{#with this}}{{#with this}}BAR{{/with}}{{/with}}';
+
+        // NOTE: As of v1.0.11, a context object must not be empty for the body
+        // of a `{{#with}}` statement to be executed.
+        // See: https://github.com/wycats/handlebars.js/issues/518
+        //
+        // Assert.areSame('FOOBAR', H.render(template));
+        Assert.areSame('FOOBAR', H.render(template, {}));
     }
 }));
 

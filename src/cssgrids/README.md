@@ -1,5 +1,9 @@
 CSS Grids Utility
-===============
+=================
+
+Grids is imported from [Pure Grids](http://purecss.io/grids/).
+
+----
 
 Note: The file "grids.css" is deprecated, use "cssgrids.css" instead.
 

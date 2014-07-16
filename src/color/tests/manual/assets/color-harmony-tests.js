@@ -111,9 +111,9 @@ YUI.add('color-harmony-tests', function(Y) {
             },
 
             'brightness of "yellow"': function() {
-                var b = Y.Color.getBrightness('yellow');
+                var c = Y.Color.getSimilarBrightness('yellow', 'blue', 'rgb');
 
-                Y.Assert.areSame(0.97, Math.round(b*100)/100, 'length is greater than 1');
+                Y.Assert.areSame('rgb(71, 71, 0)', c, 'incorrect color matching');
             },
 
             'similar brightness of "yellow" matching "blue"': function() {

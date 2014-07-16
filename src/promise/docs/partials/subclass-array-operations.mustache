@@ -1,0 +1,24 @@
+log('Fetching GitHub data for users: "yui", "yahoo" and "davglass"...')
+
+// requests is a regular promise
+var requests = Y.Promise.all([GitHub.getUser('yui'), GitHub.getUser('yahoo'), GitHub.getUser('davglass')]);
+// users is now an ArrayPromise
+var users = toArrayPromise(requests);
+
+// Transform the data into a list of names
+users.map(function (data) {
+    log('Getting name for user "' + data.login + '"...')
+    return data.name;
+}).filter(function (name) {
+    log('Checking if the name "' + name + '" starts with "Y"...')
+    return name.charAt(0) === 'Y';
+}).then(function (names) {
+    log('Done!');
+    return names;
+}).each(function (name, i) {
+    log(i + '. ' + name);
+}).then(null, function (error) {
+    // if there was an error in any step or request, it is automatically
+    // passed around the promise chain so we can react to it at the end
+    showError(error.message);
+});

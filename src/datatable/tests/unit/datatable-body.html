@@ -9,13 +9,14 @@
     <div id="testbed"></div>
 
 	<script src="../../../../build/yui/yui.js"></script>
+	<script src="../../../../build/datatable-formatters/datatable-formatters.js"></script>
     <script src="./assets/datatable-body-tests.js"></script>
 	<script>
 		YUI({
             coverage: ['datatable-body'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-body-tests', function (Y) {
-			
+
 			new Y.Test.Console().render();
 
 			Y.Test.Runner.run();

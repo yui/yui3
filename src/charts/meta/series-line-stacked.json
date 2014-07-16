@@ -1,0 +1,8 @@
+{
+    "series-line-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-line"
+        ]
+    }
+}

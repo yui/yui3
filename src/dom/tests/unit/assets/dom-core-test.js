@@ -86,7 +86,7 @@ YUI.add('dom-core-test', function(Y) {
             Y.Assert.areEqual(doc.getElementById('demo'),
                     Y.DOM.byId('demo', doc));
         }
-    })); 
+    }));
 
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.DOM.allById',
@@ -638,7 +638,8 @@ YUI.add('dom-core-test', function(Y) {
 
         'should be true for contained comment node': function() {
             var node = document.createElement('div');
-            node.innerHTML = 'foo<!-- comment -->';
+            node.innerHTML = 'foo';
+            node.appendChild(document.createComment('bar'));
             Assert.isTrue(Y.DOM.contains(node, node.firstChild.nextSibling));
         },
 
@@ -720,7 +721,7 @@ YUI.add('dom-core-test', function(Y) {
             Assert.isFalse(Y.DOM._bruteContains(document.body));
             Assert.isFalse(Y.DOM._bruteContains());
         }
-        
+
     }));
 
     Y.Test.Runner.add(new Y.Test.Case({
@@ -842,7 +843,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should create a form with content': function() {
-            var el = Y.DOM.create('<form><fieldset><legend>foo</legend>' + 
+            var el = Y.DOM.create('<form><fieldset><legend>foo</legend>' +
                 '<label>foo:</label><input name="foo"><input type="submit"></fieldset></form>'),
                 fieldset = el.firstChild,
                 legend = fieldset.firstChild;
@@ -918,7 +919,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should create a table head with nested table': function() {
-            var el = Y.DOM.create('<thead><tr><td><table><tbody><tr>' + 
+            var el = Y.DOM.create('<thead><tr><td><table><tbody><tr>' +
                     '<td>fresh</td></tr></tbody></table></td></tr></thead>');
 
             Assert.areEqual('THEAD', el.tagName);
@@ -1056,7 +1057,7 @@ YUI.add('dom-core-test', function(Y) {
 
         'should create an iframe with attributes': function() {
             var html = '<iframe border="0" frameBorder="0" marginWidth="0"' +
-                    ' marginHeight="0" leftMargin="0" topMargin="0"' + 
+                    ' marginHeight="0" leftMargin="0" topMargin="0"' +
                     ' allowTransparency="true" width="100%" height="99%"></iframe>';
             el = Y.DOM.create(html);
             Assert.areEqual('IFRAME', el.tagName);
@@ -1081,9 +1082,9 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should create a link element with attrs': function() {
-            var el = Y.DOM.create('<link href="http://search.yahoo.com/" rel="stylesheet">');
+            var el = Y.DOM.create('<link id="test-link" rel="stylesheet">');
             Assert.areEqual('LINK', el.tagName);
-            Assert.areEqual('http://search.yahoo.com/', el.href);
+            Assert.areEqual('test-link', el.id);
             Assert.areEqual(el.rel, 'stylesheet');
         },
 
@@ -1200,7 +1201,7 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual('foo', Y.DOM.getAttribute(node, 'class'), 'class');
             Assert.areEqual('foo', Y.DOM.getAttribute(node, 'className'), 'className');
         },
-        
+
         'should return "for" value': function() {
             var node = document.getElementById('for-id');
             Assert.areEqual('id', Y.DOM.getAttribute(node, 'for'));
@@ -1213,6 +1214,13 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.getAttribute(null);
             Y.DOM.getAttribute();
             Assert.isTrue(true);
+        },
+
+        'should return "value" attribute of a button': function () {
+           var node = document.getElementById('test-button-value'),
+               expected = 'button value';
+
+           Assert.areEqual(expected, Y.DOM.getAttribute(node, 'value'));
         }
     }));
 
@@ -1289,7 +1297,7 @@ YUI.add('dom-core-test', function(Y) {
 
         'should ignore textarea html value attribute': function() {
             var node = document.getElementById('test-textarea-value');
-                
+
             Assert.areEqual('', Y.DOM.getValue(node));
         },
 
@@ -1410,6 +1418,16 @@ YUI.add('dom-core-test', function(Y) {
             node.removeAttribute('value')
         },
 
+        'value updated from null should be empty string': function() {
+            var node = document.getElementById('test-text-no-value'),
+                val = null;
+
+            Y.DOM.setValue(node, val);
+            Assert.areEqual('', Y.DOM.getValue(node));
+            Y.DOM.setValue(node, '');
+            node.removeAttribute('value');
+        },
+
         'textarea from html value should match new value': function() {
             var node = document.getElementById('test-textarea-text-value'),
                 val = 'new textarea test';
@@ -1425,6 +1443,15 @@ YUI.add('dom-core-test', function(Y) {
 
             Y.DOM.setValue(node, val);
             Assert.areEqual(val, Y.DOM.getValue(node));
+            Y.DOM.setValue('');
+        },
+
+        'textarea from null should be empty string': function() {
+            var node = document.getElementById('test-textarea-no-value'),
+                val = null;
+
+            Y.DOM.setValue(node, val);
+            Assert.areEqual('', Y.DOM.getValue(node));
             Y.DOM.setValue('');
         },
 
@@ -1454,6 +1481,16 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
             node.removeAttribute('value')
+        },
+
+        'button value updated from null should be empty string': function() {
+            var node = document.getElementById('test-button-no-value'),
+                val = null;
+
+            Y.DOM.setValue(node, val);
+            Assert.areEqual('', Y.DOM.getValue(node));
+            Y.DOM.setValue(node, '');
+            node.removeAttribute('value');
         },
 
         'option value should match updated value': function() {
@@ -1491,6 +1528,16 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
             node.removeAttribute('value')
+        },
+
+        'option value updated from null should be null': function() {
+            var node = document.getElementById('test-option-no-value'),
+                val = null;
+
+            Y.DOM.setValue(node, val);
+            Assert.areEqual('', Y.DOM.getValue(node));
+            Y.DOM.setValue(node, '');
+            node.removeAttribute('value');
         }
     }));
 
@@ -1500,7 +1547,7 @@ YUI.add('dom-core-test', function(Y) {
         'should return fragment from HTMLCollection': function() {
             var node = document.createElement('div'),
                 frag;
-            
+
             node.innerHTML = '<div>foo</div><div>bar</div><div>baz</div>';
             frag = Y.DOM._nl2frag(node.childNodes);
 
@@ -1609,7 +1656,7 @@ YUI.add('dom-core-test', function(Y) {
 
             Y.DOM.addHTML(node.childNodes[1], '<span>new content</span>', 'before');
             Assert.areEqual('SPAN', node.childNodes[1].nodeName);
-            
+
         },
 
         'should add html after the given node': function() {
@@ -1857,7 +1904,7 @@ YUI.add('dom-core-test', function(Y) {
                 node3 = parent.getElementsByTagName('strong')[0],
                 siblings = Y.DOM.siblings(node);
 
-    
+
             ArrayAssert.itemsAreEqual(siblings, [node2, node3]);
         },
 
@@ -1868,7 +1915,7 @@ YUI.add('dom-core-test', function(Y) {
                 node3 = parent.getElementsByTagName('span')[0],
                 siblings = Y.DOM.siblings(node);
 
-    
+
             ArrayAssert.itemsAreEqual(siblings, [node2, node3]);
         },
 
@@ -1879,7 +1926,7 @@ YUI.add('dom-core-test', function(Y) {
                 node3 = parent.getElementsByTagName('strong')[0],
                 siblings = Y.DOM.siblings(node);
 
-    
+
             ArrayAssert.itemsAreEqual(siblings, [node2, node3]);
         },
 
@@ -1889,10 +1936,10 @@ YUI.add('dom-core-test', function(Y) {
                 node2 = parent.getElementsByTagName('em')[0],
                 node3 = parent.getElementsByTagName('strong')[0],
                 siblings = Y.DOM.siblings(node, function(n) {
-                    return n.tagName === 'STRONG'; 
+                    return n.tagName === 'STRONG';
                 });
 
-    
+
             ArrayAssert.itemsAreEqual(siblings, [node3]);
         }
     }));
@@ -2072,7 +2119,7 @@ YUI.add('dom-core-test', function(Y) {
             Assert.isNotNull(id);
             Assert.areEqual(node.id, id);
         },
-        
+
         'should return exising ID': function() {
             var node = document.createElement('div'),
                 id = 'foo';
@@ -2083,7 +2130,7 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual('foo', node.id);
             Assert.areEqual('foo', id);
         }
-        
-    })); 
+
+    }));
 
 }, '@VERSION@' ,{requires:['dom-core', 'test']});

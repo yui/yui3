@@ -1,5 +1,7 @@
 <div id="sort" class="yui3-skin-sam dt-example"></div>
 
+<div id="sortSensitive" class="yui3-skin-sam dt-example"></div>
+
 <div id="presorted" class="yui3-skin-sam dt-example"></div>
 
 <div id="dblclick" class="yui3-skin-sam dt-example"></div>
@@ -11,6 +13,12 @@ YUI().use("datatable-sort", function (Y) {
         {key:"Phone", label:"Not Sortable Column B"},
         {key:"Contact", label:"Click to Sort Column C", sortable:true}
     ],
+	sortableCols = [
+		 {key:"Number", label:"Sortable Number", sortable:true},
+		 {key:"Date", label:"Sortable Date", sortable:true},
+		 {key:"String", label:"Sortable string", sortable:true},
+		 {key:"StringSensitive", label:"Sortable string (case sensitive)", sortable:true, caseSensitive:true}
+	],
     /*
     dblclickCols = [
         {key:"Company", label:"Dblclick to Sort A", sortable:true},
@@ -23,6 +31,12 @@ YUI().use("datatable-sort", function (Y) {
         {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
+    dataSortable = [
+        {Number:1, Date:new Date(2001, 8, 16), String:"A", StringSensitive:"A"},
+        {Number:2, Date:new Date(2003, 8, 16), String:"a", StringSensitive:"a"},
+		{Number:3, Date:new Date(2005, 8, 16), String:"Z", StringSensitive:"Z"},
+		{Number:4, Date:new Date(2007, 8, 16), String:"z", StringSensitive:"z"}
+	],dt1,dt2;
     /*
     presortedData = [
         {Company:"Acme Company", Phone:"415-555-1234", Contact:"John Jones"},
@@ -37,7 +51,14 @@ YUI().use("datatable-sort", function (Y) {
         summary:"Contacts list",
         caption:"Table with simple column sorting"
     }).render("#sort");
-    
+
+    dt2 = new Y.DataTable({
+        columns:sortableCols,
+        data:dataSortable,
+        summary:"Sortable test data",
+        caption:"Table with column sorting by data type"
+    }).render("#sortSensitive");
+
     /*
     dt2 = new Y.DataTable({
         columns:cols,

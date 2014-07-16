@@ -32,6 +32,7 @@ var Y = YUI({
                 'lazy-model-list-test',
                 'model-test',
                 'model-list-test',
+                'model-sync-local-test',
                 'model-sync-rest-test',
                 'router-test',
                 'view-test',
@@ -62,6 +63,11 @@ var Y = YUI({
         'model-list-test': {
             fullpath: 'assets/model-list-test.js',
             requires: ['model-list', 'test']
+        },
+
+        'model-sync-local-test': {
+            fullpath: 'assets/model-sync-local-test.js',
+            requires: ['model', 'model-list', 'model-sync-local', 'test']
         },
 
         'model-sync-rest-test': {

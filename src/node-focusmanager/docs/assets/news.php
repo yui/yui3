@@ -30,13 +30,13 @@
 			$list = ""; // HTML output
 
 			$nResults = count($results);
-			
+
 			if ($nResults > 10) {
 				$nResults = 9;
 			}
-				
+
 			for ($i = 0; $i<= $nResults; $i++) {
-				
+
 				$result = $results[$i];
 
 				$list.= <<< END_OF_HTML

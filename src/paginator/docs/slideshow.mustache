@@ -1,0 +1,85 @@
+<div class="intro">
+<p>{{description}}</p>
+</div>
+
+<div id="demo" class="example">
+{{>slideshow-full}}
+</div>
+
+<h3>Setting Up the Interface</h3>
+<p>First we need to construct the HTML for the slideshow.</p>
+<p>This includes our slides, and controls, as well as a message that is displayed when the slideshow is paused. </p>
+<p><em>If you do not want an automated slideshow, this can be left out.</em></p>
+```
+{{>slideshow-html-markup}}
+```
+
+<p>Now let's jazz it up a bit with some CSS.</p>
+```
+{{>slideshow-css-styles}}
+```
+
+
+<h2>JavaScript</h2>
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the modules.</p>
+```
+{{>slideshow-js-startup}}
+```
+<p>There are only a few modules we need to require:</p>
+<ul>
+    <li><b>node:</b> Allows us to access the elem ents on the page and gives us basic event attachment</li>
+    <li><b>paginator:</b> Gives us the paginator</li>
+    <li><b>event-hover:</b> Let's us track moving the mouse over and out of an element</li>
+    <li><b>gallery-timer:</b> Let's us create a timer to pause and resume when we mouse in and out of the element</li>
+</ul>
+<p><em>If you are not interested having an automated slideshow, you can leave out `event-hover` and `gallery-timer`.</em></p>
+
+<h3>Defining our variables</h3>
+```
+{{>slideshow-js-vars}}
+```
+<p>We start our slide show by saving a reference to the slideshow container, `#spiffySlides`. Then we get a reference to all the slides and store them in a `Y.NodeList`. Our next variable, `controls`, stores a `Y.NodeList` of the control elements.</p>
+<p>After that we store our string for selected slides and controls. This will make maintenence easier for us later on.</p>
+<p>Next, we create a new `Y.Paginator` that will display only one item, or "slide", at a time. We use the `size()` method of our `slides` NodeList to get the total number of items in our paginator.</p>
+
+<h3>Binding Paginator's `pageChange`</h3>
+<p>Now that we have our variables in place, we need to define what happens when the page number changes in the paginator.</p>
+```
+{{>slideshow-js-pageChange}}
+```
+<p>Paginator's first page is always 1, and since a `NodeList`'s first element is at 0, we need to subtract 1 from the page to give us the proper index in the slides and controls list. (`index = page - 1;`)</p>
+<p>After we get the proper index, we need to remove any evidence of a preceeding active slide then make the new slide and control active.</p>
+
+<h3>Binding clicks on page controls</h3>
+<p>To define the controls click event, we can delegate on all anchor (`<a>`) elements within the `.controls` element.</p>
+```
+{{>slideshow-js-click}}
+```
+<p>First we prevent the default behavior of the anchor element.</p>
+<p>Then we check to see if it's active. If it is, we simply `return` out of the function to prevent any further action.</p>
+<p>If it's not active, we need to get the page number to go to. To do that, we use the number from the element and send it to the paginator. Since `Paginator` only takes numbers, we need to parse the string before we set it.</p>
+
+<p><b>At this point we are done with the slideshow funtionality.</b></p>
+<p><b><em>The rest of this walk through will be covering making the slideshow automated.</em></b></p>
+
+<h3>Automating the Slideshow</h3>
+<p>Using `gallery-timer`, we will create a new `Timer` object.</p>
+```
+{{>slideshow-js-timer}}
+```
+<p>We want the slides to advance every 2.5 seconds, so we set the length to 2500. We make it run continuously by setting repeatCount to zero.</p>
+<p>The timer fires a `'timer'` event on every loop. We listen for this event to proceed to the next slide. If there isn't a next slide, we simply go back to the first one.</p>
+
+<h3>Pausing the Slideshow</h3>
+<p>We probably do not want to have the slideshow run while we are trying to interact with the controls, so let's make it pause when we mouse over the whole thing.</p>
+```
+{{>slideshow-js-pause}}
+```
+<p>Using the `event-hover` module, we can define the mouse over and mouse out behavior at one time. When we mouse over the slideshow, we pause the timer. When we mouse out of the slideshow, we resume the timer.</p>
+
+<h3>The Whole Example</h3>
+<p>That's it! Now let's put it all together.</p>
+```
+{{>slideshow-full}}
+```

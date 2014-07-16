@@ -1,15 +1,15 @@
 /* base.css, part of YUI's CSS Foundation */
 h1 {
 	/*18px via YUI Fonts CSS foundation*/
-	font-size:138.5%;  
+	font-size:138.5%;
 }
 h2 {
 	/*16px via YUI Fonts CSS foundation*/
-	font-size:123.1%; 
+	font-size:123.1%;
 }
 h3 {
 	/*14px via YUI Fonts CSS foundation*/
-	font-size:108%;  
+	font-size:108%;
 }
 h1,h2,h3 {
 	/* top & bottom margin based on font size */
@@ -17,13 +17,13 @@ h1,h2,h3 {
 }
 h1,h2,h3,h4,h5,h6,strong {
 	/*bringing boldness back to headers and the strong element*/
-	font-weight:bold; 
+	font-weight:bold;
 }
 abbr,acronym {
 	/*indicating to users that more info is available */
 	border-bottom:1px dotted #000;
 	cursor:help;
-} 
+}
 em {
 	/*bringing italics back to the em element*/
 	font-style:italic;
@@ -38,13 +38,13 @@ ol,ul,dl {
 }
 ol {
 	/*giving OL's LIs generated numbers*/
-	list-style: decimal outside;	
+	list-style: decimal outside;
 }
 ul {
 	/*giving UL's LIs generated disc markers*/
 	list-style: disc outside;
 }
-dl dd {
+dd {
 	/*providing spacing for definition terms*/
 	margin-left:1em;
 }
@@ -68,6 +68,7 @@ p,fieldset,table,pre {
 	/*so things don't run into each other*/
 	margin-bottom:1em;
 }
-/* setting a consistent width, 160px; 
-   control of type=file still not possible */
+/* setting a consistent width, 160px;
+   control of type=file still not possible
+   *width is for ie7 (no ie6 fallback) */
 input[type=text],input[type=password],textarea{width:12.25em;*width:11.9em;}

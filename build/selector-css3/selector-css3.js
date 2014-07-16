@@ -11,7 +11,7 @@ YUI.add('selector-css3', function (Y, NAME) {
     an+b = get every _a_th node starting at the _b_th
     0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element
     1n+b =  get every element starting from b ("1" may may be omitted, e.g. "1n+0" or "n+0" or "n")
-    an+0 = get every _a_th element, "0" may be omitted 
+    an+0 = get every _a_th element, "0" may be omitted
 */
 
 Y.Selector._reNth = /^(?:([\-]?\d*)(n){1}|(odd|even)$)*([\-+]?\d*)$/;
@@ -37,7 +37,7 @@ Y.Selector._getNth = function(node, expr, tag, reverse) {
 
     if (a === 0) { // just the first
         if (reverse) {
-            b = siblings.length - b + 1; 
+            b = siblings.length - b + 1;
         }
 
         if (siblings[b - 1] === node) {
@@ -83,11 +83,11 @@ Y.mix(Y.Selector.pseudos, {
     'nth-of-type': function(node, expr) {
         return Y.Selector._getNth(node, expr, node.tagName);
     },
-     
+
     'nth-last-of-type': function(node, expr) {
         return Y.Selector._getNth(node, expr, node.tagName, true);
     },
-     
+
     'last-child': function(node) {
         var children = Y.DOM._children(node.parentNode);
         return children[children.length - 1] === node;
@@ -96,12 +96,12 @@ Y.mix(Y.Selector.pseudos, {
     'first-of-type': function(node) {
         return Y.DOM._children(node.parentNode, node.tagName)[0] === node;
     },
-     
+
     'last-of-type': function(node) {
         var children = Y.DOM._children(node.parentNode, node.tagName);
         return children[children.length - 1] === node;
     },
-     
+
     'only-child': function(node) {
         var children = Y.DOM._children(node.parentNode);
         return children.length === 1 && children[0] === node;
@@ -141,7 +141,7 @@ Y.mix(Y.Selector.pseudos, {
 Y.mix(Y.Selector.operators, {
     '^=': '^{val}', // Match starts with value
     '$=': '{val}$', // Match ends with value
-    '*=': '{val}' // Match contains value as substring 
+    '*=': '{val}' // Match contains value as substring
 });
 
 Y.Selector.combinators['~'] = {

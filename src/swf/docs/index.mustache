@@ -1,3 +1,24 @@
+<style type="text/css">
+    .notice {
+        background: #faf3d1;
+        border: 1px solid #eac9a9;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: px;
+        padding: 0 1em;
+        -moz-box-shadow: 0 0 5px #ccc8b3;
+        -webkit-box-shadow: 0 0 5px #ccc8b3;
+        box-shadow: 0 0 5px #ccc8b3;
+        margin-bottom: 1em;
+    }
+    .notice h2 {
+        margin-top: .6em;
+    }
+    .notice ul {
+        margin-top: 0.31em;
+    }
+</style>
+
 <div class="intro">
    <p>The YUI SWF Utility provides a standardized method for embedding the Adobe Flash player in web pages. Specifically, the SWF Utility:
 	<ol>
@@ -7,7 +28,15 @@
 		<li> Wraps the ExternalInterface API of the Flash player to allow method calls on specific player instances.</li>
 		<li> In conjunction with the YUIBridge ActionScript API, allows Flash applications to dispatch events that get converted to native YUI events.</li>
 	</ol>
-	
+
+    <div class="notice">
+        <strong>NOTE:</strong> Due to security issues, as of 3.13.0:
+        <ul>
+            <li>The swf module is deprecated. YUI has no plans for providing a utility for embedding Flash into HTML pages.</li>
+            <li>YUI <a href="https://github.com/yui/yui3/issues/845">has removed all the Flash files from the repository</a>. Necessary source files and documentation for `YUIBridge` are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</li>
+        </ul>
+    </div>
+
 	<p><strong>Important usage notes:</strong></p><ul>
 
 	<li>The SWF Utility is engineered to only work with A-grade browsers. Because it allows only standards-compliant markup, the utility will not function properly in older browser versions.</li>
@@ -17,7 +46,7 @@
 </div>
 
 {{>getting-started}}
-				
+
 <h2>Using the SWF Utility</h2>
 
 <p>This section describes how to use the SWF Utility in further detail.
@@ -27,14 +56,14 @@
 
 <p>The SWF Utility uses the browser information from the `Y.ua` variable to generate the appropriate markup for embedding the Flash player. The markup that the SWF Utility generates is entirely based on the `<object>` tag, and therefore will not work in older browsers that use the non-standard `<embed>` tag.
 </p>
-<p>In addition, the SWF Utility also determines the version of the Flash player (using YUI's `swfdetect` library), and places that information in `Y.ua.flash` as a period-delimited string (MajorVersion.MinorVersion.Revision). This information is used by SWF utility to prevent Flash Player embedding if the version of user's installed Flash player does not match that required by the developer.</p>				
+<p>In addition, the SWF Utility also determines the version of the Flash player (using YUI's `swfdetect` library), and places that information in `Y.ua.flash` as a period-delimited string (MajorVersion.MinorVersion.Revision). This information is used by SWF utility to prevent Flash Player embedding if the version of user's installed Flash player does not match that required by the developer.</p>
 <p>
    While the SWF Utility provides a direct access to the instance of the Flash player it encapsulates, it is recommended that all communication to that instance occur via the methods provided by the SWF Utility (see below.)
 </p>
 
 <h3>Configuring and Instantiating the SWF Utility</h3>
 <p>For simplicity, all configuration of the embedded Flash player instance happens in the SWF Utility at construction time, and therefore, all configuration parameters must be provided as arguments to the SWF constructor.</p>
-<p>By default, the SWF constructor requires only two arguments &ndash; the reference to the container in which the instance of the Flash player should be placed, and the URL of the swf application that the Flash player instance should load. Note that the Flash player instance created by the SWF Utility always adopts the size of the parent container it is placed into; therefore, setting the size of the Flash player is as simple as setting the size of its container.</p>                 
+<p>By default, the SWF constructor requires only two arguments &ndash; the reference to the container in which the instance of the Flash player should be placed, and the URL of the swf application that the Flash player instance should load. Note that the Flash player instance created by the SWF Utility always adopts the size of the parent container it is placed into; therefore, setting the size of the Flash player is as simple as setting the size of its container.</p>
 <p>To put an instance of the Flash player on the page, simply create a new instance of `Y.SWF` and provide it with the reference to the container in which it should be placed, as well as the URL of the swf file that needs to be loaded:</p>
 ```
 YUI({...}).use('swf',function (Y) {
@@ -89,7 +118,7 @@ var myswf = new Y.SWF("#swfContainer", "http://example.com/example.swf", params)
 YUI({...}).use('swf',function (Y) {
 
 	var myswf = new Y.SWF("#swfContainer", "http://example.com/example.swf");
-	myswf.callSWF("foo", [arg1, arg2]);	
+	myswf.callSWF("foo", [arg1, arg2]);
 
 });
 ```
@@ -98,61 +127,6 @@ YUI({...}).use('swf',function (Y) {
 
 <h3>Working with the YUIBridge ActionScript Library</h3>
 
-<p>YUIBridge ActionScript library creates a standardized method for sending YUI events from a Flash application. In an ActionScript application, an instance of YUIBridge is created as follows:</p>
-	
-```
-	import com.yahoo.util.YUIBridge
-	
-	...
-
-	// The scope for 'this' should be either the top-level application
-	// or a Sprite that has been placed on the stage.
-	
-	var yuiBridge:YUIBridge = new YUIBridge(this.stage);
-```
-
-<p>Instead of using `ExternalInterface.addCallback` on each method that needs to be exposed to JavaScript, you can instead call a collective `addCallbacks()` method available in YUIBridge:</p>
-
-```
-	import com.yahoo.util.YUIBridge
-	
-	...
-
-	// The scope for 'this' should be either the top-level application
-	// or a Sprite that has been placed on the stage.
-	
-	var yuiBridge:YUIBridge = new YUIBridge(this.stage);
-	yuiBridge.addCallbacks({externalMethodName:internalMethod, externalMethodName2:internalMethod2});
-
-});
-```
-
-<p>To dispatch YUI events (fired by the instance of the SWF Utility on the JavaScript end, you can call YUIBridge's `sendEvent` method:</p>
-
-```
-	import com.yahoo.util.YUIBridge
-	
-	...
-
-	// The scope for 'this' should be either the top-level application
-	// or a Sprite that has been placed on the stage.
-	
-	var yuiBridge:YUIBridge = new YUIBridge(this.stage);
-	yuiBridge.sendEvent({type:'someevent', payload:'some payload'});
-});
-```
-
-<p>In addition to any custom events you dispatch, YUIBridge also fires a `swfReady` event at initialization time, announcing that the Flash player is ready for communication with JavaScript:</p>
-```
-YUI({...}).use('swf',function (Y) {
-
-	var myswf = new Y.SWF("#swfContainer", "http://example.com/example.swf");
-	myswf.on('swfReady', init);
-	
-	function init() {
-		// Start communicating with the Flash player instance here
-		myswf.callSWF("foo", [arg1, arg2]);
-	}
-
-});
-```
+<div class="notice">
+    <strong>NOTE:</strong> Due to security issues, as of 3.13.0, YUI <a href="https://github.com/yui/yui3/issues/845">has removed all the Flash files from the repository</a>. Necessary source files and documentation for `YUIBridge` are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+</div>

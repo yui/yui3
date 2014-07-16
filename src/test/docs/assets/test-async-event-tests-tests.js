@@ -1,6 +1,6 @@
 YUI.add('test-async-event-tests-tests', function(Y) {
 
-    
+
     setTimeout(function() {
 
         var Assert = Y.Assert,
@@ -18,7 +18,7 @@ YUI.add('test-async-event-tests-tests', function(Y) {
                     entries,
                     condition = function() {
                         entries = Y.all('#testLogger .yui3-console-entry');
-                        return entries.size() > 0; 
+                        return entries.size() > 0;
                     },
                     interval = 10,
                     timeout = 10000,

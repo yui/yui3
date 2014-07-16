@@ -1,6 +1,6 @@
 {
     "scrollview" : {
-    
+
         "plugins" : {
             "scrollview-base" : {
                 "requires" : [
@@ -23,7 +23,7 @@
             },
             "scrollview-scrollbars" : {
                 "requires" : [
-		            "classnamemanager",
+                    "classnamemanager",
                     "transition",
                     "plugin"
                 ],

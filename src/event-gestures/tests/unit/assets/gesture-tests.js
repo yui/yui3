@@ -26,6 +26,11 @@ YUI.add('gesture-tests', function(Y) {
                 }
             ]
         },
+
+        eventNoTouch = {
+            target: node,
+            currentTarget: node
+        },
         suite = new Y.Test.Suite('Gesture Event Suite');
 
     suite.add(new Y.Test.Case({
@@ -59,6 +64,20 @@ YUI.add('gesture-tests', function(Y) {
                     Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
+        },
+
+        'test: _onStart() without e.touches': function () {
+            eventData.start._onStart(eventNoTouch,node, {
+                _extra: {
+                    minTime: 5,
+                    minDistance: 5
+                }
+            }, {
+                fire: function(e) {
+                    Assert.areSame(eventNoTouch.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');                }
+            });
+
         },
         'test: _start()': function() {
             eventData.start._start(event,node, {
@@ -102,7 +121,25 @@ YUI.add('gesture-tests', function(Y) {
                     Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
+        },
+
+        'test: _onMove() delegate': function() {
+            eventData.move._onMove(event,node, {
+                _extra: {
+                    minTime: 5,
+                    minDistance: 5
+                }
+            }, {
+                fire: function(e) {
+                    Assert.areSame(event.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemove', e.type, 'Event type not correct');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
+                }
+
+            }, Y.one('doc'));
         }
+
+
     }));
 
     suite.add(new Y.Test.Case({

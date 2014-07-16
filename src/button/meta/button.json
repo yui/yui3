@@ -3,7 +3,8 @@
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
 

@@ -1,0 +1,7 @@
+{
+    "series-candlestick": {
+        "requires":[
+            "series-range"
+        ]
+    }
+}

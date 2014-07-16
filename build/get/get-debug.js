@@ -762,12 +762,13 @@ This object comes from the options passed to `Get.css()`, `Get.js()`, or
 **/
 
 /**
-Array of errors that have occurred during this transaction, if any.
+Array of errors that have occurred during this transaction, if any. Each error
+object has the following properties:
+`errors.error`: Error message.
+`errors.request`: Request object related to the error.
 
 @since 3.5.0
 @property {Object[]} errors
-@property {String} errors.error Error message.
-@property {Object} errors.request Request object related to the error.
 **/
 
 /**
@@ -1007,7 +1008,7 @@ Transaction.prototype = {
     _getInsertBefore: function (req) {
         var doc = req.doc,
             el  = req.insertBefore,
-            cache, cachedNode, docStamp;
+            cache, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
@@ -1137,11 +1138,12 @@ Transaction.prototype = {
 
             if (ua.ie >= 10) {
 
-                // We currently need to introduce a timeout for IE10, since it 
+                // We currently need to introduce a timeout for IE10, since it
                 // calls onerror/onload synchronously for 304s - messing up existing
-                // program flow. 
+                // program flow.
 
                 // Remove this block if the following bug gets fixed by GA
+                /*jshint maxlen: 1500 */
                 // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
                 node.onerror = function() { setTimeout(onError, 0); };
                 node.onload  = function() { setTimeout(onLoad, 0); };

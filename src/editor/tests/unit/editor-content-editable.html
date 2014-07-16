@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Editor Tests</title>
+    <style>
+        #editor {
+            height: 400px;
+            width: 400px;
+            margin: 2em;
+            border: 1px solid black;
+        }
+        #log {
+            position: absolute;
+            right: 5px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+    <div id="log"></div>
+    <div id="editor"></div>
+
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+YUI({
+    coverage: [ 'editor-inline', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-selection' ],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'editor-tests': {
+            fullpath: './assets/editor-content-editable.js',
+            requires: [ 'test', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-selection', 'node-event-simulate', 'editor-inline', 'color' ]
+        }
+
+    }
+}).use('editor-tests', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
+    Y.Test.Runner.run();
+});
+
+</script>
+
+</body>
+</html>

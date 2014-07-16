@@ -77,14 +77,16 @@ YUI({
             fullpath: 'array-test.js',
             requires: ['test']
         },
-        
         'object-test': {
             fullpath: 'object-test.js',
             requires: ['test']
         },
-        
         'lang-test': {
             fullpath: 'lang-test.js',
+            requires: ['test']
+        },
+        'es-modules-test': {
+            fullpath: 'es-modules-test.js',
             requires: ['test']
         }
     };
@@ -94,13 +96,18 @@ YUI({
         mod.fullpath = path.join(__dirname, '../unit/assets', mod.fullpath);
     });
 
+    modules['core-nodejs-tests'] = {
+        fullpath: path.join(__dirname, './lib/nodejs-tests.js'),
+        requires: ['test']
+    };
+
     Y.applyConfig({
         modules: modules
     });
 
     Y.use(Object.keys(modules));
-    
+
     Y.Test.Runner.setName('CORE cli tests');
-    
+
 });
 

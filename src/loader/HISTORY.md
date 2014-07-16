@@ -1,6 +1,133 @@
 YUI Loader Change History
 =========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* Fix a bug in 3.17.1 where there comboBase was no longer inherited from the default group. ([#1837][]: @andrewnicols)
+
+3.17.1
+------
+
+* Fix a bug in 3.17 which caused certain YUI modules to be loaded with a group
+  `comboBase`.
+
+3.17.0
+------
+
+* Add support for optional dependencies. These dependencies are conditionally
+  loaded but each dependency is responsible for determining the result of the
+  test, the opposite of `condition`. Example:
+
+```js
+  YUI({
+    modules: {
+      foo: {
+        test: function (Y) {
+          return true;
+        }
+      },
+      bar: {
+        optionalRequires: ['foo']
+      }
+    }
+  }).use('bar', ...);
+```
+
+3.16.0
+------
+
+* regresion: expanding trigger with aliases. ([#1768][]: @caridy)
+
+[#1768]: https://github.com/yui/yui3/pull/1581
+
+* Optimization of the Loader's constructor by removing _populateCache() in  in favor of an on-demand process to create internal module info based on the raw meta when the module is needed and called thru `getModuleInfo()`. ([#1581][]: @caridy)
+
+[#1581]: https://github.com/yui/yui3/pull/1581
+
+* Removal of  `onCSS` documentation, as it was never implemented. ([#1743][]: @ezequiel)
+
+* Fixed an issue where a module's `lang` packs were not being included before the module itself. ([#1743][]: @ezequiel)
+
+* Fixed an issue where conditionally loading a module using `before` did not work. ([#1743][]: @ezequiel)
+
+* Fixed an issue where a `CSS` module could not require a `js` module. ([#1743][]: @ezequiel)
+
+[#1743]: https://github.com/yui/yui3/pull/1743
+
+3.15.0
+------
+
+* Optimization of the `calculate` method, which now utilizes a topological sort (a variation of a depth first search) to generate a valid dependency order. ([#1606][]: @ezequiel)
+
+[#1606]: https://github.com/yui/yui3/pull/1606
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Removed the default `build` directories from Loader generated combo URL's
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Fixed gallery update method for override group configs
+* Fixed #2533138, added a missing `hasOwnProperty` check in `Loader.resolve` to help harden the config processing
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 
@@ -64,19 +191,11 @@ all of them asynchronously, then return to loader for post processing of the inj
    * 2530343 Loader.sorted does not contain conditional modules
    * 2530565 Slider one-off skins not being loaded
    * 2530958 Loader.resolve not properly handling CSS modules
-   * 2531319 The aliased modules are reported as missing 
+   * 2531319 The aliased modules are reported as missing
    * 2531324 Support regular expressions in the patterns configuration
    * 2531281 specify ID when injecting CSS via loader
-   * 2529521 Consider making the presence of YUI CSS detectable by the loader
    * 2530077 'force' ignored for on-page modules unless 'allowRollup' is true
-   * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
-   * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
-   * 2530343 Loader.sorted does not contain conditional modules
-   * 2530565 Slider one-off skins not being loaded
-   * 2530958 Loader.resolve not properly handling CSS modules
    * 2531150 Update Dynamic Loader example
-   * 2531319 The aliased modules are reported as missing 
-   * 2531324 Support regular expressions in the patterns configuration
    * 2531433 Improve the syntax for setting a skin in the YUI.use() statement
    * 2531451 Loading of lang modules doesn't go through configFn in loader
    * 2531590 addModule does not update the global cache so dynamically added skins modules can get lost
@@ -86,7 +205,6 @@ all of them asynchronously, then return to loader for post processing of the inj
    * 2531697 Loading a CSS module without specifying 'type=css' will throw a syntax error
    * 2531587 Loader will not load custom modules if combine: true
 
-
 3.4.1
 -----
 
@@ -94,7 +212,7 @@ all of them asynchronously, then return to loader for post processing of the inj
 
 3.4.0
 -----
-    
+
    * Added Alias support and flattened the module structure.
    * Alias support: When asking for: "dd"
         Loader actually asks for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"

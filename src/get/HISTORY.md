@@ -1,31 +1,123 @@
 Get Utility Change History
 ==========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Preserve `global` as `this` when executing a yui module in nodejs ([#1360][])
+
+[#1360]: https://github.com/yui/yui3/pull/1360
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Added fake transaction object to Node.js version
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
 
 3.7.3
 -----
 
-* Fixed Get issues, highlighted by IE10. 
+* Fixed Get issues, highlighted by IE10.
 
   1) IE10 seems to interrupt JS execution, in the case of a 304'ing script to invoke
   the onLoad handler. If this happened inside the transaction execute loop, the transaction
   would terminate early (call onSuccess before all scripts were done), because the _waiting
   count would only reflect the number of scripts added to the DOM, when the loop was
-  interrupted. Changed the logic so that we only finish a transaction when the expected 
+  interrupted. Changed the logic so that we only finish a transaction when the expected
   number of requests are accounted for which seems reasonable in general.
 
-  Also wrapped the internal onLoad/onError callbacks in a setTimeout for IE10, so we're 
-  re-introducing asynchronicty for external onSuccess, etc. app code. We can take this out 
-  when/if the bug below gets fixed. 
+  Also wrapped the internal onLoad/onError callbacks in a setTimeout for IE10, so we're
+  re-introducing asynchronicty for external onSuccess, etc. app code. We can take this out
+  when/if the bug below gets fixed.
 
   http://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
 
-  2) transaction._finish() would move on to the next transaction, before the current 
-  transaction's onSuccess/Finish/End listeners were invoked, since the logic to move to 
+  2) transaction._finish() would move on to the next transaction, before the current
+  transaction's onSuccess/Finish/End listeners were invoked, since the logic to move to
   the next transaction was invoked before the `on` listeners were invoked. This meant that
   for all browsers, when issuing a CSS transaction followed by a JS transaction, the CSS
   success callback wouldn't be invoked until the JS transaction was initiated.
@@ -37,8 +129,8 @@ Get Utility Change History
 
   ---
 
-  Get should work OK with IE10 now aside from one pending issue. If you issue 2 Get 
-  requests to the same 404ing script, IE10 doesn't call the success handler for the 
+  Get should work OK with IE10 now aside from one pending issue. If you issue 2 Get
+  requests to the same 404ing script, IE10 doesn't call the success handler for the
   subsequent valid (200 etc.) request. This seems to be an IE10 issue, which we cannot
   control:
 

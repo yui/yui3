@@ -1,0 +1,8 @@
+{
+    "series-marker": {
+        "requires":[
+            "series-cartesian",
+            "series-plot-util"
+        ]
+    }
+}

@@ -1,9 +1,24 @@
 /**
+ * The Charts widget provides an api for displaying data
+ * graphically.
+ *
+ * @module charts
+ * @main charts
+ */
+
+/**
+ * Provides functionality for the handling of axis data in a chart.
+ *
+ * @module charts
+ * @submodule axis-base
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * The Renderer class is a base class for chart components that use the `styles`
  * attribute.
  *
  * @module charts
- * @submodule charts-base
  * @class Renderer
  * @constructor
  */
@@ -81,7 +96,7 @@ Renderer.prototype = {
             b = {};
         }
         var newstyles = Y.merge(b, {});
-        Y.Object.each(a, function(value, key, a)
+        Y.Object.each(a, function(value, key)
         {
             if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isFunction(value) && !Y_Lang.isArray(value))
             {
@@ -93,6 +108,36 @@ Renderer.prototype = {
             }
         }, this);
         return newstyles;
+    },
+
+    /**
+     * Copies an object literal.
+     *
+     * @method _copyObject
+     * @param {Object} obj Object literal to be copied.
+     * @return Object
+     * @private
+     */
+    _copyObject: function(obj) {
+        var newObj = {},
+            key,
+            val;
+        for(key in obj)
+        {
+            if(obj.hasOwnProperty(key))
+            {
+                val = obj[key];
+                if(typeof val === "object" && !Y_Lang.isArray(val))
+                {
+                    newObj[key] = this._copyObject(val);
+                }
+                else
+                {
+                    newObj[key] = val;
+                }
+            }
+        }
+        return newObj;
     },
 
     /**

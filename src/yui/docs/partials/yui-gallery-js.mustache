@@ -1,7 +1,7 @@
 YUI().use('event-key', 'node', 'gallery-bitly', function(Y) {
     /*
         To use the bit.ly module, you must have a bit.ly username and apiKey.
-        If you do not have an apiKey, sign up for a bitly account and go to 
+        If you do not have an apiKey, sign up for a bitly account and go to
         your Account page to get your apiKey.
     */
     var bitly = new Y.bitly({
@@ -37,7 +37,7 @@ YUI().use('event-key', 'node', 'gallery-bitly', function(Y) {
             short.set('value', r.longUrl);
         });
     };
-    
+
 
     Y.on('click', function(e) {
         shorten(e.target);

@@ -1,0 +1,22 @@
+YUI.add('editor-inline-events-tests', function (Y) {
+
+    var suite = new Y.Test.Suite('editor events example test suite'),
+        Assert = Y.Assert;
+
+    suite.add(new Y.Test.Case({
+        name: 'Example tests',
+        'Example should have rendered an iframe for Editor': function () {
+            var editorFrame = Y.one('#editor');
+
+            Assert.isTrue(editorFrame.hasAttribute('contenteditable'));
+        },
+
+        'Example should have rendered a console for logging': function () {
+            var consoleNode = Y.one('#console .yui3-console');
+
+            Assert.isNotNull(consoleNode, 'Console widget is missing');
+        }
+    }));
+
+    Y.Test.Runner.add(suite);
+}, '@VERSION@', { requires: [ 'node', 'test' ] });

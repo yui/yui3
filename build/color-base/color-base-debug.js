@@ -7,16 +7,14 @@ Color provides static methods for color conversion.
 
     Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
 
-
 @module color
 @submodule color-base
-@class Base
-@namespace Color
+@class Color
 @since 3.8.0
 **/
 
-var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/,
-    REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})/,
+var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})(\ufffe)?/,
+    REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})(\ufffe)?/,
     REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/,
     TYPES = { 'HEX': 'hex', 'RGB': 'rgb', 'RGBA': 'rgba' },
     CONVERTS = { 'hex': 'toHex', 'rgb': 'toRGB', 'rgba': 'toRGBA' };
@@ -37,19 +35,27 @@ Y.Color = {
     },
 
     /**
+        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
+        place for the alpha channel that is returned from toArray
+        without compromising any usage of the Regular Expression
+
     @static
     @property REGEX_HEX
     @type RegExp
-    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/
+    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(\ufffe)?/
     @since 3.8.0
     **/
     REGEX_HEX: REGEX_HEX,
 
     /**
+        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
+        place for the alpha channel that is returned from toArray
+        without compromising any usage of the Regular Expression
+
     @static
     @property REGEX_HEX3
     @type RegExp
-    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/
+    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})(\ufffe)?/
     @since 3.8.0
     **/
     REGEX_HEX3: REGEX_HEX3,
@@ -115,24 +121,31 @@ Y.Color = {
     CONVERTS: CONVERTS,
 
     /**
-    @public
-    @method convert
-    @param {String} str
-    @param {String} to
-    @return {String}
-    @since 3.8.0
-    **/
-    convert: function (str, to) {
-        // check for a toXXX conversion method first
-        // if it doesn't exist, use the toXxx conversion method
-        var convert = Y.Color.CONVERTS[to],
-            clr = Y.Color[convert](str);
+     Converts the provided string to the provided type.
+     You can use the `Y.Color.TYPES` to get a valid `to` type.
+     If the color cannot be converted, the original color will be returned.
 
-        return clr.toLowerCase();
+     @public
+     @method convert
+     @param {String} str
+     @param {String} to
+     @return {String}
+     @since 3.8.0
+     **/
+    convert: function (str, to) {
+        var convert = Y.Color.CONVERTS[to.toLowerCase()],
+            clr = str;
+
+        if (convert && Y.Color[convert]) {
+            clr = Y.Color[convert](str);
+        }
+
+        return clr;
     },
 
     /**
     Converts provided color value to a hex value string
+
     @public
     @method toHex
     @param {String} str Hex or RGB value string
@@ -140,8 +153,14 @@ Y.Color = {
     @since 3.8.0
     **/
     toHex: function (str) {
-        var clr = Y.Color._convertTo(str, 'hex');
-        return clr.toLowerCase();
+        var clr = Y.Color._convertTo(str, 'hex'),
+            isTransparent = clr.toLowerCase() === 'transparent';
+
+        if (clr.charAt(0) !== '#' && !isTransparent) {
+            clr = '#' + clr;
+        }
+
+        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
     },
 
     /**
@@ -171,9 +190,20 @@ Y.Color = {
     },
 
     /**
-    Converts the provided color string to an array of values. Will
-        return an empty array if the provided string is not able
-        to be parsed.
+    Converts the provided color string to an array of values where the
+        last value is the alpha value. Will return an empty array if
+        the provided string is not able to be parsed.
+
+        NOTE: `(\ufffe)?` is added to `HEX` and `HEX3` Regular Expressions to
+        carve out a place for the alpha channel that is returned from
+        toArray without compromising any usage of the Regular Expression
+
+        Y.Color.toArray('fff');              // ['ff', 'ff', 'ff', 1]
+        Y.Color.toArray('rgb(0, 0, 0)');     // ['0', '0', '0', 1]
+        Y.Color.toArray('rgba(0, 0, 0, 0)'); // ['0', '0', '0', 1]
+
+
+
     @public
     @method toArray
     @param {String} str
@@ -184,24 +214,38 @@ Y.Color = {
         // parse with regex and return "matches" array
         var type = Y.Color.findType(str).toUpperCase(),
             regex,
-            arr;
+            arr,
+            length,
+            lastItem;
 
         if (type === 'HEX' && str.length < 5) {
             type = 'HEX3';
         }
 
-        if (type[type.length - 1] === 'A') {
+        if (type.charAt(type.length - 1) === 'A') {
             type = type.slice(0, -1);
         }
+
         regex = Y.Color['REGEX_' + type];
+
         if (regex) {
             arr = regex.exec(str) || [];
+            length = arr.length;
 
-            if (arr.length) {
+            if (length) {
+
                 arr.shift();
+                length--;
 
-                if (typeof arr[arr.length - 1] === 'undefined') {
-                    arr[arr.length - 1] = 1;
+                if (type === 'HEX3') {
+                    arr[0] += arr[0];
+                    arr[1] += arr[1];
+                    arr[2] += arr[2];
+                }
+
+                lastItem = arr[length - 1];
+                if (!lastItem) {
+                    arr[length - 1] = 1;
                 }
             }
         }
@@ -315,6 +359,11 @@ Y.Color = {
     @since 3.8.0
     **/
     _convertTo: function(clr, to) {
+
+        if (clr === 'transparent') {
+            return clr;
+        }
+
         var from = Y.Color.findType(clr),
             originalTo = to,
             needsAlpha,
@@ -328,28 +377,30 @@ Y.Color = {
         }
 
         if (from === 'hex' && clr.length < 5) {
-            if (clr[0] === '#') {
+            if (clr.charAt(0) === '#') {
                 clr = clr.substr(1);
             }
 
-            clr = '#' + clr[0] + clr[0] + clr[1] + clr[1] + clr[2] + clr[2];
+            clr = '#' + clr.charAt(0) + clr.charAt(0) +
+                        clr.charAt(1) + clr.charAt(1) +
+                        clr.charAt(2) + clr.charAt(2);
         }
 
         if (from === to) {
             return clr;
         }
 
-        if (from[from.length - 1] === 'a') {
+        if (from.charAt(from.length - 1) === 'a') {
             from = from.slice(0, -1);
         }
 
-        needsAlpha = (to[to.length - 1] === 'a');
+        needsAlpha = (to.charAt(to.length - 1) === 'a');
         if (needsAlpha) {
             to = to.slice(0, -1);
             alpha = Y.Color._getAlpha(clr);
         }
 
-        ucTo = to[0].toUpperCase() + to.substr(1).toLowerCase();
+        ucTo = to.charAt(0).toUpperCase() + to.substr(1).toLowerCase();
         method = Y.Color['_' + from + 'To' + ucTo ];
 
         // check to see if need conversion to rgb first

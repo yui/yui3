@@ -1,0 +1,29 @@
+<script>
+YUI().use('node', 'jsonp', 'promise', 'escape', function (Y) {
+
+{{>github-cache}}
+
+var demo = Y.one('#demo'),
+    SUCCESS_TEMPLATE = '<div class="success">Loaded {name}\'s data! ' +
+                        '<a href="{link}">Link to profile</a></div>',
+    FAILURE_TEMPLATE = '<div class="error">{message}</div>';
+
+function renderUser(user) {
+    demo.setHTML(Y.Lang.sub(SUCCESS_TEMPLATE, {
+        // escape the values gotten from the GitHub API to avoid unexpected
+        // HTML injection which could be an XSS vulnerability
+        name: Y.Escape.html(user.login),
+        link: Y.Escape.html(user.html_url)
+    }));
+}
+
+function showError(err) {
+    demo.setHTML(
+        'Looks like the service might be down - would you like to <a href="?mock=true">try this example with mock data</a>?'
+    );
+}
+
+GitHub.getUser('yui').then(renderUser, showError);
+
+});
+</script>

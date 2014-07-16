@@ -49,7 +49,7 @@ Y.assert = function(condition, message){
  * @for YUI
  * @static
  */
-Y.fail = Y.Assert.fail; 
+Y.fail = Y.Assert.fail;
 
 Y.Test.Runner.once = Y.Test.Runner.subscribe;
 
@@ -75,20 +75,20 @@ if (!YUI.YUITest) {
 
     YUI.YUITest = Y.Test;
 
-    
+
     //Only setup the listeners once.
     var logEvent = function(event) {
-        
+
         //data variables
         var message = "";
         var messageType = "";
-        
+
         switch(event.type){
             case this.BEGIN_EVENT:
                 message = "Testing began at " + (new Date()).toString() + ".";
                 messageType = "info";
                 break;
-                
+
             case this.COMPLETE_EVENT:
                 message = Y.Lang.sub("Testing completed at " +
                     (new Date()).toString() + ".\n" +
@@ -97,27 +97,27 @@ if (!YUI.YUITest) {
                     event.results);
                 messageType = "info";
                 break;
-                
+
             case this.TEST_FAIL_EVENT:
                 message = event.testName + ": failed.\n" + event.error.getMessage();
                 messageType = "fail";
                 break;
-                
+
             case this.TEST_IGNORE_EVENT:
                 message = event.testName + ": ignored.";
                 messageType = "ignore";
                 break;
-                
+
             case this.TEST_PASS_EVENT:
                 message = event.testName + ": passed.";
                 messageType = "pass";
                 break;
-                
+
             case this.TEST_SUITE_BEGIN_EVENT:
                 message = "Test suite \"" + event.testSuite.name + "\" started.";
                 messageType = "info";
                 break;
-                
+
             case this.TEST_SUITE_COMPLETE_EVENT:
                 message = Y.Lang.sub("Test suite \"" +
                     event.testSuite.name + "\" completed" + ".\n" +
@@ -126,12 +126,12 @@ if (!YUI.YUITest) {
                     event.results);
                 messageType = "info";
                 break;
-                
+
             case this.TEST_CASE_BEGIN_EVENT:
                 message = "Test case \"" + event.testCase.name + "\" started.";
                 messageType = "info";
                 break;
-                
+
             case this.TEST_CASE_COMPLETE_EVENT:
                 message = Y.Lang.sub("Test case \"" +
                     event.testCase.name + "\" completed.\n" +
@@ -142,9 +142,9 @@ if (!YUI.YUITest) {
                 break;
             default:
                 message = "Unexpected event " + event.type;
-                message = "info";
+                messageType = "info";
         }
-        
+
         if (Y.Test.Runner._log) {
             Y.log(message, messageType, "TestRunner");
         }

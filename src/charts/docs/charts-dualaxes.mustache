@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #mychart {
     margin:10px 10px 10px 10px;
     width:90%;
@@ -15,13 +15,29 @@
 <h3>Creating a `Chart` with multiple axes.</h3>
 
 
-<p>Multiple axes charts are useful for comparing trends in two or more data sets whose numeric range differs greatly. In this example, we'll create two `NumericAxis` through the 
+<p>Multiple axes charts are useful for comparing trends in two or more data sets whose numeric range differs greatly. In this example, we'll create two `NumericAxis` through the
 `axes` attribute. By defining a separate axis for each key in our data provider, we can plot percentages and dollar sales on the same graph.</p>
 
+<h4>CSS</h4>
 ```
-YUI().use('charts', function (Y) 
-{ 
-    var myDataValues = [ 
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+```
+
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+
+<h4>JavaScript</h4>
+```
+YUI().use('charts', function (Y)
+{
+    var myDataValues = [
         {month:"January", internetSales: 110000, percentOfRevenue: 25},
         {month:"February", internetSales: 333500, percentOfRevenue: 28},
         {month:"March", internetSales: 90500, percentOfRevenue: 15},
@@ -29,7 +45,7 @@ YUI().use('charts', function (Y)
         {month:"May", internetSales: 445000, percentOfRevenue: 33},
         {month:"June", internetSales: 580000, percentOfRevenue: 38}
     ];
-   
+
     //Define axes and assign keys
     var myAxes = {
         percentage: {
@@ -56,10 +72,10 @@ YUI().use('charts', function (Y)
     ];
 
     var mychart = new Y.Chart({
-                            dataProvider:myDataValues, 
-                            categoryKey:"month", 
-                            axes:myAxes, 
-                            seriesCollection:mySeries, 
+                            dataProvider:myDataValues,
+                            categoryKey:"month",
+                            axes:myAxes,
+                            seriesCollection:mySeries,
                             render:"#mychart"
                         });
 });

@@ -1,0 +1,7 @@
+{
+    "series-stacked": {
+        "requires":[
+            "axis-stacked"
+        ]
+    }
+}

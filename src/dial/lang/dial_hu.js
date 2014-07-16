@@ -1,0 +1,5 @@
+{
+	label: 'Saj\u00e1t c\u00edmke',
+    resetStr: '\u00dajrakezd',
+    tooltipHandle: 'H\u00e1zza az \u00e9rt\u00e9k be\u00e1ll\u00edt\u00e1s\u00e1hoz'
+}

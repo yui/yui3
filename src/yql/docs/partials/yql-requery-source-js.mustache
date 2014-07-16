@@ -1,20 +1,21 @@
 YUI().use('node', 'yql', function(Y) {
-    
+
     var res = Y.one('#res'), count = 0,
         url = '<a href="http://flickr.com/photos/{owner}/{id}"><img src="http://static.flickr.com/{server}/{id}_{secret}_t.jpg"></a>';
-    
+
     var q = Y.YQL('select * from flickr.photos.recent where (api_key = "1895311ec0d2e23431a6407f3e8dffcc")', {
         //Tell JSONP to not cache this request so we get new images on each request
         allowCache: false,
         on: {
             success: function(r) {
-                if (r.query && r.query.results) {
-                    count++;
-                    res.setHTML('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
-                    Y.each(r.query.results.photo, function(v) {
-                        res.append(Y.Lang.sub(url, v));
-                    });
-                }
+                count++;
+                res.setHTML('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
+                Y.each(r.query.results.photo, function(v) {
+                    res.append(Y.Lang.sub(url, v));
+                });
+            },
+            failure: function() {
+                res.setHTML('YQL is down at the moment. Please <a href="?mock=true">try this example with mocked data</a>.');
             }
         }
     });

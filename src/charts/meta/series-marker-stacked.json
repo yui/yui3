@@ -1,0 +1,8 @@
+{
+    "series-marker-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-marker"
+        ]
+    }
+}

@@ -148,12 +148,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             boundingBox.plug(Y.Plugin.Shim);
         }
 
-        // Force position: absolute on the boundingBox. This works around a
-        // potential CSS loading race condition in Gecko that can cause the
-        // boundingBox to become relatively positioned, which is all kinds of
-        // no good.
-        boundingBox.setStyle('position', 'absolute');
-
         this._ariaNode    = ariaNode;
         this._boundingBox = boundingBox;
         this._contentBox  = contentBox;
@@ -617,8 +611,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var boundingBox = this._boundingBox,
             target      = e.target;
 
-        if(target !== this._inputNode && target !== boundingBox &&
-                target.ancestor('#' + boundingBox.get('id'), true)){
+        if (target !== this._inputNode && target !== boundingBox &&
+                !target.ancestor('#' + boundingBox.get('id'), true)){
             this.hide();
         }
     },

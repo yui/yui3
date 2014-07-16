@@ -1,7 +1,7 @@
 YUI.add('color-harmony-tests', function(Y) {
 
     var testBasic = new Y.Test.Case({
-            name: "Color Convertion Tests",
+            name: "Color Harmony Convertion Tests",
 
             'complementary of "blue"': function() {
                 var c = Y.Color.getComplementary('blue');
@@ -162,7 +162,7 @@ YUI.add('color-harmony-tests', function(Y) {
 
         });
 
-    var suite = new Y.Test.Suite("Color");
+    var suite = new Y.Test.Suite("Color Harmony");
     suite.add(testBasic);
 
     Y.Test.Runner.add(suite);

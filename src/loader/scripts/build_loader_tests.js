@@ -10,7 +10,7 @@ var wrapper = fs.readFileSync(__dirname + '/loader_template.js', 'utf8');
 
 var testMod = function(v) {
     //Removes YUI core modules
-    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') !== 0) && 
+    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') !== 0) &&
         (v.indexOf('css') === -1) && (v !== 'queue-run') && (v !== 'features') && (v !== 'get') &&
         (v !== 'intl-base')) {
         return true;

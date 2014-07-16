@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 .handlebars-code pre.code {
     height: 100%;
     margin: 0;
@@ -1126,7 +1126,7 @@ The `precompiled` variable will contain a string of JavaScript code that looks s
 </p>
 
 ```
-function (Handlebars,depth0,helpers,partials,data) {\n  helpers = helpers || Handlebars.helpers;\n  var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;\n\n\n  buffer += "My favorite food is ";\n  foundHelper = helpers.food;\n  stack1 = foundHelper || depth0.food;\n  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }\n  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "food", { hash: {} }); }\n  buffer += escapeExpression(stack1) + ".";\n  return buffer;}
+function (Handlebars,depth0,helpers,partials,data) {\n  helpers = helpers || Handlebars.helpers; data = data || {};\n  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression;\n\n\n  buffer += "My favorite food is ";\n  foundHelper = helpers.food;\n  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }\n  else { stack1 = depth0.food; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }\n  buffer += escapeExpression(stack1) + ".";\n  return buffer;}
 ```
 
 <p>
@@ -1251,22 +1251,6 @@ YUI Handlebars differs from the original Handlebars in the following minor ways:
     <li>
         <p>
         YUI Handlebars is a first-class YUI module intended to be loaded via `YUI().use()` or as a dependency of a module created via `YUI.add()`. Like all YUI modules, it adds its API to the `Y` namespace, so the YUI Handlebars object is `Y.Handlebars` instead of the global `Handlebars` namespace used by the original Handlebars.
-        </p>
-    </li>
-
-    <li>
-        <p>
-        YUI Handlebars uses YUI's own `Y.Escape.html()` method to escape HTML, and the `Y.Lang.isEmpty()` and `Y.Lang.isArray()` methods to determine whether a value is empty or an array. This ensures consistency with other parts of the library.
-        </p>
-    </li>
-
-    <li>
-        <p>
-        In escaped expressions like `\{{foo}}`, YUI Handlebars escapes all `&` characters, even when they're part of an existing HTML entity like `&amp;`. Original Handlebars doesn't double-escape existing HTML entities.
-        </p>
-
-        <p>
-        This change was made to ensure consistency and safety&mdash;this way you always know that all the contents of a value rendered by an escaped expression will truly be escaped, even if that means some characters will be double-escaped. This is especially important in cases where double-escaping is desired, such as when attempting to display the literal string `&amp;` in a code example or documentation (like this user guide!).
         </p>
     </li>
 

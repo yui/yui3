@@ -1,5 +1,5 @@
 
-    
+
 /**
  * A test suite that can contain a collection of TestCase and TestSuite objects.
  * @param {String||Object} data The name of the test suite or an object containing
@@ -43,16 +43,15 @@ YUITest.TestSuite = function (data) {
     }
 
 };
-    
+
 YUITest.TestSuite.prototype = {
-    
+
     //restore constructor
     constructor: YUITest.TestSuite,
-    
+
     /**
      * Adds a test suite or test case to the test suite.
      * @param {Test.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
-     * @return {Void}
      * @method add
      */
     add : function (testObject) {
@@ -61,25 +60,23 @@ YUITest.TestSuite.prototype = {
         }
         return this;
     },
-    
+
     //-------------------------------------------------------------------------
     // Stub Methods
     //-------------------------------------------------------------------------
 
     /**
      * Function to run before each test is executed.
-     * @return {Void}
      * @method setUp
      */
     setUp : function () {
     },
-    
+
     /**
      * Function to run after each test is executed.
-     * @return {Void}
      * @method tearDown
      */
     tearDown: function () {
     }
-    
+
 };

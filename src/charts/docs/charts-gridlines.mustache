@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #mychart {
     margin:10px 10px 10px 10px;
     width:90%;
@@ -18,19 +18,35 @@
 add gridlines to a chart. Setting either attribute to `true` will add gridlines with default styling. Alternatively, you can pass a style object to either attribute. The `styles`
 object of a gridline contains the line property with color, alpha and weight attributes.</p>
 
+<h4>CSS</h4>
 ```
-YUI().use('charts', function (Y) 
-{ 
-    var myDataValues = [ 
-        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+```
+
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+
+<h4>JavaScript</h4>
+```
+YUI().use('charts', function (Y)
+{
+    var myDataValues = [
+        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ];
-    
+
     var mychart = new Y.Chart({
-                        dataProvider:myDataValues, 
+                        dataProvider:myDataValues,
                         render:"#mychart",
                         horizontalGridlines: {
                             styles: {

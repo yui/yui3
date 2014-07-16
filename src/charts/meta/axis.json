@@ -1,0 +1,12 @@
+{
+    "axis": {
+        "requires":[
+            "dom",
+            "widget",
+            "widget-position",
+            "widget-stack",
+            "graphics",
+            "axis-base"
+        ]
+    }
+}

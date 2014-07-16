@@ -3,7 +3,7 @@
     display: inline-block;
     *display: inline; /*IE 6/7*/
     zoom: 1;
-    font-size: 100%; 
+    font-size: 100%;
     *font-size: 90%; /*IE 6/7 - To reduce IE's oversized button text*/
     *overflow: visible; /*IE 6/7 - Because of IE's overly large left/right padding on buttons */
     padding: 0.4em 1em 0.45em;
@@ -94,6 +94,10 @@ a.yui3-button {
     -webkit-box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
     -moz-box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
+}
+
+.yui3-button-hidden {
+    display:none;
 }
 
 /* Firefox: Get rid of the inner focus border */

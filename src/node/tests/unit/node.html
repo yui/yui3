@@ -3,15 +3,20 @@
 <head>
 <title>Node Test Suite</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="./assets/node-data-test.js"></script>
 <script type="text/javascript" src="./assets/node-attrs-test.js"></script>
+<script type="text/javascript" src="./assets/node-data-test.js"></script>
+<script type="text/javascript" src="./assets/node-pluginhost-test.js"></script>
 <script type="text/javascript" src="./assets/node-traversal-test.js"></script>
 <script type="text/javascript" src="./assets/nodelist-test.js"></script>
 
 <style type="text/css">
 body {
     font:13px/1.22 arial;
+    height: 2000px;
+    width: 2000px;
 }
 
 #doc {
@@ -109,7 +114,7 @@ button {
             <label for="test-text-value"><em>label</em></label>
             <input name="test-text-value" id="test-text-value" readonly="read" value="text value">
             <input name="test-text-novalue">
-    
+
             <textarea name="test-textarea-value" value="textarea value"></textarea>
             <textarea name="test-textarea-novalue"></textarea>
             <textarea name="test-textarea-textvalue">textarea text</textarea>
@@ -185,14 +190,16 @@ button {
         <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em></div>
     </div>
 </div>
+<div id="test-node-addMethod">
+</div>
 
 <div id="yui-log"></div>
 <script type="text/javascript">
 YUI({
-    coverage: ['node', 'node-load', 'node-deprecated'],
+    coverage: ['node', 'node-load'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 
-}).use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+}).use('selector-css3', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-attrs-test', 'node-data-test', 'node-pluginhost-test', 'node-traversal-test', 'nodelist-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         ObjectAssert = Y.ObjectAssert,
@@ -331,7 +338,7 @@ YUI({
 
             node.set('foo', 'foo');
             Assert.isUndefined(node.get('foo'), 'node.get("foo")');
-            
+
             node.set('title', 'my title');
             Assert.areEqual('my title', Y.Node.getDOMNode(node).title, 'node.title)');
             Assert.areEqual('my title', node.get('title'), 'node.set("title")');
@@ -348,8 +355,8 @@ YUI({
             };
             node.setAttrs(attrMap);
             var getAttrs = node.getAttrs(['className', 'title']);
-            Assert.areEqual(attrMap.className, getAttrs.className, 'node.setAttrs(attrMap) (get className)'); 
-            Assert.areEqual(attrMap.title, getAttrs.title, 'node.setAttrs(attrMap) (get title)'); 
+            Assert.areEqual(attrMap.className, getAttrs.className, 'node.setAttrs(attrMap) (get className)');
+            Assert.areEqual(attrMap.title, getAttrs.title, 'node.setAttrs(attrMap) (get title)');
 
             Y.one('#test-select').set('selectedIndex', 2);
             Assert.areEqual(2, Y.one('#test-select')._node.selectedIndex,
@@ -381,7 +388,7 @@ YUI({
             Assert.isFalse(xmlNode.hasMethod('onreadystatechange')," xmlNode.hasMethod('onreadystatechange')");
 
             //Assert.isTrue(element === Y.one(node), 'element === Y.one(node)');
-            Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
+            Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName');
             var insertNode = document.createElement('div');
             Y.stamp(insertNode);
             insertNode.innerHTML = 'inserted node';
@@ -429,7 +436,7 @@ YUI({
             Assert.isTrue(node.contains(byId('test-contains')), 'contains()');
             Assert.isTrue(node.contains(node), 'contains() self');
             Assert.isTrue(node.contains(element), 'contains() self');
-        
+
             Assert.isFalse(node.contains(document.getElementsByTagName('div')), 'contains() false positive for collection');
 
             Assert.areEqual('doc', node.ancestor(function(el) {
@@ -461,7 +468,7 @@ YUI({
             Assert.areEqual(node.getAttribute('tabIndex'), node.get('tabIndex'),
                 "node.getAttribute('tabIndex') === node.get('tabIndex')");
                 */
-            
+
             Assert.isFalse(Y.one('body').hasAttribute('title'), 'body.hasAttribute("title")');
             Assert.areEqual('0', Y.one('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
             Assert.areEqual('1', Y.one('select[name=test-select] option:nth-child(2)').getAttribute('value'), 'option2.getAttribute("value") (from innerText)');
@@ -581,10 +588,10 @@ YUI({
 
             node.setStyle('float', 'left');
             Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
-            
+
             nodes.setStyle('marginTop', '1em');
             Assert.areEqual('1em', nodes.getStyle('marginTop')[2], "setStyle('marginTop', '1em'");
-        },            
+        },
 
         test_getStyle: function() {
             var node = Y.one('#get-style');
@@ -688,28 +695,62 @@ YUI({
         },
 
         test_scroll: function() {
+            var test = this;
             Y.one('#test-scroll').set('scrollTop', 100);
             Y.one('#test-scroll').set('scrollLeft', 200);
             Assert.areEqual(100, byId('test-scroll').scrollTop, 'test-scroll.set("scrollTop", 100)');
             Assert.areEqual(200, byId('test-scroll').scrollLeft, 'test-scroll.set("scrollLeft", 200)');
-            document.body.style.height = '5000px';
-            document.body.style.width = '5000px';
-/*
-            Y.one(window).set('scrollTop', 100);
-            Y.one(window).set('scrollLeft', 200);
-            Assert.areEqual(100, Y.DOM.docScrollY(window), 'window.set("scrollTop", 100)');
-            Assert.areEqual(200, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 200)');
-*/
-
-            Y.one(document).set('scrollTop', 200);
-            Y.one(document).set('scrollLeft', 100);
-            Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
-            Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
-
-            document.body.style.height = '';
-            document.body.style.width = '';
-
             window.scrollTo(0, 0);
+        },
+
+        test_winScrollLeft: function() {
+            var test = this;
+            Y.one(window).set('scrollLeft', 100);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(100, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 100)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+
+            test.wait();
+        },
+
+        test_winScrollTop: function() {
+            var test = this;
+            Y.one(window).set('scrollTop', 200);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(200, Y.DOM.docScrollY(window), 'window.set("scrollTop", 200)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+            test.wait();
+        },
+
+        test_docScrollLeft: function() {
+            var test = this;
+            Y.one(document).set('scrollLeft', 100);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+
+            test.wait();
+        },
+
+        test_docScrollTop: function() {
+            var test = this;
+            Y.one(document).set('scrollTop', 200);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+            test.wait();
         },
 
         test_setContent: function() {
@@ -1004,10 +1045,10 @@ YUI({
             mask.className = 'mask';
             document.body.appendChild(mask);
             var doc = Y.one('document');
-            window.scrollTo(0,0);
+            //window.scrollTo(0,0);
             mask.style.height = doc.get('docHeight') + 'px';
             mask.style.width = doc.get('docWidth') + 'px';
-            Y.DOM.setStyle(mask, 'opacity', 0.4); 
+            Y.DOM.setStyle(mask, 'opacity', 0.4);
             Assert.areEqual('DIV', Y.one('#test-prop').get('nodeName'), 'one("test-prop")');
 
             Assert.areEqual('test-xy', doc.one('#test-xy').get('id'), 'doc.one("#test-xy")');
@@ -1052,19 +1093,29 @@ YUI({
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
 
             node = Y.one('body');
-            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes,
                 "Y.all(Y.one('body'))");
 
             node = Y.one('win');
-            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes,
                 "Y.all(Y.one('win'))");
 
 /* comparision fails in webkit, so using alert test below
-            Assert.areEqual(window, Y.all(window)._nodes[0], 
+            Assert.areEqual(window, Y.all(window)._nodes[0],
                 "Y.all(window)");
 */
 
             Assert.isTrue(Y.DOM.isWindow(Y.all(window)._nodes[0], "Y.all(window)"));
+        },
+
+        test_all_after_destroy: function () {
+            var node = Y.one('#test-form');
+
+            Assert.isTrue((node.all('*').size() > 0), "node.all('*').size() should be > 0");
+
+            node.destroy();
+
+            Assert.areSame(0, node.all('*').size(), "destroyed node.all('*').size() should be 0");
         },
 
         test_isEmpty: function() {
@@ -1094,11 +1145,6 @@ YUI({
 
         test_data: function() {
             var node = Y.one('body');
-
-            // deprecated usage
-            node.set('data', 'foo');
-            Assert.areEqual('foo', node.get('data'),
-                "node.set('data', 'foo')");
 
             node.setData('foo', 'foo');
             Assert.areEqual('foo', node.getData('foo'),
@@ -1313,15 +1359,20 @@ YUI({
         'should hide the node': function() {
             var node = Y.one('body');
             node.hide();
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
         'should show the node': function() {
             var node = Y.one('body');
+            node.setAttribute('hidden', '');
             node.setStyle('display', 'none');
             node.show(1);
+            Assert.isFalse(node.hasAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1329,6 +1380,7 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
+            node.setAttribute('hidden', '');
             node.setStyle('display', 'none');
 
             node.show(function() {
@@ -1336,6 +1388,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1343,6 +1396,7 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
 
             node.show(null, function() {
@@ -1350,6 +1404,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1362,6 +1417,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1374,15 +1430,18 @@ YUI({
             });
 
             Assert.isTrue(called);
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
         'should toggle the node view on': function() {
             var node = Y.one('body');
 
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
             node.toggleView();
 
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1390,6 +1449,7 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
 
             node.toggleView('foo', function() {
@@ -1397,6 +1457,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            node.removeAttribute('hidden');
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1406,6 +1467,7 @@ YUI({
 
             node.toggleView(true);
 
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1418,6 +1480,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1426,7 +1489,9 @@ YUI({
 
             node.toggleView(false);
 
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1439,7 +1504,9 @@ YUI({
             });
 
             Assert.isTrue(called);
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1667,7 +1734,6 @@ YUI({
         },
 
         'should accept document Node instance': function() {
-            Y.DOM._fragClones = {};
             var node = Y.Node.create('<div/>', Y.one(document));
             Assert.areEqual('DIV', node.get('tagName'));
         },
@@ -1695,8 +1761,27 @@ YUI({
         'should not cache document fragment': function() {
             var node = Y.Node.create('<div>foo</div><div>bar</div>');
             Assert.isUndefined(Y.Node._instances[node._yuid]);
+        },
+
+        'should return false if node is removed': function () {
+            var myNode = Y.Node.create('foo'),
+                _ref;
+
+            Assert.isTrue(myNode.inDoc() === false);
+
+            Y.one('body').append(myNode);
+
+            Assert.isTrue(myNode.inDoc() === true);
+
+            _ref = myNode.getDOMNode();
+
+            myNode.destroy();
+
+            Assert.isTrue(myNode.inDoc() === false);
+
+            _ref.parentNode.removeChild(_ref);
         }
-    })); 
+    }));
 
     suite.add( new Y.Test.Case({
         name: 'generateID',
@@ -1707,7 +1792,7 @@ YUI({
             Assert.isTrue(node.get('id') !== '');
             Assert.areEqual(node.get('id'), id);
         },
-        
+
         'should return exising ID': function() {
             var node = Y.Node.create('<div id="foo"/>'),
                 id = node.generateID();
@@ -1715,8 +1800,8 @@ YUI({
             Assert.areEqual('foo', node.get('id'));
             Assert.areEqual('foo', id);
         }
-        
-    })); 
+
+    }));
 
     suite.add( new Y.Test.Case({
         name: 'new Y.Node()',
@@ -1728,7 +1813,7 @@ YUI({
         'compareTo should pass': function() {
             Assert.isTrue(Y.one('body').compareTo(Y.Node('body')));
         }
-    })); 
+    }));
 
     suite.add( new Y.Test.Case({
         name: 'NodeList API',
@@ -1769,7 +1854,7 @@ YUI({
         'should create empty NodeList from empty string via Y.all': function() {
             ArrayAssert.itemsAreEqual([], Y.all('')._nodes);
         }
-    })); 
+    }));
 
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.Node.insert',
@@ -1876,6 +1961,17 @@ YUI({
 
             nodes.setHTML(html);
             ArrayAssert.itemsAreEqual(['baz', 'baz'], nodes.getHTML());
+        },
+
+        'should get html from fragment': function() {
+            var html = '<div><div><div></div></div><div></div></div>',
+                node = Y.one(Y.config.doc.createDocumentFragment());
+
+            node.setHTML(html);
+            Assert.areEqual(html, node.getHTML().toLowerCase().replace(/\s+/g, ''));
+
+            // make sure node's contents have not disappeared
+            Assert.areEqual(node.get("children").size(), 1);
         }
     }));
 
@@ -1922,6 +2018,31 @@ YUI({
 
             Assert.isUndefined(val[0]);
             Assert.isUndefined(val[1]);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.addMethod',
+
+        'should return a method': function() {
+            var nd = Y.one('#test-node-addMethod');
+
+            Y.Node.addMethod('testAddMethod', function () {
+                return this;
+            });
+
+            Assert.isFunction(nd.testAddMethod);
+            Assert.areSame(nd, nd.testAddMethod());
+        },
+        'should return property of context obj': function () {
+            var nd = Y.one('#test-node-addMethod'),
+                obj = { type: 'context obj' };
+
+            Y.Node.addMethod('testAMC', function () {
+                return this.type;
+            }, obj);
+
+            Assert.areEqual('context obj', nd.testAMC());
         }
     }));
 

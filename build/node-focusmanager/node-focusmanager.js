@@ -28,7 +28,11 @@ YUI.add('node-focusmanager', function (Y, NAME) {
 * styling focus.
 * </p>
 *
+
+DEPRECATED: The FocusManager Node Plugin has been deprecated as of YUI 3.9.0. This module will be removed from the library in a future version. If you require functionality similar to the one provided by this  module, consider taking a look at the various modules in the YUI Gallery <http://yuilibrary.com/gallery/>.
+
 * @module node-focusmanager
+* @deprecated 3.9.0
 */
 
 	//	Frequently used strings
@@ -185,6 +189,7 @@ NodeFocusManager.ATTRS = {
 				}
 
 			}
+
 
 			return returnValue;
 
@@ -915,7 +920,6 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	//	Public methods
 
     initializer: function (config) {
-
 		this.start();
 
     },
@@ -932,10 +936,9 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	* @method focus
 	* @description Focuses the active descendant and sets the
 	* <code>focused</code> attribute to true.
-	* @param index {Number} Optional. Number representing the index of the
-	* descendant to be set as the active descendant.
-	* @param index {Node} Optional. Node instance representing the
-	* descendant to be set as the active descendant.
+	* @param index {Number|Node} Optional. Number representing the index of the
+	* descendant to be set as the active descendant or Node instance
+	* representing the descendant to be set as the active descendant.
 	*/
 	focus: function (index) {
 

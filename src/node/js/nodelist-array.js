@@ -17,19 +17,19 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList.
+          * @param {Node | HTMLElement} nodes One or more nodes to add to the end of the NodeList.
           */
         'push': 0,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.
@@ -49,7 +49,7 @@ var Y_NodeList = Y.NodeList,
           * @method splice
           * @param {Number} index Index at which to start changing the array. If negative, will begin that many elements from the end.
           * @param {Number} howMany An integer indicating the number of old array elements to remove. If howMany is 0, no elements are removed. In this case, you should specify at least one new element. If no howMany parameter is specified (second syntax above, which is a SpiderMonkey extension), all elements after index are removed.
-          * {Node | DOMNode| element1, ..., elementN
+          * {Node | HTMLElement| element1, ..., elementN
           The elements to add to the array. If you don't specify any elements, splice simply removes elements from the array.
           * @return {NodeList} The element(s) removed.
           */
@@ -57,7 +57,7 @@ var Y_NodeList = Y.NodeList,
         /** Adds the given Node(s) to the beginning of the NodeList.
           * @for NodeList
           * @method unshift
-          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList.
+          * @param {Node | HTMLElement} nodes One or more nodes to add to the NodeList.
           */
         'unshift': 0
     };

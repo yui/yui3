@@ -1,10 +1,133 @@
 IO Utility Change History
 =========================
 
+@VERSION@
+------
+
+* Document return value of IO.send and Y.io. ([#1882][]: @andrewnicols)
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Removed the unnecessary `src` attribute which caused an extra request to be made to the current page URL when the `iframe` was included on the page. ([#1646][]: @goodforenergy)
+
+* Document usage of username/password in Y.io config. ([#1572][]: @customcommander)
+
+[#1646]: https://github.com/yui/yui3/pull/1646
+[#1572]: https://github.com/yui/yui3/pull/1572
+
+3.15.0
+------
+
+* Fixed an issue in `io-upload-iframe` where an attempt to reset the attributes of the `form` element could have occured on a `form` that no longer existed on the page. ([#1465][]: @andrewnicols)
+
+[#1465]: https://github.com/yui/yui3/pull/1465/
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* [!] #1155 Deprecate io-xdr.
+* Move all related swf and as files from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+
+* Restore form attributes after successful upload in io-upload-iframe.
+  [Ticket #2533186] [ipeychev]
+
+* Upgraded `request` module dependency for `io-nodejs` for compatibility with
+  Node.js v0.10. [Pull Request #940]
+
+
+3.10.3
+------
+
+* [security] Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* [security] Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Normalized IO's handling of falsy request and response bodies. A majority of
+  the environments want request/response bodies to always be a string, so they
+  use an empty string instead of undefined, null, etc.
+
+  This specifically fixes two issues:
+
+  * IE 10 converts a response body of `undefined` to the literal string:
+    `"undefined"`. No other environments do this, so a change has been made to
+    default the request body to `""` unless it has a non-falsy value.
+
+  * IO's node.js transport uses the Request npm module, which returns
+    `undefined` when a response has no body. This normalize IO's `responseText`
+    to an empty string when Request returns a false response body.
+
+
+3.8.1
+-----
+
+* Exposed IO's form serialize via the new `Y.IO.stringify()` method.
+  [Ticket #2529073] [Pull Request #351] [John Lindal]
+
+* Stringified request data is now passed to custom transport layers.
+  [Ticket #2532594] [Pull Request #383] [John Lindal]
+
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
+
 
 3.7.3
 -----

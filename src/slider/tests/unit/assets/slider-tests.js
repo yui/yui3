@@ -29,7 +29,7 @@ Y.Node.prototype.simulate = function (type, config) {
 
     if(type) {
         simulate.apply(Y.Event, args);
-    } 
+    }
 };
 
 var suite = new Y.Test.Suite("Slider");
@@ -360,12 +360,7 @@ suite.add( new Y.Test.Case({
 
     _should: {
         ignore: {
-            "test clickableRail": Y.UA.phantomjs
-        },
-        fail: {
-            // TODO This is a bug. invalid construction value should fallback
-            // to specified attribute default
-            "axis should only accept 'x', 'X', 'y', and 'Y'": true
+            "test clickableRail": Y.UA.phantomjs || Y.UA.touchEnabled
         }
     },
 
@@ -486,9 +481,9 @@ suite.add( new Y.Test.Case({
 
     "thumbUrl should default at render()": function () {
         var slider = new Y.Slider();
-        
+
         Y.Assert.isNull( slider.get('thumbUrl') );
-        
+
         slider.render('#testbed');
 
         Y.Assert.isString( slider.get('thumbUrl') );
@@ -517,12 +512,14 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    //TODO This test uses click simulation and will fail in touch environments
     "test clickableRail": function () {
         var slider = new Y.Slider({
                 width    : '300px',
                 clickableRail: true
             }),
-            railRegion, where, fired;
+            railRegion, fake_event, fired,
+            noop = function() {};
 
         slider.on('railMouseDown', function () {
             fired = true;
@@ -531,18 +528,21 @@ suite.add( new Y.Test.Case({
         slider.render('#testbed');
 
         railRegion = slider.rail.get('region');
-        where = {
+        fake_event = {
             clientX: railRegion.left + Math.floor(railRegion.width / 2),
-            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+            clientY: railRegion.top + Math.floor(railRegion.height / 2),
+            pageX: railRegion.left + Math.floor(railRegion.width / 2),
+            pageY: railRegion.top + Math.floor(railRegion.height / 2),
+            halt: noop,
+            preventDefault: noop
         };
+
 
         slider.on('railMouseDown', function (e) {
             fired = true;
         });
 
-        slider.rail.simulate('mousedown', where);
-        slider.rail.simulate('mouseup', where);
-        slider.rail.simulate('click', where);
+        slider._onRailMouseDown(fake_event);
 
         Y.Assert.isTrue(fired, "railMouseDown didn't fire for clickableRail: true");
 
@@ -563,9 +563,7 @@ suite.add( new Y.Test.Case({
 
         slider.render('#testbed');
 
-        slider.rail.simulate('mousedown', where);
-        slider.rail.simulate('mouseup', where);
-        slider.rail.simulate('click', where);
+        slider._onRailMouseDown(fake_event);
 
         Y.Assert.isFalse(fired, "railMouseDown fired for clickableRail: false");
 
@@ -603,6 +601,27 @@ suite.add( new Y.Test.Case({
 
         slider.set('value', 0);
 
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting value to anything non-numeric shouldn't work": function() {
+        var slider = new Y.Slider();
+
+        slider.set('value', "wat");
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', NaN);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', null);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', undefined);
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', []);
         Y.Assert.areSame(0, slider.get('value'));
 
         slider.destroy();
@@ -651,6 +670,21 @@ suite.add( new Y.Test.Case({
         Y.Assert.isTrue(slider._dd.get('lock'));
 
         slider.destroy();
+    },
+
+    "test ARIA attributes upon instantiation": function () {
+        var slider  = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        slider.render('#testbed');
+
+        var thumb = slider.thumb;
+
+        Y.Assert.areEqual(0, thumb.getAttribute('aria-valuemin'));
+        Y.Assert.areEqual(100, thumb.getAttribute('aria-valuemax'));
+        Y.Assert.areEqual(50, thumb.getAttribute('aria-valuenow'));
+        Y.Assert.areEqual(50, thumb.getAttribute('aria-valuetext'));
+
+        slider.destroy();
     }
 }));
 
@@ -658,7 +692,7 @@ suite.add( new Y.Test.Case({
     name: "Mouse",
     _should: {
         ignore: {
-            "clicking on the rail should move the thumb": Y.UA.phantomjs
+            "clicking on the rail should move the thumb": Y.UA.phantomjs || Y.UA.touchEnabled
         }
     },
     setUp: function () {
@@ -669,6 +703,7 @@ suite.add( new Y.Test.Case({
         Y.one("#testbed").remove(true);
     },
 
+    //TODO This test uses click simulation and will fail in touch environments
     "clicking on the rail should move the thumb": function () {
         var slider = new Y.Slider({
                 length: '350px',
@@ -676,7 +711,8 @@ suite.add( new Y.Test.Case({
                 max   : 100,
                 value : 50
             }),
-            position, fired, railRegion, where;
+            position, fired, railRegion, fake_event,
+            noop = function() {};
 
         function thumbPosition() {
             return parseInt(slider.thumb.getStyle('left'), 10);
@@ -685,9 +721,13 @@ suite.add( new Y.Test.Case({
         slider.render( "#testbed" );
 
         railRegion = slider.rail.get('region');
-        where = {
+        fake_event = {
             clientX: railRegion.left + Math.floor(railRegion.width / 2),
-            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+            clientY: railRegion.top + Math.floor(railRegion.height / 2),
+            pageX: railRegion.left + Math.floor(railRegion.width / 2),
+            pageY: railRegion.top + Math.floor(railRegion.height / 2),
+            halt: noop,
+            preventDefault: noop
         };
 
         Y.Assert.areNotSame(0, thumbPosition());
@@ -696,16 +736,14 @@ suite.add( new Y.Test.Case({
 
         Y.Assert.areSame(0, thumbPosition());
 
-        slider.on('railMouseDown', function (e) {
+        slider.on('railMouseDown', function (fake_event) {
             fired = true;
         });
 
-        slider.rail.simulate('mousedown', where);
-        slider.rail.simulate('mouseup', where);
-        slider.rail.simulate('click', where);
+        slider._onRailMouseDown(fake_event);
 
-        Y.Assert.isTrue(fired);
-        Y.Assert.isTrue( (thumbPosition() > 0) );
+        Y.Assert.isTrue(fired, "Failed to fire: railMouseDown");
+        Y.Assert.isTrue( (thumbPosition() > 0), "Failed to find thumPosition > 0" );
     }
 }));
 
@@ -746,9 +784,9 @@ suite.add( new Y.Test.Case({
         thumb.key(37); // left
         thumb.key(37); // left
         Y.Assert.areEqual(59, slider.get('value'));
-        thumb.key(36); // home 
+        thumb.key(36); // home
         Y.Assert.areEqual(0, slider.get('value'));
-        thumb.key(35); // end 
+        thumb.key(35); // end
         Y.Assert.areEqual(100, slider.get('value'));
         // beyond max
         thumb.key(33); // pageUp
@@ -786,21 +824,21 @@ suite.add( new Y.Test.Case({
         thumb.on('focus', function(){
             // 33 is pageUp. Increase value = init value + majorStep
             // .key() method is at top of this file
-            thumb.key(33);  
+            thumb.key(33);
         });
-        thumb.simulate('click'); // Should set focus on thumb  
+        thumb.simulate('click'); // Should set focus on thumb
         Y.Assert.areEqual(84, slider.get('value'));
 
         slider.destroy();
     },
-    
+
     /*
      * This tests changing the value by one unit
      * that would not move the slider a full pixel
      * and because of ticket #2531498, was
      * changing the value back to previous value
      * to match the thumb position
-     */                             
+     */
     "test keyboard input and resultant value change, when Slider length is less than max - min": function () {
         var slider = new Y.Slider({
             length: '30px',  // length less than max - min
@@ -818,7 +856,7 @@ suite.add( new Y.Test.Case({
         slider.destroy();
 
     },
-    
+
     "test ARIA attributes while values change by keyboard input": function () {
         var slider = new Y.Slider({
             length: '300px',  // length less than max - min

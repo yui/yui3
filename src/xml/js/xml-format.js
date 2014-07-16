@@ -19,7 +19,7 @@ Y.mix(Y.namespace("XML"), {
      * Converts data to type XMLDocument.
      *
      * @method format
-     * @param data {XMLDoc} Data to convert.
+     * @param data {XMLDocument} Data to convert.
      * @return {String} String.
      */
     format: function(data) {

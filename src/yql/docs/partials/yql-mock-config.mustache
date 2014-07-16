@@ -1,0 +1,16 @@
+<script>
+YUI.GlobalConfig = {
+    modules: {
+        'yql-api-mock': {
+            fullpath: '../assets/yql/yql-api-mock.js',
+            condition: {
+                trigger: ['yql', 'yql-jsonp'],
+                when: 'instead',
+                test: function () {
+                    return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
+                }
+            }
+        }
+    }
+};
+</script>

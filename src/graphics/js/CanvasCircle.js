@@ -9,7 +9,7 @@
  * @class CanvasCircle
  * @constructor
  */
-CanvasCircle = function(cfg)
+CanvasCircle = function()
 {
 	CanvasCircle.superclass.constructor.apply(this, arguments);
 };

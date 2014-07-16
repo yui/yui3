@@ -36,7 +36,7 @@ suite.add(new Y.Test.Case({
                 node  : 'body',
                 points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
             };
-        
+
         widget.align();
         Assert.isNull(widget.get('align'));
 

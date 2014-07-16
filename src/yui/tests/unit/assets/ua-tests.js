@@ -63,7 +63,12 @@ YUI.add('ua-tests', function(Y) {
         },
         tearDown: function() {
             if (window && window.Windows && window.Windows.YUI) {
-                delete window.Windows;
+                try {
+                    delete window.Windows;
+                } catch (e) {
+                    // For IE6, IE7
+                    window.Windows = undefined;
+                }
             }
         },
         'test: win8 app': function() {
@@ -161,20 +166,17 @@ YUI.add('ua-tests', function(Y) {
         }
     }));
 
-    Y.each(Y.UAData, function(info, name) {
-        var testCase = {
-            name: 'User Agent: ' + name
-        };
+    Y.Object.each(Y.UAData, function (tests, name) {
+        var testCase = {name: 'User Agent: ' + name};
 
-        Y.each(info, function(data) {
-            testCase['test: ' + data.ua] = (function(i) {
-                return function() {
-                    var ua = YUI.Env.parseUA(i.ua);
-                    Y.each(i.data, function(v, k) {
-                        Y.Assert.areEqual(v, ua[k], 'Key (' + k + ') for ' + i.ua);
-                    });
-                };
-            }(data));
+        Y.Array.each(tests, function (test) {
+            testCase['test: ' + test.ua] = function () {
+                var ua = YUI.Env.parseUA(test.ua);
+
+                Y.Object.each(test.data, function (value, key) {
+                    Y.Assert.areEqual(value, ua[key], 'Key (' + key + ') for ' + test.ua);
+                });
+            };
         });
 
         suite.add(new Y.Test.Case(testCase));

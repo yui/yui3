@@ -1,0 +1,8 @@
+{
+  "name": "yui",
+  "version": "3.17.3-pre",
+  "main": "build/yui/yui.js",
+  "devDependencies": {
+    "pure": "0.4.2"
+  }
+}

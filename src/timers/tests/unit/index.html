@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Timers</title>
+    <script src="../../../../build/yui/yui.js"> </script>
+</head>
+<body class="yui3-skin-sam">
+    <div id="logger">
+    </div>
+    <script>
+        YUI({
+            coverage: [
+                'timers'
+            ],
+            modules: {
+                'timers-tests': {
+                    fullpath: './js/timers-tests.js',
+                    requires: ['timers', 'test']
+                }
+            },
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'test', 'timers-tests', function (Y) {
+            (new Y.Test.Console()).render('#logger');
+            Y.Test.Runner.setName('Timers');
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>

@@ -2,7 +2,7 @@ YUI.add('cache-offline', function (Y, NAME) {
 
 /**
  * Provides a Cache subclass which uses HTML5 `localStorage` for persistence.
- * 
+ *
  * @module cache
  * @submodule cache-offline
  */
@@ -215,7 +215,7 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
      * Adds entry to cache.
      *
      * @method _defAddFn
-     * @param e {Event.Facade} Event Facade with the following properties:
+     * @param e {EventFacade} Event Facade with the following properties:
      * <dl>
      * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
      * </dl>
@@ -246,7 +246,7 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
      * Flushes cache.
      *
      * @method _defFlushFn
-     * @param e {Event.Facade} Event Facade object.
+     * @param e {EventFacade} Event Facade object.
      * @protected
      */
     _defFlushFn: function(e) {

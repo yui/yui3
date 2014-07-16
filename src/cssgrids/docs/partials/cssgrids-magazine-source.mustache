@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name = "viewport" content = "width = device-width">
+    <link rel="stylesheet" type="text/css" href="{{yuiBuildUrl}}/cssnormalize/cssnormalize-min.css">
+    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssgrids-responsive/cssgrids-responsive.css" type="text/css">
+    <script src="{{yuiSeedUrl}}"></script>
+    <style>
+
+        /*
+
+        NATIVE HTML ELEMENT STYLES
+
+        */
+
+        body {
+            font-family: serif;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        h3 {
+            font-size:1.2em;
+            letter-spacing: -0.05em;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            color: #9B1518;
+            font: normal 0.5em/1.3 Helvetica, Arial, sans-serif;
+            letter-spacing: 0.01em;
+            text-transform: uppercase;
+            margin-bottom: .4em;
+        }
+
+        /*
+
+        MODULE STYLES - CONTENT
+        The content module is a wrapper class for each column on the site.
+        We add some padding to act as a gutter between columns.
+
+        */
+
+        .content {
+            padding: 15px;
+        }
+
+        /*
+
+        MODULE STYLES - ARTICLE
+        The article class is applied to every news article on the site.
+
+        */
+
+        .article {
+            border-bottom: 1px solid #ddd;
+            padding: 0 5px 15px 5px;
+        }
+            .article img {
+                margin-right: 10px;
+                border-radius: 5px;
+            }
+
+            .article p {
+                margin-top: 0;
+            }
+
+
+        /*
+
+        MODULE STYLES - RIGHT BAR
+        The right-bar class is applied to the right-column. This lets
+        us set specificity for styling those articles differently.
+
+        */
+
+        .right-bar .article {
+            text-align: center;
+            padding:15px;
+        }
+            .right-bar h3 {
+                color: #333;
+                font-family: 1em;
+                font-weight: normal;
+                margin-top:0.3em;
+            }
+
+
+        /*
+
+        FONT STYLES - RIGHT BAR
+        The section-header class is applied to the red section headers
+        for each column.
+
+        */
+
+        .section-header {
+            color: #AA0016;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.3em;
+            margin-bottom:0.2em;
+            padding-bottom:0.5em;
+            border-bottom:1px solid #ddd;
+            margin-top:1em;
+            font-style: normal;
+            font-variant: normal;
+        }
+
+        /*
+
+        FONT STYLE - PHOTO CREDIT
+        We are just right-aligning the little photo-credit link here.
+
+        */
+        .photo-credit {
+            text-align: right;
+        }
+
+
+
+        /*
+
+        MEDIA QUERY FOR 767px AND BELOW
+        On smaller screen sizes, we do the following:
+
+        - Make the headline text bigger.
+        - Collapse the right-column articles so that they
+          become a grid instead of being stacked. We do this
+          by setting width: 30%; display: inline-block;
+
+        */
+        @media (max-width: 767px) {
+
+
+            .headline h3 {
+                font-size:180%;
+            }
+
+            .right-bar .article {
+                display:inline-block;
+                width:30%;
+                padding:0;
+                border:none;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="yui3-g-r">
+        <div class="yui3-u-1-2 left-bar">
+            <div class="yui3-u-1 content">
+
+                <div class='yui3-u-1 headline article'>
+                    <img src="http://farm9.staticflickr.com/8391/8544074541_29a2c7a292_b_d.jpg">
+                    <small class="yui3-u-1 photo-credit">
+                        Photo Credit: <a href="http://www.flickr.com/photos/37010090@N04/8544074541/">Sprengben</a> /<a href="http://creativecommons.org/licenses/by-nc-sa/2.0/">cc</a>
+                    </small>
+                    <h3 class='yui3-u-1'>Lorem ipsum dolor sit amet</h3>
+                    <p>Aliquam viverra, ipsum vitae sollicitudin posuere, lacus odio tincidunt nisi, ac tristique ante massa ut libero. Aliquam id nunc dui, in pretium turpis.</p>
+                </div>
+
+                <div class='yui3-u-1 article'>
+                    <div class='yui3-g'>
+                        <h3 class='yui3-u-1'>Aenean tempor, felis id bibendum consectetur.</h3>
+                        <img class='yui3-u' src="http://placehold.it/90x90">
+                        <div class='yui3-u-2-3'>
+                            <p>Donec aliquam interdum massa, ac vehicula augue pellentesque eget. Aenean tempor, felis id bibendum consectetur, purus urna ultricies orci.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class='yui3-u-1 article'>
+                    <div class='yui3-g'>
+                        <h3 class='yui3-u-1'>Fusce non nibh mi.</h3>
+                        <img class='yui3-u' src="http://placehold.it/90x90">
+                        <div class='yui3-u-2-3'>
+                            <p>Proin vitae condimentum elit. Sed mattis consequat mi vitae ornare. Nam bibendum.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="yui3-u-1-5 center-bar">
+            <div class='yui3-u-1 content'>
+                <h1 class='yui3-u-1 section-header'>Latest News</h1>
+                <div class='yui3-u-1 article'>
+                    <h2>Curabitur egestas velit nec purus</h2>
+                    <p>uspendisse euismod facilisis pharetra. Suspendisse dignissim eros nec neque aliquam sit.</p>
+                </div>
+                <div class='yui3-u-1 article'>
+                    <h2>Nam eget massa ut nibh porta.</h2>
+                    <p>Etiam urna magna, porta id consequat at, aliquam nec nisi. Donec luctus libero vitae diam convallis in aliquet mauris tempor.</p>
+                </div>
+                <div class='yui3-u-1 article'>
+                    <h2>Powerball jackpot up to $550m</h2>
+                    <p>The fast-growing jackpot had been $450 million as recently as Tuesday morning.</p>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-1-4 right-bar">
+            <div class='yui3-u-1 content'>
+                <h1 class='yui3-u-1 section-header'>Exclusives</h1>
+                <div class='yui3-u-1 article'>
+                    <img src="http://placehold.it/160x160">
+                    <h4>John Smith</h4>
+                    <h3>Nunc in ipsum nec massa?</h3>
+                </div>
+                <div class='yui3-u-1 article'>
+                    <img src="http://placehold.it/160x160">
+                    <h3>Duis dignissim augue vel lacus tincidunt</h3>
+                </div>
+                <div class='yui3-u-1 article'>
+                    <img src="http://placehold.it/160x160">
+                    <h3>Hed scelerisque eros a sem dictum</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

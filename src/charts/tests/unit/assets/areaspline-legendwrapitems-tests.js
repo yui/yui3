@@ -1,5 +1,9 @@
 YUI.add('areaspline-legendwrapitems-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: AreaSplineLegendWrapItems"),
+        LegendTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     LegendTestTemplate = function(cfg, globalCfg)
     {
@@ -18,27 +22,25 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
 
     Y.extend(LegendTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:' + this._width + 'px;height:' + this._height + 'px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
 
-    var basicDataValues = [ 
-        {date:"5/1/2010", values:400, expenses:1100, revenue:1500, dog:8230, cat:7005, bird:6500, fish:5200, horse:4500, man:3400, shoe:2010, boat:1400}, 
-        {date:"5/2/2010", values:2000, expenses:3700, revenue:2200, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400}, 
+    var basicDataValues = [
+        {date:"5/1/2010", values:400, expenses:1100, revenue:1500, dog:8230, cat:7005, bird:6500, fish:5200, horse:4500, man:3400, shoe:2010, boat:1400},
+        {date:"5/2/2010", values:2000, expenses:3700, revenue:2200, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400},
         {date:"5/3/2010", values:50, expenses:9100, revenue:100, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400},
         {date:"5/4/2010", values:5000, expenses:5000, revenue:2650, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400},
-        {date:"5/5/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:2005, bird:3500, fish:4200}, 
-        {date:"5/6/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:4005}, 
-        {date:"5/7/2010", values:200, expenses:1900, revenue:2800} 
+        {date:"5/5/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:2005, bird:3500, fish:4200},
+        {date:"5/6/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:4005},
+        {date:"5/7/2010", values:200, expenses:1900, revenue:2800}
     ],
-    
+
     topLegend = function()
     {
         return {
@@ -208,14 +210,14 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
             assert.areEqual(chartSC[i].get("displayName"), legendItems.text);
         }
     },
-    
+
     NoLegendTest = function(type, dataProvider)
     {
         var cfg = {
             type: type,
-            render: "#mychart",
+            render: "#testdiv",
             dataProvider: basicDataValues
-        }, 
+        },
         nameSuffix = " with basic dataProvider";
         if(dataProvider)
         {
@@ -224,7 +226,7 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
         }
         return new LegendTestTemplate(cfg, {
             name: "No Legend Tests" + nameSuffix,
-            
+
             _width: 500,
 
             _height: 400,
@@ -238,12 +240,12 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
             }
         });
     },
-    
+
     LegendTest = function(type, position, legend, align, dataProvider)
     {
         var cfg = {
             type: type,
-            render: "#mychart",
+            render: "#testdiv",
             dataProvider: basicDataValues,
             legend: legend
         },
@@ -264,7 +266,7 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
             name: "Test with " + position + " positioned, " + align + " aligned legend",
 
             legendPosition: position,
-            
+
             _width: width,
 
             _height: height,
@@ -277,10 +279,10 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
     {
         var cfg = {
             type: type,
-            render: "#mychart",
+            render: "#testdiv",
             dataProvider: basicDataValues,
             legend: leftLegend()
-        }, 
+        },
         nameSuffix = " with basic dataProvider";
         if(dataProvider)
         {
@@ -289,7 +291,7 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
         }
         return new LegendTestTemplate(cfg, {
             name: "Legend Position Test" + nameSuffix,
-            
+
             _width: 250,
 
             _height: 225,
@@ -312,7 +314,7 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
             }
         });
     };
-    
+
     suite.add(NoLegendTest("areaspline"));
     suite.add(LegendTest("areaspline", "top", topLegend(), "center"));
     suite.add(LegendTest("areaspline", "right", rightLegend(), "middle"));
@@ -327,6 +329,6 @@ YUI.add('areaspline-legendwrapitems-tests', function(Y) {
     suite.add(LegendTest("areaspline", "bottom", bottomLegendRight(), "right"));
     suite.add(LegendTest("areaspline", "left",  leftLegendBottom(), "bottom"));
     suite.add(LegendPositionTest("areaspline"));
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts-legend', 'test']});

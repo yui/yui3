@@ -1,0 +1,9 @@
+{
+    "name"       : "tree",
+    "displayName": "Tree",
+    "description": "Provides a generic tree data structure.",
+    "author"     : "rgrove",
+
+    "tags": ["tree", "infrastructure", "beta"],
+    "use" : ["tree"]
+}

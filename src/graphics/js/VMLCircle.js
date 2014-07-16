@@ -8,7 +8,7 @@
  * @class VMLCircle
  * @constructor
  */
-VMLCircle = function(cfg)
+VMLCircle = function()
 {
 	VMLCircle.superclass.constructor.apply(this, arguments);
 };

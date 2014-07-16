@@ -1,10 +1,103 @@
 YUI Test Change History
 =======================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* `test.next` now takes an optional argument to change the value
+  of `this` inside the callback.
+
+3.15.0
+------
+
+* Added test.next(fn) which returns a callback that automatically
+  resumes asynchronous tests.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Added Y.ArrayAssert.isUnique()
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* Modified YUITest.hasNoKeys() to bypass Android 2.3.x prototype
+  enumeration bug. (GH #949)
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* No changes.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
 
 3.7.3
 -----

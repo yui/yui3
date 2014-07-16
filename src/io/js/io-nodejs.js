@@ -97,17 +97,10 @@
                 };
 
                 if (config.data) {
-                    if (Y.Lang.isObject(config.data)) {
-                        if (Y.QueryString && Y.QueryString.stringify) {
-                            Y.log('Stringifying config.data for request', 'info', 'io');
-                            rconf.body = Y.QueryString.stringify(config.data);
-                        } else {
-                            Y.log('Failed to stringify config.data object, likely because `querystring-stringify-simple` is missing.', 'warn', 'io');
-                        }
-                    } else if (Y.Lang.isString(config.data)) {
+                    if (Y.Lang.isString(config.data)) {
                         rconf.body = config.data;
                     }
-                    if (rconf.method === 'GET') {
+                    if (rconf.body && rconf.method === 'GET') {
                         rconf.uri += (rconf.uri.indexOf('?') > -1 ? '&' : '?') + rconf.body;
                         rconf.body = '';
                     }
@@ -137,7 +130,7 @@
                             statusCode: data.statusCode,
                             statusText: codes[data.statusCode],
                             headers: data.headers,
-                            responseText: data.body,
+                            responseText: data.body || '',
                             responseXML: null,
                             getResponseHeader: function(name) {
                                 return this.headers[name];

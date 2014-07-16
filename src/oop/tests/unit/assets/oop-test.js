@@ -58,7 +58,9 @@ suite.add(new Y.Test.Case({
         var b = Y.clone(a);
         b.node.foo = 'bar';
 
-        Assert.isFalse(b.node.foo === a.node.foo);
+        // We don't try to clone DOM nodes.
+        Assert.areNotSame(b.node.foo, a.node.foo);
+        Assert.isObject(b.node._node.style, 'Could not access cloned node.');
     },
 
     test_each: function () {

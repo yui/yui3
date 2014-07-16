@@ -1,0 +1,8 @@
+{
+    "series-areaspline-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-areaspline"
+        ]
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "series-area-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-area"
+        ]
+    }
+}

@@ -15,6 +15,7 @@
 
 <button id="hide" class="yui3-button">Hide</button>
 <button id="show" class="yui3-button">Show</button>
+<button id="toggle" class="yui3-button">Toggle</button>
 
 <div id="demo"><p>Show or hide me with the buttons above.</p></div>
 
@@ -23,11 +24,13 @@ YUI().use('node', function(Y) {
     Y.delegate('click', function(e) {
         var buttonID = e.currentTarget.get('id'),
             node = Y.one('#demo');
-            
+
         if (buttonID === 'show') {
             node.show();
-        } else if (buttonID == 'hide') {
+        } else if (buttonID === 'hide') {
             node.hide();
+        } else if (buttonID === 'toggle') {
+            node.toggleView();
         }
 
     }, document, 'button');

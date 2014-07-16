@@ -9,19 +9,18 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate",
-                    "classnamemanager",
-                    "skin-sam-tabview"
+                    "classnamemanager"
                 ]
-            } 
-        }, 
+            }
+        },
         "requires": [
-            "widget", 
+            "widget",
             "widget-parent",
             "widget-child",
             "tabview-base",
             "node-pluginhost",
             "node-focusmanager"
-        ], 
+        ],
         "skinnable": true
-    } 
+    }
 }

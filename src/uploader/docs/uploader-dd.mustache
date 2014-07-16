@@ -2,8 +2,10 @@
 <p>In this example, the Uploader is used to send multiple images or videos to the server and monitor
    their upload progress with individual counters. If the Uploader is used in a browser with HTML5
    support, it is progressively enhanced to enable dragging-and-dropping files into the browser window.</p>
-   
+
 <p><strong>Please note:</strong> This example will not work when run from a local filesystem because of security restrictions in the transport protocols used. If you’d like to run this example locally, set up a local web server and launch it from there.</p>
+
+<p><strong>Also note:</strong> You will need compile and host your own <code>flashuploader.swf</code> file to enable Flash mode which is needed for IE <= 9. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>
 
 <p><strong>Also note:</strong> The uploader is not supported on iOS devices (iPhone and iPad), because they lack file upload capability. This example provides a graceful degradation message for all such systems.</p>
 
@@ -23,8 +25,8 @@ your tests to a few small files to avoid overloading the system.</p>
 ```
 if (Y.Uploader.TYPE == "html5") {
    uploader.set("dragAndDropArea", "body");
-   Y.one("#ddmessage").setHTML("<strong>Drag and drop files here.</strong>");   
- 
+   Y.one("#ddmessage").setHTML("<strong>Drag and drop files here.</strong>");
+
    uploader.on(["dragenter", "dragover"], function (event) {
        var ddmessage = Y.one("#ddmessage");
        if (ddmessage) {

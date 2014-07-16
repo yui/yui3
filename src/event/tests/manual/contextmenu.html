@@ -6,18 +6,18 @@
         <title>contextmenu synthetic event</title>
         <meta name="author" content="Todd Kloots">
         <style type="text/css">
-          
+
           .contextmenu {
               background: #ccc;
               padding: 0;
               margin: 0;
               list-style-type: none;
           }
-          
+
           .contextmenu li {
               white-space: nowrap;
           }
-          
+
         </style>
 
       	<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
@@ -31,7 +31,7 @@
 
 
             var btn = Y.one("#btn-1"),
-                btn2 = Y.one("#btn-2"), 
+                btn2 = Y.one("#btn-2"),
                 contextmenu;
 
             function onContextmenu(e) {
@@ -42,27 +42,27 @@
                       visible: false,
                       constrain: true
                   });
-                  contextmenu.render(Y.one("body"));                    
+                  contextmenu.render(Y.one("body"));
                 }
 
                 contextmenu.set("xy", [e.pageX, e.pageY]);
                 contextmenu.show();
             }
 
-            
+
             btn.on("contextmenu", onContextmenu);
             btn2.on("contextmenu", onContextmenu);
 
 
 
             Y.one("doc").delegate("contextmenu", function (e) {
-                Y.log("First delegate() listener called");            
+                Y.log("First delegate() listener called");
             }, "a");
 
             Y.one("doc").delegate("contextmenu", function (e) {
-                Y.log("Second delegate() listener called");            
+                Y.log("Second delegate() listener called");
             }, "a");
-            
+
             btn.on("contextmenu", function (e) {
                 Y.log("First on() listener called");
             });
@@ -70,7 +70,7 @@
             btn.on("contextmenu", function (e) {
                 Y.log("Second on() listener called");
             });
-            
+
             btn.on("contextmenu", function (e) {
                 Y.log("Third on() listener called");
             });

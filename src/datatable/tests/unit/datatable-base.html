@@ -15,7 +15,7 @@
             coverage: ['datatable-base'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-base-tests', function (Y) {
-			
+
 			new Y.Test.Console().render();
 
 			Y.Test.Runner.run();

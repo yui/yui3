@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 /* css to counter global site css */
 .example table {
     width: auto;
@@ -90,7 +90,7 @@ var table = new Y.DataTable({
         {   key:        'select',
             allowHTML:  true, // to avoid HTML escaping
             label:      '<input type="checkbox" class="protocol-select-all" title="Toggle ALL records"/>',
-            formatter:      '<input type="checkbox" checked/>',
+            formatter: '<input type="checkbox" checked/>',
             emptyCellValue: '<input type="checkbox"/>'
         },
         {   key: 'port',   label: 'Port No.' },
@@ -111,7 +111,7 @@ var table = new Y.DataTable({
 <p>
     Having a DataTable with a bunch of checkboxes in it may look cool (or
     not!), but we also need to define what to do when they are checked.   Since
-    the column formatter for the first column creates the checkboxes, we 
+    the column formatter for the first column creates the checkboxes, we
     delegate "click" listeners from the DataTable for the two types of
     checkboxes&mdash;the "check all" checkbox in the header and the individual
     checkboxes on each data row.
@@ -129,7 +129,9 @@ table.delegate("click", function(e){
     // undefined to trigger the emptyCellValue
     var checked = e.target.get('checked') || undefined;
 
-    this.getRecord(e.target).set('select', checked);
+    // Don't pass `{silent:true}` if there are other objects in your app
+    // that need to be notified of the checkbox change.
+    this.getRecord(e.target).set('select', checked, { silent: true });
 
     // Uncheck the header checkbox
     this.get('contentBox')

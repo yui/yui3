@@ -70,7 +70,7 @@ YUI.add('sortable', function (Y, NAME) {
                 groups: del.dd.get('groups')
             });
             this.drop.on('drop:enter', Y.bind(this._onDropEnter, this));
-            
+
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
                 'drag:end': Y.bind(this._onDragEnd, this),
@@ -154,7 +154,7 @@ YUI.add('sortable', function (Y, NAME) {
                         Y.log('No delegate parent found', 'error', 'sortable');
                         return;
                     }
-                    
+
                     Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get(ID));
 
                     //Same List
@@ -205,6 +205,7 @@ YUI.add('sortable', function (Y, NAME) {
         */
         _onDragEnd: function() {
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
+            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '');
             this.delegate.get(CURRENT_NODE).setStyles({
                 top: '',
                 left: ''
@@ -268,7 +269,7 @@ YUI.add('sortable', function (Y, NAME) {
             if (this[method]) {
                 this[method](sel);
             }
-            
+
             return this;
         },
         /**
@@ -484,47 +485,42 @@ YUI.add('sortable', function (Y, NAME) {
     /**
     * @event copy
     * @description A Sortable node was moved with a copy.
-    * @param {Event.Facade} event An Event Facade object
+    * @param {EventFacade} event An Event Facade object
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event move
     * @description A Sortable node was moved with a move.
-    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * @param {EventFacade} event An Event Facade object with the following specific property added:
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event insert
     * @description A Sortable node was moved with an insert.
-    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * @param {EventFacade} event An Event Facade object with the following specific property added:
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event swap
     * @description A Sortable node was moved with a swap.
-    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * @param {EventFacade} event An Event Facade object with the following specific property added:
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
     /**
     * @event moved
     * @description A Sortable node was moved.
-    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * @param {EventFacade} event An Event Facade object with the following specific property added:
     * @param {Boolean} event.same Moved to the same list.
     * @param {DD.Drag} event.drag The drag instance.
     * @param {DD.Drop} event.drop The drop instance.
-    * @type {Event.Custom}
     */
 
 

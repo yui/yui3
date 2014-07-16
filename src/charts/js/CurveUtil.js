@@ -1,10 +1,15 @@
 /**
- * Utility class used for calculating curve points.
+ * Provides functionality for drawing curves in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-curve-util
+ */
+/**
+ * Utility class used for calculating curve points.
+ *
  * @class CurveUtil
  * @constructor
+ * @submodule series-curve-util
  */
 function CurveUtil()
 {
@@ -25,8 +30,8 @@ CurveUtil.prototype = {
 		var outpoints = [],
             i = 1,
             l = xcoords.length - 1,
-		    xvals = [],
-		    yvals = [];
+            xvals = [],
+            yvals = [];
 
 
 		// Too few points, need at least two
@@ -54,7 +59,12 @@ CurveUtil.prototype = {
 
 		for (; i < l; ++i)
         {
-			outpoints.push({startx: Math.round(xcoords[i]), starty: Math.round(ycoords[i]), endx: Math.round(xcoords[i+1]), endy: Math.round(ycoords[i+1])});
+			outpoints.push({
+                startx: Math.round(xcoords[i]),
+                starty: Math.round(ycoords[i]),
+                endx: Math.round(xcoords[i+1]),
+                endy: Math.round(ycoords[i+1])
+            });
 			xvals[i] = 4.0 * xcoords[i] + 2*xcoords[i+1];
 			yvals[i] = 4.0*ycoords[i] + 2*ycoords[i+1];
 		}

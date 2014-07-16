@@ -1,0 +1,1090 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Transition tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<style>
+.demo {
+    background: #ccc;
+    border: 5px solid green;
+    width: 200px;
+    height: 200px;
+}
+
+.demo div {
+    width: 200px;
+    height: 200px;
+}
+
+#yui-log {
+    background: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30em;
+    z-index:10;
+}
+</style>
+</head>
+<body class="yui3-skin-sam">
+    <h1>Transition Tests</h1>
+    <div class="demo"><div></div></div>
+    <div class="demo"><div></div></div>
+    <div class="demo last"><div></div></div>
+
+    <div id="yui-log"></div>
+<script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    logInclude: { TestRunner: true }
+}).use('transition', 'test', 'test-console', function (Y) {
+    Y.namespace('Tests');
+    new Y.Test.Console({node: '#yui-log'}).render('#yui-log');
+    Y.Tests.Transition = (function(){
+        var suite = new Y.Test.Suite('Transition Tests');
+
+        suite.add(new Y.Test.Case({
+            name: 'property onend Tests',
+
+            'should run the onend for the property': function() {
+
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    height: {
+                        value: 0,
+                        on: {
+                            end: function() {
+                                test.resume(function() {
+                                    Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                                    node.setStyle('height', '');
+                                });
+                            }
+                        }
+                    }
+                });
+
+                test.wait();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'onstart Tests',
+
+            'should run the onstart prior to setting target values': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    onstart = function() {
+                        node.setStyle('height', 0);
+                    };
+
+                node.setStyle('height', h);
+                node.transition({
+                    height: function() {
+                        return h;
+                    },
+
+                    on: {
+                        start: onstart
+                    }
+                }, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                        node.setStyle('height', '');
+                    });
+                });
+
+                test.wait();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'onend Tests',
+
+            'should run the onend after transition completes': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+                    onend = function() {
+                        test.resume(function() {
+                            Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                            node.setStyle('height', '');
+                        });
+                    };
+
+                node.transition({
+                    height: 0,
+                    on: {
+                        end: onend
+                    }
+                });
+
+                test.wait();
+            },
+
+            'should run the onend before callback': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    onend = function() {
+                        test.resume(function() {
+                            Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                            node.setStyle('height', h);
+                            test.wait();
+                        });
+                    };
+
+                node.setStyle('height', 0);
+                node.transition({
+                    height: function() {
+                        return h;
+                    },
+
+                    on: {
+                        end: onend
+                    }
+                }, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                        node.setStyle('height', '');
+                    });
+                });
+
+                test.wait();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'Show Transition Tests',
+
+            'should show the node with the default transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('display', 'none');
+                node.setStyle('opacity', '0');
+                node.show(true);
+
+                Y.later(2000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                        Y.Assert.areEqual('block', node.getStyle('display'));
+                    });
+                });
+                test.wait();
+            },
+
+            'should show the node with the default transition and fire callback': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('display', 'none');
+                node.setStyle('opacity', '0');
+                node.show(true, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                        Y.Assert.areEqual('block', node.getStyle('display'));
+                    });
+                });
+                test.wait();
+            },
+
+            'should show the node with the named transition': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    w = node.getComputedStyle('width');
+
+                node.setStyles({
+                    height: 0,
+                    width: 0
+                });
+
+                node.show('sizeIn');
+
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                        Y.Assert.areEqual(w, node.getComputedStyle('width'));
+                    });
+                });
+                test.wait();
+            },
+
+            'should show the node with the named transition using passed config': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    w = node.getComputedStyle('width');
+
+                node.setStyles({
+                    height: 0,
+                    width: 0,
+                    opacity: 0
+                });
+
+                Y.Assert.areEqual(0, node.getComputedStyle('opacity'));
+
+                node.show('sizeIn', {
+                    duration: 0.2,
+                    opacity: 1
+                });
+
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                        Y.Assert.areEqual(w, node.getComputedStyle('width'));
+                        Y.Assert.areEqual(1, node.getComputedStyle('opacity'));
+                    });
+                });
+                test.wait();
+            },
+
+            'should show the node with the named transition and fire callback': function() {
+                var node = Y.one('.demo'),
+                    test = this,
+                    h = node.getComputedStyle('height'),
+                    w = node.getComputedStyle('width');
+
+                node.setStyles({
+                    height: 0,
+                    width: 0
+                });
+                node.show('sizeIn', {duration: 0.2}, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(h, node.getComputedStyle('height'));
+                        Y.Assert.areEqual(w, node.getComputedStyle('width'));
+                    });
+                });
+                test.wait();
+            },
+
+            'should override the default duration': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('opacity', 0);
+
+                node.show({duration: 0.2}, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime * 10));
+                    });
+                });
+                test.wait();
+            }
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'Hide Transition Tests',
+
+            'should hide the node with the default transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.hide(true, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        Y.Assert.areEqual('none', node.getStyle('display'));
+                        node.setStyle('display', 'block');
+                        node.setStyle('opacity', '1');
+                    });
+                });
+
+                Y.Assert.areEqual('block', node.getStyle('display'));
+                test.wait();
+            }
+
+        }));
+
+
+        suite.add(new Y.Test.Case({
+            name: 'Named Transition Tests',
+
+            'should run named effect': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition('fadeOut');
+
+                Y.later(800, null, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'should run named effect with passed config': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition('fadeOut', {duration: 0.2, height: '0px'});
+
+                Y.later(500, null, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        Y.Assert.areEqual('0px', node.getStyle('height'));
+                        //node.setStyle('opacity', 1);
+                    });
+                });
+
+
+                test.wait();
+            },
+
+            'should run named effect and fire callback': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition('fadeOut', function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'should override effect duration': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition('fadeIn', {duration: 0.25}, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime * 10));
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'Multiple Transition Tests',
+            setUp: function() {
+                Y.one('.demo').setStyles({
+                    height: '200px',
+                    width: '200px',
+                    opacity: '1'
+                });
+            },
+
+            'all chained callbacks should fire': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                        node.transition({
+                            height: 0
+                        }, function(e) {
+                            test.resume(function() {
+                                Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                            });
+                        });
+                        test.wait();
+                    });
+                });
+
+                test.wait();
+            },
+            'setStyle should not transition 1': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            },
+
+            'last transition should win for same property': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    height: '100px'
+                }, function(e) {
+                    test.resume(function() { // shouldnt fire
+                        Y.Assert.isNull(1);
+                    });
+                });
+
+                node.transition({
+                    height: 0
+                }, function(e) {
+                    test.resume(function() { // shouldnt fire
+                        Y.Assert.isNull(1);
+                    });
+                });
+
+                node.transition({
+                    height: '100px'
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'setStyle should not transition 2': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            },
+
+            'all serial callbacks should fire': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 2,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                node.transition({
+                    duration: 1,
+                    height: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        test.wait();
+                    });
+                });
+
+                test.wait();
+            },
+
+            'setStyle should not transition 3': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            },
+
+            'all serial callbacks should fire (duration)': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 1,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                        test.wait();
+                    });
+                });
+
+                node.transition({
+                    duration: 2,
+                    height: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'setStyle should not transition 4': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            },
+
+            'parallel transition should steal attribute': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    width: 0
+                }, function(e) { // should never fire
+                    test.resume(function() {
+                        Y.Assert.isNull(1);
+                        test.wait();
+                    });
+
+                });
+
+                node.transition({
+                    duration: 1,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'setStyle should not transition 5': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('width', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('width'));
+            },
+
+            'parallel transition should shorten duration': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease-in',
+                    duration: 0.2,
+                    opacity: {
+                        value: 0,
+                        duration: 0.3
+                    },
+                    height: 0,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime * 10));
+                    });
+                });
+
+                node.transition({
+                    duration: 0.1,
+                    opacity: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
+                        test.wait();
+                    });
+                });
+
+                test.wait();
+            },
+
+            'setStyle should not transition 6': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            }
+
+            }));
+            suite.add(new Y.Test.Case({
+                name: 'Multiple Element Tests',
+                setUp: function() {
+                    Y.all('.demo').setStyles({
+                        height: '200px',
+                        width: '200px',
+                        opacity: '1'
+                    });
+                },
+            'multiple elements should transition together': function() {
+                var nodes = Y.all('.demo'),
+                    node1 = nodes.item(0),
+                    node2 = nodes.item(1),
+                    test = this;
+
+                node1.transition({
+                    duration: 0.15,
+                    height: 0
+                });
+
+                node2.transition({
+                    height: '100px',
+                    duration: 0.25
+                }, function(e) {
+                    test.resume(function () {
+                        Y.Assert.areEqual('0px', node1.getComputedStyle('height'), 'item 1 height');
+                        Y.Assert.areEqual('100px', node2.getComputedStyle('height'), 'item 2 height');
+                    });
+                });
+
+                test.wait();
+            }
+
+        }));
+        suite.add(new Y.Test.Case({
+            name: 'Single Transition Tests',
+            setUp: function() {
+                Y.all('.demo').setStyles({
+                    height: '200px',
+                    width: '200px',
+                    borderWidth: '5px',
+                    paddingTop: 0,
+                    opacity: '1'
+                });
+            },
+
+            'should end at final value': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'should end at both final values': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                   opacity: {
+                      easing: 'ease-out',
+                      duration: 1.25,
+                      value: 0
+                    },
+                    height: {
+                      delay:1.25,
+                      easing: 'ease-out',
+                      value: 0
+                    }
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'callback should fire when transitioning to current value': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 0.15,
+                    height: '200px',
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('200px', node.getComputedStyle('height'));
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                test.wait();
+
+            },
+
+            'callback should fire when transitioning to current number value': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('width', 0);
+
+                node.transition({
+                    duration: 0.15,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                test.wait();
+
+            },
+
+            'should end at all final values': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 0.15,
+                    width: 0,
+                    height: 0,
+                    opacity: 0,
+                    borderTopWidth: '1px',
+                    foo: 0, // ignore non-supported
+                    paddingTop: '100px'
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
+                        Y.Assert.areEqual('100px', node.getComputedStyle('paddingTop'));
+                        Y.Assert.areEqual('1px', node.getStyle('borderTopWidth'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'callback should fire after longest duration': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease-in',
+                    duration: 1,
+                    opacity: {
+                        value: 0,
+                        duration: 0.25
+                    },
+                    height: 0,
+                    width: 0
+                }, function(e) {
+                    test.resume(function() {
+                        Y.Assert.areEqual(10, parseInt(e.elapsedTime * 10));
+
+                    node.setStyle('height', '100px');
+                    node.setStyle('opacity', '1');
+                    Y.Assert.areEqual(1, node.getStyle('opacity'));
+                    });
+                });
+
+                test.wait();
+            },
+
+            'native transform should map to vendor prefix': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease',
+                    duration: 0.1,
+                    transform: 'rotate(180deg)'
+                }, function(e) {
+                    test.resume(function() {
+                        if (!(Y.UA.ie < 10)) {
+                            Y.Assert.isNotUndefined(node.getComputedStyle(Y.Transition._TRANSFORM));
+                        }
+                    });
+                });
+
+                test.wait();
+            },
+
+            'setStyle should not transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.setStyle('height', '100px');
+                Y.Assert.areEqual('100px', node.getComputedStyle('height'));
+            },
+
+            'destroyed node should complete transition': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    easing: 'ease',
+                    duration: 0.1,
+                    height: 0
+                }, function(e) {
+                    test.resume(function() {
+                        var node = Y.one('.demo');
+                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                    });
+                });
+                node.destroy();
+                test.wait();
+            },
+
+            'should clean up style object': function() {
+
+            }
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'Transition Duration Tests',
+
+            'A 1ms `duration` should call the callback async': function() {
+                var node   = Y.one('.demo'),
+                    test   = this,
+                    called = 0;
+
+                node.transition({
+                    height  : 0,
+                    duration: 0.001
+                }, function (e) {
+                    test.resume(function () {
+                        called += 1;
+
+                        Y.Assert.areSame(1, called);
+                    });
+                });
+
+                Y.Assert.areSame(0, called);
+
+                test.wait();
+            },
+
+            'A 0ms `duration` should call the callback async': function() {
+                var node   = Y.one('.demo'),
+                    test   = this,
+                    called = 0;
+
+                node.transition({
+                    height  : 0,
+                    duration: 0
+                }, function (e) {
+                    test.resume(function () {
+                        called += 1;
+
+                        Y.Assert.areSame(1, called);
+                    });
+                });
+
+                Y.Assert.areSame(0, called);
+
+                test.wait();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'toggleView Tests',
+
+            setUp: function() {
+                Y.one('.demo').setStyles({
+                    display: 'block',
+                    opacity: '1'
+                });
+            },
+
+            tearDown: function() {
+                Y.one('.demo').setStyles({
+                    display: 'block',
+                    opacity: '1'
+                });
+            },
+
+            'should force state with boolean first arg': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.toggleView(false, function() {
+                    Y.Assert.areEqual('none', node.getStyle('display'));
+                    node.destroy();
+                });
+            },
+
+            'should force state with boolean first arg for all nodes': function() {
+                var nodes = Y.all('.demo'),
+                    count = 0;
+
+                nodes.toggleView(false, function() {
+                    if (count < nodes.size()) {
+                        count++;
+                    } else {
+                        Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                    }
+                    nodes.destroy();
+                });
+
+                Y.Assert.areEqual(nodes.size(), count);
+            },
+
+            'should toggle using only the named toggle parameter': function() {
+                var node = Y.one('.demo'), test = this;
+
+                // fade out
+                node.toggleView('fade');
+
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        Y.Assert.areEqual('none', node.getStyle('display'));
+                        node.destroy();
+                    });
+                });
+
+                this.wait();
+
+                // fade in
+                node.toggleView('fade');
+
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                        Y.Assert.areEqual('block', node.getStyle('display'));
+                        node.destroy();
+                    });
+                });
+
+                this.wait();
+
+            },
+
+            'should toggle using the named toggle': function() {
+                var nodes = Y.all('.demo'),
+                    test = this,
+                    count = 0;
+
+                nodes.toggleView('fade', function() {
+                    if (!count) {
+                        count++;
+                        test.resume(function () {
+                            Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                            Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                            Y.Assert.areEqual('0', nodes.item(0).getStyle('opacity'));
+                            Y.Assert.areEqual('0', nodes.item(1).getStyle('opacity'));
+                        });
+                    }
+                });
+
+                test.wait();
+            },
+
+            'should hide using the named toggle': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.toggleView('fade', false, function() {
+                    Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
+                    Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
+                    Y.Assert.areEqual('1', nodes.item(0).getStyle('opacity'));
+                    Y.Assert.areEqual('1', nodes.item(1).getStyle('opacity'));
+                    nodes.destroy();
+                });
+            },
+
+            'should show using the named toggle': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.setStyles({
+                    display: 'none',
+                    opacity: '0'
+                });
+
+                nodes.toggleView('fade', true, function() {
+                    Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
+                    Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
+                    Y.Assert.areEqual('1', nodes.item(0).getStyle('opacity'));
+                    Y.Assert.areEqual('1', nodes.item(1).getStyle('opacity'));
+                    nodes.destroy();
+                });
+            }
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'NodeList Transitions',
+
+            setUp: function() {
+                Y.one('.demo').setStyles({
+                    display: 'block',
+                    opacity: '1'
+                });
+            },
+
+            'nodelist should transition together': function() {
+                var test = this,
+                    resumed = false;
+
+                Y.all('.demo').transition({duration: 0.5, opacity: 0}, function(e) {
+                    if (!resumed) {
+                        test.resume(function() {
+                            resumed = true;
+                            var nodes = Y.all('.demo');
+                            Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
+                            Y.Assert.areEqual(0, nodes.item(1).getStyle('opacity'));
+                        });
+                    }
+                });
+                test.wait();
+            },
+
+            'should show the nodes with the default transition': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.setStyle('display', 'none');
+                nodes.setStyle('opacity', '0');
+                nodes.show(true);
+
+                Y.later(800, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, nodes.item(0).getStyle('opacity'));
+                        Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual(1, nodes.item(1).getStyle('opacity'));
+                        Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
+                    });
+                });
+                test.wait();
+            },
+
+            'should hide the nodes with the default transition': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.setStyle('display', 'none');
+                nodes.setStyle('opacity', '0');
+                nodes.hide(true);
+
+                Y.later(550, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
+                        Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual(0, nodes.item(1).getStyle('opacity'));
+                        Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                    });
+                });
+                test.wait();
+            },
+
+            'nodelist should fire callback once when all nodes have transitioned': function() {
+                var test = this,
+                    nodes = Y.all('.demo'),
+                    callbackCount = 0;
+
+                nodes.transition({duration: 0.5, opacity: 0}, function(e) {
+                    callbackCount++;
+                }, true);
+
+                test.wait(function(){
+                    Y.Assert.areEqual(1, callbackCount, 'callback was called more than once');
+                },1000);//this should fire half a second after the transitions
+                        //have ended since they should all transition at the same time
+            }
+        }));
+        //return it
+        return suite;
+
+    })();
+
+/*
+    Y.Test.Runner.subscribe(Y.Test.Runner.COMPLETE_EVENT, function(e) {
+    });
+*/
+
+    //add to the testrunner and run
+    Y.Test.Runner.add(Y.Tests.Transition);
+    Y.Test.Runner.run();
+
+});
+
+
+</script>
+</body>
+</html>

@@ -64,16 +64,16 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
     * @return {Boolean} True if this is Istanbul Coverage
     */
     _isIstanbul: function(json) {
-        var first = Object.keys(json)[0],
+        var first = Y.Object.keys(json)[0],
             ret = false;
 
         if (json[first].s !== undefined && json[first].fnMap !== undefined) {
             ret = true;
-        }   
+        }
 
         if (json.s !== undefined && json.fnMap !== undefined) {
             ret = true;
-        }   
+        }
         return ret;
     },
     /**
@@ -102,14 +102,14 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
             cov.lines.hit += info.calledLines;
             cov.lines.miss += (info.coveredLines - info.calledLines);
             cov.lines.percent = Math.floor((cov.lines.hit / cov.lines.total) * 100);
-            
+
             cov.functions.total += info.coveredFunctions;
             cov.functions.hit += info.calledFunctions;
             cov.functions.miss += (info.coveredFunctions - info.calledFunctions);
             cov.functions.percent = Math.floor((cov.functions.hit / cov.functions.total) * 100);
         });
 
-        
+
         coverageLog = 'Lines: Hit:' + cov.lines.hit + ' Missed:' + cov.lines.miss + ' Total:' + cov.lines.total + ' Percent:' + cov.lines.percent + '%\n';
         coverageLog += 'Functions: Hit:' + cov.functions.hit + ' Missed:' + cov.functions.miss + ' Total:' + cov.functions.total + ' Percent:' + cov.functions.percent + '%';
 
@@ -197,8 +197,8 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
             ret.total += 1;
             if (val) {
                 ret.covered += 1;
-            }   
-        }); 
+            }
+        });
         ret.pct = this._percent(ret.covered, ret.total);
         return ret;
     },
@@ -213,10 +213,10 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
             ret = { total: 0, covered: 0 };
 
         Y.Object.each(stats, function (branches) {
-            var covered = Y.Array.filter(branches, function (num) { return num > 0; }); 
+            var covered = Y.Array.filter(branches, function (num) { return num > 0; });
             ret.total += branches.length;
             ret.covered += covered.length;
-        }); 
+        });
         ret.pct = this._percent(ret.covered, ret.total);
         return ret;
     },

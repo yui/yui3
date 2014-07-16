@@ -4,8 +4,8 @@
     <button type="button" id="translate">Translate</button><br/>
 </div>
 <script>
-    YUI().use('graphics', function (Y) 
-    { 
+    YUI().use('graphics', function (Y)
+    {
         var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
         var myrect = mygraphic.addShape({
             type: "rect",
@@ -19,7 +19,7 @@
             width:40,
             height:50
         });
-            
+
         var myellipse = mygraphic.addShape({
             type: "ellipse",
             stroke: {
@@ -35,7 +35,7 @@
             x:100,
             y:50
         });
-            
+
         var mycircle = mygraphic.addShape({
             type: "circle",
             stroke: {

@@ -27,8 +27,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('loader-tests');
-    
+
     Y.Test.Runner.setName('Loader cli tests');
-    
+
 });
 

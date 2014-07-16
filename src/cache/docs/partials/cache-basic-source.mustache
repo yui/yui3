@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 /* custom styles for this example */
 #demo fieldset {display:block; border:0;}
 #demo .short {width:2em;}
@@ -30,23 +30,27 @@
 <div id="out">(cache results here)</div>
 
 <script>
-YUI().use("node", "datatype-number", "cache-base" ,function (Y) {
-    var cache = new Y.Cache(),
-        out   = Y.one('#out');
-    
+YUI().use("node", "datatype-number", "cache-base", "escape" , function (Y) {
+    var cache  = new Y.Cache(),
+        out    = Y.one('#out'),
+        escape = Y.Escape.html;
+
     Y.on("click", function(e){
         cache.set("max", Y.DataType.Number.parse(Y.one("#demo_max").get("value")));
-        out.setHTML("Cache max set to " + cache.get("max") + ".");
+        var msg = "Cache max set to " + cache.get("max") + ".";
+        out.setHTML(escape(msg)); // Escape user input for example.
     }, "#demo_setMax");
-    
+
     Y.on("click", function(e){
         cache.set("uniqueKeys", Y.one("#demo_setUniqueKeys").get("checked"));
-        out.setHTML("Cache uniqueKeys set to " + cache.get("uniqueKeys") + ".");
+        var msg = "Cache uniqueKeys set to " + cache.get("uniqueKeys") + ".";
+        out.setHTML(escape(msg)); // Escape user input for example.
     }, "#demo_setUniqueKeys");
 
     Y.on("click", function(e){
         cache.set("expires", Y.DataType.Number.parse(Y.one("#demo_expires").get("value")));
-        out.setHTML("Cache \"expires\" set to " + cache.get("expires") + ".");
+        var msg = "Cache \"expires\" set to " + cache.get("expires") + ".";
+        out.setHTML(escape(msg)); // Escape user input for example.
     }, "#demo_setExpires");
 
     Y.on("click", function(e){
@@ -54,13 +58,13 @@ YUI().use("node", "datatype-number", "cache-base" ,function (Y) {
         var msg = cache.get("max") ?
             "Value cached. Cache size is now " + cache.get("size") + "." :
             "Cache max is " + cache.get("max") + ". Value not cached."
-        out.setHTML(msg);
+        out.setHTML(escape(msg)); // Escape user input for example.
     }, "#demo_add");
 
     Y.on("click", function(e){
         var entry = cache.retrieve(Y.one("#demo_retrieveKey").get("value")),
-            output = entry ? entry.response : "Value not cached.";
-        out.setHTML(output);
+            msg   = entry ? entry.response : "Value not cached.";
+        out.setHTML(escape(msg)); // Escape user input for example.
     }, "#demo_retrieve");
 
     Y.on("click", function(e){

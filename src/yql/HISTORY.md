@@ -1,6 +1,100 @@
 YQL Change History
 ==================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Fixed an issue where `yql-jsonp`, `yql-nodejs`, and `yql-winjs` were missing `yql`
+  from their `requires` list. ([#1737][]: @ezequiel)
+
+[#1737]: https://github.com/yui/yui3/issues/1737
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Created a `yql-jsonp` module that requires the various JSONP modules needed. This allows us to use Conditional Loading
+to only load them when needed.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 

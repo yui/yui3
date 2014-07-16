@@ -1,5 +1,30 @@
 {
     "charts-base": {
-        "requires":["dom", "datatype-number", "datatype-date", "event-custom", "event-mouseenter", "event-touch", "widget", "widget-position", "widget-stack", "graphics"]
+        "requires":[
+            "dom",
+            "event-mouseenter",
+            "event-touch",
+            "graphics-group",
+            "axes",
+            "series-pie",
+            "series-line",
+            "series-marker",
+            "series-area",
+            "series-spline",
+            "series-column",
+            "series-bar",
+            "series-areaspline",
+            "series-combo",
+            "series-combospline",
+            "series-line-stacked",
+            "series-marker-stacked",
+            "series-area-stacked",
+            "series-spline-stacked",
+            "series-column-stacked",
+            "series-bar-stacked",
+            "series-areaspline-stacked",
+            "series-combo-stacked",
+            "series-combospline-stacked"
+        ]
     }
 }

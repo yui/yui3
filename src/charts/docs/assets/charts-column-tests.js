@@ -19,11 +19,11 @@ YUI.add('charts-column-tests', function(Y) {
         name: "Charts Column Tests",
 
         dataProvider: [
-            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
-            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650} 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
+            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
 
         seriesKeys: [
@@ -34,15 +34,15 @@ YUI.add('charts-column-tests', function(Y) {
 
         _should: {
             ignore: {
-                testMouseEvents:  isTouch//,
-              //  testTouchEvents: isMouse
+                testMouseEvents:  isTouch,
+                testTouchEvents: isMouse
             }
         },
-        
+
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -57,7 +57,7 @@ YUI.add('charts-column-tests', function(Y) {
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
-                handleEvent = function(event) 
+                handleEvent = function(event)
                 {
                     result = event;
                 },
@@ -72,7 +72,7 @@ YUI.add('charts-column-tests', function(Y) {
                 seriesMarkers = Y.all(CHART_SERIESMARKER),
                 tooltip = Y.all(CHART_TOOLTIP).shift();
             seriesMarkers.each(function(node) {
-                var domNode = node.getDOMNode(), 
+                var domNode = node.getDOMNode(),
                     xy = node.getXY(),
                     x = xy[0] - Y.one('document').get('scrollLeft'),
                     y = xy[1] - Y.one('document').get('scrollTop');
@@ -90,7 +90,6 @@ YUI.add('charts-column-tests', function(Y) {
                 Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
-            /*
         },
 
         testTouchEvents: function()
@@ -122,8 +121,8 @@ YUI.add('charts-column-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },
@@ -141,10 +140,10 @@ YUI.add('charts-column-tests', function(Y) {
                 failure = function() {
                     Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
                 };
-            checkAndFireEvent(seriesMarkers);*/
+            checkAndFireEvent(seriesMarkers);
         }
     }));
-    
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});
 

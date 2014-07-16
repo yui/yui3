@@ -194,42 +194,42 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(null,Y.JSON.parse("null"));
     },
     test_failOnEmptyString : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.Assert.isString(Y.JSON.parse(""));
        // Y.log("Parsed empty string, but should have failed.","warn","TestRunner");
     },
     test_failOnFunction : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"fn":function(){}}');
         //Y.log("Parsed a function, but should have failed.","warn","TestRunner");
     },
     test_failOnRegex : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"re":/abc/}');
         //Y.log("Parsed regular expression literal, but should have failed.","warn","TestRunner");
     },
     test_failOnNew : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"dt":new Date()}');
         //Y.log("Parsed <code>new Date()</code>, but should have failed.","warn","TestRunner");
     },
     test_failOnUnquotedVal : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"foo":bar}');
         //Y.log("Parsed unquoted non-native value, but should have failed.","warn","TestRunner");
     },
     test_failOnUnquotedKey : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{foo:1}');
         //Y.log("Parsed unquoted object key, but should have failed.","warn","TestRunner");
     },
     test_failOnUnclosedObject : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"unclosed":"object"');
         //Y.log("Parsed unclosed object, but should have failed.","warn","TestRunner");
     },
     test_failOnUnclosedArray : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('["unclosed array"');
         //Y.log("Parsed unclosed array, but should have failed.","warn","TestRunner");
     },
@@ -242,7 +242,7 @@ suite.add(new Y.Test.Case({
         throw new Error("Parsed object with extra comma, but should have failed.");
     },
     test_failOnDoubleExtraCommaInObject : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"extra":"commas",,}');
         //Y.log("Parsed object with two extra commas, but should have failed.","warn","TestRunner");
     },
@@ -268,23 +268,23 @@ suite.add(new Y.Test.Case({
         throw new Error("Parsed array with missing value ("+data[0]+"), but should have failed.");
     },
     test_failOnCommaAfterClose : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('["comma","after","close"],');
         //Y.log("Parsed comma after array close, but should have failed.","warn","TestRunner");
     },
     test_failOnValueAfterClose : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"misplaced":"value"}" after close"');
         //Y.log("Parsed string value after object close, but should have failed.","warn","TestRunner");
     },
     test_failOnExtraClose : function () {
-        // parse should throw an error 
+        // parse should throw an error
         var data = Y.JSON.parse('{"foo":1}}');
         //Y.log("Parsed extra closing curly brace on object, but should have failed.","warn","TestRunner");
         throw new Error("Parsed extra closing curly brace on object, but should have failed.");
     },
     test_failOnExpression : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"foo":1+2}');
         //Y.log("Parsed expression, but should have failed.","warn","TestRunner");
     },
@@ -296,7 +296,7 @@ suite.add(new Y.Test.Case({
         throw new Error("Parsed zero prefixed number, but should have failed.");
     },
     test_failOnHex : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"foo":0x14}');
         //Y.log("Parsed hex value, but should have failed.","warn","TestRunner");
     },
@@ -309,27 +309,27 @@ suite.add(new Y.Test.Case({
         throw new Error("Parsed illegal backslash escape \\x15, but should have failed.");
     },
     test_failOnMissingColon : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"foo" null}');
         //Y.log("Parsed object with missing colon, but should have failed.","warn","TestRunner");
     },
     test_failOnDoubleColon : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"foo"::1}');
         //Y.log("Parsed double colon in object, but should have failed.","warn","TestRunner");
     },
     test_failOnCommaInsteadOfColon : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('{"foo",1}');
         //Y.log("Parsed comma in place of colon, but should have failed.","warn","TestRunner");
     },
     test_failOnColonInsteadOfComma : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('["colon instead of":"comma"]');
         //Y.log("Parsed colon in place of comma, but should have failed.","warn","TestRunner");
     },
     test_failOnSingleQuote : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse("{'foo':1}");
         //Y.log("Parsed single quote, but should have failed.","warn","TestRunner");
     },
@@ -341,12 +341,12 @@ suite.add(new Y.Test.Case({
         throw new Error("Parsed unescaped line break character, but should have failed.");
     },
     test_failOnMismatchedClose : function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse('["mismatched"}');
         //Y.log("Parsed curly brace close for array, but should have failed.","warn","TestRunner");
     },
     test_failOnObjectInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse({"should": "be treated as [object Object]"});
         //Y.log("Parsed object input, but should have failed.","warn","TestRunner");
     },
@@ -358,40 +358,40 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame("bar", o.foo);
     },
     test_failOnArrayInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(['x', 'y']); // should be treated as "x,y");
         //Y.log("Parsed array input, but should have failed.","warn","TestRunner");
     },
     test_failOnDateInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(new Date()); // should be treated as date string
         //Y.log("Parsed Date input, but should have failed.","warn","TestRunner");
     },
     test_failOnRegExpInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(/should fail/); // should ToString to '/should fail/'
         Y.JSON.parse(/true/); // should ToString to '/true/'
         //Y.log("Parsed RegExp input, but should have failed.","warn","TestRunner");
     },
     test_failOnErrorInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(new Error("Boom")); // ToString to 'Error: Boom'
         Y.JSON.parse(new Error("true")); // ToString to 'Error: true'
         Y.JSON.parse(new SyntaxError("true")); // ToString to 'Error: true'
         //Y.log("Parsed Error input, but should have failed.","warn","TestRunner");
     },
     test_failOnFunctionInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(function () { return "decompiled!"; }); // ToString 'function ...'
         //Y.log("Parsed function input, but should have failed.","warn","TestRunner");
     },
     test_failOnNaNInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(NaN); // ToString to 'NaN', but not a valid JSON number
         //Y.log("Parsed NaN input, but should have failed.","warn","TestRunner");
     },
     test_failOnInfinityInput: function () {
-        // parse should throw an error 
+        // parse should throw an error
         Y.JSON.parse(Infinity); // ToString to 'Infinity', but not valid JSON
         //Y.log("Parsed Infinity input, but should have failed.","warn","TestRunner");
     },
@@ -498,7 +498,7 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['json-parse', 'test']});
+}, '@VERSION@' ,{requires:['json-parse-shim', 'test']});
 YUI.add('json-stringify-tests', function(Y) {
 
 // Automated tests should only cover js API.  Use a manual test for native API
@@ -895,7 +895,7 @@ suite.add(new Y.Test.Case({
     test_toJSON_on_proto: function () {
         function A() {}
         A.prototype.toJSON = function () { return "A"; };
-        
+
         function B() {}
         B.prototype = new A();
 
@@ -1029,7 +1029,7 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['json-stringify', 'test']});
+}, '@VERSION@' ,{requires:['json-stringify-shim', 'test']});
 
 
 YUI.add('json-tests', function(Y){}, '@VERSION@' ,{use:['json-parse-tests', 'json-stringify-tests']});

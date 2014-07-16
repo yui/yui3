@@ -15,7 +15,7 @@ YUI().use('node', function(Y) {
     var nodes = Y.all('#demo li');
 
     var onClick = function(e) {
-        e.currentTarget.addClass('highlight'); // e.currentTarget === #demo li 
+        e.currentTarget.addClass('highlight'); // e.currentTarget === #demo li
         e.target.setHTML('Thanks for the click!'); // e.target === #demo li or #demo li em
         e.container.setStyle('border', '5px solid #FFA100'); // e.container === #demo
 

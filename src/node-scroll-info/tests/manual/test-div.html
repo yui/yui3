@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>node-scroll-info div test</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        body {
+            background: #161616;
+            color: #fff;
+            font: 14px Helvetica, sans-serif;
+        }
+
+        .tile {
+            background-color: green;
+            margin: 1px;
+            float: left;
+            height: 200px;
+            width: 200px;
+        }
+
+        .offscreen { background-color: #999; }
+
+        #content {
+            overflow: auto;
+            margin: 200px 0 0 400px;
+            padding: 0;
+            height: 400px;
+            width: 450px;
+        }
+
+        #info {
+            background: #333;
+            border: 1px solid #555;
+            font-size: 12px;
+            min-width: 160px;
+            padding: 3px;
+            position: fixed;
+            right: 5px;
+            top: 5px;
+            *position: absolute;
+        }
+
+        #info th { text-align: right; }
+    </style>
+</head>
+<body>
+
+<div id="content">
+    <p style="text-align: center;">
+    Scroll to the bottom of the div to load more tiles.
+    </p>
+</div>
+
+<div id="info">
+    <table>
+        <tr>
+            <th scope="row">Tiles Loaded:</th>
+            <td id="info-loaded"></td>
+        </tr>
+
+        <tr>
+            <th scope="row">Tiles Onscreen:</th>
+            <td id="info-onscreen"></td>
+        </tr>
+
+        <tr>
+            <th scope="row">Tiles Offscreen:</th>
+            <td id="info-offscreen"></td>
+        </tr>
+    </table>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+
+<script>
+var Y = YUI({filter: 'raw'}).use('node-scroll-info', function (Y) {
+
+var content = Y.one('#content'),
+
+    tiles        = [],
+    tileTemplate = '<div class="tile"></div>',
+
+    lastIndex = -1,
+
+    hideTimeout,
+    showTimeout;
+
+function loadNext(count) {
+    var html  = [],
+        limit = Math.min(lastIndex + count + 1, tiles.length);
+
+    for (var i = lastIndex + 1; i < limit; i++) {
+        html.push(tileTemplate);
+    }
+
+    lastIndex = i - 1;
+
+    if (html.length) {
+        content.append(html.join(''));
+    }
+
+    updateInfo({loaded: lastIndex + 1});
+}
+
+function refresh() {
+    clearTimeout(hideTimeout);
+    clearTimeout(showTimeout);
+
+    showTimeout = setTimeout(function () {
+        var nodes = content.scrollInfo.getOnscreenNodes('.tile');
+
+        nodes.removeClass('offscreen');
+        updateInfo({onscreen: nodes.size()});
+    }, 20);
+
+    hideTimeout = setTimeout(function () {
+        var nodes = content.scrollInfo.getOffscreenNodes('.tile')
+
+        nodes.addClass('offscreen');
+        updateInfo({offscreen: nodes.size()});
+    }, 500);
+}
+
+function updateInfo(info) {
+    Y.Object.each(info, function (value, name) {
+        Y.one('#info-' + name).set('text', value);
+    });
+}
+
+for (var i = 0; i < 5000; i++) {
+    tiles.push(1);
+}
+
+loadNext(50);
+refresh();
+
+window.scrollInfo = content.plug(Y.Plugin.ScrollInfo, {scrollMargin: 0}).scrollInfo;
+
+Y.one('win').on('windowresize', refresh);
+
+if (content.scrollInfo.getScrollInfo().atBottom) {
+    loadNext(50);
+    refresh();
+}
+
+content.scrollInfo.on({
+    scroll: function (e) {
+        Y.log('scroll');
+        refresh();
+    },
+
+    scrollDown: function (e) {
+        Y.log('scrollDown');
+    },
+
+    scrollLeft: function (e) {
+        Y.log('scrollLeft');
+    },
+
+    scrollRight: function (e) {
+        Y.log('scrollRight');
+    },
+
+    scrollUp: function (e) {
+        Y.log('scrollUp');
+    },
+
+    scrollToBottom: function (e) {
+        loadNext(50);
+    },
+
+    scrollToLeft: function (e) {
+        Y.log('scrollToLeft');
+    },
+
+    scrollToRight: function (e) {
+        Y.log('scrollToRight');
+    },
+
+    scrollToTop: function (e) {
+        Y.log('scrollToTop');
+    }
+});
+
+});
+</script>
+
+</body>
+</html>

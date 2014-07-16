@@ -1,0 +1,161 @@
+<style>
+/** DEMO BOX **/
+#demo {
+    position: relative;
+    border: 1px solid #cbcbcb;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fafafa;
+}
+
+/** SEARCH FORM **/
+#demo form {
+    border: 1px solid #cbcbcb;
+    border-radius: 3px;
+    padding: 8px;
+    background: #fefefe;
+}
+#demo form input {
+    font-size: 180%;
+    padding: 3px 7px;
+}
+
+/** SEARCH RESULTS **/
+#demo .results {
+    position: relative;
+    margin: 8px 0;
+}
+#demo.hide-pg .results {
+    margin: 0;
+}
+#demo .results ul {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    position: absolute;
+    opacity: 0;
+}
+#demo .results li {
+    list-style: none;
+    float: left;
+    padding: 3px;
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+#demo .results li img {
+    background: #efefef;
+    width: 150px;
+    height: 150px;
+}
+#demo .results li:hover {
+    z-index: 10;
+}
+#demo .results li:hover img {
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    width: 160px;
+    height: 160px;
+    z-index: 10;
+    border: 3px solid #fff;
+    -webkit-box-shadow: 3px 3px 5px hsla(250, 40%, 30%, 0.5);
+    -moz-box-shadow: 3px 3px 5px hsla(250, 40%, 30%, 0.5);
+    box-shadow: 3px 3px 5px hsla(250, 40%, 30%, 0.5);
+}
+
+/** LOADING INDICATOR **/
+#demo.loading .loading {
+    display: block;
+}
+#demo .loading {
+    background: url('../assets/paginator/images/loading.gif') left center repeat-x;
+    height: 15px;
+    width: 150px;
+    border: 1px solid #3b4f93;
+    border-radius: 4px;
+    box-shadow: 3px 3px 3px hsla(40, 40%, 30%, 0.5);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -75px;
+    display: none;
+    z-index: 100;
+    -webkit-box-shadow: 0 0 0 6px hsla(226, 10%, 40%, 0.4);
+    -moz-box-shadow: 0 0 0 6px hsla(226, 10%, 40%, 0.4);
+    box-shadow: 0 0 0 6px hsla(226, 10%, 40%, 0.4);
+}
+
+/** PAGINATOR CSS **/
+#demo.hide-pg .paginator {
+    display: none;
+}
+
+#demo .paginator {
+    margin-top: 8px;
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin: 0 10px;
+}
+
+#demo .paginator .control {
+    display: block;
+    padding: 0 .5em;
+    text-align: center;
+    text-decoration: none;
+}
+#demo .paginator ul {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+#demo .paginator ul li {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    list-style: none;
+}
+#demo .paginator .control {
+    border: solid 1px #CBCBCB;
+    display: inline-block;
+    zoom: 1; *display: inline;
+    margin: 0 3px;
+    padding: 0 .5em;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #4A4A4A;
+    font-family: arial,san-serif;
+    background-color: #E6E6E6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ie-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+#demo .paginator .control:hover {
+    background-color: #d6d6d6;
+    color: #3a3a3a;
+}
+#demo .paginator .control.selected,
+#demo .paginator .control.selected:hover {
+    cursor: default;
+    font-weight: bold;
+    font-weight: bold;
+    background-color: #2647a0;
+    color: #fff;
+}
+#demo .paginator .control.disabled,
+#demo .paginator .control.disabled:hover {
+    background-color: #E6E6E6;
+    cursor: default;
+    opacity: 0.55;
+    filter: alpha(opacity=55);
+}
+#demo .paginator .page:hover {
+    background-color: #bfdaff;
+    color: #000;
+}
+</style>

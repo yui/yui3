@@ -15,17 +15,17 @@
         `extend` or `augment` your classes with `EventTarget` directly.
     </p>
 
-    <p><strong>DEPRECATION NOTE:</strong> The `subscribers` and `afters` properties which
-       used to sit on `CustomEvent` object instances have been deprecated and 
+    <p class="deprecated"><strong>DEPRECATION NOTE:</strong> The `subscribers` and `afters` properties which
+       used to sit on `CustomEvent` object instances have been deprecated and
        removed for performance reasons as of the 3.7.0 release.
     </p>
 
     <p>If you're referring to the `subscribers` or `afters` properties directly just
-       to access the set of subscribers,  consider switching to the public `getSubs()` 
+       to access the set of subscribers,  consider switching to the public `getSubs()`
        method instead which hides you from the implementation details.</p>
 
-    <p>If you have a use case which requires you to access the above properties 
-       directly you can set `Y.CustomEvent.keepDeprecatedSubs` to true, to restore 
+    <p>If you have a use case which requires you to access the above properties
+       directly you can set `Y.CustomEvent.keepDeprecatedSubs` to true, to restore
        them, but you will incur a performance hit if you enable this flag.
     </p>
 
@@ -33,7 +33,7 @@
         Bundled with `EventTarget` are <a
         href="http://en.wikipedia.org/wiki/Aspect_oriented_programming">Aspect
         Oriented Programming</a> methods that allow you to subscribe to the
-        execution of object methods, and 
+        execution of object methods, and
         their own.
     </p-->
 </div>
@@ -92,10 +92,10 @@ Y.after("spa-category|pedicure", gelatoTime);
 
 <p>
     All `EventTarget`s host methods
-    <a href="{{apiDocs}}/classes/EventTarget.html#method_on">`on`</a>, 
-    <a href="{{apiDocs}}/classes/EventTarget.html#method_once">`once`</a>, 
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_on">`on`</a>,
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_once">`once`</a>,
     <a href="{{apiDocs}}/classes/EventTarget.html#method_after">`after`</a>, and
-    <a href="{{apiDocs}}/classes/EventTarget.html#method_onceAfter">`onceAfter`</a>. 
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_onceAfter">`onceAfter`</a>.
     Both `once` and `onceAfter` will automatically detach the subscription
     after the callback is executed the first time.  All subscription methods
     return a subscription object called an
@@ -340,7 +340,7 @@ gruel.on('add', function (e) {
 
 <p>
     `emitFacade` is typically passed as a default configuration to `Y.augment`.
-    All other YUI infrastructure classes extend `EventTarget` and set 
+    All other YUI infrastructure classes extend `EventTarget` and set
     `emitFacade` to `true` for you.
 </p>
 
@@ -629,7 +629,7 @@ rootNode.add( new LeafNode("Leafy") ); // Node NOT added
 rootNode.add( new LeafNode("James Bond") ); // Node added without event bubbling
 ```
 
-<h3>Broadcasting Events to Y or Between YUI instances</h3>
+<h3 id="broadcast">Broadcasting Events to Y or Between YUI instances</h3>
 
 <p>
     Event broadcasting is very similar to bubbling, but with some important
@@ -699,7 +699,7 @@ YUI().use('node', 'event-custom', function (Y) {
     Y.augment(Character, Y.EventTarget, true, null, {
         emitFacade: true
     });
-    
+
     var murdock = new Character();
 
     Y.one('#status').on('click', function () {
@@ -726,7 +726,7 @@ YUI().use('node', 'event-custom', function (OtherY) {
     OtherY.augment(Character, OtherY.EventTarget, true, null, {
         emitFacade: true
     });
-    
+
     var striker = new Character()
 
     OtherY.one('#report').on('click', function () {
@@ -762,7 +762,7 @@ YUI().use('node', 'event-custom', function (Y) {
     Y.augment(Character, Y.EventTarget, true, null, {
         emitFacade: true
     });
-    
+
     var murdock = new Character();
 
     Y.one('#status').on('click', function () {
@@ -789,7 +789,7 @@ YUI().use('node', 'event-custom', function (OtherY) {
     OtherY.augment(Character, OtherY.EventTarget, true, null, {
         emitFacade: true
     });
-    
+
     var striker = new Character()
 
     OtherY.one('#report').on('click', function () {
@@ -874,11 +874,14 @@ YUI().use('node', 'event-custom', function (OtherY) {
     <tr>
         <td>`broadcast`</td>
         <td>
-            Notify the YUI instance (`broadcast: 1`) or the YUI instance
-            <em>and</em> `Y.Global` with the event.
-            <a href="#broadcast">Details above</a>.
+            <a href="#broadcast">Details above</a>. Fire the event from:
+            <ul>
+                <li>`0` - Only the EventTarget instance</li>
+                <li>`1` - The EventTarget and the YUI instance (`Y`)</li>
+                <li>`2` - The EventTarget, `Y`, and `Y.Global`</li>
+            </ul>
         </td>
-        <td>0 (instance only)</td>
+        <td>0</td>
         <td>YES</td>
     </tr>
     <tr>
@@ -934,7 +937,7 @@ YUI().use('node', 'event-custom', function (OtherY) {
         <td>`async`</td>
         <td>
             Only applicable to events also configured with `fireOnce: true`.
-            If `true`, new subscriptions to this event after it has already 
+            If `true`, new subscriptions to this event after it has already
             been fired will be queued to execute in a `setTimeout` instead of
             immediately (synchronously).
         </td>

@@ -13,14 +13,10 @@
 
 <script>
 
-YUI({base: '../../../../build/', filter:"raw"}).use('dump', 'base', 'node', function(Y) {
-
-    var res = document.getElementById('results');
+YUI({filter:"raw"}).use('base', 'node', function(Y) {
 
     var Test = function() {
-        if (Test.superclass) {
-            Test.superclass.constructor.apply(this, arguments);
-        }
+        Test.superclass.constructor.apply(this, arguments);
     };
 
     Test.NAME = 'test';
@@ -103,7 +99,135 @@ YUI({base: '../../../../build/', filter:"raw"}).use('dump', 'base', 'node', func
         },
 
         attr16: {
-            value: ['default'],
+            value: 10,
+
+            getter: function() {
+                return false;
+            },
+
+            setter: function(g) {
+                return g;
+            }
+        },
+
+        attr17: {
+            value: null,
+            setter: function(g) {
+                return g;
+            }
+        },
+
+        attr18: {
+            writeOnce: true,
+            value: null
+        },
+
+        attr19: {
+            writeOnce: true,
+            value: null
+        },
+
+        attr20: {
+            writeOnce: true,
+            value: null
+        }
+    };
+
+    Y.extend(Test, Y.BaseCore);
+
+    var MyBaseCore20Ideal = function() {
+        MyBaseCore20Ideal.superclass.constructor.apply(this, arguments);
+    };
+
+    Y.extend(MyBaseCore20Ideal, Y.BaseCore);
+
+    MyBaseCore20Ideal.NAME = 'myBaseCore20Ideal';
+
+    MyBaseCore20Ideal.ATTRS = {
+
+        attr1: {
+            value: "Foo",
+            setter: function(n) {
+                return n;
+            }
+        },
+
+        attr2: {
+            value: "Bar",
+            setter: function(n) {
+                return n;
+            }
+        },
+
+        attr3: {
+            value: true
+        },
+
+        attr4: {
+            value: 3
+        },
+
+        attr5: {
+            value: 3
+        },
+
+        attr6: {
+            value: false,
+            setter: function(lock) {
+                return lock;
+            }
+        },
+
+        attr7: {
+            value: 10
+        },
+
+        attr8: {
+            valueFn: function() {
+                return {};
+            }
+        },
+
+        attr9: {
+            valueFn : function() {
+                return [];
+            }
+        },
+
+        attr10: {
+            value: "Foobar"
+        },
+
+        attr11: {
+            value: 25
+        },
+
+        attr12: {
+            value: null
+        },
+
+        attr13: {
+            value: false
+        },
+
+        attr14: {
+            value: false,
+            setter: function(val) {
+                return val;
+            }
+        },
+
+        attr15: {
+            value: null,
+            setter: function(val) {
+                return false;
+            }
+        },
+
+        attr16: {
+            valueFn: function() {
+                return ['default'];
+            },
 
             getter: function() {
                 return false;
@@ -133,24 +257,17 @@ YUI({base: '../../../../build/', filter:"raw"}).use('dump', 'base', 'node', func
         }
     };
 
-    Y.extend(Test, Y.Base, {
-        foo: function() {}
+    Y.one("document").on("click", function() {
+
+        console.profile("instantiation");
+
+        for (var i = 0; i < 10000; i++) {
+            t = new MyBaseCore20Ideal();
+        }
+
+        console.profileEnd("instantiation");
+
     });
-
-    var start, end, i, t, n = 1000;
-
-    // console.profile("Base");
-    start = new Date().getTime();
-    for (i = 0; i < n; i++) {
-        t = new Test();
-    }
-    end = new Date().getTime();
-    // console.profileEnd();
-
-    res.innerHTML = "Avg Time:" + ((end-start)/n);
-
-    var t = new Test();
-    res.innerHTML += "<pre>" + Y.dump(t.getAttrs()) + "</pre>";
 });
 </script>
 </body>

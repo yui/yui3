@@ -12,16 +12,16 @@
 }
 </style>
 
-<div id="uploaderContainer"> 
+<div id="uploaderContainer">
     <div id="selectFilesButtonContainer">
-    </div> 
+    </div>
     <div id="uploadFilesButtonContainer">
-      <button type="button" id="uploadFilesButton" 
+      <button type="button" id="uploadFilesButton"
               class="yui3-button" style="width:250px; height:35px;">Upload Files</button>
-    </div> 
+    </div>
     <div id="overallProgress">
     </div>
-</div> 
+</div>
 
 <div id="filelist">
   <table id="filenames">
@@ -35,22 +35,22 @@
     </thead>
     <tbody>
     </tbody>
-  </table>  
+  </table>
 </div>
 
 <script>
 
 YUI({filter:"raw"}).use("uploader", function(Y) {
 Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
-   if (Y.Uploader.TYPE != "none" && !Y.UA.ios) { 
-       var uploader = new Y.Uploader({width: "250px", 
-                                      height: "35px", 
+   if (Y.Uploader.TYPE != "none" && !Y.UA.ios) {
+       var uploader = new Y.Uploader({width: "250px",
+                                      height: "35px",
                                       multipleFiles: true,
-                                      swfURL: "{{yuiBuildUrl}}/uploader/assets/flashuploader.swf?t=" + Math.random(),
-                                      uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
+                                      swfURL: "flashuploader.swf?t=" + Math.random(),
+                                      uploadURL: "http://yuilibrary.com/sandbox/upload/",
                                       simLimit: 2,
                                       withCredentials: false
-                                     });    
+                                     });
        var uploadDone = false;
 
        uploader.render("#selectFilesButtonContainer");
@@ -67,12 +67,12 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
             uploadDone = false;
             fileTable.setHTML("");
           }
-          
+
           Y.each(fileList, function (fileInstance) {
-              fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" + 
-                                    "<td class='filename'>" + fileInstance.get("name") + "</td>" + 
-                                    "<td class='filesize'>" + fileInstance.get("size") + "</td>" + 
-                                    "<td class='percentdone'>Hasn't started yet</td>"); 
+              fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" +
+                                    "<td class='filename'>" + fileInstance.get("name") + "</td>" +
+                                    "<td class='filesize'>" + fileInstance.get("size") + "</td>" +
+                                    "<td class='percentdone'>Hasn't started yet</td>");
                              });
        });
 
@@ -113,8 +113,8 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
          if (!uploadDone && uploader.get("fileList").length > 0) {
             uploader.uploadAll();
          }
-       });     
-   } 
+       });
+   }
    else {
        Y.one("#uploaderContainer").set("text", "We are sorry, but to use the uploader, you either need a browser that support HTML5 or have the Flash player installed on your computer.");
    }

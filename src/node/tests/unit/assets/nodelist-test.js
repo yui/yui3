@@ -91,9 +91,8 @@ YUI.add('nodelist-test', function(Y) {
             Assert.areEqual(3, Y.all('#test-select option').size());
         },
 
-        'should find 2 FORMs via form query': function() {
-            Assert.areEqual(2, Y.all('form').size());
-            Assert.areEqual('FORM', Y.all('form').item(1).get('tagName').toUpperCase());
+        'should find all FORMs via form query': function() {
+            Assert.areEqual(document.getElementsByTagName('form').length, Y.all('form').size());
         },
 
         'should find all elements with bar className': function() {
@@ -173,7 +172,7 @@ YUI.add('nodelist-test', function(Y) {
         'should pop the nodelist': function() {
             var nodes = Y.all('div'),
                 node = nodes.pop();
-            
+
             Assert.areEqual(Y.all('div').item(Y.all('div').size() - 1), node);
             Assert.areEqual(Y.all('div').size() - 1, nodes.size());
         },
@@ -181,7 +180,7 @@ YUI.add('nodelist-test', function(Y) {
         'should shift the nodelist': function() {
             var nodes = Y.all('div'),
                 node = nodes.shift();
-            
+
             Assert.areEqual(Y.one('div'), node);
             Assert.areEqual(Y.all('div').size() - 1, nodes.size());
         },
@@ -189,7 +188,7 @@ YUI.add('nodelist-test', function(Y) {
         'should push the node on nodelist': function() {
             var nodes = Y.all('div'),
                 node = Y.one(document.createElement('div'));
-            
+
             Assert.areEqual(nodes.size() + 1, nodes.push(node));
             Assert.areEqual(nodes.item(nodes.size() - 1), node);
             Assert.areEqual(node._node, nodes._nodes[nodes.size() - 1]);
@@ -199,7 +198,7 @@ YUI.add('nodelist-test', function(Y) {
             var nodes = Y.all('div'),
                 size = nodes.size(),
                 node = Y.one(document.createElement('div'));
-            
+
             nodes.unshift(node);
             Assert.areEqual(size + 1, nodes.size());
             Assert.areEqual(nodes.item(0), node);
@@ -210,7 +209,7 @@ YUI.add('nodelist-test', function(Y) {
             var nodes = Y.all('div'),
                 size = nodes.size(),
                 node = document.createElement('div');
-            
+
             nodes.unshift(node);
             Assert.areEqual(size + 1, nodes.size());
             Assert.areEqual(nodes.item(0), Y.one(node));
@@ -221,14 +220,14 @@ YUI.add('nodelist-test', function(Y) {
             var nodelist1 = Y.all('div'),
                 nodelist2 = Y.all('li'),
                 nodelist3 = nodelist1.concat(nodelist2);
-            
+
             ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(nodelist2._nodes), nodelist3._nodes);
         },
 
         'should concat the nodes': function() {
             var nodelist1 = Y.all('div');
                 nodelist2 = nodelist1.concat(Y.one('ul'), Y.one('li'));
-            
+
             ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(Y.one('ul')._node, Y.one('li')._node), nodelist2._nodes);
         },
 
@@ -251,7 +250,7 @@ YUI.add('nodelist-test', function(Y) {
             var nodelist1 = Y.all('div');
                 nodelist2 = nodelist1.slice(1, 4);
                 nodelist3 = nodelist1.slice(0, 3);
-            
+
             ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
             ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(0, 3), nodelist3._nodes);
         },
@@ -273,7 +272,7 @@ YUI.add('nodelist-test', function(Y) {
 
             nodelist.item(1).remove();
             ArrayAssert.itemsAreEqual(size, nodelist.size(), 'remove item shouldnt affect size');
-            
+
             nodelist.refresh();
             ArrayAssert.itemsAreEqual(node.all('li').size(), nodelist.size(), 'refresh should affect size');
             ArrayAssert.itemsAreEqual(node.all('li')._nodes, nodelist._nodes, 'refreshed nodelist should be in sync');

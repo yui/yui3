@@ -9,7 +9,7 @@ function f() {}
 
 
 suite.add(new Y.Test.Case({
-    name : "Queue isntantiation",
+    name : "Queue instantiation",
 
     test_instantiation : function () {
         var basic         = new Y.AsyncQueue(),
@@ -42,7 +42,7 @@ suite.add(new Y.Test.Case({
             var callback,
 
                 q = new Y.Queue(inc, inc, "string", inc);
-            
+
             while ((callback = q.next())) {
                 if (Y.Lang.isFunction(callback)) {
                     callback();
@@ -297,6 +297,7 @@ suite.add(new Y.Test.Case({
     test_stop : function () {
         var results = "",
             self = this,
+            completeEvt = false,
             q = new Y.AsyncQueue(
                     function () { results += 'S'; },
                     function () { results += 'T'; },
@@ -311,20 +312,104 @@ suite.add(new Y.Test.Case({
                         timeout: 10
                     });
 
+        q.on('complete', function () { completeEvt = true; });
         q.run();
         q.stop();
+
         Y.Assert.areSame('STOP',results);
         Y.Assert.areSame(0,q.size());
+        Y.Assert.areSame(false, q.isRunning());
+        if (!completeEvt) { Y.Assert.fail("'q.stop() should fire the 'complete' event"); }
+
+
+        // try to re-run the queue (should be empty)
+        completeEvt = false;
 
         setTimeout(function () {
             self.resume(function () {
                 Y.Assert.areSame('STOP',results);
+                Y.Assert.areSame(false, q.isRunning());
+                if (!completeEvt) { Y.Assert.fail("'q.run() should fire the 'complete' event"); }
             });
         },100);
 
         q.run();
 
         this.wait();
+
+    },
+
+    test_stop_inside_the_callback : function () {
+        var results = "",
+            self = this,
+            completeEvt = false,
+            q = new Y.AsyncQueue(
+                    function () { this.stop(); },
+                    function () { Y.Assert.fail("q.stop() should have cleared this callback"); });
+
+        q.defaults = { timeout: -1 }; // sync queue
+
+        q.on('complete', function () { completeEvt = true; });
+
+        q.run();
+
+        Y.Assert.areSame(0, q.size());
+        Y.Assert.areSame(false, q.isRunning());
+        if (!completeEvt) { Y.Assert.fail("'q.stop() should fire the 'complete' event"); }
+
+    },
+
+    test_stop_inside_the_callback_async : function () {
+        var results = "",
+            self = this,
+            q = new Y.AsyncQueue(
+                    function () { this.stop(); },
+                    function () {
+                        self.resume(function () {
+                            Y.Assert.fail("q.stop() should have cleared this callback");
+                        });
+                    });
+
+        q.defaults = { timeout: 10 }; // async queue
+
+        q.on('complete', function () {
+            self.resume(function () {
+                Y.Assert.areSame(0, q.size());
+                Y.Assert.areSame(false, q.isRunning());
+            });
+        });
+
+        q.run();
+
+        this.wait();
+    },
+
+    test_stop_after_pause_and_settimeout : function () {
+        var results = "",
+            self = this,
+            completeEvt = false,
+            q = new Y.AsyncQueue(
+                    function () {
+                        this.pause();
+                        setTimeout(function () {
+                            q.stop();
+                        }, 0);
+                    },
+                    function () { Y.Assert.fail("q.stop() should have cleared this callback"); });
+
+        q.defaults = { timeout: 10 }; // async queue
+
+        q.on('complete', function () {
+            self.resume(function () {
+                Y.Assert.areSame(0, q.size());
+                Y.Assert.areSame(false, q.isRunning());
+            });
+        });
+
+        q.run();
+
+        this.wait();
+
     },
 
     test_getCallback : function () {
@@ -465,7 +550,7 @@ suite.add(new Y.Test.Case({
     test_iterations : function () {
         var results = '',
             self = this;
-       
+
         (new Y.AsyncQueue(
             function () { results += 'A'; },
             { fn: function () { results += 'B'; } },
@@ -484,7 +569,7 @@ suite.add(new Y.Test.Case({
     test_until : function () {
         var results = '',
             self = this;
-       
+
         (new Y.AsyncQueue(
             function () { results += 'A'; },
             {
@@ -514,6 +599,38 @@ suite.add(new Y.Test.Case({
             })).run();
 
         Y.Assert.areSame('ABBB', results);
+
+        this.wait();
+    },
+
+    test_until_after_paused_callback: function () {
+        var results = '',
+            self = this;
+
+        (new Y.AsyncQueue(
+            function () {
+                this.pause();
+                Y.later(0, this, function () {
+                    results += 'A';
+                    this.run();
+                });
+            },
+            {
+                fn: function () {
+                    results += 'B'; // should be executed once
+                },
+                until: function () {
+                    return results === '' || results === 'AB';
+                }
+            },
+            { fn: function () {
+                self.resume(function () {
+                    Y.Assert.areSame('AB', results);
+                });
+              }
+            })).run();
+
+        Y.Assert.areSame('', results);
 
         this.wait();
     },
@@ -579,7 +696,7 @@ suite.add(new Y.Test.Case({
                 timeout : 10
             });
         }
-        
+
         function test(s,f,step) {
             return function () {
                 var msg = "Incorrect number of ",
@@ -720,9 +837,6 @@ suite.add(new Y.Test.Case({
                     "E",
                     "(afterExec)",
 
-                    "(onShift)",
-                    "(afterShift)",
-
                     "(onPromote)",
                     "(afterPromote)",
 
@@ -735,6 +849,9 @@ suite.add(new Y.Test.Case({
                     "(onExec)",
                     "V",
                     "(afterExec)",
+
+                    "(onShift)",
+                    "(afterShift)",
 
                     "(onShift)",
                     "(afterShift)",
@@ -828,8 +945,7 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-/*
-// Avoiding a Y.Test bug where tests repeat infinitely
+
 suite.add(new Y.Test.Case({
     name : "From bugs",
 
@@ -861,14 +977,14 @@ suite.add(new Y.Test.Case({
                 Y.Assert.areSame( 11, register );
             } );
         } );
-        
+
         q.run();
 
         this.wait();
 
     }
 }));
-*/
+
 
 Y.Test.Runner.add(suite);
 

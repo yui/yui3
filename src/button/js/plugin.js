@@ -6,16 +6,18 @@
 */
 
 /**
-* @class ButtonPlugin
+* @class Button
 * @param config {Object} Configuration object
+* @extends ButtonCore
 * @constructor
+* @namespace Plugin
 */
-function ButtonPlugin(config) {
+function ButtonPlugin() {
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
 
 Y.extend(ButtonPlugin, Y.ButtonCore, {
-    
+
     /**
     * @method _afterNodeGet
     * @param name {string}
@@ -25,7 +27,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
         // TODO: point to method (_uiSetLabel, etc) instead of getter/setter
         var ATTRS = this.constructor.ATTRS,
             fn = ATTRS[name] && ATTRS[name].getter && this[ATTRS[name].getter];
-            
+
         if (fn) {
             return new Y.Do.AlterReturn('get ' + name, fn.call(this));
         }
@@ -40,7 +42,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     _afterNodeSet: function (name, val) {
         var ATTRS = this.constructor.ATTRS,
             fn = ATTRS[name] && ATTRS[name].setter && this[ATTRS[name].setter];
-            
+
         if (fn) {
             fn.call(this, val);
         }
@@ -54,7 +56,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     _initNode: function(config) {
         var node = config.host;
         this._host = node;
-        
+
         Y.Do.after(this._afterNodeGet, node, 'get', this);
         Y.Do.after(this._afterNodeSet, node, 'set', this);
     },
@@ -66,9 +68,9 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     destroy: function(){
         // Nothing to do, but things are happier with it here
     }
-    
+
 }, {
-    
+
     /**
     * Attribute configuration.
     *
@@ -78,7 +80,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     * @static
     */
     ATTRS: Y.merge(Y.ButtonCore.ATTRS),
-    
+
     /**
     * Name of this component.
     *
@@ -87,7 +89,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     * @static
     */
     NAME: 'buttonPlugin',
-    
+
     /**
     * Namespace of this component.
     *
@@ -96,7 +98,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     * @static
     */
     NS: 'button'
-    
+
 });
 
 /**
@@ -104,14 +106,14 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
 * @description A factory that plugs a Y.Node instance with Y.Plugin.Button
 * @param node {Object}
 * @param config {Object}
-* @returns {Object} A plugged Y.Node instance
+* @return {Object} A plugged Y.Node instance
 * @public
 */
 ButtonPlugin.createNode = function(node, config) {
     var template;
 
     if (node && !config) {
-        if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
+        if (! (node.nodeType || node.getDOMNode || typeof node === 'string')) {
             config = node;
             node = config.srcNode;
         }

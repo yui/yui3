@@ -155,7 +155,7 @@ suite.add(new Y.Test.Case({
                 }
             }),
             timeoutCallback;
-        
+
         ds.plug(Y.Plugin.DataSourceJSONSchema, {
             schema: {
                 resultListLocator: "query.results.result",

@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 /* custom styles for this example */
 #htContainer {
 	font-size:90%;
@@ -20,7 +20,7 @@
 
 ```
 YUI().use("recordset-base", "recordset-indexer", function(Y) {
-    
+
 	//Add "recordset-indexer" sub-module in the use statement.
 
 	var data = [
@@ -28,20 +28,20 @@ YUI().use("recordset-base", "recordset-indexer", function(Y) {
 		{a:9, b:8, c:7},
 		{a:1, b:2, c:3}
 	],
-	
+
 	//Recordset is created with the objects from the data array
 	myRecordset = new Y.Recordset({records: data});
-	
+
 	//Plugging in Sorting functionality
 	myRecordset.plug(Y.Plugin.RecordsetIndexer);
-	
+
 	//You can now call methods to allow for custom hash tables on the myRecordset instance using the "indexer" namespace.
-	
+
 	myRecordset.indexer.createTable('a');
 
 });
 ```
-	
+
 <h3>Using the RecordsetIndexer Plugin</h3>
 
 <ul class="topspace">
@@ -61,14 +61,14 @@ YUI().use("recordset-base","recordset-indexer", function(Y) {
 		{a:9, b:8, c:7},
 		{a:1, b:2, c:3}
 	],
-	
+
 	//Recordset is created with the objects from the data array
 	myRecordset = new Y.Recordset({records: data});
 	myRecordset.plug(Y.Plugin.RecordsetIndexer);
-	
+
 	//creates and returns a new hash table which indexes by the key 'a'
 	var tableA = myRecordset.indexer.createTable('a');
-	
+
 	//calling tableA[9] would return a record instance of {a:9, b:8, c:7}
 	//calling tableA[3].getValue() would return {a:3, b:2, c:1}
 	//calling tableA[10] would return undefined
@@ -86,18 +86,18 @@ YUI().use("recordset-base", "recordset-indexer", function(Y) {
 		{a:9, b:8, c:7},
 		{a:1, b:2, c:3}
 	],
-	
+
 	//Recordset is created with the objects from the data array
 	myRecordset = new Y.Recordset({records: data});
 	myRecordset.plug(Y.Plugin.RecordsetIndexer);
-	
+
 	//create two hash tables
 	var hashA = myRecordset.indexer.createTable('a'),
 	myRecordset.indexer.createTable('c'),
-	
+
 	//get access to the hashtable object
 	hashTables = myRecordset.indexer.get('hashTables');
-	
+
 	//we can access the 2nd hash table we created through the object
 	hashC = hashTables.c;
 });

@@ -8,13 +8,12 @@ YUI.add('mouseenter-tests', function(Y) {
         enter: Y.Node.DOM_EVENTS.mouseenter.eventDef,
         leave: Y.Node.DOM_EVENTS.mouseleave.eventDef
     };
-    
+
 
     suite.add(new Y.Test.Case({
         name: 'mouseenter',
         setUp: function() {
             var handles = [];
-
             handles.push(node.on('mouseenter', noop));
             handles.push(node.on('mouseleave', noop));
             handles.push(node.delegate('mouseenter', noop));

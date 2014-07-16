@@ -1,6 +1,10 @@
 YUI.add('numericaxis-min-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: NumericAxisMin"),
-    
+        AxisTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
+
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -19,23 +23,21 @@ YUI.add('numericaxis-min-tests', function(Y) {
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
-    
+
     var AxisMinTestTemplate = function()
     {
         AxisMinTestTemplate.superclass.constructor.apply(this, arguments);
     };
-    
+
     Y.extend(AxisMinTestTemplate, AxisTestTemplate, {
         //Tests a NumericAxis minimum by applying the labelFunction of the axis to the set minimum value to the innerHTML of the first label.
         //Tests a NumericAxis maximum (unset) by checking to ensure the last label has a numeric value greater than or equal to the largest value in the data set.
@@ -61,20 +63,20 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 //if the roundingMethod is numeric the axis cannot guarantee that the maximum will be greater than the data maximum
                 if(!setIntervals || (count * roundingMethod) >= dataMax - setMin)
                 {
-                    Y.assert(max >= dataMax); 
+                    Y.assert(max >= dataMax);
                 }
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     });
 
     Y.AxisMinTestTemplate = AxisMinTestTemplate;
-    
-    var allPositiveDataProvider =  [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+
+    var allPositiveDataProvider =  [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
     ],
 
@@ -82,11 +84,11 @@ YUI.add('numericaxis-min-tests', function(Y) {
 
     allPositiveDataProviderDataMin = 50,
 
-    positiveAndNegativeDataProvider = [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+    positiveAndNegativeDataProvider = [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
         {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
     ],
 
@@ -94,11 +96,11 @@ YUI.add('numericaxis-min-tests', function(Y) {
 
     positiveAndNegativeDataProviderDataMin = -5000,
 
-    allNegativeDataProvider = [ 
-        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
-        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500}, 
-        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800}, 
+    allNegativeDataProvider = [
+        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200},
+        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100},
+        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500},
+        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800},
         {category:"5/5/2010", values:-5000, expenses:-5000, revenue:-2650}
     ],
 
@@ -106,25 +108,25 @@ YUI.add('numericaxis-min-tests', function(Y) {
 
     allNegativeDataProviderDataMin = -9100,
 
-    decimalDataProvider = [ 
-        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2}, 
-        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16}, 
-        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25}, 
-        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8}, 
+    decimalDataProvider = [
+        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2},
+        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16},
+        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25},
+        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8},
         {category:"5/5/2010", values:5.53, expenses:5.21, revenue:2.65}
     ],
 
     decimalDataProviderDataMax = 9.1,
 
     decimalDataProviderDataMin = 0.05,
-    
+
     AxisMinTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
                 minimum: 7
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test",
@@ -140,7 +142,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 alwaysShowZero: false
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test",
@@ -156,7 +158,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         },
         dataProvider: positiveAndNegativeDataProvider
     },
-    {    
+    {
         name: "Axes Negative Min Test",
         setMin: -1721,
         dataMax: positiveAndNegativeDataProviderDataMax
@@ -170,7 +172,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         },
         dataProvider: positiveAndNegativeDataProvider
     },
-    {    
+    {
         name: "Axes Negative Min Test",
         setMin: -1721,
         dataMax: positiveAndNegativeDataProviderDataMax
@@ -185,7 +187,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         },
         dataProvider: positiveAndNegativeDataProvider
     },
-    {    
+    {
         name: "Axes Negative Min Test",
         setMin: -1721,
         dataMax: positiveAndNegativeDataProviderDataMax
@@ -202,7 +204,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
     {
         name: "Axes Negative Min with All Negative Data Test",
         setMin: -1721,
-        dataMax: allNegativeDataProviderDataMax 
+        dataMax: allNegativeDataProviderDataMax
     }),
 
     AxisNegativeMinAlwaysShowZeroFalseTest = new Y.AxisMinTestTemplate({
@@ -217,7 +219,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
     {
         name: "Axes Negative Min with All Negative Data and alwaysShowZero=false Test",
         setMin: -1721,
-        dataMax: allNegativeDataProviderDataMax 
+        dataMax: allNegativeDataProviderDataMax
     }),
 
     AxisMinWithDecimalsTest = new Y.AxisMinTestTemplate({
@@ -247,7 +249,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         dataMax: decimalDataProviderDataMax,
         setMin: 1
     }),
-    
+
     //Tests setting a NumericAxis' minimum to a negative value with a data set of all positive values
     AxisNegativeMinPositiveDataTest =  new Y.AxisMinTestTemplate({
         axes: {
@@ -255,7 +257,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 minimum: -100
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Negative Min with Positive Data Test",
@@ -270,7 +272,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 roundingMethod: "auto"
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test",
@@ -287,14 +289,14 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 alwaysShowZero: false
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test with roundingMethod=auto",
         setMin: 7,
         dataMax: allPositiveDataProviderDataMax
     }),
- 
+
     //Tests setting a NumericAxis' minimum to a negative value
     AxisNegativeMinRoundingMethodAutoTest = new Y.AxisMinTestTemplate({
         axes: {
@@ -305,12 +307,12 @@ YUI.add('numericaxis-min-tests', function(Y) {
         },
         dataProvider: positiveAndNegativeDataProvider
     },
-    {    
+    {
         name: "Axes Negative Min Test with roundingMethod=auto",
         setMin: -1721,
         dataMax: positiveAndNegativeDataProviderDataMax
     }),
-    
+
     //Tests setting a NumericAxis' minimum to a negative values with all negative values in it's dataProvider
     AxisNegativeMinWithAllNegativeDataRoundingMethodAutoTest = new Y.AxisMinTestTemplate({
         axes: {
@@ -324,7 +326,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
     {
         name: "Axes Negative Min with All Negative Data Test with roundingMethod=auto",
         setMin: -1721,
-        dataMax: allNegativeDataProviderDataMax 
+        dataMax: allNegativeDataProviderDataMax
     }),
 
     //Tests setting a NumericAxis' minimum to a value with decimals
@@ -366,14 +368,14 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 roundingMethod: "auto"
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Negative Min with Positive Data Test with roundingMethod=auto",
         setMin: -100,
         dataMax: allPositiveDataProviderDataMax
     }),
-    
+
     AxisMinRoundingNullTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -381,7 +383,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 roundingMethod: null
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test with roundingMethod=null",
@@ -397,14 +399,14 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 alwaysShowZero: false
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test with roundingMethod=null",
         setMin: 7,
         dataMax: allPositiveDataProviderDataMax
     }),
-    
+
     AxisNegativeMinRoundingMethodNullTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -414,7 +416,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         },
         dataProvider: positiveAndNegativeDataProvider
     },
-    {    
+    {
         name: "Axes Negative Min Test with roundingMethod=null",
         setMin: -1721,
         dataMax: positiveAndNegativeDataProviderDataMax
@@ -432,7 +434,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
     {
         name: "Axes Negative Min with All Negative Data Test with roundingMethod=null",
         setMin: -1721,
-        dataMax: allNegativeDataProviderDataMax 
+        dataMax: allNegativeDataProviderDataMax
     }),
 
     AxisMinWithDecimalsRoundingMethodNullTest = new Y.AxisMinTestTemplate({
@@ -449,7 +451,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         dataMax: decimalDataProviderDataMax,
         setMin: 1.5
     }),
-    
+
     AxisMinIntegerDecimalDataRoundingMethodNullTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -464,7 +466,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         dataMax: decimalDataProviderDataMax,
         setMin: 1
     }),
-    
+
     AxisNegativeMinPositiveDataRoundingMethodNullTest =  new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -472,14 +474,14 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 roundingMethod: null
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Negative Min with Positive Data Test with roundingMethod=null",
         setMin: -100,
         dataMax: allPositiveDataProviderDataMax
     }),
-    
+
     AxisMinRoundingNumericTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -487,14 +489,14 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 roundingMethod: 1000
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test with roundingMethod=1000",
         setMin: 7,
         dataMax: allPositiveDataProviderDataMax
     }),
-    
+
     AxisMinAlwaysShowZeroFalseRoundingMethodNumericTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -503,14 +505,14 @@ YUI.add('numericaxis-min-tests', function(Y) {
                 alwaysShowZero: false
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min Test with roundingMethod=1000",
         setMin: 7,
         dataMax: allPositiveDataProviderDataMax
     }),
- 
+
     AxisNegativeMinRoundingMethodNumericTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -520,7 +522,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         },
         dataProvider: positiveAndNegativeDataProvider
     },
-    {    
+    {
         name: "Axes Negative Min Test with roundingMethod=1000",
         setMin: -1721,
         dataMax: positiveAndNegativeDataProviderDataMax
@@ -538,7 +540,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
     {
         name: "Axes Negative Min with All Negative Data Test with roundingMethod=1000",
         setMin: -1721,
-        dataMax: allNegativeDataProviderDataMax 
+        dataMax: allNegativeDataProviderDataMax
     }),
 
     AxisMinWithDecimalsRoundingMethodNumericTest = new Y.AxisMinTestTemplate({
@@ -570,22 +572,22 @@ YUI.add('numericaxis-min-tests', function(Y) {
         dataMax: decimalDataProviderDataMax,
         setMin: 1
     }),
-    
+
     AxisNegativeMinPositiveDataRoundingMethodNumericTest =  new Y.AxisMinTestTemplate({
         axes: {
             values: {
                 minimum: -100,
-                roundingMethod: 1000 
+                roundingMethod: 1000
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Negative Min with Positive Data Test with roundingMethod=1000",
         setMin: -100,
         dataMax: allPositiveDataProviderDataMax
     });
-    
+
     suite.add(AxisMinTest);
     suite.add(AxisMinAlwaysShowZeroFalseTest);
     suite.add(AxisNegativeMinTest);
@@ -615,8 +617,8 @@ YUI.add('numericaxis-min-tests', function(Y) {
     suite.add(AxisMinWithDecimalsRoundingMethodNumericTest);
     suite.add(AxisMinIntegerDecimalDataRoundingMethodNumericTest);
     suite.add(AxisNegativeMinPositiveDataRoundingMethodNumericTest);
-    suite.add(AxisPositiveAndNegativeMinTest); 
-    suite.add(AxisPositiveAndNegativeAlwaysShowZeroFalseMinTest); 
-    
+    suite.add(AxisPositiveAndNegativeMinTest);
+    suite.add(AxisPositiveAndNegativeAlwaysShowZeroFalseMinTest);
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

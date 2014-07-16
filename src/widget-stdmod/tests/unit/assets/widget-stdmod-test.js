@@ -14,8 +14,11 @@ suite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
-        delete this.widget;
+        if (this.widget) {
+            this.widget.destroy();
+            delete this.widget;
+        }
+
         Y.one('#test').empty();
     },
 
@@ -39,9 +42,15 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
-        delete this.widget;
-        Y.one('#test').empty();
+        if (this.widget) {
+            this.widget.destroy();
+            delete this.widget;
+        }
+
+        var test = Y.one('#test');
+        if (test) {
+            test.empty();
+        }
     },
 
     'getStdModNode() should return the section node if there is content': function () {
@@ -114,7 +123,7 @@ suite.add(new Y.Test.Case({
 
     'fillHeight() should fill up the widget correctly with multiple nodes': function () {
         var bb, header, body;
-        
+
         this.widget = new TestWidget({
             headerContent: 'foo',
             bodyContent  : 'bar',
@@ -140,9 +149,26 @@ suite.add(new Y.Test.Case({
         Assert.areSame('150px', body.getStyle('height'), 'body is not 150px in height after fill.');
     },
 
+    'fillHeight() should fill up the widget even if section content is set after render()': function () {
+
+        this.widget = new TestWidget({
+            headerContent:    '<div style="height:40px;overflow:hidden">header</div>',
+            // no body content, so no section node will be created
+            render:            '#test',
+            height:            500
+        });
+
+        this.widget.set('bodyContent', '<div>body</div>');
+
+        Assert.areEqual(500, this.widget.get("boundingBox").get('offsetHeight'));
+
+        Assert.areEqual(40, this.widget.getStdModNode('header').get('offsetHeight'));
+        Assert.areEqual(460, this.widget.getStdModNode('body').get('offsetHeight'));
+    },
+
     'HTML_PARSER rules should return the proper inner HTML contents from markup': function () {
         var src, headerMarkup, footerMarkup, bodyMarkup;
-        
+
         headerMarkup = Y.Node.create('<div class="yui3-widget-hd">foo</div>');
         bodyMarkup   = Y.Node.create('<div class="yui3-widget-bd">bar</div>');
         footerMarkup = Y.Node.create('<div class="yui3-widget-ft">baz</div>');
@@ -151,15 +177,16 @@ suite.add(new Y.Test.Case({
         src.append(headerMarkup);
         src.append(bodyMarkup);
         src.append(footerMarkup);
-        
+
         this.widget = new TestWidget({
-            srcNode: '#test'  
+            srcNode: '#test'
         });
-    
+
         Assert.areEqual('foo', this.widget.get('headerContent'), 'header not picked up from markup');
         Assert.areEqual('bar', this.widget.get('bodyContent'), 'body not picked up from markup');
         Assert.areEqual('baz', this.widget.get('footerContent'), 'footer not picked up from markup');
     }
+
 }));
 
 Y.Test.Runner.add(suite);

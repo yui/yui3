@@ -9,15 +9,15 @@ var Lang = Y.Lang,
     BOUNDING_BOX = "boundingBox";
 
 /**
- * Widget extension providing functionality enabling a Widget to be a 
+ * Widget extension providing functionality enabling a Widget to be a
  * parent of another Widget.
  *
  * <p>In addition to the set of attributes supported by WidgetParent, the constructor
  * configuration object can also contain a <code>children</code> which can be used
  * to add child widgets to the parent during construction. The <code>children</code>
- * property is an array of either child widget instances or child widget configuration 
- * objects, and is sugar for the <a href="#method_add">add</a> method. See the 
- * <a href="#method_add">add</a> for details on the structure of the child widget 
+ * property is an array of either child widget instances or child widget configuration
+ * objects, and is sugar for the <a href="#method_add">add</a> method. See the
+ * <a href="#method_add">add</a> for details on the structure of the child widget
  * configuration object.
  * @class WidgetParent
  * @constructor
@@ -27,12 +27,12 @@ var Lang = Y.Lang,
 function Parent(config) {
 
     /**
-    * Fires when a Widget is add as a child.  The event object will have a 
-    * 'child' property that returns a reference to the child Widget, as well 
-    * as an 'index' property that returns a reference to the index specified 
+    * Fires when a Widget is add as a child.  The event object will have a
+    * 'child' property that returns a reference to the child Widget, as well
+    * as an 'index' property that returns a reference to the index specified
     * when the add() method was called.
     * <p>
-    * Subscribers to the "on" moment of this event, will be notified 
+    * Subscribers to the "on" moment of this event, will be notified
     * before a child is added.
     * </p>
     * <p>
@@ -44,18 +44,18 @@ function Parent(config) {
     * @preventable _defAddChildFn
     * @param {EventFacade} e The Event Facade
     */
-    this.publish("addChild", { 
+    this.publish("addChild", {
         defaultTargetOnly: true,
-        defaultFn: this._defAddChildFn 
+        defaultFn: this._defAddChildFn
     });
 
 
     /**
-    * Fires when a child Widget is removed.  The event object will have a 
-    * 'child' property that returns a reference to the child Widget, as well 
+    * Fires when a child Widget is removed.  The event object will have a
+    * 'child' property that returns a reference to the child Widget, as well
     * as an 'index' property that returns a reference child's ordinal position.
     * <p>
-    * Subscribers to the "on" moment of this event, will be notified 
+    * Subscribers to the "on" moment of this event, will be notified
     * before a child is removed.
     * </p>
     * <p>
@@ -67,9 +67,9 @@ function Parent(config) {
     * @preventable _defRemoveChildFn
     * @param {EventFacade} e The Event Facade
     */
-    this.publish("removeChild", { 
+    this.publish("removeChild", {
         defaultTargetOnly: true,
-        defaultFn: this._defRemoveChildFn 
+        defaultFn: this._defRemoveChildFn
     });
 
     this._items = [];
@@ -80,7 +80,7 @@ function Parent(config) {
     if (config && config.children) {
 
         children = config.children;
-        
+
         handle = this.after("initializedChange", function (e) {
             this._add(children);
             handle.detach();
@@ -107,20 +107,20 @@ Parent.ATTRS = {
      * @attribute defaultChildType
      * @type {String|Object}
      *
-     * @description String representing the default type of the children 
+     * @description String representing the default type of the children
      * managed by this Widget.  Can also supply default type as a constructor
      * reference.
      */
     defaultChildType: {
         setter: function (val) {
-            
+
             var returnVal = Y.Attribute.INVALID_VALUE,
                 FnConstructor = Lang.isString(val) ? Y[val] : val;
-            
+
             if (Lang.isFunction(FnConstructor)) {
                 returnVal = FnConstructor;
             }
-            
+
             return returnVal;
         }
     },
@@ -132,7 +132,7 @@ Parent.ATTRS = {
      *
      * @description Returns the Widget's currently focused descendant Widget.
      */
-    activeDescendant: {    
+    activeDescendant: {
         readOnly: true
     },
 
@@ -140,9 +140,9 @@ Parent.ATTRS = {
      * @attribute multiple
      * @type Boolean
      * @default false
-     * @writeOnce 
+     * @writeOnce
      *
-     * @description Boolean indicating if multiple children can be selected at 
+     * @description Boolean indicating if multiple children can be selected at
      * once.  Whether or not multiple selection is enabled is always delegated
      * to the value of the <code>multiple</code> attribute of the root widget
      * in the object hierarchy.
@@ -161,18 +161,18 @@ Parent.ATTRS = {
     /**
      * @attribute selection
      * @type {ArrayList|Widget}
-     * @readOnly  
+     * @readOnly
      *
-     * @description Returns the currently selected child Widget.  If the 
-     * <code>mulitple</code> attribte is set to <code>true</code> will 
-     * return an Y.ArrayList instance containing the currently selected 
+     * @description Returns the currently selected child Widget.  If the
+     * <code>mulitple</code> attribte is set to <code>true</code> will
+     * return an Y.ArrayList instance containing the currently selected
      * children.  If no children are selected, will return null.
      */
     selection: {
         readOnly: true,
         setter: "_setSelection",
         getter: function (value) {
-            var selection = Lang.isArray(value) ? 
+            var selection = Lang.isArray(value) ?
                     (new Y.ArrayList(value)) : value;
             return selection;
         }
@@ -181,14 +181,14 @@ Parent.ATTRS = {
     selected: {
         setter: function (value) {
 
-            //  Enforces selection behavior on for parent Widgets.  Parent's 
+            //  Enforces selection behavior on for parent Widgets.  Parent's
             //  selected attribute can be set to the following:
             //  0 - Not selected
-            //  1 - Fully selected (all children are selected).  In order for 
-            //  all children to be selected, multiple selection must be 
-            //  enabled.  Therefore, you cannot set the "selected" attribute 
+            //  1 - Fully selected (all children are selected).  In order for
+            //  all children to be selected, multiple selection must be
+            //  enabled.  Therefore, you cannot set the "selected" attribute
             //  on a parent Widget to 1 unless multiple selection is enabled.
-            //  2 - Partially selected, meaning one ore more (but not all) 
+            //  2 - Partially selected, meaning one ore more (but not all)
             //  children are selected.
 
             var returnVal = value;
@@ -197,7 +197,7 @@ Parent.ATTRS = {
                 Y.log('The selected attribute can only be set to 1 if the "multiple" attribute is set to true.', "error", "widget");
                 returnVal = Y.Attribute.INVALID_VALUE;
             }
-            
+
             return returnVal;
         }
     }
@@ -215,7 +215,7 @@ Parent.prototype = {
     },
 
     /**
-     * Destroy event listener for each child Widget, responsible for removing 
+     * Destroy event listener for each child Widget, responsible for removing
      * the destroyed child Widget from the parent's internal array of children
      * (_items property).
      *
@@ -228,12 +228,12 @@ Parent.prototype = {
 
         if (child.get("parent") == this) {
             child.remove();
-        }        
+        }
     },
 
     /**
-     * Attribute change listener for the <code>selection</code> 
-     * attribute, responsible for setting the value of the 
+     * Attribute change listener for the <code>selection</code>
+     * attribute, responsible for setting the value of the
      * parent's <code>selected</code> attribute.
      *
      * @method _afterSelectionChange
@@ -253,24 +253,24 @@ Parent.prototype = {
                 selectedVal = 2;    //  Assume partially selected, confirm otherwise
 
 
-                if (Y.instanceOf(selection, Y.ArrayList) && 
+                if (Y.instanceOf(selection, Y.ArrayList) &&
                     (selection.size() === this.size())) {
 
                     selectedVal = 1;    //  Fully selected
 
                 }
-                
+
             }
 
             this.set("selected", selectedVal, { src: this });
-        
+
         }
     },
 
 
     /**
-     * Attribute change listener for the <code>activeDescendant</code> 
-     * attribute, responsible for setting the value of the 
+     * Attribute change listener for the <code>activeDescendant</code>
+     * attribute, responsible for setting the value of the
      * parent's <code>activeDescendant</code> attribute.
      *
      * @method _afterActiveDescendantChange
@@ -286,10 +286,10 @@ Parent.prototype = {
     },
 
     /**
-     * Attribute change listener for the <code>selected</code> 
-     * attribute, responsible for syncing the selected state of all children to 
+     * Attribute change listener for the <code>selected</code>
+     * attribute, responsible for syncing the selected state of all children to
      * match that of their parent Widget.
-     * 
+     *
      *
      * @method _afterParentSelectedChange
      * @protected
@@ -299,21 +299,21 @@ Parent.prototype = {
 
         var value = event.newVal;
 
-        if (this == event.target && event.src != this && 
+        if (this == event.target && event.src != this &&
             (value === 0 || value === 1)) {
 
             this.each(function (child) {
 
-                //  Specify the source of this change as the parent so that 
-                //  value of the parent's "selection" attribute isn't 
+                //  Specify the source of this change as the parent so that
+                //  value of the parent's "selection" attribute isn't
                 //  recalculated
 
                 child.set("selected", value, { src: this });
 
             }, this);
-            
+
         }
-        
+
     },
 
 
@@ -322,7 +322,7 @@ Parent.prototype = {
      *
      * @method _setSelection
      * @protected
-     * @param child {Widget|Array} Widget or Array of Widget instances.     
+     * @param child {Widget|Array} Widget or Array of Widget instances.
      * @return {Widget|Array} Widget or Array of Widget instances.
      */
     _setSelection: function (child) {
@@ -333,7 +333,7 @@ Parent.prototype = {
         if (this.get("multiple") && !this.isEmpty()) {
 
             selected = [];
-            
+
             this.each(function (v) {
 
                if (v.get("selected") > 0) {
@@ -354,15 +354,15 @@ Parent.prototype = {
             }
 
         }
-        
+
         return selection;
-            
+
     },
 
 
     /**
-     * Attribute change listener for the <code>selected</code> 
-     * attribute of child Widgets, responsible for setting the value of the 
+     * Attribute change listener for the <code>selected</code>
+     * attribute of child Widgets, responsible for setting the value of the
      * parent's <code>selection</code> attribute.
      *
      * @method _updateSelection
@@ -397,14 +397,14 @@ Parent.prototype = {
             if (event.src == this) {
                 this._set("selection", child, { src: this });
             }
-            
+
         }
 
     },
 
     /**
-     * Attribute change listener for the <code>focused</code> 
-     * attribute of child Widgets, responsible for setting the value of the 
+     * Attribute change listener for the <code>focused</code>
+     * attribute of child Widgets, responsible for setting the value of the
      * parent's <code>activeDescendant</code> attribute.
      *
      * @method _updateActiveDescendant
@@ -418,16 +418,16 @@ Parent.prototype = {
 
     /**
      * Creates an instance of a child Widget using the specified configuration.
-     * By default Widget instances will be created of the type specified 
+     * By default Widget instances will be created of the type specified
      * by the <code>defaultChildType</code> attribute.  Types can be explicitly
      * defined via the <code>childType</code> property of the configuration object
-     * literal. The use of the <code>type</code> property has been deprecated, but 
+     * literal. The use of the <code>type</code> property has been deprecated, but
      * will still be used as a fallback, if <code>childType</code> is not defined,
-     * for backwards compatibility. 
+     * for backwards compatibility.
      *
      * @method _createChild
      * @protected
-     * @param config {Object} Object literal representing the configuration 
+     * @param config {Object} Object literal representing the configuration
      * used to create an instance of a Widget.
      */
     _createChild: function (config) {
@@ -445,7 +445,7 @@ Parent.prototype = {
         if (Lang.isFunction(Fn)) {
             FnConstructor = Fn;
         } else if (defaultType) {
-            // defaultType is normalized to a function in it's setter 
+            // defaultType is normalized to a function in it's setter
             FnConstructor = defaultType;
         }
 
@@ -456,7 +456,7 @@ Parent.prototype = {
         }
 
         return child;
-        
+
     },
 
     /**
@@ -465,9 +465,9 @@ Parent.prototype = {
      * @method _defAddChildFn
      * @protected
      * @param event {EventFacade} The Event object
-     * @param child {Widget} The Widget instance, or configuration 
+     * @param child {Widget} The Widget instance, or configuration
      * object for the Widget to be added as a child.
-     * @param index {Number} Number representing the position at 
+     * @param index {Number} Number representing the position at
      * which the child will be inserted.
      */
     _defAddChildFn: function (event) {
@@ -506,9 +506,9 @@ Parent.prototype = {
      * @protected
      * @param event {EventFacade} The Event object
      * @param child {Widget} The Widget instance to be removed.
-     * @param index {Number} Number representing the index of the Widget to 
+     * @param index {Number} Number representing the index of the Widget to
      * be removed.
-     */    
+     */
     _defRemoveChildFn: function (event) {
 
         var child = event.child,
@@ -533,20 +533,18 @@ Parent.prototype = {
     /**
     * @method _add
     * @protected
-    * @param child {Widget|Object} The Widget instance, or configuration 
-    * object for the Widget to be added as a child.
-    * @param child {Array} Array of Widget instances, or configuration 
-    * objects for the Widgets to be added as a children.
-    * @param index {Number} (Optional.)  Number representing the position at 
-    * which the child should be inserted.
+    * @param child {Widget|Object|Array} The Widget instance, or configuration
+    * object for the Widget, or Array of Widget instances to be added as a child.
+    * @param index {Number} Number representing the position at which the child
+    * should be inserted.
     * @description Adds a Widget as a child.  If the specified Widget already
     * has a parent it will be removed from its current parent before
     * being added as a child.
-    * @return {Widget|Array} Successfully added Widget or Array containing the 
-    * successfully added Widget instance(s). If no children where added, will 
+    * @return {Widget|Array} Successfully added Widget or Array containing the
+    * successfully added Widget instance(s). If no children where added, will
     * will return undefined.
     */
-    _add: function (child, index) {   
+    _add: function (child, index) {
 
         var children,
             oChild,
@@ -564,9 +562,9 @@ Parent.prototype = {
                 if (oChild) {
                     children.push(oChild);
                 }
-                
+
             }, this);
-            
+
 
             if (children.length > 0) {
                 returnVal = children;
@@ -595,23 +593,21 @@ Parent.prototype = {
 
     /**
     * @method add
-    * @param child {Widget|Object} The Widget instance, or configuration 
-    * object for the Widget to be added as a child. The configuration object
-    * for the child can include a <code>childType</code> property, which is either
-    * a constructor function or a string which names a constructor function on the 
-    * Y instance (e.g. "Tab" would refer to Y.Tab) (<code>childType</code> used to be 
-    * named <code>type</code>, support for which has been deprecated, but is still
-    * maintained for backward compatibility. <code>childType</code> takes precedence
-    * over <code>type</code> if both are defined.
-    * @param child {Array} Array of Widget instances, or configuration 
-    * objects for the Widgets to be added as a children.
-    * @param index {Number} (Optional.)  Number representing the position at 
-    * which the child should be inserted.
+    * @param child {Widget|Object|Array} The Widget instance, or configuration
+    * object for the Widget, or Array of Widget instances to be added as a child.
+    * The configuration object for the child can include a <code>childType</code>
+    * property, which is either a constructor function or a string which names
+    * a constructor function on the Y instance (e.g. "Tab" would refer to Y.Tab).
+    * <code>childType</code> used to be named <code>type</code>, support for
+    * which has been deprecated, but is still maintained for backward compatibility.
+    * <code>childType</code> takes precedence over <code>type</code> if both are defined.
+    * @param index {Number} Number representing the position at which the child
+    * should be inserted.
     * @description Adds a Widget as a child.  If the specified Widget already
     * has a parent it will be removed from its current parent before
     * being added as a child.
-    * @return {ArrayList} Y.ArrayList containing the successfully added 
-    * Widget instance(s).  If no children where added, will return an empty 
+    * @return {ArrayList} Y.ArrayList containing the successfully added
+    * Widget instance(s).  If no children where added, will return an empty
     * Y.ArrayList instance.
     */
     add: function () {
@@ -626,7 +622,7 @@ Parent.prototype = {
 
     /**
     * @method remove
-    * @param index {Number} (Optional.)  Number representing the index of the 
+    * @param index {Number} (Optional.)  Number representing the index of the
     * child to be removed.
     * @description Removes the Widget from its parent.  Optionally, can remove
     * a child by specifying its index.
@@ -641,7 +637,7 @@ Parent.prototype = {
         if (child && this.fire("removeChild", { child: child, index: index })) {
             returnVal = child;
         }
-        
+
         return returnVal;
 
     },
@@ -650,8 +646,8 @@ Parent.prototype = {
     /**
     * @method removeAll
     * @description Removes all of the children from the Widget.
-    * @return {ArrayList} Y.ArrayList instance containing Widgets that were 
-    * successfully removed.  If no children where removed, will return an empty 
+    * @return {ArrayList} Y.ArrayList instance containing Widgets that were
+    * successfully removed.  If no children where removed, will return an empty
     * Y.ArrayList instance.
     */
     removeAll: function () {
@@ -672,7 +668,7 @@ Parent.prototype = {
         return (new Y.ArrayList(removed));
 
     },
-    
+
     /**
      * Selects the child at the given index (zero-based).
      *
@@ -707,14 +703,14 @@ Parent.prototype = {
      * @method _uiAddChild
      * @protected
      * @param child {Widget} The child Widget instance to render.
-     * @param parentNode {Object} The Node under which the 
+     * @param parentNode {Object} The Node under which the
      * child Widget is to be rendered.
-     */    
+     */
     _uiAddChild: function (child, parentNode) {
 
         child.render(parentNode);
 
-        // TODO: Ideally this should be in Child's render UI. 
+        // TODO: Ideally this should be in Child's render UI.
 
         var childBB = child.get("boundingBox"),
             siblingBB,
@@ -723,11 +719,11 @@ Parent.prototype = {
 
         // Insert or Append to last child.
 
-        // Avoiding index, and using the current sibling 
-        // state (which should be accurate), means we don't have 
-        // to worry about decorator elements which may be added 
+        // Avoiding index, and using the current sibling
+        // state (which should be accurate), means we don't have
+        // to worry about decorator elements which may be added
         // to the _childContainer node.
-    
+
         if (nextSibling && nextSibling.get(RENDERED)) {
 
             siblingBB = nextSibling.get(BOUNDING_BOX);
@@ -747,7 +743,7 @@ Parent.prototype = {
                 // Based on pull request from andreas-karlsson
                 // https://github.com/yui/yui3/pull/25#issuecomment-2103536
 
-                // Account for case where a child was rendered independently of the 
+                // Account for case where a child was rendered independently of the
                 // parent-child framework, to a node outside of the parentNode,
                 // and there are no siblings.
 
@@ -763,7 +759,7 @@ Parent.prototype = {
      * @method _uiRemoveChild
      * @protected
      * @param child {Widget} The child Widget instance to render.
-     */        
+     */
     _uiRemoveChild: function (child) {
         child.get("boundingBox").remove();
     },
@@ -815,7 +811,7 @@ Parent.prototype = {
          *
          * <p>If the children need to be rendered somewhere else, the _childrenContainer property
          * can be set to the Node which the children should be rendered to. This property should be
-         * set before the _renderChildren method is invoked, ideally in your renderUI method, 
+         * set before the _renderChildren method is invoked, ideally in your renderUI method,
          * as soon as you create the element to be rendered to.</p>
          *
          * @protected
@@ -835,7 +831,7 @@ Parent.prototype = {
     /**
      * Destroys all child Widgets for the parent.
      * <p>
-     * This method is invoked before the destructor is invoked for the Widget 
+     * This method is invoked before the destructor is invoked for the Widget
      * class using YUI's aop infrastructure.
      * </p>
      * @method _destroyChildren
@@ -843,21 +839,21 @@ Parent.prototype = {
      */
     _destroyChildren: function () {
 
-        //  Detach the handler responsible for removing children in 
+        //  Detach the handler responsible for removing children in
         //  response to destroying them since:
-        //  1)  It is unnecessary/inefficient at this point since we are doing 
+        //  1)  It is unnecessary/inefficient at this point since we are doing
         //      a batch destroy of all children.
-        //  2)  Removing each child will affect our ability to iterate the 
-        //      children since the size of _items will be changing as we 
+        //  2)  Removing each child will affect our ability to iterate the
+        //      children since the size of _items will be changing as we
         //      iterate.
         this._hDestroyChild.detach();
 
-        //  Need to clone the _items array since 
+        //  Need to clone the _items array since
         this.each(function (child) {
             child.destroy();
         });
     }
-    
+
 };
 
 Y.augment(Parent, Y.ArrayList);

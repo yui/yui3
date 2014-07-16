@@ -1,6 +1,10 @@
 YUI.add('numericaxis-minandmax-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: NumericAxisMinAndMax"),
-    
+        AxisTestTemplate,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
+
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -19,23 +23,21 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
-    
+
     var AxisMinAndMaxTestTemplate = function()
     {
         AxisMinAndMaxTestTemplate.superclass.constructor.apply(this, arguments);
     };
-    
+
     Y.extend(AxisMinAndMaxTestTemplate, AxisTestTemplate, {
         testMinAndMax: function()
         {
@@ -48,9 +50,9 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
                     count = majorUnit.count - 1,
                     labels = axis.get("labels");
                 Y.assert(labels[0].innerHTML == axis.get("labelFunction").apply(axis, [setMin, axis.get("labelFormat")]));
-                Y.assert(labels[count].innerHTML == axis.get("labelFunction").apply(axis, [setMax, axis.get("labelFormat")])); 
+                Y.assert(labels[count].innerHTML == axis.get("labelFunction").apply(axis, [setMax, axis.get("labelFormat")]));
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     });
 
@@ -58,21 +60,19 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
 
     AxisAlwaysShowZero = new Y.Test.Case({
         name: "Axis alwaysShowZero Test",
-        
-        setUp: function() 
+
+        setUp: function()
         {
-            var myDataValues = [ 
-                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-                {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+            var myDataValues = [
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+                {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
                 {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
             ];
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart({
-                width:400, 
-                height:300, 
+                width:400,
+                height:300,
                 dataProvider:myDataValues
             });
         },
@@ -80,7 +80,7 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         testAlwaysShowZero: function()
@@ -103,27 +103,25 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
                 }
                 Y.assert(label === 0);
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     }),
-    
+
     AxisAlwaysShowZeroFalse = new Y.Test.Case({
         name: "Axis alwaysShowZero = false Test",
-        
-        setUp: function() 
+
+        setUp: function()
         {
-            var myDataValues = [ 
-                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-                {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+            var myDataValues = [
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+                {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+                {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+                {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
                 {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
             ];
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart({
-                width:400, 
-                height:300, 
+                width:400,
+                height:300,
                 axes: {
                     values: {
                         alwaysShowZero: false
@@ -136,9 +134,9 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
-        
+
         testAlwaysShowZeroEqualsFalse: function()
         {
             var chart = this.chart;
@@ -159,15 +157,15 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
                 }
                 Y.assert(label !== 0);
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     });
 
-    var allPositiveDataProvider =  [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+    var allPositiveDataProvider =  [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", values:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
     ],
 
@@ -175,11 +173,11 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
 
     allPositiveDataProviderDataMin = 50,
 
-    positiveAndNegativeDataProvider = [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
+    positiveAndNegativeDataProvider = [
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", values:50, expenses:9100, revenue:-100},
+        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500},
+        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800},
         {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
     ],
 
@@ -187,11 +185,11 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
 
     positiveAndNegativeDataProviderDataMin = -5000,
 
-    allNegativeDataProvider = [ 
-        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
-        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500}, 
-        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800}, 
+    allNegativeDataProvider = [
+        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200},
+        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100},
+        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500},
+        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800},
         {category:"5/5/2010", values:-5000, expenses:-5000, revenue:-2650}
     ],
 
@@ -199,11 +197,11 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
 
     allNegativeDataProviderDataMin = -9100,
 
-    decimalDataProvider = [ 
-        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2}, 
-        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16}, 
-        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25}, 
-        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8}, 
+    decimalDataProvider = [
+        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2},
+        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16},
+        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25},
+        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8},
         {category:"5/5/2010", values:5.53, expenses:5.21, revenue:2.65}
     ],
 
@@ -218,7 +216,7 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
                 maximum: 8000
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Min and Max Test",
@@ -233,42 +231,12 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
                 maximum: 8000
             }
         },
-        dataProvider: allPositiveDataProvider    
+        dataProvider: allPositiveDataProvider
     },
     {
         name: "Axes Negative Min and Positive Max Test",
         setMin: -500,
         setMax: 8000
-    }),
-   
-    AxisMinAndMaxWithDecimalsTest = new Y.AxisMinAndMaxTestTemplate({
-        axes: {
-            values: {
-                maximum: 7.5,
-                minimum: 2.5
-            }
-        },
-        dataProvider: decimalDataProvider
-    },
-    {
-        name: "Axes Min and Max with Decimals Test",
-        setMin: 2.5,
-        setMax: 7.5
-    }),
-    
-    AxisNegativeMinAndMaxTest = new Y.AxisMinAndMaxTestTemplate({
-        axes: {
-            values: {
-                minimum: -5000,
-                maximum: -500
-            }
-        },
-        dataProvider: allNegativeDataProvider
-    },
-    {
-        name: "Axes Negative Min an Max Test",
-        setMin: -5000,
-        setMax: -500
     }),
 
     AxisMinAndMaxWithDecimalsTest = new Y.AxisMinAndMaxTestTemplate({
@@ -285,7 +253,7 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
         setMin: 2.5,
         setMax: 7.5
     }),
-    
+
     AxisNegativeMinAndMaxTest = new Y.AxisMinAndMaxTestTemplate({
         axes: {
             values: {
@@ -300,7 +268,7 @@ YUI.add('numericaxis-minandmax-tests', function(Y) {
         setMin: -5000,
         setMax: -500
     });
-    
+
     suite.add(AxisMinAndMaxTest);
     suite.add(AxisNegativeMinAndPositiveMaxTest);
     suite.add(AxisNegativeMinAndMaxTest);

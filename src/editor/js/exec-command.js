@@ -171,13 +171,13 @@
             },
             /**
             * Static object literal of execCommand overrides
-            * @property COMMANDS
+            * @class Plugin.ExecCommand.COMMANDS
             * @static
             */
             COMMANDS: {
                 /**
                 * Wraps the content with a new element of type (tag)
-                * @method COMMANDS.wrap
+                * @method wrap
                 * @static
                 * @param {String} cmd The command executed: wrap
                 * @param {String} tag The tag to wrap the selection with
@@ -189,7 +189,7 @@
                 },
                 /**
                 * Inserts the provided HTML at the cursor, should be a single element.
-                * @method COMMANDS.inserthtml
+                * @method inserthtml
                 * @static
                 * @param {String} cmd The command executed: inserthtml
                 * @param {String} html The html to insert
@@ -205,7 +205,7 @@
                 },
                 /**
                 * Inserts the provided HTML at the cursor, and focuses the cursor afterwards.
-                * @method COMMANDS.insertandfocus
+                * @method insertandfocus
                 * @static
                 * @param {String} cmd The command executed: insertandfocus
                 * @param {String} html The html to insert
@@ -225,7 +225,7 @@
                 },
                 /**
                 * Inserts a BR at the current cursor position
-                * @method COMMANDS.insertbr
+                * @method insertbr
                 * @static
                 * @param {String} cmd The command executed: insertbr
                 */
@@ -233,6 +233,7 @@
                     var inst = this.getInstance(),
                         sel = new inst.EditorSelection(),
                         html = '<var>|</var>', last = null,
+                        root = inst.EditorSelection.ROOT,
                         q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var',
                         insert = function(n) {
                             var c = inst.Node.create('<br>');
@@ -247,7 +248,7 @@
                     }
 
 
-                    inst.all(q).each(function(n) {
+                    root.all(q).each(function(n) {
                         var g = true, s;
                         if (Y.UA.webkit) {
                             g = false;
@@ -272,7 +273,7 @@
                 },
                 /**
                 * Inserts an image at the cursor position
-                * @method COMMANDS.insertimage
+                * @method insertimage
                 * @static
                 * @param {String} cmd The command executed: insertimage
                 * @param {String} img The url of the image to be inserted
@@ -283,7 +284,7 @@
                 },
                 /**
                 * Add a class to all of the elements in the selection
-                * @method COMMANDS.addclass
+                * @method addclass
                 * @static
                 * @param {String} cmd The command executed: addclass
                 * @param {String} cls The className to add
@@ -295,7 +296,7 @@
                 },
                 /**
                 * Remove a class from all of the elements in the selection
-                * @method COMMANDS.removeclass
+                * @method removeclass
                 * @static
                 * @param {String} cmd The command executed: removeclass
                 * @param {String} cls The className to remove
@@ -307,7 +308,7 @@
                 },
                 /**
                 * Adds a forecolor to the current selection, or creates a new element and applies it
-                * @method COMMANDS.forecolor
+                * @method forecolor
                 * @static
                 * @param {String} cmd The command executed: forecolor
                 * @param {String} val The color value to apply
@@ -339,7 +340,7 @@
                 },
                 /**
                 * Adds a background color to the current selection, or creates a new element and applies it
-                * @method COMMANDS.backcolor
+                * @method backcolor
                 * @static
                 * @param {String} cmd The command executed: backcolor
                 * @param {String} val The color value to apply
@@ -375,7 +376,7 @@
                 },
                 /**
                 * Sugar method, calles backcolor
-                * @method COMMANDS.hilitecolor
+                * @method hilitecolor
                 * @static
                 * @param {String} cmd The command executed: backcolor
                 * @param {String} val The color value to apply
@@ -386,7 +387,7 @@
                 },
                 /**
                 * Adds a font name to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontname2
+                * @method fontname2
                 * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontname
@@ -406,7 +407,7 @@
                 },
                 /**
                 * Adds a fontsize to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontsize2
+                * @method fontsize2
                 * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontsize
@@ -436,8 +437,8 @@
                     }
                 },
                 /**
-                * Overload for COMMANDS.list
-                * @method COMMANDS.insertorderedlist
+                * Overload for list
+                * @method insertorderedlist
                 * @static
                 * @param {String} cmd The command executed: list, ul
                 */
@@ -445,8 +446,8 @@
                     this.command('list', 'ul');
                 },
                 /**
-                * Overload for COMMANDS.list
-                * @method COMMANDS.insertunorderedlist
+                * Overload for list
+                * @method insertunorderedlist
                 * @static
                 * @param {String} cmd The command executed: list, ol
                 */
@@ -455,7 +456,7 @@
                 },
                 /**
                 * Noramlizes lists creation/destruction for IE. All others pass through to native calls
-                * @method COMMANDS.list
+                * @method list
                 * @static
                 * @param {String} cmd The command executed: list (not used)
                 * @param {String} tag The tag to deal with
@@ -472,14 +473,15 @@
                         dir, range, div, elm, n, str, s, par, list, lis,
                         useP = (inst.host.editorPara ? true : false), tmp,
                         sdir, hasPParent, fc,
+                        root = inst.EditorSelection.ROOT,
                         sel = new inst.EditorSelection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
 
-                    if (Y.UA.ie && !sel.isCollapsed) {
+                    if (Y.UA.ie && Y.UA.ie < 11 && !sel.isCollapsed) {
                         range = sel._selection;
                         html = range.htmlText;
-                        div = inst.Node.create(html) || inst.one('body');
+                        div = inst.Node.create(html) || root;
 
                         if (div.test('li') || div.one('li')) {
                             this._command(cmd, null);
@@ -528,7 +530,7 @@
                             if (html.indexOf('<br>') > -1) {
                                 html = html.split(/<br>/i);
                             } else {
-                                tmp = inst.Node.create(html),
+                                tmp = inst.Node.create(html);
                                 ps = tmp ? tmp.all('p') : null;
 
                                 if (ps && ps.size()) {
@@ -563,7 +565,7 @@
                             }
                             range.select();
                         }
-                    } else if (Y.UA.ie) {
+                    } else if (Y.UA.ie && Y.UA.ie < 11) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
                             if (par && par.hasAttribute(DIR)) {
@@ -585,7 +587,7 @@
                             this._command(cmd, null);
                         }
                     } else {
-                        inst.all(tag).addClass(cls);
+                        root.all(tag).addClass(cls);
                         if (sel.anchorNode.test(inst.EditorSelection.BLOCKS)) {
                             par = sel.anchorNode;
                         } else {
@@ -621,7 +623,7 @@
                         } else {
                             this._command(cmd, null);
                         }
-                        list = inst.all(tag);
+                        list = root.all(tag);
                         if (dir) {
                             if (list.size()) {
                                 //Changed to a List
@@ -638,7 +640,7 @@
                 },
                 /**
                 * Noramlizes alignment for Webkit Browsers
-                * @method COMMANDS.justify
+                * @method justify
                 * @static
                 * @param {String} cmd The command executed: justify (not used)
                 * @param {String} val The actual command from the justify{center,all,left,right} stubs
@@ -663,32 +665,32 @@
                     }
                 },
                 /**
-                * Override method for COMMANDS.justify
-                * @method COMMANDS.justifycenter
+                * Override method for justify
+                * @method justifycenter
                 * @static
                 */
                 justifycenter: function() {
                     this.command('justify', 'justifycenter');
                 },
                 /**
-                * Override method for COMMANDS.justify
-                * @method COMMANDS.justifyleft
+                * Override method for justify
+                * @method justifyleft
                 * @static
                 */
                 justifyleft: function() {
                     this.command('justify', 'justifyleft');
                 },
                 /**
-                * Override method for COMMANDS.justify
-                * @method COMMANDS.justifyright
+                * Override method for justify
+                * @method justifyright
                 * @static
                 */
                 justifyright: function() {
                     this.command('justify', 'justifyright');
                 },
                 /**
-                * Override method for COMMANDS.justify
-                * @method COMMANDS.justifyfull
+                * Override method for justify
+                * @method justifyfull
                 * @static
                 */
                 justifyfull: function() {
@@ -697,7 +699,7 @@
             }
         });
 
-        if (Y.UA.ie) {
+        if (Y.UA.ie && Y.UA.ie < 11) {
             ExecCommand.COMMANDS.bold = function() {
                 fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
             };

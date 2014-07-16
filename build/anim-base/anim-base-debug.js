@@ -335,7 +335,8 @@ YUI.add('anim-base', function (Y, NAME) {
         },
 
         /**
-         * If true, animation begins from last frame
+         * If true, the `from` and `to` attributes are swapped,
+         * and the animation is then run starting from `from`.
          * @attribute reverse
          * @type Boolean
          * @default false
@@ -682,4 +683,4 @@ YUI.add('anim-base', function (Y, NAME) {
     Y.extend(Y.Anim, Y.Base, proto);
 
 
-}, '@VERSION@', {"requires": ["base-base", "node-style"]});
+}, '@VERSION@', {"requires": ["base-base", "node-style", "color-base"]});

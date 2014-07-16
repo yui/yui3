@@ -1,6 +1,193 @@
 Base Change History
 ===================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* No changes.
+
+3.13.0
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* BaseObservable now bypasses the event sub-system if there are no listeners for
+  the `init` event, during construction, to optimize performance.
+
+* [!] Base and BaseCore now add all ATTRS definitions, across the hierarchy,
+  in a single shot. Prior to this change, they used to be added a class
+  at a time.
+
+  That is, for Foo extends Bar, the order of operations used to be:
+
+  1) Add Bar ATTRS
+  2) Call Bar initializer
+  3) Add Foo ATTRS
+  4) Call Foo initializer
+
+  Now it is:
+
+  1) Add Foo and Bar's ATTRS together
+  2) Call Bar initializer
+  3) Call Foo initializer
+
+  This change fixes issues encountered in real-world code where setters,
+  getters and valueFns in superclass ATTRS, overidden in a subclass,
+  wouldn't be able to access the subclass' attributes.
+
+  However as a result of this change, there are a couple of areas,
+  mentioned below, which may require component developers (especially
+  Extension developers) to update their implementations. These are
+  mentioned below:
+
+  A. There may potentially be setters/getters/valueFns in Foo, which
+  expected Bar's initializer to have been executed already.
+
+  This is expected to be rare, and if required, the `_preAddAttrs()`
+  hook described in the API Documentation, can be used to jump in before
+  attributes are added.
+
+  B. Older Extensions may need to move code from their Constructors, to
+  initializers.
+
+  To align with the above change, Base and BaseCore will now call all
+  Extension constructors before any attributes are added, to address issues
+  where attribute configurations required Extension constructors to have run.
+
+  Extensions created before `initializer` support for Extensions was added to
+  Base, may have code in their constructors which accesses attributes from a
+  superclass.
+
+  Such code would need to be moved to an `initializer` method on the Extension,
+  which is likely the proper place for it. YUI's WidgetPosition and other
+  extensions based on it, needed to do this for example.
+
+  Although this scenario is expected to be more common, the upgrade requirement
+  was simple enough to warrant us pursuing this change so that the attribute
+  setup flow was cleaner moving foward.
+
+  See the Base and BaseCore API docs and the base-core unit tests for more
+  details.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Significant performance improvements in common Base/BaseCore operations.
+
+  For example, on Chrome:
+
+    `new BaseCore()` is 3 times faster
+    `BaseCore set()` is 3 times faster
+    `BaseCore get()` is 5 times faster
+
+  In addition to the above basic `BaseCore` numbers, improvements in CustomEvent
+  performance, result in the following improvements for `Base`
+
+    `new Base()` is 4 times faster
+    `Base set()` is 4 times faster
+    `Base get()` is 5 times faster
+
+  Major performance related changes are listed in the list of updates below.
+
+  Commit messages have detailed descriptions of incremental changes, and the
+  benefits introduced.
+
+* [!] The result of static `ATTRS` aggregation is now cached during the creation of
+  the first instance of a given "class", and the cached results are reused for
+  subsequent instances.
+
+  This provides significant performance benefits, but has the potential to introduce
+  a backwards compatibility issue in the hopefully rare circumstance that you're
+  modifying the static ATTRS collection directly, after the first instance is created.
+
+  [!] If you are modifying static `ATTRS` collection directly after an instance is
+  created (e.g. if an optional module comes in and updates the collection dynamically),
+  you will need to change the implementation to use the static `Y.Base.modifyAttrs()`
+  or `Y.BaseCore.modifyAttrs()` method, so we can mark the cached aggregation
+  dirty, and recompute it.
+
+      `Y.Base.modifyAttrs(MyClass, {..changes to merge..})`
+
+  `Base.create` and `Base.mix` will take care of this internally, so you only need
+  to use the above methods if your own code is touching the ATTRS object on a class.
+  Additionaly, `Base.create` and `Base.mix` will add the `modifyAttrs` to your created
+  class, so you can also call it directly on the class. e.g.
+
+      `MyCreatedClass.modifyAttrs({..changes to merge..})`
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* No changes.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 

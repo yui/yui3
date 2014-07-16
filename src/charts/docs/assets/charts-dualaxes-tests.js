@@ -24,7 +24,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
             {month:"March", internetSales: 90500, percentOfRevenue: 15},
             {month:"April", internetSales: 255550, percentOfRevenue: 21},
             {month:"May", internetSales: 445000, percentOfRevenue: 33},
-            {month:"June", internetSales: 580000, percentOfRevenue: 38} 
+            {month:"June", internetSales: 580000, percentOfRevenue: 38}
         ],
 
         seriesKeys: [
@@ -41,18 +41,18 @@ YUI.add('charts-dualaxes-tests', function(Y) {
         {
             return this.seriesDisplayNames[seriesKey];
         },
-        
+
         _should: {
             ignore: {
-                testMouseEvents:  isTouch//,
-                //testTouchEvents: isMouse
+                testMouseEvents:  isTouch,
+                testTouchEvents: isMouse
             }
         },
-        
+
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -67,7 +67,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
-                handleEvent = function(event) 
+                handleEvent = function(event)
                 {
                     result = event;
                 },
@@ -81,7 +81,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
                 seriesMarkers = Y.all(CHART_SERIESMARKER),
                 tooltip = Y.all(CHART_TOOLTIP).shift();
             seriesMarkers.each(function(node) {
-                var domNode = node.getDOMNode(), 
+                var domNode = node.getDOMNode(),
                     xy = node.getXY(),
                     x = xy[0] - Y.one('document').get('scrollLeft'),
                     y = xy[1] - Y.one('document').get('scrollTop');
@@ -99,7 +99,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
         },
-/*
+
         testTouchEvents: function()
         {
             var result = null,
@@ -129,8 +129,8 @@ YUI.add('charts-dualaxes-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },
@@ -149,7 +149,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-       */ 
+
         markerLabelFunction: function(seriesIndex, index)
         {
             var seriesKey = this.seriesKeys[seriesIndex],
@@ -175,7 +175,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
             }
         }
     }));
-    
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});
 

@@ -1,0 +1,15 @@
+function PromisePlugin(config) {
+    // Create a private NodePromise instance that points to the plugin host
+    this._promise = new NodePromise(function (fulfill) {
+        // Since this is a Node plugin, config.host will be an instance of Node
+        fulfill(config.host);
+    });
+}
+
+// Set up the plugin's namespace
+PromisePlugin.NS = 'promise';
+
+PromisePlugin.prototype.transition = function (config) {
+    // Simply point to the private promise's transition method
+    return this._promise.transition(config);
+};

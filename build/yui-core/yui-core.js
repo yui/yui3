@@ -8,6 +8,7 @@ utilities for the library.
 @submodule yui-base
 **/
 
+/*jshint eqeqeq: false*/
 if (typeof YUI != 'undefined') {
     YUI._YUI = YUI;
 }
@@ -194,6 +195,12 @@ available.
                 el.detachEvent('on' + type, fn);
             }
         },
+        handleReady = function() {
+            YUI.Env.DOMReady = true;
+            if (hasWin) {
+                remove(doc, 'DOMContentLoaded', handleReady);
+            }
+        },
         handleLoad = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
@@ -347,6 +354,7 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _exported: {},
                 _missed: [],
                 _yidx: 0,
                 _uidx: 0,
@@ -354,15 +362,15 @@ proto = {
                 _loaded: {},
                 // serviced: {},
                 // Regex in English:
-                // I'll start at the \b(simpleyui).
-                // 1. Look in the test string for "simpleyui" or "yui" or
+                // I'll start at the \b(yui).
+                // 1. Look in the test string for "yui" or
                 //    "yui-base" or "yui-davglass" or "yui-foobar" that comes after a word break.  That is, it
-                //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
+                //    can't match "foyui" or "i_heart_yui". This can be anywhere in the string.
                 // 2. After #1 must come a forward slash followed by the string matched in #1, so
-                //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
+                //    "yui-base/yui-base" or "yui-pants/yui-pants".
                 // 3. The second occurence of the #1 token can optionally be followed by "-debug" or "-min",
                 //    so "yui/yui-min", "yui/yui-debug", "yui-base/yui-base-debug". NOT "yui/yui-tshirt".
-                // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
+                // 4. This is followed by ".js", so "yui/yui.js".
                 // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
                 //    then capture the junk between the LAST "&" and the string in 1-4.  So
                 //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-davglass/yui-davglass.js"
@@ -374,13 +382,13 @@ proto = {
                 //   *               in fact, find as many sets of characters followed by a & as you can
                 //   ([^&]*)         capture the stuff after the last & in \1
                 // )?                but it's ok if all this ?junk&more_junk stuff isn't even there
-                // \b(simpleyui|     after a word break find either the string "simpleyui" or
-                //    yui(?:-\w+)?   the string "yui" optionally followed by a -, then more characters
-                // )                 and store the simpleyui or yui-* string in \2
-                // \/\2              then comes a / followed by the simpleyui or yui-* string in \2
+                // \b(               after a word break find either the string
+                //    yui(?:-\w+)?   "yui" optionally followed by a -, then more characters
+                // )                 and store the yui-* string in \2
+                // \/\2              then comes a / followed by the yui-* string in \2
                 // (?:-(min|debug))? optionally followed by "-min" or "-debug"
                 // .js               and ending in ".js"
-                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
                 parseBasePath: function(src, pattern) {
                     var match = src.match(pattern),
                         path, filter;
@@ -482,6 +490,8 @@ proto = {
             } else {
                 docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
             }
+        } else if (doc && doc.getElementById(CSS_STAMP_EL) && !YUI.Env.cssStampEl) {
+            YUI.Env.cssStampEl = doc.getElementById(CSS_STAMP_EL);
         }
 
         Y.config.lang = Y.config.lang || 'en-US';
@@ -503,7 +513,7 @@ proto = {
     @method _setup
     @private
     **/
-    _setup: function(o) {
+    _setup: function() {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
@@ -589,15 +599,15 @@ with any configuration info required for the module.
 @param {String} version Module version number. This is currently used only for
     informational purposes, and is not used internally by YUI.
 
-@param {Object} [config] Module config.
-    @param {Array} [config.requires] Array of other module names that must be
+@param {Object} [details] Module config.
+    @param {Array} [details.requires] Array of other module names that must be
         attached before this module can be attached.
-    @param {Array} [config.optional] Array of optional module names that should
+    @param {Array} [details.optional] Array of optional module names that should
         be attached before this module is attached if they've already been
         loaded. If the `loadOptional` YUI option is `true`, optional modules
         that have not yet been loaded will be loaded just as if they were hard
         requirements.
-    @param {Array} [config.use] Array of module names that are included within
+    @param {Array} [details.use] Array of module names that are included within
         or otherwise provided by this module, and which should be attached
         automatically when this module is attached. This makes it possible to
         create "virtual rollup" modules that simply attach a collection of other
@@ -616,7 +626,7 @@ with any configuration info required for the module.
             },
             //Instance hash so we don't apply it to the same instance twice
             applied = {},
-            loader, inst,
+            loader, inst, modInfo,
             i, versions = env.versions;
 
         env.mods[name] = mod;
@@ -630,7 +640,8 @@ with any configuration info required for the module.
                     applied[inst.id] = true;
                     loader = inst.Env._loader;
                     if (loader) {
-                        if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
+                        modInfo = loader.getModuleInfo(name);
+                        if (!modInfo || modInfo.temp) {
                             loader.addModule(details, name);
                         }
                     }
@@ -659,8 +670,12 @@ with any configuration info required for the module.
             cache = YUI.Env._renderedMods,
             loader = Y.Env._loader,
             done = Y.Env._attached,
+            exported = Y.Env._exported,
             len = r.length, loader, def, go,
-            c = [];
+            c = [],
+            modArgs, esCompat, reqlen, modInfo,
+            condition,
+            __exports__, __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
         //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
@@ -693,8 +708,9 @@ with any configuration info required for the module.
                     continue;
                 }
                 if (!mod) {
-                    if (loader && loader.moduleInfo[name]) {
-                        mod = loader.moduleInfo[name];
+                    modInfo = loader && loader.getModuleInfo(name);
+                    if (modInfo) {
+                        mod = modInfo;
                         moot = true;
                     }
 
@@ -718,6 +734,17 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+
+                    // Optional dependencies normally work by modifying the
+                    // dependency list of a module. If the dependency's test
+                    // passes it is added to the list. If not, it's not loaded.
+                    // This following check ensures that optional dependencies
+                    // are not attached when they were already loaded into the
+                    // page (when bundling for example)
+                    if (loader && !loader._canBeAttached(name)) {
+                        return true;
+                    }
+
                     /*
                         If it's a temp module, we need to redo it's requirements if it's already loaded
                         since it may have been loaded by another instance and it's dependencies might
@@ -726,8 +753,9 @@ with any configuration info required for the module.
                     if (loader && cache && cache[name] && cache[name].temp) {
                         loader.getRequires(cache[name]);
                         req = [];
-                        for (j in loader.moduleInfo[name].expanded_map) {
-                            if (loader.moduleInfo[name].expanded_map.hasOwnProperty(j)) {
+                        modInfo = loader.getModuleInfo(name);
+                        for (j in modInfo.expanded_map) {
+                            if (modInfo.expanded_map.hasOwnProperty(j)) {
                                 req.push(j);
                             }
                         }
@@ -736,6 +764,7 @@ with any configuration info required for the module.
 
                     details = mod.details;
                     req = details.requires;
+                    esCompat = details.es;
                     use = details.use;
                     after = details.after;
                     //Force Intl load if there is a language (Loader logic) @todo fix this shit
@@ -745,7 +774,8 @@ with any configuration info required for the module.
                     }
 
                     if (req) {
-                        for (j = 0; j < req.length; j++) {
+                        reqlen = req.length;
+                        for (j = 0; j < reqlen; j++) {
                             if (!done[req[j]]) {
                                 if (!Y._attach(req)) {
                                     return false;
@@ -767,14 +797,41 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                            if (Y.config.throwFail) {
-                                mod.fn(Y, name);
-                            } else {
-                                try {
-                                    mod.fn(Y, name);
-                                } catch (e) {
-                                    Y.error('Attach error: ' + name, e, name);
+                        modArgs = [Y, name];
+                        if (esCompat) {
+                            __imports__ = {};
+                            __exports__ = {};
+                            // passing `exports` and `imports` onto the module function
+                            modArgs.push(__imports__, __exports__);
+                            if (req) {
+                                reqlen = req.length;
+                                for (j = 0; j < reqlen; j++) {
+                                    __imports__[req[j]] = exported.hasOwnProperty(req[j]) ? exported[req[j]] : Y;
+                                }
+                            }
+                        }
+                        if (Y.config.throwFail) {
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
+                        } else {
+                            try {
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
+                            } catch (e) {
+                                Y.error('Attach error: ' + name, e, name);
                                 return false;
+                            }
+                        }
+                        if (esCompat) {
+                            // store the `exports` in case others `es` modules requires it
+                            exported[name] = __exports__;
+
+                            // If an ES module is conditionally loaded and set
+                            // to be used "instead" another module, replace the
+                            // trigger module's content with the conditionally
+                            // loaded one so the values returned by require()
+                            // still makes sense
+                            condition = mod.details.condition;
+                            if (condition && condition.when === 'instead') {
+                                exported[condition.trigger] = __exports__;
                             }
                         }
                     }
@@ -900,7 +957,6 @@ with any configuration info required for the module.
             callback = args[args.length - 1],
             Y = this,
             i = 0,
-            a = [],
             name,
             Env = Y.Env,
             provisioned = true;
@@ -944,6 +1000,65 @@ with any configuration info required for the module.
         }
 
         return Y;
+    },
+
+    /**
+    Sugar for loading both legacy and ES6-based YUI modules.
+
+    @method require
+    @param {String} [modules*] List of module names to import or a single
+        module name.
+    @param {Function} callback Callback that gets called once all the modules
+        were loaded. Each parameter of the callback is the export value of the
+        corresponding module in the list. If the module is a legacy YUI module,
+        the YUI instance is used instead of the module exports.
+    @example
+    ```
+    YUI().require(['es6-set'], function (Y, imports) {
+        var Set = imports.Set,
+            set = new Set();
+    });
+    ```
+    **/
+    require: function () {
+        var args = SLICE.call(arguments),
+            callback;
+
+        if (typeof args[args.length - 1] === 'function') {
+            callback = args.pop();
+
+            // only add the callback if one was provided
+            // YUI().require('foo'); is valid
+            args.push(function (Y) {
+                var i, length = args.length,
+                    exported = Y.Env._exported,
+                    __imports__ = {};
+
+                // Get only the imports requested as arguments
+                for (i = 0; i < length; i++) {
+                    if (exported.hasOwnProperty(args[i])) {
+                        __imports__[args[i]] = exported[args[i]];
+                    }
+                }
+
+                // Using `undefined` because:
+                // - Using `Y.config.global` would force the value of `this` to be
+                //   the global object even in strict mode
+                // - Using `Y` goes against the goal of moving away from a shared
+                //   object and start thinking in terms of imported and exported
+                //   objects
+                callback.call(undefined, Y, __imports__);
+            });
+        }
+        // Do not return the Y object. This makes it hard to follow this
+        // traditional pattern:
+        //   var Y = YUI().use(...);
+        // This is a good idea in the light of ES6 modules, to avoid working
+        // in the global scope.
+        // This also leaves the door open for returning a promise, once the
+        // YUI loader is based on the ES6 loader which uses
+        // loader.import(...).then(...)
+        this.use.apply(this, args);
     },
 
     /**
@@ -991,7 +1106,7 @@ with any configuration info required for the module.
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot, handleRLS,
+        var len, loader, handleBoot,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -1457,11 +1572,14 @@ with any configuration info required for the module.
     YUI._init();
 
     if (hasWin) {
+        add(doc, 'DOMContentLoaded', handleReady);
+
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
         add(window, 'load', handleLoad);
     } else {
+        handleReady();
         handleLoad();
     }
 
@@ -1472,8 +1590,33 @@ with any configuration info required for the module.
     // Support the CommonJS method for exporting our single global
     if (typeof exports == 'object') {
         exports.YUI = YUI;
+        /**
+        * Set a method to be called when `Get.script` is called in Node.js
+        * `Get` will open the file, then pass it's content and it's path
+        * to this method before attaching it. Commonly used for code coverage
+        * instrumentation. <strong>Calling this multiple times will only
+        * attach the last hook method</strong>. This method is only
+        * available in Node.js.
+        * @method setLoadHook
+        * @static
+        * @param {Function} fn The function to set
+        * @param {String} fn.data The content of the file
+        * @param {String} fn.path The file path of the file
+        */
+        YUI.setLoadHook = function(fn) {
+            YUI._getLoadHook = fn;
+        };
+        /**
+        * Load hook for `Y.Get.script` in Node.js, see `YUI.setLoadHook`
+        * @method _getLoadHook
+        * @private
+        * @param {String} data The content of the file
+        * @param {String} path The file path of the file
+        */
+        YUI._getLoadHook = null;
     }
 
+    YUI.Env[VERSION] = {};
 }());
 
 
@@ -1505,6 +1648,108 @@ or handle dependency resolution yourself.
 **/
 
 /**
+
+@property {Object} filters
+**/
+
+/**
+If `true`, YUI will use a combo handler to load multiple modules in as few
+requests as possible.
+
+The YUI CDN (which YUI uses by default) supports combo handling, but other
+servers may not. If the server from which you're loading YUI does not support
+combo handling, set this to `false`.
+
+Providing a value for the `base` config property will cause `combine` to default
+to `false` instead of `true`.
+
+@property {Boolean} combine
+@default true
+*/
+
+/**
+Array of module names that should never be dynamically loaded.
+
+@property {String[]} ignore
+**/
+
+/**
+Array of module names that should always be loaded when required, even if
+already present on the page.
+
+@property {String[]} force
+**/
+
+/**
+DOM element or id that should be used as the insertion point for dynamically
+added `<script>` and `<link>` nodes.
+
+@property {HTMLElement|String} insertBefore
+**/
+
+/**
+Object hash containing attributes to add to dynamically added `<script>` nodes.
+
+@property {Object} jsAttributes
+**/
+
+/**
+Object hash containing attributes to add to dynamically added `<link>` nodes.
+
+@property {Object} cssAttributes
+**/
+
+/**
+Timeout in milliseconds before a dynamic JS or CSS request will be considered a
+failure. If not set, no timeout will be enforced.
+
+@property {Number} timeout
+**/
+
+/**
+A hash of module definitions to add to the list of available YUI modules. These
+modules can then be dynamically loaded via the `use()` method.
+
+This is a hash in which keys are module names and values are objects containing
+module metadata.
+
+See `Loader.addModule()` for the supported module metadata fields. Also see
+`groups`, which provides a way to configure the base and combo spec for a set of
+modules.
+
+@example
+
+    modules: {
+        mymod1: {
+            requires: ['node'],
+            fullpath: '/mymod1/mymod1.js'
+        },
+
+        mymod2: {
+            requires: ['mymod1'],
+            fullpath: '/mymod2/mymod2.js'
+        },
+
+        mymod3: '/js/mymod3.js',
+        mycssmod: '/css/mycssmod.css'
+    }
+
+@property {Object} modules
+**/
+
+/**
+Aliases are dynamic groups of modules that can be used as shortcuts.
+
+@example
+
+    YUI({
+        aliases: {
+            davglass: [ 'node', 'yql', 'dd' ],
+            mine: [ 'davglass', 'autocomplete']
+        }
+    }).use('mine', function (Y) {
+        // Node, YQL, DD & AutoComplete available here.
+    });
 
 @property {Object} aliases
 **/
@@ -1610,6 +1855,22 @@ supported native console. This function is executed with the YUI instance as its
 **/
 
 /**
+The minimum log level to log messages for. Log levels are defined
+incrementally. Messages greater than or equal to the level specified will
+be shown. All others will be discarded. The order of log levels in
+increasing priority is:
+
+    debug
+    info
+    warn
+    error
+
+@property {String} logLevel
+@default 'debug'
+@since 3.10.0
+**/
+
+/**
 Callback to execute when `Y.error()` is called. It receives the error message
 and a JavaScript error object if one was provided.
 
@@ -1669,18 +1930,34 @@ relying on ES5 functionality, even when ES5 functionality is available.
 **/
 
 /**
-Event to wait for before executing the `use()` callback.
+ * Leverage native JSON stringify if the browser has a native
+ * implementation.  In general, this is a good idea.  See the Known Issues
+ * section in the JSON user guide for caveats.  The default value is true
+ * for browsers with native JSON support.
+ *
+ * @property useNativeJSONStringify
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
 
-The following events are supported:
+ /**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeJSONParse
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
 
-  - available
-  - contentready
-  - domready
-  - load
+/**
+Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
 
-The event may be specified as a string or as an object hash that provides
-additional event configuration, as illustrated in the example below.
-
+@property {Object|String} delayUntil
+@since 3.6.0
 @example
 
 You can use `load` or `domready` strings by default:
@@ -1703,8 +1980,6 @@ Or you can delay until a node is available (with `available` or `contentready`):
         // available in the DOM.
     });
 
-@property {Object|String} delayUntil
-@since 3.6.0
 **/
 YUI.add('yui-base', function (Y, NAME) {
 
@@ -1745,9 +2020,15 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-TRIMREGEX       = /^\s+|\s+$/g,
-NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+
+WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
+WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
+TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
+TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
+TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
+
+NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -1888,6 +2169,17 @@ L.isObject = function(o, failfn) {
 };
 
 /**
+ * Determines whether or not the provided value is a regexp.
+ * @method isRegExp
+ * @static
+ * @param value The value or object to test.
+ * @return {boolean} true if value is a regexp.
+ */
+L.isRegExp = function(value) {
+    return L.type(value) === 'regexp';
+};
+
+/**
  * Determines whether or not the provided item is a string.
  * @method isString
  * @static
@@ -1947,9 +2239,15 @@ L.now = Date.now || function () {
 };
 
 /**
- * Lightweight version of <code>Y.substitute</code>. Uses the same template
- * structure as <code>Y.substitute</code>, but doesn't support recursion,
- * auto-object coersion, or formats.
+ * Performs `{placeholder}` substitution on a string. The object passed as the
+ * second parameter provides values to replace the `{placeholder}`s.
+ * `{placeholder}` token names must match property names of the object. For example,
+ *
+ *`var greeting = Y.Lang.sub("Hello, {who}!", { who: "World" });`
+ *
+ * `{placeholder}` tokens that are undefined on the object map will be left
+ * in tact (leaving unsightly `{placeholder}`'s in the output string).
+ *
  * @method sub
  * @param {string} s String to be modified.
  * @param {object} o Object containing replacement values.
@@ -1971,7 +2269,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = STRING_PROTO.trim ? function(s) {
+L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -1988,10 +2286,10 @@ L.trim = STRING_PROTO.trim ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
+L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(/^\s+/, '');
+    return s.replace(TRIM_LEFT_REGEX, '');
 };
 
 /**
@@ -2001,10 +2299,10 @@ L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = STRING_PROTO.trimRight ? function (s) {
+L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(/\s+$/, '');
+    return s.replace(TRIM_RIGHT_REGEX, '');
 };
 
 /**
@@ -2078,6 +2376,7 @@ pass `true` as the value of the _force_ parameter.
 function YArray(thing, startIndex, force) {
     var len, result;
 
+    /*jshint expr: true*/
     startIndex || (startIndex = 0);
 
     if (force || YArray.test(thing)) {
@@ -2105,16 +2404,34 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with strings, whereas `unique` may be used with other types (but is slower).
-Using `dedupe()` with non-string values may result in unexpected behavior.
+with arrays consisting entirely of strings or entirely of numbers, whereas
+`unique` may be used with other value types (but is slower).
+
+Using `dedupe()` with values other than strings or numbers, or with arrays
+containing a mix of strings and numbers, may result in unexpected behavior.
 
 @method dedupe
-@param {String[]} array Array of strings to dedupe.
-@return {Array} Deduped copy of _array_.
+@param {String[]|Number[]} array Array of strings or numbers to dedupe.
+@return {Array} Copy of _array_ containing no duplicate values.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = function (array) {
+YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
+    var hash    = Object.create(null),
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hash[item]) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
+} : function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -2450,6 +2767,7 @@ string `[object Object]` when used as a cache key.
 @for YUI
 **/
 Y.cached = function (source, cache, refetch) {
+    /*jshint expr: true*/
     cache || (cache = {});
 
     return function (arg) {
@@ -2457,6 +2775,7 @@ Y.cached = function (source, cache, refetch) {
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
 
+        /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
         }
@@ -2754,7 +3073,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50.
+ * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -2798,7 +3117,9 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available.
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be
+ * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
  *
@@ -2810,7 +3131,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -3243,6 +3564,13 @@ YUI.Env.parseUA = function(subUA) {
          */
         silk: 0,
         /**
+         * Detects Ubuntu version
+         * @property ubuntu
+         * @type float
+         * @static
+         */
+        ubuntu: 0,
+        /**
          * Detects Kindle Silk Acceleration
          * @property accel
          * @type Boolean
@@ -3403,7 +3731,7 @@ YUI.Env.parseUA = function(subUA) {
 
                 }
                 if (/Silk/.test(ua)) {
-                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    m = ua.match(/Silk\/([^\s]*)/);
                     if (m && m[1]) {
                         o.silk = numberify(m[1]);
                     }
@@ -3417,18 +3745,45 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-            if (m && m[1] && m[2]) {
-                o.chrome = numberify(m[2]); // Chrome
-                o.safari = 0; //Reset safari back to 0
-                if (m[1] === 'CrMo') {
-                    o.mobile = 'chrome';
-                }
+            m = ua.match(/OPR\/(\d+\.\d+)/);
+
+            if (m && m[1]) {
+                // Opera 15+ with Blink (pretends to be both Chrome and Safari)
+                o.opera = numberify(m[1]);
             } else {
-                m = ua.match(/AdobeAIR\/([^\s]*)/);
-                if (m) {
-                    o.air = m[0]; // Adobe AIR 1.0 or better
+                m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+
+                if (m && m[1] && m[2]) {
+                    o.chrome = numberify(m[2]); // Chrome
+                    o.safari = 0; //Reset safari back to 0
+                    if (m[1] === 'CrMo') {
+                        o.mobile = 'chrome';
+                    }
+                } else {
+                    m = ua.match(/AdobeAIR\/([^\s]*)/);
+                    if (m) {
+                        o.air = m[0]; // Adobe AIR 1.0 or better
+                    }
                 }
+            }
+        }
+
+        m = ua.match(/Ubuntu\ (\d+\.\d+)/);
+        if (m && m[1]) {
+
+            o.os = 'linux';
+            o.ubuntu = numberify(m[1]);
+
+            m = ua.match(/\ WebKit\/([^\s]*)/);
+            if (m && m[1]) {
+                o.webkit = numberify(m[1]);
+            }
+            m = ua.match(/\ Chromium\/([^\s]*)/);
+            if (m && m[1]) {
+                o.chrome = numberify(m[1]);
+            }
+            if (/ Mobile$/.test(ua)) {
+                o.mobile = 'Ubuntu';
             }
         }
 
@@ -3457,16 +3812,21 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE\s([^;]*)/);
-                if (m && m[1]) {
-                    o.ie = numberify(m[1]);
+                m = ua.match(/MSIE ([^;]*)|Trident.*; rv:([0-9.]+)/);
+
+                if (m && (m[1] || m[2])) {
+                    o.ie = numberify(m[1] || m[2]);
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
+
                     if (m) {
                         o.gecko = 1; // Gecko detected, look for revision
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -3536,6 +3896,7 @@ Y.UA.compareVersions = function (a, b) {
         aPart = parseInt(aParts[i], 10);
         bPart = parseInt(bParts[i], 10);
 
+        /*jshint expr: true*/
         isNaN(aPart) && (aPart = 0);
         isNaN(bPart) && (bPart = 0);
 
@@ -3553,19 +3914,21 @@ Y.UA.compareVersions = function (a, b) {
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "anim-shape-transform": ["anim-shape"],
-    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","model-sync-local","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
+    "axes": ["axis-numeric","axis-category","axis-time","axis-stacked"],
+    "axes-base": ["axis-numeric-base","axis-category-base","axis-time-base","axis-stacked-base"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
+    "charts": ["charts-base"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "color": ["color-base","color-hsl","color-harmony"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
-    "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-date","datatype-number","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format","datatype-date-math"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3578,7 +3941,7 @@ YUI.Env.aliases = {
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
-    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "history": ["history-base","history-hash","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],

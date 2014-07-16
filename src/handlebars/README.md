@@ -21,14 +21,6 @@ modules:
 
 The 'handlebars' module is an alias that can be used to load both modules.
 
-Apart from the YUI wrapper code, the only other significant change is that we
-use YUI's own `Y.Escape.html()` method to escape strings rather than using
-Handlebars's built-in escaping. This is done because Handlebars's built-in HTML
-escaper avoids double-escaping existing `&amp;` entities, which can lead to
-unexpected output, especially when using Handlebars templates to render code
-snippets in which double-escaping is necessary to properly display the literal
-text "&amp;".
-
 
 Code Organization
 -----------------
@@ -53,16 +45,16 @@ Handlebars.js repo. Here are the steps (you need `Node.js`, `npm`, `Ruby` and
 
 This should compile the `parser.js` file required to import into YUI.
 
-Code from this Handlebars.js repo is imported into the YUI 3 repo by a Makefile
-in the `src/handlebars` directory. Running `make import` will copy Handlebars
-source files from the separate Handlebars repo into the `src/handlebars/js`
-directory in the YUI 3 repo.
+Code from this Handlebars.js repo is imported into the YUI 3 repo by a
+`Gruntfile` in the `src/handlebars` directory. Running `grunt` will copy
+Handlebars source files from the separate Handlebars repo into the
+`src/handlebars/js` directory in the YUI 3 repo.
 
 Handlebars files imported into `src/handlebars/js` are prefixed with
 `handlebars-` and should not be edited, while YUI-specific files that live in
 that directory are prefixed with `yui-handlebars` and may be edited.
 
-After importing Handlebars files, run `ant all` to build the final YUI modules.
+After importing Handlebars files, run `shifter` to build the final YUI modules.
 The Handlebars API will be available at `Y.Handlebars` when you use one of the
 Handlebars modules.
 

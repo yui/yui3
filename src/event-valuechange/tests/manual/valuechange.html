@@ -4,45 +4,79 @@
     <meta charset="utf-8">
     <title>event-valuechange manual tests</title>
 </head>
-<body>
+<body class="yui3-skin-sam">
 
 <h1>event-valuechange manual tests</h1>
 
 <h2>valueChange</h2>
 <input type="text" id="a" class="valuechange">
 <textarea id="b" class="valuechange"></textarea>
+<div class="valuechange" contenteditable="true"><h3>This is a editable header.</h3><span>This is an editable span.</span></div>
+<select class="valuechange">
+    <option>foo</option>
+    <option>bar</option>
+</select>
 
 <h2>input</h2>
 <input type="text" class="input">
 <textarea class="input"></textarea>
+<div class="input" contenteditable="true">This is an editable div.</div>
+<select class="input">
+    <option>foo</option>
+    <option>bar</option>
+</select>
 
 <h2>keyup</h2>
 <input type="text" class="keyup">
 <textarea class="keyup"></textarea>
+<div class="keyup" contenteditable="true">This is an editable div.</div>
+<select class="keyup">
+    <option>foo</option>
+    <option>bar</option>
+</select>
 
 <h2>keypress</h2>
 <input type="text" class="keypress">
 <textarea class="keypress"></textarea>
+<div class="keypress" contenteditable="true">This is an editable div.</div>
+<select class="keypress">
+    <option>foo</option>
+    <option>bar</option>
+</select>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', function(Y) {
+var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', 'console', function(Y) {
     Y.all('.valuechange').on('valueChange', function (e) {
         Y.log("valueChange: from " + e.prevVal + " to " + e.newVal, 'info');
     });
 
     Y.Node.DOM_EVENTS['input'] = true;
     Y.all('.input').on('input', function (e) {
-        Y.log("input: from ? to " + e.currentTarget.get('value'), 'info');
+        var node       = e.currentTarget,
+            isEditable = node.getDOMNode().isContentEditable,
+            newValue   = isEditable ? node.getHTML() : node.get('value');
+
+        Y.log("input: from ? to " + newValue, 'info');
     });
 
     Y.all('.keyup').on('keyup', function (e) {
-        Y.log("keyup: from ? to " + e.currentTarget.get('value'), 'info');
+        var node       = e.currentTarget,
+            isEditable = node.getDOMNode().isContentEditable,
+            newValue   = isEditable ? node.getHTML() : node.get('value');
+
+        Y.log("keyup: from ? to " + newValue, 'info');
     });
 
     Y.all('.keypress').on('keypress', function (e) {
-        Y.log("keypress: from ? to " + e.currentTarget.get('value'), 'info');
+        var node       = e.currentTarget,
+            isEditable = node.getDOMNode().isContentEditable,
+            newValue   = isEditable ? node.getHTML() : node.get('value');
+
+        Y.log("keypress: from ? to " + newValue, 'info');
     });
+
+    new Y.Console().render();
 });
 </script>
 </body>

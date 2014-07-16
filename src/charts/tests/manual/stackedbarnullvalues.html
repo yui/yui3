@@ -10,17 +10,17 @@
 }
 </style>
 <link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts.css">
-</head>		
+</head>
 <body class="yui3-skin-sam">
 <h3>Stacked Bar Chart with missing data</h3>
 <div id="mychart"></div>
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-<script type="text/javascript">            
+<script type="text/javascript">
     YUI({
         defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
 		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-    }).use('charts', function (Y) 
-    { 
+    }).use('charts', function (Y)
+    {
         var myDataValues = [
             {date:"1/1/2010", miscellaneous:1000, revenue:2200},
             {date:"2/1/2010", expenses:null, revenue:100},
@@ -29,12 +29,12 @@
             {date:"5/1/2010", expenses:null, revenue:2650},
             {date:"6/1/2010", miscellaneous:null, expenses:null, revenue:1200}
         ];
-        
+
         var mychart = new Y.Chart({
             categoryKey: "date",
-            type:"bar", 
-            dataProvider:myDataValues, 
-            stacked: true, 
+            type:"bar",
+            dataProvider:myDataValues,
+            stacked: true,
             render:"#mychart"
         });
  });

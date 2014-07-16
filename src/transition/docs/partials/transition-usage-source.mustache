@@ -8,7 +8,7 @@ YUI().use('transition', function(Y) {
 
     node.one('a').on('click', function(e) {
         e.preventDefault();
-        
+
         node.transition({
             duration: 1, // seconds
             easing: 'ease-out', // CSS syntax
@@ -35,7 +35,7 @@ YUI().use('transition', function(Y) {
                 value: 0
             }
         }, function() {
-            node.remove(); 
+            node.remove();
         });
     });
 });

@@ -16,28 +16,4 @@ are important differences, though, and the YUI app framework takes full
 advantage of YUI's powerful component and event infrastructure under the hood.
 
 
-Modules
--------
-
-* [`app`][app]: Rollup module that includes all of the following modules. Use
-  this module when you plan to use the full app framework stack.
-
-* [`app-base`][app-base]: Provides the `Y.App` class.
-
-* [`app-transitions`][app-transitions]: Provides the `Y.App.Transitions` class.
-
-* [`model`][model]: Provides the `Y.Model` class.
-
-* [`model-list`][model-list]: Provides the `Y.ModelList` class.
-
-* [`router`][router]: Provides the `Y.Router` class.
-
-* [`view`][view]: Provides the `Y.View` class.
-
-[app]:             http://yuilibrary.com/yui/docs/app/
-[app-base]:        http://yuilibrary.com/yui/docs/app/#app-component
-[app-transitions]: http://yuilibrary.com/yui/docs/app/#yapptransitions
-[model]:           http://yuilibrary.com/yui/docs/model/
-[model-list]:      http://yuilibrary.com/yui/docs/model-list/
-[router]:          http://yuilibrary.com/yui/docs/router/
-[view]:            http://yuilibrary.com/yui/docs/view/
+[app]: http://yuilibrary.com/yui/docs/app/

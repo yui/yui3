@@ -1,6 +1,121 @@
 Rich Text Editor Change History
 ===============================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* Increase specificity of when to set cursor.
+* Check for the existence of `node` before removing it.
+
+3.16.0
+------
+
+* Fixed an issue where the `yui-cursor` selector was used as an `id` instead of a `class`. ([#1648][]: @alaaibrahim)
+
+[#1648]: https://github.com/yui/yui3/pull/1648
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* Resolution of several issues in IE 11. ([#1505][]: @ezequiel)
+
+[#1505]: https://github.com/yui/yui3/issues/1505
+
+3.14.0
+------
+
+* Fix Y.Frame issue where the linked CSS in the frame was trying to call
+  `/undefined`. ([#1367][]: @ipeychev)
+
+[#1367]: https://github.com/yui/yui3/issues/1367
+
+3.13.0
+------
+* Add in `getEditorOffset` to calculate distance from current selection to the
+  beginning of the editor. [Pull Request #1232]
+
+* Editor is able to work in two modes - as an Inline Editor or using an iframe.
+  For that reason, some internal changes have been made:
+
+  Y.Frame is now a plugin and extends Y.Plugin.Base.
+
+  There is a new Plugin, called ContentEditable. This plugin allows
+  editor to work without using an iframe, as an inline editor.
+
+  If a container is not specified, EditorBase creates and plugs an instance of
+  Y.Frame. Otherwise, it uses the provided container (ContentEditable)
+
+  Added Y.InlineEditor which extends EditorBase and plugs ContentEditable
+  during the initialization process.
+
+  [Ticket #1041] [ipeychev]
+
+3.12.0
+------
+
+* No changes.
+
+
+3.11.0
+------
+
+* Fix exception when sel.anchorNode doesn't exist. [rgrove]
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Removed unused `substitute` dependency.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>YUI3 Editor without iframe</title>
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.11.0/build/cssreset/cssreset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.11.0/build/cssfonts/cssfonts-min.css">
+
+<style type="text/css">
+    #wrapper {
+        position: relative;
+        top: 50px;
+    }
+
+    #editor {
+        border: solid 1px #000;
+        height: 300px;
+        left: 50px;
+        overflow: auto;
+        position: relative;
+        width: 900px;
+   }
+
+   #toolbar {
+        left: 50px;
+        position: relative;
+        width: 900px;
+        z-index: 1000;
+   }
+</style>
+</head>
+
+<body class="yui-skin-sam">
+
+<div id="wrapper">
+    <div id="toolbar"></div>
+    <div id="editor"></div>
+</div>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+
+<script>
+
+YUI({
+    debug: true,
+    filter: 'raw',
+    gallery: 'gallery-2013.07.03-22-52'
+}).use('editor-inline', 'gallery-itsatoolbar', function(Y) {
+
+    var myEditor = new Y.InlineEditor({
+        content: '<p>Hello world. I\'m an inline editor. No iframe here!</p>Hello <b>World</b>!!',
+        extracss: 'b { color: red; }',
+        plugins: [
+            {
+                fn: Y.Plugin.ITSAToolbar,
+                cfg: {
+                    srcNode: '#toolbar'
+                }
+            }
+        ]
+    });
+
+    myEditor.render('#editor');
+});
+
+</script>
+
+</body>
+
+</html>

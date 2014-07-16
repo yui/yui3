@@ -1,11 +1,108 @@
 Transition Change History
 =========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* No changes.
+
+3.14.1
+------
+
+* No changes.
+
+3.14.0
+------
+
+* Fixed issue where `toggleView` did not correctly work when passed only an effect name. ([#1258][] @ezequiel)
+
+[#1258]: https://github.com/yui/yui3/issues/1258
+
+3.13.0
+------
+
+* Added optional flag to NodeList.transition which, if true, fires the callback only once at the end of the NodeList transitions. ([#880][] @Perturbatio)
+
+[#880]: https://github.com/yui/yui3/issues/880
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Fixed `transitionend` event issues in Android 4.1 which claims it supports
+  non-prefixed transition properties, when it doesn't.
+
+* `transform` prefix is now handled separately from `transition` prefix.
+
+3.8.1
+-----
+
+* PR #398 Fix show, hide and toggleView methods in transition module [prajwalit]
+
 3.8.0
 -----
 
   * No changes.
- 
+
 3.7.3
 -----
 

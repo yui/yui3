@@ -1,0 +1,8 @@
+{
+    "series-pie": {
+        "requires":[
+            "series-base",
+            "series-plot-util"
+        ]
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "axis-category": {
+        "requires":[
+            "axis",
+            "axis-category-base"
+        ]
+    }
+}

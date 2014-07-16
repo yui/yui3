@@ -41,10 +41,10 @@
 
                     // Loader should not have been pulled in if dependencies are right
                     Y2.Assert.isUndefined(Y2.Loader);
-                } 
+                }
 
             });
-            
+
         });
 
         YUI({
@@ -59,10 +59,10 @@
 
                 test_missing_message: function () {
 
-                } 
+                }
 
             });
-            
+
         });
 
         Y.Test.Runner.add(testUse);
@@ -74,7 +74,7 @@
             test_ran: function () {
                 // tests to make sure the use('*') callback executed
                 Y.Assert.areEqual(2, count);
-            } 
+            }
 
         });
 

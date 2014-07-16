@@ -1,8 +1,8 @@
 <div class="intro">
     <p>The `event-valuechange` module adds a "valuechange" event that fires
-    when the `value` property of an `<input>` or `<textarea>` element changes as
-    the result of a keystroke, mouse operation, or input method editor (IME)
-    input event.</p>
+    when the `value` property of an `<input>`, `<textarea>`, `<select>`, or
+    `[contenteditable="true"]` element changes as the result of a keystroke,
+    mouse operation, or input method editor (IME) input event.</p>
 </div>
 
 <h2>What's the problem?</h2>
@@ -49,10 +49,11 @@ polled at a time, so the performance of your app should not be impacted.</p>
 <ul>
     <li>
         <p>
-        `valuechange` only supports subscriptions on `<input>` and
-        `<textarea>` elements, although it doesn't prevent you from subscribing
-        on other types of elements.  If you subscribe on a different type of element
-        and stuff breaks, you were warned.
+        `valuechange` only supports subscriptions on `<input>`, `<textarea>`,
+        `<select>`, and `[contenteditable="true"]` elements, although it
+        doesn't prevent you from subscribing on other types of elements.
+        If you subscribe on a different type of element and stuff breaks,
+        you were warned.
         </p>
     </li>
 

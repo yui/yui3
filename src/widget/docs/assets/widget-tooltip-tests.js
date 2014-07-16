@@ -1,5 +1,5 @@
 YUI.add('widget-tooltip-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('widget-tooltip example test suite'),
         TIMEOUT = 10000;
 
@@ -43,6 +43,12 @@ YUI.add('widget-tooltip-tests', function(Y) {
             }, 10);
         },
 
+        // We consider ourselves "close enough" if the actual value is within
+        // 2 pixels of the expected value.
+        closeEnough: function (actual, expected) {
+            return Math.abs(expected - actual) < 1;
+        },
+
         'test initial render' : function() {
 
             var test = this,
@@ -60,10 +66,19 @@ YUI.add('widget-tooltip-tests', function(Y) {
 
                     Y.Assert.areEqual("2", tooltip.getComputedStyle("zIndex"));
                     Y.Assert.areEqual("absolute", tooltip.getComputedStyle("position"));
-                    Y.Assert.areEqual("-10000px", tooltip.getComputedStyle("top"));
-                    Y.Assert.areEqual("-10000px", tooltip.getComputedStyle("left"));
-                    
-                    test.assertTooltipHidden(tooltip);
+
+                    Y.Assert.isTrue(
+                        test.closeEnough(
+                            parseInt(tooltip.getComputedStyle("top"), 10),
+                            parseInt("-10000px", 10)
+                        )
+                    );
+                    Y.Assert.isTrue(
+                        test.closeEnough(
+                            parseInt(tooltip.getComputedStyle("left"), 10),
+                            parseInt("-10000px", 10)
+                        )
+                    );
 
                     Y.Assert.areEqual(0, tooltip.one(".yui3-tooltip-content").get("childNodes").size());
                 },
@@ -160,7 +175,7 @@ YUI.add('widget-tooltip-tests', function(Y) {
         },
 
         'test mouseover tt2' : function() {
-            
+
             var tooltip = Y.one(".yui3-tooltip"),
                 test = this,
                 trigger = this.tt2,
@@ -210,7 +225,7 @@ YUI.add('widget-tooltip-tests', function(Y) {
 
                 trigger2.simulate("mouseover", {
                     clientX : clientXY2[0],
-                    clientY : clientXY2[1] 
+                    clientY : clientXY2[1]
                 });
 
                 test.assertTooltipVisible(tooltip);
@@ -223,7 +238,7 @@ YUI.add('widget-tooltip-tests', function(Y) {
         },
 
         'test mouseover tt3' : function() {
-            
+
             var tooltip = Y.one(".yui3-tooltip"),
                 test = this,
                 trigger = this.tt3,

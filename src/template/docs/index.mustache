@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 .micro-code pre.code {
     height: 100%;
     margin: 0;
@@ -73,15 +73,15 @@ YUI().use('template-base', 'handlebars', function (Y) {
 <h3>Generic Template API</h3>
 
 <p>
-`Y.Template` exists to specifically to provide its API as a normalization layer on top of conceptually similar, but technically different template engines and syntaxes. This layer of abstraction allows components which work with templates to not be tied to a particular engine. Another huge benefit is allowing developers to override a component's default templates using an entirely different template engine.
+`Y.Template` exists specifically to provide its API as a normalization layer on top of conceptually similar, but technically different template engines and syntaxes. This layer of abstraction allows components which work with templates to not be tied to a particular engine. Another huge benefit is allowing developers to override a component's default templates using an entirely different template engine.
 </p>
 
 <p>
-The two templates engines provided in YUI, Handlebars and Template.Micro, are conceptually similar. They both compile string-based templates into functions, which are invoked with a data context and return the rendered output as a string. Handlebars is really well suited for organizing and managing the templates of an entire app or complex widget because of its partials and helpers features. Template.Micro is great for small templates, or when you need more powerful templates and its compilation engine is <em>extremely</em> small.
+The two template engines provided in YUI, Handlebars and Template.Micro, are conceptually similar. They both compile string-based templates into functions, which are invoked with a data context and return the rendered output as a string. Handlebars is really well suited for organizing and managing the templates of an entire app or complex widget because of its partials and helpers features. Template.Micro is great for small templates, or when you need more powerful templates and its compilation engine is <em>extremely</em> small.
 </p>
 
 <p>
-By making Template.Micro's public API very similar to Handlebars, we've made it possible to use the two template engines interchangeably via the `Y.Template` normalization API. When you need to compile templates on the client, it is <strong>strongly recommend</strong> that you use Micro templates, because Template.Micro's compile is <em>much</em> smaller than Handlebars' compiler &mdash; 0.5KB vs 9KB (minified and gzipped) respectively.
+By making Template.Micro's public API very similar to Handlebars, we've made it possible to use the two template engines interchangeably via the `Y.Template` normalization API. When you need to compile templates on the client, it is <strong>strongly recommend</strong> that you use Micro templates, because Template.Micro's compiler is <em>much</em> smaller than Handlebars' compiler &mdash; 0.5KB vs 9KB (minified and gzipped) respectively.
 </p>
 
 <h3>Instantiating a Template Engine</h3>
@@ -315,7 +315,7 @@ For more details, refer to the Precompiling and Reviving Templates sections of t
 <h3>Creating a Custom Template Engine</h3>
 
 <p>
-The generic `Y.Template` interface is [[#Generic Template API|designed]] to worked with for variety of string -> function template engines. To implement a custom underlaying template engine for `Y.Template`, refer to the following list of methods and their descriptions which need to be implemented:
+The generic `Y.Template` interface is [[#Generic Template API|designed]] to work with a variety of string -> function template engines. To implement a custom underlaying template engine for `Y.Template`, refer to the following list of methods and their descriptions which need to be implemented:
 </p>
 
 <dl>
@@ -344,7 +344,7 @@ The generic `Y.Template` interface is [[#Generic Template API|designed]] to work
     <dt>`precompile( text , [options] )`</dt>
     <dd>
         <p>
-        Precompiles a string template into a new string containing JavaScript source code for the precompiled template and returns it to the caller. The `revive()` method this method's companion, it converts the precompiled template back into a renderable function.
+        Precompiles a string template into a new string containing JavaScript source code for the precompiled template and returns it to the caller. The `revive()` method is this method's companion, it converts the precompiled template back into a renderable function.
         </p>
 
         <p>
@@ -363,6 +363,89 @@ The generic `Y.Template` interface is [[#Generic Template API|designed]] to work
         </p>
     </dd>
 </dl>
+
+<h3>Abstracting Templates Through Registration</h3>
+
+<p>
+The template registry decouples making templates available from invoking a template to render it. This central registry and abstraction of templates to names separates concerns, creates a level of indirection, and enables templates to be easily overridden.
+</p>
+
+<p>
+When precompiling templates, the template registry can be used as an abstraction layer allowing application code to render templates without having to know about the underlying template engine or what component is providing the template and its location on that component. This creates a clear separation between allowing the code that consumes a template to reference it by an abstracted template name in the registry which is registered by a dependency, like a YUI module.
+</p>
+
+<p>
+This central template registry is used through two <em>static</em> methods on `Y.Template`:
+</p>
+
+<dl>
+    <dt>`Y.Template.register( templateName , template )`</dt>
+    <dd>
+        <p>
+        Registers a pre-compiled template into the central template registry with a given template string, allowing that template to be called and rendered by that name using the `Y.Template.render()` static method.
+        </p>
+    </dd>
+
+    <dt>`Y.Template.get( templateName )`</dt>
+    <dd>
+        <p>
+        Returns a revived template function registered under the given `templateName`, if it exists. Otherwise, it returns `undefined`.
+        </p>
+    </dd>
+
+    <dt>`Y.Template.render( templateName , [data] , [options] )`</dt>
+    <dd>
+        <p>
+        Renders a registered template under the given `templateName`, passing along any additional `data` or `options` values needed.
+        </p>
+    </dd>
+</dl>
+
+<p>
+Using template registration usually involves taking a precompiled template, and wrapping it as a YUI module. You can use packages such as <a href="https://github.com/yahoo/locator-handlebars">locator-handlebars</a> to do so automatically, by having it find the location of your existing templates.  The wrapped pre-compiled template should look something like this:
+</p>
+
+<strong>foo.handlebars</strong>
+
+```html
+<p>\{{tagline}}</p>
+```
+
+<strong>templates-foo.js</strong>
+
+```javascript
+YUI.add('templates-foo', function (Y) {
+
+    var engine = new Y.Template(Y.Handlebars),
+        precompiled;
+
+    // Generated from the Handlebars compiler. This is the evaluated result of
+    // precompiling `foo.handlebars`.
+    precompiled = function (Handlebars,depth0,helpers,partials,data) {\n  this.compilerInfo = [4,\'>= 1.0.0\'];\nhelpers = this.merge(helpers, Handlebars.helpers); data = data || {};\n  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;\n\n\n  buffer += "<p>";\n  if (stack1 = helpers.tagline) { stack1 = stack1.call(depth0, {hash:{},data:data}); }\n  else { stack1 = depth0.tagline; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }\n  buffer += escapeExpression(stack1)\n    + "</p>";\n  return buffer;\n  };
+
+    Y.Template.register('foo', engine.revive(precompiled));
+
+}, '0.0.1', {requires: ['template-base', 'handlebars-base']});
+```
+
+<p>
+Then, once the precompiled template is revived and registered, you can simply render the template in the following way:
+</p>
+
+<strong>bar.js</strong>
+
+```javascript
+YUI.add('bar', function (Y) {
+
+    var html = Y.Template.render('foo', {
+        tagline: '"bar" is now template language agnostic'
+    });
+
+}, '0.0.1', {requires: ['template-base', 'templates-foo']});
+```
+
+Our template can now be used as a dependency like any other YUI module, and rendered without needing the full Handlebars compiler (which is much larger in file size than `handlebars-base`) or even having to know which template engine is being used in the application code.
+
 
 <h2>Using `Template.Micro`</h2>
 
@@ -456,7 +539,7 @@ To execute arbitrary JavaScript code within the template without rendering its o
 
                 <ul class="<%= this.classNames.list %>">
                   <% Y.Array.each(this.animals, function (animal, i) { %>
-                    <li class="<% i % 2 ? 'odd' : 'even' %>">
+                    <li class="<%= i % 2 ? 'odd' : 'even' %>">
                         <%= animal %>
                     </li>
                   <% }); %>
@@ -536,8 +619,8 @@ The `precompiled` variable will contain a string of JavaScript code that looks s
 
 ```javascript
 function (Y, $e, data) {
-var $b='',$t='My favorite animal is a '+
-$e(( this.animal )||$b)+
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='My favorite animal is a '+
+$e($v( this.animal ))+
 '.';
 return $t;
 }
@@ -648,7 +731,7 @@ The following example will define a Handlebars-like Micro template syntax:
 Y.mix(Y.Template.Micro.options, {
     code         : /\{\{%([\s\S]+?)%\}\}/g,
     escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
-    rawOutput    : /\{\{\{([\s\S]+?)\}\}/g
+    rawOutput    : /\{\{\{([\s\S]+?)\}\}\}/g
 }, true);
 ```
 
@@ -710,13 +793,13 @@ Y.mix(Y.Template.Micro.options, {
 </table>
 
 <p>
-<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods.
+<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods. Alternatively you can specify `defaults` when using the [[#Generic Template API|generic Template API]], doing so will only affect how the templates are process for that engine instance.
 </p>
 
 <h2>Using Templates in Custom Components</h2>
 
 <p>
-When created custom components for your app, it's natural to bundle the templates with the component that will use them. The following examples show how create a custom view component which use templates.
+When creating custom components for your app, it's natural to bundle the templates with the component that will use them. The following examples show how to create a custom view component which uses templates.
 </p>
 
 <h3>Custom View with Embeded Template</h3>
@@ -766,7 +849,7 @@ YUI().use('template-micro', 'view', function (Y) {
 <h3>Custom View with External Template</h3>
 
 <p>
-Usually embedding the template in your component's JavaScript code is bad practice. The following examples show two way to externalize a component's templates.
+Usually embedding the template in your component's JavaScript code is bad practice. The following examples show two ways to externalize a component's templates.
 </p>
 
 <h4>Defining Templates in HTML</h4>
@@ -842,7 +925,7 @@ YUI.add('animalListTemplate', function (Y) {
 ```
 
 ```javascript
-// Defines a YUI module defines our view and requires our template module.
+// Defines a YUI module which defines our view and requires our template module.
 YUI.add('animalListView', function (Y) {
     var AnimalListView = Y.Base.create('animalListView', Y.View, [], {
         render: function () {
@@ -901,11 +984,11 @@ Make sure not to embed too much logic in your templates, things can get out of c
 <h3>Externalize Templates</h3>
 
 <p>
-Avoid embedding huge templates string in your JavaScript code. Strive to separate your templates from the code the uses them, having your templates specified in separate files is best. The [[#Defining Templates in a Module|template module example]] above would ideally use a build-time process to wrap the template source with the YUI module registration wrapper.
+Avoid embedding huge template strings in your JavaScript code. Strive to separate your templates from the code that uses them, having your templates specified in separate files is best. The [[#Defining Templates in a Module|template module example]] above would ideally use a build-time process to wrap the template source with the YUI module registration wrapper.
 </p>
 
 <h3>Compile Once, Render Often</h3>
 
 <p>
-Template [[#Instantiating a Template Engine|compliation is expensive]]. You should avoid compiling a template more than once. Ideally, you are [[#Precompiling and Reviving Templates|precompiling templates]] on the server or during a build-time process to avoid the compilation step on the client.
+Template [[#Instantiating a Template Engine|compilation is expensive]]. You should avoid compiling a template more than once. Ideally, you are [[#Precompiling and Reviving Templates|precompiling templates]] on the server or during a build-time process to avoid the compilation step on the client.
 </p>

@@ -12,23 +12,23 @@
                 "requires": [
                     "dataschema-base"
                 ]
-            }, 
+            },
             "dataschema-base": {
                 "requires": [
                     "base"
                 ]
-            }, 
+            },
             "dataschema-json": {
                 "requires": [
-                    "dataschema-base", 
+                    "dataschema-base",
                     "json"
                 ]
-            }, 
+            },
             "dataschema-text": {
                 "requires": [
                     "dataschema-base"
                 ]
-            }, 
+            },
             "dataschema-xml": {
                 "requires": [
                     "dataschema-base"

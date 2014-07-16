@@ -1,4 +1,4 @@
-<style type="text/css" scoped>
+<style>
     .yui3-tooltip {
         position:absolute;
     }
@@ -63,18 +63,18 @@
 <p>This basic structure is shown below:</p>
 
 ```
-/* 
- *  Required NAME static field, used to identify the Widget class and 
- *  used as an event prefix, to generate class names etc. (set to the 
- *  class name in camel case). 
+/*
+ *  Required NAME static field, used to identify the Widget class and
+ *  used as an event prefix, to generate class names etc. (set to the
+ *  class name in camel case).
  */
 Tooltip.NAME = "tooltip";
 
 /* Default Tooltip Attributes */
 Tooltip.ATTRS = {
 
-    /* 
-     * The tooltip content. This can either be a fixed content value, 
+    /*
+     * The tooltip content. This can either be a fixed content value,
      * or a map of id-to-values, designed to be used when a single
      * tooltip is mapped to multiple trigger elements.
      */
@@ -82,8 +82,8 @@ Tooltip.ATTRS = {
         value: null
     },
 
-    /* 
-     * The set of nodes to bind to the tooltip instance. Can be a string, 
+    /*
+     * The set of nodes to bind to the tooltip instance. Can be a string,
      * or a node instance.
      */
     triggerNodes : {
@@ -125,8 +125,8 @@ Tooltip.ATTRS = {
     },
 
     /*
-     * The time to wait, after the tooltip is first displayed for 
-     * a trigger node, to hide it, if the mouse has not left the 
+     * The time to wait, after the tooltip is first displayed for
+     * a trigger node, to hide it, if the mouse has not left the
      * trigger node
      */
     autoHideDelay : {
@@ -149,7 +149,7 @@ Tooltip.ATTRS = {
     }
 };
 
-Y.extend(Tooltip, Y.Widget, { 
+Y.extend(Tooltip, Y.Widget, {
     // Prototype methods/properties
 });
 ```
@@ -160,14 +160,14 @@ Y.extend(Tooltip, Y.Widget, {
 `Base.create` to create a new `Tooltip` class with this support:</p>
 
 ```
-   var Tooltip = Y.Base.create("tooltip", Y.Widget, [Y.WidgetPosition, Y.WidgetStack], 
+   var Tooltip = Y.Base.create("tooltip", Y.Widget, [Y.WidgetPosition, Y.WidgetStack],
                                      { ... prototype properties ... },
-                                     { ... static properties ... },  
+                                     { ... static properties ... },
 ```
 
 <h3>Lifecycle Methods: initializer, destructor</h3>
 
-<p>The `initializer` method is invoked during the `init` lifecycle phase, after the attributes are configured for each class. `Tooltip` uses it 
+<p>The `initializer` method is invoked during the `init` lifecycle phase, after the attributes are configured for each class. `Tooltip` uses it
 to setup the private state variables it will use to store the trigger node currently being serviced by the tooltip instance, event handles and show/hide timers.</p>
 
 ```
@@ -200,7 +200,7 @@ initializer : function(config) {
     };
 
     // Publish events introduced by Tooltip. Note the triggerEnter event is preventable,
-    // with the default behavior defined in the _defTriggerEnterFn method 
+    // with the default behavior defined in the _defTriggerEnterFn method
     this.publish("triggerEnter", {defaultFn: this._defTriggerEnterFn, preventable:true});
     this.publish("triggerLeave", {preventable:false});
 }
@@ -267,7 +267,7 @@ _uiSetNodes : function(nodes) {
 ```
 
 <p>Similarly the `_afterSetDelegate` method is the default attribute change listener for the `delegate` attribute,
-and invokes `_bindDelegate` to set up the listeners when a new delegate node is set. We use `Y.delegate` support, along with Event's `mouseenter` support, 
+and invokes `_bindDelegate` to set up the listeners when a new delegate node is set. We use `Y.delegate` support, along with Event's `mouseenter` support,
 which means the only thing we need to do is tell delegate which node we want to act as the delegate, and which elements we want to target using the `"." + this._triggerClassName` selector.</p>
 
 ```
@@ -299,8 +299,8 @@ _onNodeMouseEnter : function(e) {
 }
 ```
 
-<p>Since the `mouseenter` implementation doesn't invoke it's listeners for `mouseover` events generated from elements nested 
-inside the targeted node (for example when mousing out of a child element of a trigger node), there are no additional checks we need to perform other than to see if the node is the current trigger, before handing off to 
+<p>Since the `mouseenter` implementation doesn't invoke it's listeners for `mouseover` events generated from elements nested
+inside the targeted node (for example when mousing out of a child element of a trigger node), there are no additional checks we need to perform other than to see if the node is the current trigger, before handing off to
 the `_enterTrigger` method to setup the current trigger state and attach mousemove and mouseleave listeners on the current trigger node.</p>
 
 <p>The mouseleave listener delegates to the `_leaveTrigger` method, and again, since the `mouseleave` implementation deals with nested elements, we don't need to perform any additional target checks:</p>
@@ -321,12 +321,12 @@ _onNodeMouseMove : function(e) {
 
 <h3>Trigger Event Delegates: _enterTrigger, _leaveTrigger, _overTrigger</h3>
 
-<p>As seen above, the DOM event handlers delegate to the `_enterTrigger, _leaveTrigger and _overTrigger` methods to update the 
+<p>As seen above, the DOM event handlers delegate to the `_enterTrigger, _leaveTrigger and _overTrigger` methods to update the
 Tooltip state based on the currently active trigger node.</p>
 
-<p>The `_enterTrigger` method sets the current trigger state (which node is the current tooltip trigger, 
-what the current mouse XY position is, etc.). The method also fires the `triggerEnter` event, whose default function actually handles 
-showing the tooltip after the configured `showDelay` period. The `triggerEnter` event can be prevented by listeners, allowing 
+<p>The `_enterTrigger` method sets the current trigger state (which node is the current tooltip trigger,
+what the current mouse XY position is, etc.). The method also fires the `triggerEnter` event, whose default function actually handles
+showing the tooltip after the configured `showDelay` period. The `triggerEnter` event can be prevented by listeners, allowing
 users to prevent the tooltip from being shown if required. (`triggerEnter` listeners are passed the current trigger node and pageX, pageY mouse co-ordinates as event facade properties):</p>
 
 ```

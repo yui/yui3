@@ -1,14 +1,20 @@
 /**
+ * Provides functionality for creating a combospline series.
+ *
+ * @module charts
+ * @submodule series-combospline
+ */
+/**
  * The ComboSplineSeries class renders a combination of splines, plots and areaspline fills in a single series. Each
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, splines and plots
  * are rendered and areaspline is not.
  *
- * @module charts
- * @submodule charts-base
  * @class ComboSplineSeries
  * @extends ComboSeries
- * @extends CurveUtil
+ * @uses CurveUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-combospline
  */
 Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.CurveUtil], {
     /**

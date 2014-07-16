@@ -1,0 +1,14 @@
+{
+	"name": "promise",
+
+	"builds": {
+		"promise": {
+			"jsfiles": [
+				"promise.js",
+				"resolver.js",
+				"when.js",
+				"batch.js"
+			]
+		}
+	}
+}

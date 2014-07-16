@@ -23,7 +23,7 @@
 </div>
 <script>
 YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
-	
+
 	var state_census_data = [
         {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
         {ANSI: "02000", STATE: "ALASKA", TOTAL_POP: 698473, LAND_AREA: 571951.26, POP_PER_SQ_MILE: 1.1},
@@ -77,16 +77,16 @@ YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
         {ANSI: "56000", STATE: "WYOMING", TOTAL_POP: 544270, LAND_AREA: 97100.4, POP_PER_SQ_MILE: 5.1	}
     ],
 	TEMPLATE_TR = '<tr id="row_{ANSI}"><td>{STATE}</td><td>{TOTAL_POP}</td><td>{LAND_AREA}</td></tr>';
-	
+
   	// Create a Recordset instance.
   	var recordset = new Y.Recordset({records:state_census_data.slice(0,10)});
 	recordset.plug(Y.Plugin.RecordsetSort);
-	
-	
+
+
 	renderRows(recordset);
 	setUpEvents(recordset);
 	setUpButtons(recordset);
-	
+
 	function setUpEvents(rs) {
 		/*Edits the table based on Recordset events that are fired*/
 		rs.sort.after('sort', function(e) {
@@ -100,27 +100,27 @@ YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
 		{
 		  return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
-		
+
 		Y.one('#sortButton').on('click', function(e) {
 			//prevent default behavior (stop link)
 			e.preventDefault();
 			rs.sort.sort('STATE',false);
 			Y.all('.secondary').set('disabled', false);
 		});
-		
+
 		Y.one('#resortButton').on('click', function(e) {
 			e.preventDefault();
 			rs.sort.resort();
 		});
-		
+
 		Y.one('#flipButton').on('click', function(e) {
 			e.preventDefault();
 			rs.sort.flip();
 		});
-		
+
 		Y.one('#shuffleButton').on('click', function(e) {
 			e.preventDefault;
-			
+
 			function arrayShuffle(theArray) {
 			 	var len = theArray.length;
 				var i = len;
@@ -131,17 +131,17 @@ YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
 				  	theArray[p] = t;
 			 	}
 			};
-			
+
 			arrayShuffle(recordset._items);
 			renderRows(recordset);
 		});
-		
+
 		Y.one('#reverseButton').on('click', function(e) {
 			e.preventDefault();
 			rs.sort.reverse();
 			renderRows(recordset);
 		});
-		
+
 		Y.one('#customButton').on('click',function(e) {
 			e.preventDefault();
 			 var customsort = function(recA, recB, field, desc) {
@@ -153,22 +153,22 @@ YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
 						return first_sorted;
 					}
 		    };
-		
+
 			recordset.sort.sort('',true,customsort);
 			renderRows(recordset);
 		});
 	}
-	
+
 	function renderRows(rs) {
 		var tbody = Y.one('#demo tbody'),
 		i=0,
 		len = rs.getLength(),
 		html = '';
-		
+
 		if (tbody.hasChildNodes()) {
 			tbody.get('children').remove();
 		}
-		
+
 		for (; i < len; i++) {
 			html += Y.Lang.sub(TEMPLATE_TR, rs.getRecord(i).getValue());
 		}

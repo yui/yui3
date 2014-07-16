@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <title>Event Tap Unit Tests</title>
+</head>
+<body class="yui3-skin-sam">
+    <div id="clickcontainer">
+        <p class="clickers"><a id="clicker1" href="#">click1</a></p>
+        <p class="clickers"><a id="clicker2" href="#tapped">click2</a></p>
+    </div>
+    <div id="log"></div>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/event-tap-unit-tests.js"></script>
+    <script>
+        YUI({
+            coverage: ['event-tap'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            lazyEventFacade: true
+        }).use('test-console', 'event-tap-unit-tests', 'json', function (Y) {
+
+            (new Y.Test.Console()).render( "#log" );
+
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>

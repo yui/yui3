@@ -6,7 +6,7 @@ YUI.add('loader-tests', function(Y) {
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
 
-    
+
     var resolvePath = function(p) {
         if (Y.UA.nodejs) {
             var path = require('path');
@@ -31,12 +31,14 @@ YUI.add('loader-tests', function(Y) {
                 test_async: Y.UA.nodejs,
                 test_css_stamp: Y.UA.nodejs,
                 test_group_filters: Y.UA.nodejs,
+                test_early_module_meta: Y.UA.nodejs || !Y.config.earlyModuleMeta,
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
                 test_cond_with_test_function: Y.UA.nodejs,
                 'test external lang 1': Y.UA.nodejs,
                 'testing fetchCSS false': !Y.config.win,
-                'testing duplicate CSS loading': !Y.config.win
+                'testing duplicate CSS loading': !Y.config.win,
+                'test: mojito loader calculate bleeding over': (!Y.UA.nodejs && Y.UA.ie < 8)
             }
         },
         'test: skin overrides double loading': function() {
@@ -179,7 +181,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length >= 3), 'JS Files returned less than expected');
+            Assert.isTrue((out.js.length >= 2), 'JS Files returned less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-min') === -1), 'Raw filter did not work');
             Assert.isTrue((out.js[0].indexOf('-debug') === -1), 'Raw filter did not work');
@@ -289,6 +291,49 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[out.js.length - 1].indexOf('==!!==') === -1), 'Group comboSep contains Main comboSep');
             Assert.isTrue((out.js[out.js.length - 1].indexOf('==;;==') > 0), 'Group comboSep did not work');
         },
+        'test comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        comboBase: 'http://secondhost.com/combo?',
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.js.length, 'Loader did not generate one URL per comboBase');
+            Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
+            Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
+        },
+        'test inherited comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated multiple URLs for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isArray(url.match(/3.5.0\/foogg\/foogg-min\.js/), 'Group match should be combo-loaded with the default URL');
+            Assert.isArray(url.match(/3.5.0\/cookie\/cookie-min\.js/), 'Default match should combo-load with the group result');
+        },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
                 maxURLLength: 1024,
@@ -392,6 +437,33 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
 
         },
+        test_early_module_meta: function() {
+            var test = this;
+
+            // mod1 loaded via `modules` config and mod2 loaded via `groups` config.
+            YUI().use('mod1', 'mod2', 'node', function(Y) {
+                test.resume(function() {
+                    var mod1,
+                        mod2;
+
+                    mod1 = Y.one('#early-module-meta');
+                    Assert.isNotNull(mod1, 'Failed to load module via module meta');
+                    Assert.isTrue(Y.MOD1, 'Failed to add module via module meta');
+
+                    mod2 = Y.one('#early-group-meta');
+                    Assert.isNotNull(mod2, 'Failed to load module via group meta');
+                    Assert.isTrue(Y.MOD2, 'Failed to add module via group meta');
+
+                    Assert.areEqual(
+                        YUI.Env[YUI.version].skin['default'],
+                        'earlyDefaultSkin',
+                        'Configured default skin property was not as expected'
+                    );
+                });
+            });
+
+            test.wait();
+        },
         test_module_attrs: function() {
             var test = this;
 
@@ -453,11 +525,8 @@ YUI.add('loader-tests', function(Y) {
 
             YUI({
                 filter: 'debug',
-                gallery: 'gallery-2010.08.04-19-46',
-                '2in3': '4',
-                'yui2': '2.9.0'
-            }).use('base', 'gallery-port', 'yui2-yahoo', function(Y) {
-                Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
+                gallery: 'gallery-2010.08.04-19-46'
+            }).use('base', 'gallery-port', function(Y) {
                 Assert.isFunction(Y.Base, 'Y.Base did not load');
                 Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
                 Y.LOADED = true;
@@ -465,13 +534,9 @@ YUI.add('loader-tests', function(Y) {
 
             YUI({
                 filter: 'debug',
-                gallery: 'gallery-2010.08.04-19-46',
-                '2in3': '4',
-                'yui2': '2.9.0'
-            }).use('gallery-treeview', 'yui2-dom', function(Y) {
+                gallery: 'gallery-2010.08.04-19-46'
+            }).use('gallery-treeview', function(Y) {
                 test.resume(function() {
-                    Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
-                    Assert.isObject(Y.YUI2.util.Dom, 'YUI2 DOM did not load.');
                     Assert.isFunction(Y.apm.TreeView, 'Treeview gallery module did not load.');
                     Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
                     Y.LOADED = true;
@@ -486,8 +551,8 @@ YUI.add('loader-tests', function(Y) {
                 counter = 0;
 
             YUI({
-                '2in3': '4',
-                'yui2': '2.9.0',
+                filter: 'debug',
+                gallery: 'gallery-2010.08.04-19-46',
                 onSuccess: function(e) {
                     Assert.areEqual('success', e.msg, 'Failed to load files');
                     Assert.isTrue(e.success, 'Success handler failed');
@@ -498,14 +563,13 @@ YUI.add('loader-tests', function(Y) {
                         counter++;
                     }
                 }
-            }).use('gallery-bitly', 'yui2-editor', function(Y) {
+            }).use('gallery-bitly', 'editor', function(Y) {
                 test.resume(function() {
-                    Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
                     Assert.isTrue((counter > 2), 'Did not load enough files..');
                     Assert.areSame(proContext, Y, 'onProgress context does not match');
                     Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
-                    Assert.isObject(Y.YUI2.util.Dom, 'YUI2 DOM did not load.');
-                    Assert.isFunction(Y.YUI2.widget.Editor, 'YUI2 Editor did not load.');
+                    Assert.isObject(Y.DOM, 'YUI3 DOM did not load.');
+                    Assert.isFunction(Y.EditorBase, 'YUI3 Editor did not load.');
                     Assert.isFunction(Y.bitly, 'gallery-bitly did not load.');
                     Y.LOADED = true;
                 });
@@ -547,6 +611,8 @@ YUI.add('loader-tests', function(Y) {
                 onTimeout: function(e) {
                     Assert.isFalse(e.success, 'Bogus module reported it was loaded');
                     Assert.areSame('timeout', e.msg, 'Failure event was not sent');
+                    Assert.isObject(e.transaction, 'Failed to pass Get transaction object');
+                    Assert.isArray(e.transaction.errors, 'Failed to pass Get transaction object with errors');
                 },
                 modules: {
                     'bogus-module': {
@@ -580,6 +646,7 @@ YUI.add('loader-tests', function(Y) {
                 }
             }).use('mod', function(Y) {
                 test.resume(function() {
+                    Assert.isUndefined(Y.Env._loader.getModule('mod').test, 'Patterns should not carry on a `test` function');
                     Assert.isTrue(Y.MOD, 'Pattern module failed to load');
                 });
             });
@@ -632,7 +699,7 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
         },
         'test: conditional trigger is an array': function() {
-            
+
             var loader = new Y.Loader({
                 modules: {
                     test_one: {
@@ -683,7 +750,39 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
             Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
             Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
-        
+
+        },
+        'test: conditional module with alias trigger': function() {
+
+            var loader = new Y.Loader({
+                modules: {
+                    test2_one: {
+                        fullpath: '2one.js'
+                    },
+                    test2_two: {
+                        fullpath: '2two.js'
+                    },
+                    test2_three: {
+                        fullpath: '2three.js'
+                    },
+                    cond2_array: {
+                        fullpath: '2cond_array.js',
+                        condition: {
+                            trigger: ['test2_alias']
+                        }
+                    }
+                },
+                aliases: {
+                    test2_alias: ['test2_one', 'test2_two']
+                },
+                require: ['test2_two']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
+            Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
+            Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
+
         },
         'test: conditional array in modules not required': function() {
             var loader = new Y.Loader({
@@ -710,7 +809,199 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.areEqual(1, out.js.length, 'Wrong number of files returned (3)');
             Assert.areSame('3three.js', out.js[0], 'Failed to load required module (3)');
-            
+
+        },
+        'test: conditional module set to load before trigger': function () {
+            var loader = new Y.Loader({
+                modules: {
+                    test4_one: {
+                        fullpath: '4one.js'
+                    },
+                    test4_two: {
+                        fullpath: '4two.js',
+                        condition: {
+                            trigger: 'test4_one',
+                            when: 'before'
+                        }
+                    }
+                },
+                require: ['test4_one']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of modules loaded');
+            Assert.areEqual('4two.js', out.js[0], 'Loaded modules in incorrect order');
+            Assert.areEqual('4one.js', out.js[1], 'Loaded modules in incorrect order');
+        },
+        'test: optional dependencies': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
+                        path: 'foo-min.js'
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: optional dependencies with tests': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
+                        path: 'foo-min.js',
+                        test: function (Y) {
+                            Assert.isInstanceOf(YUI, Y);
+                            return true;
+                        }
+                    },
+                    baz: {
+                        path: 'baz-min.js',
+                        test: function () {
+                            return false;
+                        }
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: optional dependencies ignore undeclared modules': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foobarbazasdflkj']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('bar', out.jsMods[0].name, 'Not included required module');
+        },
+        'test: optional dependencies and patterns': function () {
+            var test = this;
+            YUI.add('a-mod-with-opt-dep', function () {}, '', {
+                optionalRequires: ['foo']
+            });
+
+            YUI({
+                groups: {
+                    patternDepIntegration: {
+                        base: '../assets/',
+                        filter: 'raw',
+                        patterns: {
+                            "part1-": {
+                                configFn: function (me) {
+                                    //change from default format of part1-mod1/part1-mod1.js to just part1-mod1.js
+                                    me.path = me.path.replace(/part1-[^\/]+\//, "");
+                                }
+                            }
+                        }
+                    }
+                },
+                modules: {
+                    'a-mod-with-opt-dep': {
+                        path: 'a-mod-with-opt-dep-min.js',
+                        optionalRequires: ['part1-mod']
+                    }
+                }
+            }).use('a-mod-with-opt-dep', function (Y) {
+                setTimeout(function () {
+                    test.resume(function () {
+
+                    });
+                }, 0);
+            });
+
+            test.wait();
+        },
+        'test: already added module with failing test': function () {
+            YUI.add('mod121-foo', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod122-bar', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                requires: ['mod121-foo']
+            });
+
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    'mod121-foo': {
+                        test: function () {
+                            return false;
+                        }
+                    },
+                    'mod122-bar': {
+                        requires: ['mod121-foo']
+                    }
+                },
+                require: ['mod122-bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('mod121-foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('mod122-bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: correct attach order of optional dependencies': function () {
+            var test = this;
+
+            YUI.add('mod131', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod132', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                optionalRequires: ['mod131']
+            });
+
+            var $Y = YUI({
+                modules: {
+                    'mod131': {
+                    },
+                    'mod132': {
+                        optionalRequires: ['mod131']
+                    }
+                }
+            });
+
+            $Y.use('mod132', function (Y, result) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Assert.areSame('hello', Y.foo);
+                        Assert.areSame('hello world', Y.bar);
+                        Assert.isTrue(result.success);
+                    });
+                });
+            });
+
+            test.wait();
         },
         test_css_stamp: function() {
             var test = this,
@@ -723,8 +1014,7 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
 
-            test.wait();
-
+            test.wait(20000);
         },
         'testing duplicate CSS loading': function() {
             var test = this,
@@ -735,7 +1025,7 @@ YUI.add('loader-tests', function(Y) {
                     'console-filters': 0,
                     'test-console': 0
                 };
-            
+
             Y.Array.each(links, function(item) {
                 var href = item.href;
                 if (/\/sam\/console\.css/.test(href)) {
@@ -1082,11 +1372,11 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
+
             Assert.areSame('plug1/lang/subplug2.js', out.js[0], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-            
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
@@ -1185,22 +1475,14 @@ YUI.add('loader-tests', function(Y) {
                         Assert.isFalse(node2.async, '#1 Async flag on node2 was set incorrectly');
                         Assert.isTrue(node3.async, '#1 Async flag on node3 was set incorrectly');
                     } else {
-                        //The async attribute is still
-                        if (Y.UA.ie && Y.UA.ie > 8 || Y.UA.opera) {
-                            Assert.isTrue(node3.async, '#2 Async flag on node3 was set incorrectly');
-                            Assert.isUndefined(node1.async, '#2 Async flag on node1 was set incorrectly');
-                            Assert.isUndefined(node2.async, '#2 Async flag on node2 was set incorrectly');
-                        } else {
-                            Assert.isNull(node1.getAttribute('async'), '#3 Async flag on node1 was set incorrectly');
-                            Assert.isNull(node2.getAttribute('async'), '#3 Async flag on node2 was set incorrectly');
-                            Assert.isNotNull(node3.getAttribute('async'), '#3 Async flag on node3 was set incorrectly');
-
-                        }
+                        Assert.isTrue(node3.async, '#2 Async flag on node3 was set incorrectly');
+                        Assert.isUndefined(node1.async, '#2 Async flag on node1 was set incorrectly');
+                        Assert.isUndefined(node2.async, '#2 Async flag on node2 was set incorrectly');
                     }
                 });
             });
 
-            test.wait();
+            test.wait(20000);
 
         },
         'test: aliases config option': function() {
@@ -1282,32 +1564,13 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
             Assert.areSame('/combo?gallery-2010.08.04-19-46/build/gallery-noop-test/gallery-noop-test-min.js', out.js[0], 'Failed to return combo url for gallery module.');
         },
-        'test: 2in3 combo with custom server': function() {
-            //TODO: in 3.6.0 this should not be required..
-            var groups = YUI.Env[YUI.version].groups;
-
-            var loader = new Y.Loader({
-                ignoreRegistered: true,
-                groups: groups,
-                combine: true,
-                root: '',
-                comboBase: '/combo?',
-                '2in3': '4',
-                'yui2': '2.9.0',
-                require: [ 'yui2-foo' ] //Invalid module so we have no module data..
-            });
-
-            var out = loader.resolve(true);
-            Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
-            Assert.areSame('/combo?2in3.4/2.9.0/build/yui2-foo/yui2-foo-min.js', out.js[0], 'Failed to return combo url for 2in3 module.');
-        },
         'test: gallery skinnable': function() {
             var test = this,
                 links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+
             YUI({
                 gallery: 'gallery-2012.03.23-18-00'
             }).use('gallery-accordion-horiz-vert', function(Y) {
-
                 var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
                 test.resume(function() {
                     Assert.areEqual((links + 1), links2, 'Failed to load css for gallery module');
@@ -1325,7 +1588,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(loader.async, 'Failed to set default async config option');
         },
         'test: 2 loader instances with different skins': function() {
- 
+
             var groups = {
                 'foo': {
                     ext: false,
@@ -1436,8 +1699,8 @@ YUI.add('loader-tests', function(Y) {
             });
 
             loader1resolved = loader1.resolve(true);
-            loader2resolved = loader2.resolve(true); 
-        
+            loader2resolved = loader2.resolve(true);
+
             Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
             Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
         },
@@ -1569,14 +1832,14 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            
+
             Assert.areEqual(6, out.js.length, 'Failed to resolve all cascaded modules');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1').requires.sort(), ['cas1', 'cas2', 'cas3'], 'cas1');
             ArrayAssert.itemsAreEqual(getMod('cas2').requires.sort(), ['cas1', 'cas2', 'cas4'], 'cas2');
             ArrayAssert.itemsAreEqual(getMod('cas3').requires.sort(), ['cas1', 'cas2'], 'cas3');
             ArrayAssert.itemsAreEqual(getMod('cas4').requires.sort(), ['cas1', 'cas2'], 'cas4');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
             ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
 
@@ -1596,8 +1859,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['my-module']
             });
             var out = loader.resolve(true);
-            var mod = out.js.pop();
-            var lang = out.js.pop();
+            var mod = out.js[7];
+            var lang = out.js[6];
             Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
             Assert.areEqual('scripts/my-module/lang/my-module_fr.js', lang, 'Failed to resolve local lang file');
         },
@@ -1620,8 +1883,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['my-module-group']
             });
             var out = loader.resolve(true);
-            var mod = out.js.pop();
-            var lang = out.js.pop();
+            var mod = out.js[7];
+            var lang = out.js[6];
             Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
             Assert.areEqual('scripts/my-module-group/lang/my-module-group_fr.js', lang, 'Failed to resolve local lang file');
         },
@@ -1708,6 +1971,20 @@ YUI.add('loader-tests', function(Y) {
             ArrayAssert.itemsAreEqual(expected, other, 'Failed to resolve the proper modules');
 
         },
+
+        // Additional context after chatting with @davglass:
+        //
+        // This test detects regressions in a bug that was raised by Mojito
+        // where calculated dependencies were bleeding over between Y
+        // instances. We also test on IE versions that support native JSON
+        // parsing because:
+        // 1) They result in the same dependencies as node (in node, loader
+        // often thinks it's IE due to opt-out style feature tests against
+        // `window` and `document`).
+        // 1) Calculated dependencies should not bleed over in any browser (not
+        // just node).
+        // 1) IE 6/7 pull in JSON shims which result in a different dependency
+        // tree.
         'test: mojito loader calculate bleeding over': function() {
             var test = this,
                 modules, required, expected, sorted,
@@ -1729,20 +2006,25 @@ YUI.add('loader-tests', function(Y) {
                     return loader.sorted.slice();
                 };
 
-            Y.UA.nodejs = false;
-
             modules = {"mojito-analytics-addon-tests":{"requires":["mojito-analytics-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/analytics-tests.common.js"},"mojito-assets-addon-tests":{"requires":["mojito-assets-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/asset-tests.common.js"},"mojito-carrier-tests":{"requires":["mojito-carrier-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/carrier.common-test.js"},"mojito-composite-addon-tests":{"requires":["mojito-composite-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/composite-tests.common.js"},"mojito-config-addon-tests":{"requires":["mojito-config-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/config-tests.common.js"},"mojito-device-tests":{"requires":["mojito-device-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/device.common-test.js"},"mojito-i13n-tests":{"requires":["mojito-i13n-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/i13.common-tests.js"},"mojito-intl-addon-tests":{"requires":["mojito-intl-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/intl-tests.common.js"},"mojito-meta-addon-tests":{"requires":["mojito-meta-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/meta-tests.common.js"},"mojito-output-adapter-addon-tests":{"requires":["mojito-output-adapter-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/output-adapter-tests.common.js"},"mojito-params-addon-tests":{"requires":["mojito-params-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/params-tests.common.js"},"mojito-partial-addon-tests":{"requires":["mojito-partial-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/partial-tests.common.js"},"mojito-url-addon-tests":{"requires":["mojito-url-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/url-tests.common.js"},"mojito-action-context-tests":{"requires":["mojito-action-context"],"fullpath":"/static/tests/autoload/app/autoload/action-context-tests.common.js"},"mojito-controller-context-tests":{"requires":["mojito-controller-context"],"fullpath":"/static/tests/autoload/app/autoload/controller-context-tests.common.js"},"mojito-dispatcher-tests":{"requires":["mojito-dispatcher"],"fullpath":"/static/tests/autoload/app/autoload/dispatch-tests.common.js"},"mojito-loader-tests":{"requires":["mojito-loader"],"fullpath":"/static/tests/autoload/app/autoload/loader-tests.common.js"},"mojito-logger-tests":{"requires":["mojito-logger"],"fullpath":"/static/tests/autoload/app/autoload/logger-tests.common.js"},"mojito-mojit-proxy-tests":{"requires":["mojito-mojit-proxy"],"fullpath":"/static/tests/autoload/app/autoload/mojit-proxy-tests.client.js"},"mojito-client-tests":{"requires":["mojito-client"],"fullpath":"/static/tests/autoload/app/autoload/mojito-client-tests.client.js"},"mojito-resource-store-adapter-tests":{"requires":["mojito-resource-store-adapter"],"fullpath":"/static/tests/autoload/app/autoload/resource-store-adapter-tests.common.js"},"mojito-rest-lib-tests":{"requires":["mojito-rest-lib"],"fullpath":"/static/tests/autoload/app/autoload/rest-tests.common.js"},"mojito-route-maker-tests":{"requires":["mojito-route-maker"],"fullpath":"/static/tests/autoload/app/autoload/route-maker-tests.common.js"},"mojito-view-renderer-tests":{"requires":["mojito-view-renderer"],"fullpath":"/static/tests/autoload/app/autoload/view-renderer-tests.common.js"},"mojito-analytics-addon":{"requires":["mojito-util","mojito-meta-addon"],"fullpath":"/static/mojito/addons/ac/analytics.common.js"},"mojito-assets-addon":{"requires":["mojito-util"],"fullpath":"/static/mojito/addons/ac/assets.common.js"},"mojito-composite-addon":{"requires":["mojito-util","mojito-params-addon"],"fullpath":"/static/mojito/addons/ac/composite.common.js"},"mojito-config-addon":{"requires":["mojito"],"fullpath":"/static/mojito/addons/ac/config.common.js"},"mojito-cookie-addon":{"requires":["cookie","mojito"],"fullpath":"/static/mojito/addons/ac/cookie.client.js"},"mojito-i13n-addon":{"requires":["mojito"],"fullpath":"/static/mojito/addons/ac/i13n.common.js"},"mojito-intl-addon":{"requires":["intl","datatype-date","mojito","mojito-config-addon"],"fullpath":"/static/mojito/addons/ac/intl.common.js"},"mojito-meta-addon":{"requires":["mojito-util","mojito-output-adapter-addon"],"fullpath":"/static/mojito/addons/ac/meta.common.js"},"mojito-output-adapter-addon":{"requires":["json-stringify","event-custom-base","mojito-view-renderer","mojito-util"],"fullpath":"/static/mojito/addons/ac/output-adapter.common.js"},"mojito-params-addon":{"requires":["mojito"],"fullpath":"/static/mojito/addons/ac/params.common.js"},"mojito-partial-addon":{"requires":["mojito-util","mojito-params-addon","mojito-view-renderer"],"fullpath":"/static/mojito/addons/ac/partial.common.js"},"mojito-url-addon":{"requires":["querystring-stringify-simple","mojito-route-maker","mojito-util"],"fullpath":"/static/mojito/addons/ac/url.common.js"},"mojito-mu":{"requires":["mojito-util","io-base"],"fullpath":"/static/mojito/addons/view-engines/mu.client.js"},"mojito-action-context":{"requires":["mojito-config-addon","mojito-output-adapter-addon","mojito-url-addon","mojito-assets-addon","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon"],"fullpath":"/static/mojito/autoload/action-context.common.js"},"mojito-controller-context":{"requires":["mojito-action-context","mojito-util"],"fullpath":"/static/mojito/autoload/controller-context.common.js"},"mojito-dispatcher":{"requires":["mojito-controller-context","mojito-util","mojito-resource-store-adapter","intl"],"fullpath":"/static/mojito/autoload/dispatch.common.js"},"mojito-loader":{"requires":["get","mojito"],"fullpath":"/static/mojito/autoload/loader.common.js"},"mojito-logger":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/logger.common.js"},"mojito-mojit-proxy":{"requires":["mojito-util"],"fullpath":"/static/mojito/autoload/mojit-proxy.client.js"},"mojito-client":{"requires":["io-base","event-delegate","node-base","querystring-stringify-simple","mojito","mojito-logger","mojito-loader","mojito-dispatcher","mojito-route-maker","mojito-client-store","mojito-resource-store-adapter","mojito-mojit-proxy","mojito-tunnel-client","mojito-output-handler","mojito-util"],"fullpath":"/static/mojito/autoload/mojito-client.client.js"},"mojito-test":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/mojito-test.common.js"},"mojito":{"requires":["mojito-perf"],"fullpath":"/static/mojito/autoload/mojito.common.js"},"mojito-output-handler":{"requires":["mojito","json"],"fullpath":"/static/mojito/autoload/output-handler.client.js"},"mojito-perf":{"fullpath":"/static/mojito/autoload/perf.client.js"},"mojito-resource-store-adapter":{"requires":["mojito-util"],"fullpath":"/static/mojito/autoload/resource-store-adapter.common.js"},"mojito-rest-lib":{"requires":["io-base","mojito"],"fullpath":"/static/mojito/autoload/rest.common.js"},"mojito-route-maker":{"requires":["querystring-stringify-simple","querystring-parse","mojito-util"],"fullpath":"/static/mojito/autoload/route-maker.common.js"},"mojito-client-store":{"requires":["mojito-util","querystring-stringify-simple"],"fullpath":"/static/mojito/autoload/store.client.js"},"dali-bean":{"requires":["breg","oop","event-custom"],"fullpath":"/static/mojito/autoload/transport/beanregistry/dali_bean.client-optional.js"},"bean-performance-watcher":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/beanregistry/performance_monitor.client-optional.js"},"breg":{"requires":["oop","event-custom"],"fullpath":"/static/mojito/autoload/transport/beanregistry/registry.client-optional.js"},"io-facade":{"requires":["breg","dali-bean"],"fullpath":"/static/mojito/autoload/transport/io_facade.client-optional.js"},"simple-request-formatter":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/request_formatter.client-optional.js"},"request-handler":{"requires":["dali-bean","breg"],"fullpath":"/static/mojito/autoload/transport/request_handler.client-optional.js"},"requestor":{"requires":["json","breg"],"fullpath":"/static/mojito/autoload/transport/requestor.client-optional.js"},"response-formatter":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/response_formatter.client-optional.js"},"response-processor":{"requires":["dali-bean","breg"],"fullpath":"/static/mojito/autoload/transport/response_processor.client-optional.js"},"dali-transport-base":{"requires":["event-custom","breg","dali-bean"],"fullpath":"/static/mojito/autoload/transport/transport.client-optional.js"},"transport-utils":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/transport_utils.client-optional.js"},"mojito-tunnel-client":{"requires":["breg","querystring-stringify-simple","mojito","dali-transport-base","request-handler","simple-request-formatter","requestor","io-facade","response-formatter","response-processor"],"fullpath":"/static/mojito/autoload/tunnel.client-optional.js"},"mojito-util":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/util.common.js"},"mojito-view-renderer":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/view-renderer.common.js"},"LazyLoadBinderIndex":{"requires":["mojito-client","node","json"],"fullpath":"/static/LazyLoad/binders/index.js"},"LazyLoad":{"requires":["mojito","json"],"fullpath":"/static/LazyLoad/controller.common.js"}};
-            required = {"mojito":true,"LazyLoadBinderIndex":true,"LazyLoad":true,"mojito-mu":true,"mojito-dispatcher":true};
-            expected = ["mojito-perf","mojito","yui-base","oop","event-custom-base","intl-base","event-custom-complex","intl","querystring-stringify-simple","mojito-config-addon","json-stringify","mojito-view-renderer","mojito-util","mojito-output-adapter-addon","array-extras","querystring-parse","mojito-route-maker","mojito-url-addon","mojito-assets-addon","cookie","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon","mojito-action-context","mojito-controller-context","mojito-resource-store-adapter","mojito-dispatcher","io-base","features","dom-core","dom-base","selector-native","selector","node-core","node-base","event-base","event-delegate","mojito-logger","get","mojito-loader","mojito-client-store","mojito-mojit-proxy","breg","dali-bean","dali-transport-base","request-handler","simple-request-formatter","json-parse","requestor","io-facade","response-formatter","response-processor","mojito-tunnel-client","mojito-output-handler","mojito-client","node-event-delegate","pluginhost-base","pluginhost-config","node-pluginhost","dom-style","dom-style-ie","dom-screen","node-screen","node-style","LazyLoadBinderIndex","LazyLoad","mojito-mu"];
+            required = {"mojito":true,"LazyLoadBinderIndex":true,"LazyLoad":true,"mojito-mu":true,"mojito-dispatcher":true };
+            expected = ["mojito-perf","mojito","yui-base","oop","event-custom-base","intl-base","event-custom-complex","intl","querystring-stringify-simple","mojito-config-addon","json-stringify","mojito-view-renderer","mojito-util","mojito-output-adapter-addon","array-extras","querystring-parse","mojito-route-maker","mojito-url-addon","mojito-assets-addon","cookie","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon","mojito-action-context","mojito-controller-context","mojito-resource-store-adapter","mojito-dispatcher","io-base","features","dom-core","dom-base","selector-native","selector","node-core","node-base","event-base","event-delegate","mojito-logger","get","mojito-loader","mojito-client-store","mojito-mojit-proxy","breg","dali-bean","dali-transport-base","request-handler","simple-request-formatter","json-parse","requestor","io-facade","response-formatter","response-processor","mojito-tunnel-client","mojito-output-handler","mojito-client","node-event-delegate","pluginhost-base","pluginhost-config","node-pluginhost","color-base","dom-style","dom-style-ie","dom-screen","node-screen","node-style","LazyLoadBinderIndex","LazyLoad","mojito-mu"];
             sorted = sort(modules, 'LazyLoad', required);
-            ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate first set of modules');
+
+            // We only check that the arrays contain the same items. We do not
+            // care about the "sorted" order (flattened dependency tree) since
+            // that's not guaranteed to be the same across browsers.
+            ArrayAssert.containsItems(expected, sorted, 'Failed to calculate first set of modules');
 
             modules = {"ModelFlickr":{"requires":["yql","jsonp-url"],"fullpath":"/app/models/flickr.common.js"},"mojito-analytics-addon":{"requires":["mojito-util","mojito-meta-addon"],"fullpath":"/fw/addons/ac/analytics.common.js"},"mojito-assets-addon":{"requires":["mojito-util"],"fullpath":"/fw/addons/ac/assets.common.js"},"mojito-composite-addon":{"requires":["mojito-util","mojito-params-addon"],"fullpath":"/fw/addons/ac/composite.common.js"},"mojito-config-addon":{"requires":["mojito"],"fullpath":"/fw/addons/ac/config.common.js"},"mojito-cookie-addon":{"requires":["cookie","mojito"],"fullpath":"/fw/addons/ac/cookie.client.js"},"mojito-i13n-addon":{"requires":["mojito"],"fullpath":"/fw/addons/ac/i13n.common.js"},"mojito-intl-addon":{"requires":["intl","datatype-date","mojito","mojito-config-addon"],"fullpath":"/fw/addons/ac/intl.common.js"},"mojito-meta-addon":{"requires":["mojito-util","mojito-output-adapter-addon"],"fullpath":"/fw/addons/ac/meta.common.js"},"mojito-output-adapter-addon":{"requires":["json-stringify","event-custom-base","mojito-view-renderer","mojito-util"],"fullpath":"/fw/addons/ac/output-adapter.common.js"},"mojito-params-addon":{"requires":["mojito"],"fullpath":"/fw/addons/ac/params.common.js"},"mojito-partial-addon":{"requires":["mojito-util","mojito-params-addon","mojito-view-renderer"],"fullpath":"/fw/addons/ac/partial.common.js"},"mojito-url-addon":{"requires":["querystring-stringify-simple","mojito-route-maker","mojito-util"],"fullpath":"/fw/addons/ac/url.common.js"},"mojito-mu":{"requires":["mojito-util","io-base"],"fullpath":"/fw/addons/view-engines/mu.client.js"},"mojito-action-context":{"requires":["mojito-config-addon","mojito-output-adapter-addon","mojito-url-addon","mojito-assets-addon","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon"],"fullpath":"/fw/autoload/action-context.common.js"},"mojito-controller-context":{"requires":["mojito-action-context","mojito-util"],"fullpath":"/fw/autoload/controller-context.common.js"},"mojito-dispatcher":{"requires":["mojito-controller-context","mojito-util","mojito-resource-store-adapter","intl"],"fullpath":"/fw/autoload/dispatch.common.js"},"mojito-loader":{"requires":["get","mojito"],"fullpath":"/fw/autoload/loader.common.js"},"mojito-logger":{"requires":["mojito"],"fullpath":"/fw/autoload/logger.common.js"},"mojito-mojit-proxy":{"requires":["mojito-util"],"fullpath":"/fw/autoload/mojit-proxy.client.js"},"mojito-client":{"requires":["io-base","event-delegate","node-base","querystring-stringify-simple","mojito","mojito-logger","mojito-loader","mojito-dispatcher","mojito-route-maker","mojito-client-store","mojito-resource-store-adapter","mojito-mojit-proxy","mojito-tunnel-client","mojito-output-handler","mojito-util"],"fullpath":"/fw/autoload/mojito-client.client.js"},"mojito-test":{"requires":["mojito"],"fullpath":"/fw/autoload/mojito-test.common.js"},"mojito":{"requires":["mojito-perf"],"fullpath":"/fw/autoload/mojito.common.js"},"mojito-output-handler":{"requires":["mojito","json"],"fullpath":"/fw/autoload/output-handler.client.js"},"mojito-perf":{"fullpath":"/fw/autoload/perf.client.js"},"mojito-resource-store-adapter":{"requires":["mojito-util"],"fullpath":"/fw/autoload/resource-store-adapter.common.js"},"mojito-rest-lib":{"requires":["io-base","mojito"],"fullpath":"/fw/autoload/rest.common.js"},"mojito-route-maker":{"requires":["querystring-stringify-simple","querystring-parse","mojito-util"],"fullpath":"/fw/autoload/route-maker.common.js"},"mojito-client-store":{"requires":["mojito-util","querystring-stringify-simple"],"fullpath":"/fw/autoload/store.client.js"},"mojito-util":{"requires":["mojito"],"fullpath":"/fw/autoload/util.common.js"},"mojito-view-renderer":{"requires":["mojito"],"fullpath":"/fw/autoload/view-renderer.common.js"},"LazyLoadBinderIndex":{"requires":["mojito-client","node","json"],"fullpath":"/LazyLoad/binders/index.js"},"LazyLoad":{"requires":["mojito","json"],"fullpath":"/LazyLoad/controller.common.js"}};
             required = {"mojito":true,"LazyLoadBinderIndex":true,"LazyLoad":true,"mojito-mu":true,"mojito-dispatcher":true};
-            expected = ["mojito-perf","mojito","yui-base","oop","event-custom-base","intl-base","event-custom-complex","intl","querystring-stringify-simple","mojito-config-addon","json-stringify","mojito-view-renderer","mojito-util","mojito-output-adapter-addon","array-extras","querystring-parse","mojito-route-maker","mojito-url-addon","mojito-assets-addon","cookie","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon","mojito-action-context","mojito-controller-context","mojito-resource-store-adapter","mojito-dispatcher","io-base","features","dom-core","dom-base","selector-native","selector","node-core","node-base","event-base","event-delegate","mojito-logger","get","mojito-loader","mojito-client-store","mojito-mojit-proxy","json-parse","mojito-output-handler","mojito-client","node-event-delegate","pluginhost-base","pluginhost-config","node-pluginhost","dom-style","dom-style-ie","dom-screen","node-screen","node-style","LazyLoadBinderIndex","LazyLoad","mojito-mu","mojito-tunnel-client"];
+            expected = ["mojito-perf","mojito","yui-base","oop","event-custom-base","intl-base","event-custom-complex","intl","querystring-stringify-simple","mojito-config-addon","json-stringify","mojito-view-renderer","mojito-util","mojito-output-adapter-addon","array-extras","querystring-parse","mojito-route-maker","mojito-url-addon","mojito-assets-addon","cookie","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon","mojito-action-context","mojito-controller-context","mojito-resource-store-adapter","mojito-dispatcher","io-base","features","dom-core","dom-base","selector-native","selector","node-core","node-base","event-base","event-delegate","mojito-logger","get","mojito-loader","mojito-client-store","mojito-mojit-proxy","json-parse","mojito-output-handler","mojito-client","node-event-delegate","pluginhost-base","pluginhost-config","node-pluginhost","color-base","dom-style","dom-style-ie","dom-screen","node-screen","node-style","LazyLoadBinderIndex","LazyLoad","mojito-mu","mojito-tunnel-client"];
             sorted = sort(modules, 'LazyLoad', required);
-            ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate second set of modules');
 
+            // We only check that the arrays contain the same items. We do not
+            // care about the "sorted" order (flattened dependency tree) since
+            // that's not guaranteed to be the same across browsers.
+            ArrayAssert.containsItems(expected, sorted, 'Failed to calculate second set of modules');
         },
         'testing configFn for bug #2532498': function() {
             var loader = new Y.Loader({
@@ -2151,7 +2433,7 @@ YUI.add('loader-tests', function(Y) {
                     test: {
                         base: resolvePath('../assets/'),
                         patterns: {
-                            'test-': {              
+                            'test-': {
                                 configFn: function(me) {
                                     //Nothing here, used for pattern matching
                                 }
@@ -2167,9 +2449,35 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
             test.wait();
+        },
+        'test loader patching mechanism': function() {
+            var loader,
+                hello,
+                out;
+
+            loader = new Y.Loader({
+                doBeforeLoader: function () {
+                    var resolve = this.context.Loader.prototype.resolve;
+
+                    this.context.Loader.prototype.resolve = function () {
+                        hello = 'world';
+                        return resolve.apply(this, arguments);
+                    };
+                },
+                modules:{
+                    'foobar':{
+                        fullpath: 'foo/bar.js'
+                    }
+                },
+                require: ['foobar']
+            });
+
+            out = loader.resolve(true);
+            Assert.areEqual('foo/bar.js', out.js[0], 'Failed to monkey patch resolve()');
+            Assert.areEqual(hello, 'world', 'Failed to monkey patch resolve()');
         }
     });
-    
+
     var name = 'Loader';
     if (typeof TestName != 'undefined') {
         name = TestName;

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+
+    coverage: [
+        'tree',
+        'tree-labelable',
+        'tree-lazy',
+        'tree-node',
+        'tree-openable',
+        'tree-selectable',
+        'tree-sortable'
+    ],
+
+    modules: {
+        'tree-test': {
+            fullpath: 'assets/tree-test.js',
+            requires: ['tree-openable', 'tree-lazy', 'json', 'test']
+        },
+
+        'tree-labelable-test': {
+            fullpath: 'assets/tree-labelable-test.js',
+            requires: ['tree-labelable', 'test']
+        },
+
+        'tree-openable-test': {
+            fullpath: 'assets/tree-openable-test.js',
+            requires: ['tree-openable', 'test']
+        },
+
+        'tree-selectable-test': {
+            fullpath: 'assets/tree-selectable-test.js',
+            requires: ['tree-selectable', 'test']
+        },
+
+        'tree-sortable-test': {
+            fullpath: 'assets/tree-sortable-test.js',
+            requires: ['tree-sortable', 'test']
+        }
+    },
+
+    useBrowserConsole: false
+}).use('tree-test', 'tree-labelable-test', 'tree-openable-test', 'tree-selectable-test', 'tree-sortable-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+
+    Y.Test.Runner.add(Y.TreeTestSuite);
+    Y.Test.Runner.add(Y.TreeLabelableTestSuite);
+    Y.Test.Runner.add(Y.TreeOpenableTestSuite);
+    Y.Test.Runner.add(Y.TreeSelectableTestSuite);
+    Y.Test.Runner.add(Y.TreeSortableTestSuite);
+    Y.Test.Runner.setName('Tree');
+
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

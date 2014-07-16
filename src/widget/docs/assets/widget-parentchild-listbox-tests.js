@@ -1,5 +1,5 @@
 YUI.add('widget-parentchild-listbox-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('widget-parentchild-listbox example test suite'),
         TIMEOUT = 10000;
 
@@ -55,7 +55,7 @@ YUI.add('widget-parentchild-listbox-tests', function(Y) {
         'test select by click' : function() {
             var bb = Y.one("#mylistbox"),
                 allItems = Y.all("#mylistbox li"),
-                selection = Y.one("#selection"); 
+                selection = Y.one("#selection");
 
             allItems.item(1).simulate("mousedown"); // Item Two
 

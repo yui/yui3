@@ -36,6 +36,12 @@
                     "classnamemanager"
                 ]
             },
+            "datatable-foot": {
+                "requires": [
+                    "datatable-core",
+                    "view"
+                ]
+            },
             "datatable-body": {
                 "requires": [
                     "datatable-core",
@@ -56,14 +62,14 @@
             },
             "datatable-column-widths": {
                 "requires": [
-                    "datatable-base"
+                "datatable-base"
                 ]
             },
             "datatable-message": {
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en"],
+                "lang": ["en", "fr", "es", "hu", "it"],
                 "skinnable": true
             },
             "datatable-mutable": {
@@ -76,23 +82,59 @@
                     "datatable-base",
                     "plugin",
                     "datasource-local"
-                ]
+                    ]
             },
             "datatable-sort": {
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en"],
+                "lang": ["en", "fr", "es", "hu"],
                 "skinnable": true
             },
-			"datatable-scroll": {
-				"requires": [
-					"datatable-base",
-					"datatable-column-widths",
-					"dom-screen"
-				],
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base",
+                    "datatable-column-widths",
+                    "dom-screen"
+                ],
                 "skinnable": true
-			}
+            },
+            "datatable-formatters": {
+                "requires": [
+                    "datatable-body",
+                    "datatype-number-format",
+                    "datatype-date-format",
+                    "escape"
+                ]
+            },
+            "datatable-paginator": {
+                "requires": [
+                    "model",
+                    "view",
+                    "paginator-core",
+                    "datatable-foot",
+                    "datatable-paginator-templates"
+                ],
+                "lang": ["en", "fr"],
+                "skinnable": true
+            },
+            "datatable-paginator-templates": {
+                "requires": [
+                    "template"
+                ]
+            },
+            "datatable-keynav": {
+                "requires": [
+                    "datatable-base"
+                ]
+            },
+            "datatable-highlight": {
+                "requires": [
+                    "datatable-base",
+                    "event-hover"
+                ],
+                "skinnable": true
+            }
         }
     }
 }

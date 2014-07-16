@@ -1,10 +1,18 @@
 /**
+ * Provides functionality for creating stacked series.
+ *
+ * @module charts
+ * @submodule series-stacked
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * Utility class used for creating stacked series.
  *
  * @module charts
- * @submodule charts-base
  * @class StackingUtil
  * @constructor
+ * @submodule series-stacked
  */
 function StackingUtil(){}
 
@@ -26,7 +34,7 @@ StackingUtil.prototype = {
      */
     _stackCoordinates: function()
     {
-        if(this.get("direction") == "vertical")
+        if(this.get("direction") === "vertical")
         {
             this._stackXCoords();
         }
@@ -45,9 +53,7 @@ StackingUtil.prototype = {
     _stackXCoords: function()
     {
         var order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             i = 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
@@ -126,10 +132,9 @@ StackingUtil.prototype = {
     _stackYCoords: function()
     {
         var order = this.get("order"),
-            type = this.get("type"),
-            graph = this.get("graph"),
-            h = graph.get("height"),
-            seriesCollection = graph.seriesTypes[type],
+            graphic = this.get("graphic"),
+            h = graphic.get("height"),
+            seriesCollection = this.get("seriesTypeCollection"),
             i = 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),

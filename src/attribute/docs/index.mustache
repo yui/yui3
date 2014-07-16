@@ -1,6 +1,6 @@
 <div class="intro">
-    <p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. 
-       The interface adds `get and `set methods to your class to retrieve and store attribute values, as well as 
+    <p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface.
+       The interface adds `get and `set methods to your class to retrieve and store attribute values, as well as
        support for change events that can be used to listen for changes in attribute values.</p>
 
     <p>In addition, attributes can be configured with custom getters, setters and validators, allowing the developer to
@@ -11,8 +11,8 @@
 
 <h2 id="augment">Augmenting Your Class With Attribute</h2>
 
-<p>The Attribute class is designed to be augmented to an existing class (we'll refer to this class as the 'host' class) and adds attribute 
-management support to it. For example, assuming you have a class constructor, `MyClass, to which you'd like to add attribute support, 
+<p>The Attribute class is designed to be augmented to an existing class (we'll refer to this class as the 'host' class) and adds attribute
+management support to it. For example, assuming you have a class constructor, `MyClass, to which you'd like to add attribute support,
 you can simply augment your class with Attribute, as shown below:</p>
 
 ```
@@ -26,17 +26,17 @@ YUI().use("attribute", function(Y) {
 });
 ```
 <p>Instances of your class will now have Attribute methods available, which your class can use to configure attributes for itself, and which users of your
-class can use to get and set attribute values. See the <a href="{{apiDocs}}/Attribute.html">Attribute API documentation</a> for a complete list of 
+class can use to get and set attribute values. See the <a href="{{apiDocs}}/Attribute.html">Attribute API documentation</a> for a complete list of
 methods which Attribute will add to your class.</p>
 
-<p>Note that in general, rather than augmenting Attribute directly, most implementations will simply extend <a href="../base/index.html">Base</a>, which 
+<p>Note that in general, rather than augmenting Attribute directly, most implementations will simply extend <a href="../base/index.html">Base</a>, which
 augments Attribute, and handles attribute setup for you. Base also sets up all attributes to be lazily initialized (initialized on the first call to get or set) by default, improving performance.</p>
 
 <h2 id="adding">Adding Attributes</h2>
 
-<p>Once augmented with Attribute, your class can either use the `addAttrs` method to setup attributes en mass, or use the 
+<p>Once augmented with Attribute, your class can either use the `addAttrs` method to setup attributes en masse, or use the
 `addAttr` method, to add them individually. `addAttrs` is tailored towards use by host classes, since in addition
-to being able to initialize multiple attributes in one call, it also accepts an additional name/value hash, which can be used to allow the 
+to being able to initialize multiple attributes in one call, it also accepts an additional name/value hash, which can be used to allow the
 user to define the initial value of attributes when instantiating Attribute driven classes, as shown below:</p>
 
 ```
@@ -45,7 +45,7 @@ function MyClass(userValues) {
 
     // Use addAttrs, to setup default attributes for
     // your class, and mixing in user provided initial values.
-    
+
     var attributeConfig = {
         attrA : {
             // ... Configuration for attribute "attrA" ...
@@ -53,9 +53,9 @@ function MyClass(userValues) {
 
         attrB : {
             // ... Configuration for attribute "attrB" ...
-        } 
+        }
     };
-    
+
     this.addAttrs(attributeConfig, userValues);
 };
 
@@ -99,11 +99,11 @@ o.set("attrB", "Hello World!");
             <td>Function</td>
             <td>
 
-            <p>A function, the return value of which is the value for the attribute. This property can be used instead of the 
-            value property for static configurations, if you need to set default values which require access to instance state 
+            <p>A function, the return value of which is the value for the attribute. This property can be used instead of the
+            value property for static configurations, if you need to set default values which require access to instance state
             ("this.something").</p>
 
-            <p>If both the value and valueFn properties are defined, the value returned by valueFn has precedence over the value property, 
+            <p>If both the value and valueFn properties are defined, the value returned by valueFn has precedence over the value property,
             unless it returns undefined, in which case the value property is used.</p>
 
             <p>The valueFn is passed the name of the attribute, allowing users to share valueFn implementations across attributes if required.</p>
@@ -117,10 +117,10 @@ o.set("attrB", "Hello World!");
                 be used to manipulate or normalize the stored value before it is returned to the user.</p>
 
                 <p>The function will be passed the currently stored value of the attribute as the first argument and the name
-                of the attribute as the second argument. If configured, the value returned by this function will be 
+                of the attribute as the second argument. If configured, the value returned by this function will be
                 the value returned to the user.</p>
-                
-                <p>Attribute also supports the ability to return sub-attribute values (`get('a.b.c')`). The getter implications for 
+
+                <p>Attribute also supports the ability to return sub-attribute values (`get('a.b.c')`). The getter implications for
                 this are discussed in the <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a> section.</p>
             </td>
         </tr>
@@ -131,36 +131,49 @@ o.set("attrB", "Hello World!");
                 <p>Custom 'set' handler, which is invoked when the user calls Attribute's `set` method. It can
                 be used to manipulate the value which is stored for the attribute.</p>
 
-                <p>The function will be passed the value which the user passed to the set method as the first 
-                argument and the name of the attribute as the second argument. If configured, the value returned by this 
-                function will be the value stored as the attribute value.</p> 
+                <p>The function will be passed the value which the user passed to the set method as the first
+                argument, the name of the attribute as the second argument and the third argument passed to the `set`
+                method as the third argument. If configured, the value returned by this
+                function will be the value stored as the attribute value.</p>
 
-                <p>The getter and setter can be used to normalize values on input/output for the user while storing the 
+                <p>The setter may return the constant `Y.Attribute.INVALID_VALUE` to reject a value.</p>
+
+                <p>The getter and setter can be used to normalize values on input/output for the user while storing the
                 value in a format most effective for internal operation.</p>
-                
-                <p>Attribute also supports the ability to set sub-attribute values (`set('a.b.c', 10)`). The setter 
-                implications for this are discussed in the  <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a>  
+
+                <p>Attribute also supports the ability to set sub-attribute values (`set('a.b.c', 10)`). The setter
+                implications for this are discussed in the  <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a>
                 section.</p>
+
+                <p>The third argument is optional and it should have been an object.  It may be used to give the reason or origin of
+                the change.  This allows the setter to manipulate the value in special ways when it comes from certain
+                sources or to decide whether to accept it or not.</p>
+
             </td>
         </tr>
         <tr>
             <td>`validator`</td>
             <td>Function</td>
             <td>
-                <p>Validation function, which if defined, is called before the `setter`. 
-                The validation function is passed the value which the user is trying to set as the first argument and the name of the 
-                attribute as the second argument.</p>
+                <p>Validation function, which if defined, is called before the `setter`.
+                The validation function is passed the value which the user is trying to set as the first argument, the name of the
+                attribute as the second argument and the third argument passed to the `set` method
+                as the third argument.</p>
 
-                <p>If the function returns `false`, the attribute's stored value is not updated (and the `setter`, if defined, will not be invoked). 
+                <p>If the function returns `false`, the attribute's stored value is not updated (and the `setter`, if defined, will not be invoked).
                 If it returns `true`, the `setter` is invoked if defined, and the attribute's stored value is updated.</p>
 
                 <p>If validation is a potentially expensive task and contains code which would be repeated in a `setter` (for example, converting a string to a Node reference),
-                you can combine validation into the `setter` function, by returning `Attribute.INVALID_VALUE` from a `setter` if it 
+                you can combine validation into the `setter` function, by returning `Attribute.INVALID_VALUE` from a `setter` if it
                 encounters an invalid value.</p>
-                
-                <p>Attribute also supports the ability to set sub-attribute values (set('a.b.c', 10)). The 'validator' 
-                implications for this are discussed in the  <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a>  
+
+                <p>Attribute also supports the ability to set sub-attribute values (set('a.b.c', 10)). The 'validator'
+                implications for this are discussed in the  <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a>
                 section.</p>
+
+                <p>The third argument is optional and it should have been an object.  It may be used to give the reason or origin of
+                the change.  This allows the validator to accept a value when it comes from certain sources
+                while rejecting it in general.</p>
             </td>
         </tr>
         <tr>
@@ -197,15 +210,15 @@ o.set("attrB", "Hello World!");
             <td>boolean</td>
             <td>
                 <p>
-                Whether or not to delay initialization of the attribute until the first call to get/set it. 
-                This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through 
+                Whether or not to delay initialization of the attribute until the first call to get/set it.
+                This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through
                 the <a href="{{apiDocs}}/Attribute.html#method_addAttrs">`addAttrs`</a> method.
                 </p>
                 <p>When extending Base, all attributes are added lazily, so this flag can be used to over-ride
                 lazyAdd behavior for specific attributes.</p>
                 <p><strong>The only reason you should need to disable `lazyAdd` is if your setter is doing more
                 than normalizing the attribute value</strong>. For example if your setter is storing some other state, in `this._someProp`, which is being used
-                by other parts of your component. In this case, since you're not getting or setting the attribute to access `this._someProp`, 
+                by other parts of your component. In this case, since you're not getting or setting the attribute to access `this._someProp`,
                 it won't get set up lazily, until someone actually calls `get` or `set` for the related attribute.</p>
             </td>
         </tr>
@@ -215,13 +228,13 @@ o.set("attrB", "Hello World!");
             <td>
                 <p>
                 This configuration value is not actually supported by Attribute natively, but is available when
-                working with Base, and defining attribute configurations using Base's static <a href="{{apiDocs}}/Base.html#property_ATTRS">ATTRS</a> property. 
+                working with Base, and defining attribute configurations using Base's static <a href="{{apiDocs}}/Base.html#property_ATTRS">ATTRS</a> property.
                 </p>
                 <p>
                 This property controls how the statically defined default `value` field in Base's `ATTRS` attribute configuration is handled,
                 when setting it up as the value for an instance. By default (if this property is not defined) object literals and arrays are deep cloned, to protect the default value from
-                being modified. Setting cloneDefaultValue to `false` will disable cloning. This is useful in cases where you intend to use arrays or 
-                object literals by reference (e.g. they point to utilities). A shallow clone will be used if cloneDefaultValue is set to `"shallow"` and a 
+                being modified. Setting cloneDefaultValue to `false` will disable cloning. This is useful in cases where you intend to use arrays or
+                object literals by reference (e.g. they point to utilities). A shallow clone will be used if cloneDefaultValue is set to `"shallow"` and a
                 deep clone will be used for `"deep"` or `true`.
                 </p>
             </td>
@@ -231,7 +244,7 @@ o.set("attrB", "Hello World!");
 
 <h4 id="howtoconfig">Configuring Attributes</h4>
 
-<p>The above attribute properties are set using an object with property name/value pairs, which is passed to either `addAttrs` or `addAttr` as the 
+<p>The above attribute properties are set using an object with property name/value pairs, which is passed to either `addAttrs` or `addAttr` as the
 configuration argument. For example, expanding on the code snippet above:</p>
 
 ```
@@ -243,7 +256,7 @@ var attributeConfig = {
         value: 5,
 
         setter: function(val) {
-            return Math.min(val, 10); 
+            return Math.min(val, 10);
         },
 
         validator: function(val) {
@@ -269,7 +282,7 @@ this.addAttr("attrA", {
     value: 5,
 
     setter: function(val) {
-        return Math.min(val, 10); 
+        return Math.min(val, 10);
     },
 
     validator: function(val) {
@@ -278,12 +291,60 @@ this.addAttr("attrA", {
 });
 
 ```
+<h2>Setting and Getting Attributes</h2>
+
+<p>Attribute adds `set` and `get` methods to the object it augments.</p>
+```
+myObject.set("attrA", 6);
+
+Y.log(myObject.get("attrA")); // should log 6
+```
+<p>Several attributes can be set or read at once via the `setAttrs` and `getAttrs`
+methods.</p>
+```
+myObject.setAttrs({
+    age: 6,
+    name: "John"
+});
+
+Y.log(Y.Lang.sub("{name} is {age} years old", myObject.getAttrs()));
+```
+<p>Calling `getAttrs` without any arguments will return all the configured attributes.
+Passing an array of attribute names will return only those. Passing `true`
+will return only those modified from its initially configured value.</p>
+
+<p>A protected `_set` method allows changing the value of attributes configured as `readOnly`
+or past the first write in those configured as `writeOnce`, to allow the
+object to still enforce those rules in the public API while allowing the
+object to change the values internally.</p>
+
+<p>An extra argument can be provided to `set` and `setAttrs` indicating the
+reason or origin of the change.  This argument must be an object and it will
+be passed to the `setter` and/or `validator` methods, if any, and it will
+be merged into the event facade of the attribute change events.</p>
+
+```
+myObject.set("attrA", inputNode.get("value"), {src:"UI"});
+
+myObject.setAttrs({
+    attrA: null,
+    attrB: ""
+},{src:"internal"});
+```
+
+<p>This may allow an object to set an attribute to a value otherwise forbidden
+in the public API, to have the `setter` manipulate it in a special way or
+an attribute change event to respond in a particular manner. For example, as shown
+in the sample code above,
+a `setter` may accept and parse a numeric string when the the source of the
+change is the UI while it would reject it otherwise.</p>
+
 <h2 id="events">Attribute Change Events</h2>
 
-<p>The availability of attribute change events are one of the key benefits of using 
-attributes to store state for your objects, instead of regular object properties. 
-Attribute change events are fired whenever `set` is invoked for an 
-attribute, allowing you to execute code in response to a change in the attribute's 
+<p>The availability of attribute change events are one of the key benefits of using
+attributes to store state for your objects, instead of regular object properties.
+Attribute change events are fired whenever `set` is invoked for an
+attribute, allowing you to execute code in response to a change in the attribute's
 value.</p>
 
 <h4>Listening for Change Events</h4>
@@ -291,7 +352,7 @@ value.</p>
 <p>Attribute change events are Custom Events, having the type: "[attributeName]Change", where
 [attributeName] is the name of the attribute which you're monitoring for changes.</p>
 
-<p>For example, if you were interested in listening for changes to an attribute named 
+<p>For example, if you were interested in listening for changes to an attribute named
 "enabled", you would subscribe to events of type "enabledChange".</p>
 
 ```
@@ -301,25 +362,44 @@ o.on("enabledChange", function(event) {
 
 ```
 
-<p><em>NOTE:</em> Context and additional arguments for the listener function can either be 
-defined using YUI's `bind` method, or by passing in the context and 
+<p><em>NOTE:</em> Context and additional arguments for the listener function can either be
+defined using YUI's `bind` method, or by passing in the context and
 additional arguments to the `on` method.</p>
 
-<p>Attribute change event listeners can be registered using either the `on` 
+<p>Attribute change event listeners can be registered using either the `on`
 (as shown above) or `after` Attribute methods.</p>
- 
+
+<p>Attribute change event listeners may respond differently according to the
+source or reason of the change as specified in the third argument to `set`.
+This argument will be merged into the event facade and can be checked by the
+event listener.</p>
+```
+myObject.after("nameChange", function (event) {
+    if (event.src !== "UI") {
+        inputNode.set("value", event.newVal);
+    }
+});
+```
+<p>The code above listens to changes in the `name` attribute and, if it comes
+from anywhere but the UI, it sets the input box to the new value.</p>
+
 <h4>On vs. After</h4>
 
 <h5>On</h5>
 
-<p>Listeners registered using the `on` method, are notified <strong>before</strong> the stored state of the attribute has been updated. 
+<p>Listeners registered using the `on` method, are notified <strong>before</strong> the stored state of the attribute has been updated.
 Functions registered as "on" listeners receive an `Event` object as the first argument (actually an
-instance of <a href="{{apiDocs}}/EventFacade.html">`EventFacade`</a>) which contains information 
+instance of <a href="{{apiDocs}}/EventFacade.html">`EventFacade`</a>) which contains information
 about the attribute being modified.</p>
 
 <p>Since these listeners are invoked before any state change has occurred, they have the ability to
-prevent the change in state from occurring, by invoking `event.preventDefault()` on 
+prevent the change in state from occurring, by invoking `event.preventDefault()` on
 the event object passed to them, or to modify the value being set, by modifying the `event.newVal` property.</p>
+
+<p>The value passed to the "on" event listener has not yet been checked via the `validator` or
+normalized by the `setter` method.  Since the change may later be rejected or prevented
+by further event listeners attached later, an "on" event listener should not
+produce any secondary effects.</p>
 
 ```
 o.on("enabledChange", function(event) {
@@ -338,12 +418,15 @@ o.on("enabledChange", function(event) {
 
 <h5>After</h5>
 
-<p>Listeners registered using the `after` method, are notified <strong>after</strong> 
-the stored state of the attribute has been updated. As with "on" listeners, the subscribed function 
+<p>Listeners registered using the `after` method, are notified <strong>after</strong>
+the stored state of the attribute has been updated. As with "on" listeners, the subscribed function
 receives an `Event` object as the first parameter.</p>
 
-<p>Based on the definition above, "after" listeners are not invoked if state change is prevented, 
-for example, due to one of the "on" listeners calling `preventDefault` on the event object.</p>
+<p>Based on the definition above, "after" listeners are not invoked if state change is prevented,
+for example, due to one of the "on" listeners calling `preventDefault` on the event object.
+They are not invoked either if the `validator` or `setter` methods
+rejected the value and they will receive the value already modified by the `setter` thus
+it is safe to produce any secondary effects based on the changed value.</p>
 
 ```
 o.after("enabledChange", function(event) {
@@ -372,7 +455,7 @@ as well methods used to manage event propagation. These are described below:</p>
     <dt>attrName</dt>
     <dd>The name of the attribute which is being set</dd>
     <dt>subAttrName</dt>
-    <dd><p>Attribute also allows you to set individual properties of attributes having values which are objects through the 
+    <dd><p>Attribute also allows you to set individual properties of attributes having values which are objects through the
     `set` method (e.g. `o.set("X.a.b", 5)`, discussed below). This event property will contain the complete dot notation path for the object property which was changed.</p>
     <p>For example, during `o.set("X.a.b", 5);`, `event.subAttrName` will be `"X.a.b"`, the path of the property which was modified, and `event.attrName` will be `"X"`, the attribute name.</p></dd>
     <dt>preventDefault()<dt>
@@ -380,10 +463,12 @@ as well methods used to manage event propagation. These are described below:</p>
     <dt>stopImmediatePropagation()</dt>
     <dd>This method can be called in "on" or "after" listener functions, and will prevent the rest of the listener stack from
     being notified, but will not prevent the attribute's value from being updated (viz. will not prevent the default behavior).</dd>
+    <dt>-- Custom properties --</dt>
+    <dd>Any other properties in the object passed as the last argument in a `set` or `setAttrs` call.</dd>
 </dl>
 
 <h2 id="attrsetflow">Attribute Set Flow Diagram</h2>
- 
+
 <p>The diagram below shows the order in which attribute setters, validators and change event subscribers are invoked during the set operation:</p>
 
 <p><a href="setflow.html" title="Click too see full-size image"><img src="{{componentAssets}}/img/attribute-set-flow.png" alt="Flow diagram for the attribute 'set' operation" height="466" width="538"></a></p>
@@ -427,9 +512,9 @@ o.set("strings.messages.intro", "Welcome");
 
 ```
 
-<p>Setting sub attribute values, will fire an attribute change event for the 
+<p>Setting sub attribute values, will fire an attribute change event for the
 main attribute (`"stringsChange"` in the above example), however the event object passed
-to the listeners with have a "subAttrName" property set to reflect the full path to the 
+to the listeners with have a "subAttrName" property set to reflect the full path to the
 attribute set (e.g. `event.subAttrName` will be `"strings.ui.accept_label"` for the set call on line 2 in the code snippet above).</p>
 
 <p>You can also retrieve sub attribute values using the same dot notation syntax</p>
@@ -440,13 +525,13 @@ var lbl = o.get("strings.ui.accept_label");
 
 ```
 
-<h3 id="subattrs-gsv">Getters, Setters, Validators and Sub Attributes</h3> 
+<h3 id="subattrs-gsv">Getters, Setters, Validators and Sub Attributes</h3>
 
-<p>Getter, setter and validator attribute configuration functions are only defined for the top level 
-attribute (`"strings"` in this case) and will be invoked when getting/setting sub attribute values. 
-What this means is that getters and setters should always return the massaged value for the top level 
-attribute (e.g. `"strings"`), and not the sub attribute value being set (e.g. `"strings.ui.accept_label"`). 
-The sub attribute being set is passed in as the second argument to the getter/setter/validator, so that it 
+<p>Getter, setter and validator attribute configuration functions are only defined for the top level
+attribute (`"strings"` in this case) and will be invoked when getting/setting sub attribute values.
+What this means is that getters and setters should always return the massaged value for the top level
+attribute (e.g. `"strings"`), and not the sub attribute value being set (e.g. `"strings.ui.accept_label"`).
+The sub attribute being set is passed in as the second argument to the getter/setter/validator, so that it
 can fork for sub attribute handling if required.</p>
 
 <p>For example:</p>
@@ -462,7 +547,7 @@ this.addAttr("strings", {
         var path = fullName.split(".");
 
         if (path.length > 1) {
-            
+
             // Someone's asking for a sub-attribute value
 
             // Maybe we want to do some special normalization just for this use case.

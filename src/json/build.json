@@ -1,8 +1,5 @@
 {
     "name": "json",
-    "postexec": [
-        "./scripts/eval_fix.js"
-    ],
     "builds": {
         "json-stringify": {
             "jsfiles": [
@@ -12,6 +9,16 @@
         "json-parse": {
             "jsfiles": [
                 "parse.js"
+            ]
+        },
+        "json-stringify-shim": {
+            "jsfiles": [
+                "stringify-shim.js"
+            ]
+        },
+        "json-parse-shim": {
+            "jsfiles": [
+                "parse-shim.js"
             ]
         }
     }

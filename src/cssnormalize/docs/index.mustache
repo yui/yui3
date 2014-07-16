@@ -1,0 +1,54 @@
+<div class="intro" class="component">
+	<p>"Normalize.css is a small CSS file that provides better cross-browser consistency in the default styling of HTML elements. It’s a modern, HTML5-ready, alternative to the traditional CSS reset."</p>
+
+	<p><b>This component is from <a href="http://purecss.io/base/">Pure Base</a></b>, which is a direct port of Normalize v1.x from the <a href="http://necolas.github.com/normalize.css/">Normalize.css</a> open source project.</p>
+
+	<p>This guide explains the use-cases behind Normalize, how it varies from CSSReset and CSSBase, and how to use it as a foundation for your new projects. For more information, check out <a href="http://nicolasgallagher.com/about-normalize-css/">this great guide</a> by Nicolas Gallagher.</p>
+
+</div><!-- /promo -->
+
+<h2 id="start">Getting Started</h2>
+
+<h3 id="dependencies">Include Dependencies</h3>
+
+<p>
+	To use Normalize.css, include the following source file in your web page:
+</p>
+
+```
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssnormalize/cssnormalize-min.css">
+```
+
+
+<h3 id="context">Global vs. Contextual</h3>
+
+<p>
+	CSS Files such as Normalize.css contain styles that apply globally to all native HTML elements. Sometimes, pulling them into your existing projects can break layout. For these cases, consider using the contextual <code>cssnormalize-context.css</code>. This version selects HTML elements only when they descend from the <code>.yui3-normalized</code> classname.
+</p>
+
+<p>
+	Here is how to include the contextual version of CSS Base:
+</p>
+
+```
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssnormalize-context/cssnormalize-context-min.css">
+```
+
+<h3 id="using-contextual">Using Contextual Normalize.css</h3>
+
+	<p>The following code snippet show how you might apply Normalize.css to one of two columns:</p>
+
+```
+<div>
+	<div id="left-column" class="yui3-normalized"><h1>Lorem Ipsum</h1></div>
+	<div id="right-column"><h1>Lorem Ipsum</h1></div>
+</div>
+```
+
+
+<h2 id="reset">Normalize vs. Reset and Base</h2>
+
+	<p>Normalize.css is an alternative to the popular CSSReset + CSSBase combination. Nicolas Gallagher has a <a href="http://nicolasgallagher.com/about-normalize-css/">great post</a> on how Normalize differs from a standard Reset. Traditional Resets aim to remove all HTML element styles and provide a "blank slate". On the other hand, Normalize.css preserves useful defaults and tries to normalize styles across browsers, instead of removing styles. If a browser does not adhere to the standard styles, Normalize aims to modify them to make styles consistent.</p>
+
+	<p>If you currently use <a href="http://yuilibrary.com/yui/docs/cssbase/">CSSBase</a>, consider shifting to using Normalize.css instead. Normalize.css contains a superset of the styles that are in CSSBase. In addition to styles for standard typographic elements, Normalize includes sane defaults for forms, lists and buttons. If you were relying on a contextual CSSBase, you can pull down the contextual Normalize.css on your page instead.</p>
+

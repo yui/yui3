@@ -2,7 +2,6 @@
     "calendar-base": {
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -13,12 +12,17 @@
             "es",
             "es-AR",
             "fr",
+            "hu",
             "it",
             "ja",
             "nb-NO",
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "skinnable": true

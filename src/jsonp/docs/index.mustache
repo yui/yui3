@@ -285,9 +285,12 @@ Y.jsonp("http://example.com/service.php", {
 // username that must be supplied in send("bill");
 // e.g. http://example.com/bill/json?fn=YUI.Env.JSONP._12345
 function prepareJSONPUrl(url, proxy, username) {
+    // URI-escape the content before it is inserted into the URL.
+    var name = encodeURIComponent(username) || "user";
+
     return Y.Lang.sub(url, {
         callback: proxy,
-        name: username || "user"
+        name: name
     });
 }
 
@@ -304,6 +307,13 @@ service.send("apipkin");
 service.send("tivac");
 service.send("razass");
 ```
+
+<p>
+    Anytime unsafe content is injected into the URL context, it should be
+    URI-encoded. This defends against <a
+    href="http://blog.mindedsecurity.com/2009/05/http-parameter-pollution-new-web-attack.html">HTTP
+    Parameter Pollution</a>.
+</p>
 
 <h2 id="issues">Known Issues</h2>
 
@@ -324,7 +334,7 @@ service.send("razass");
     </li>
     <li>
         In WinJS (Windows 8 application mode), JSONP is not supported
-        due to the security measures enforced in that environment. Making 
+        due to the security measures enforced in that environment. Making
         a JSONP request requires a remote script tag which is prohibited.
         An alternative is to use the YQL module to query a YQL table that
         can return the data that you need. The YQL module is supported in

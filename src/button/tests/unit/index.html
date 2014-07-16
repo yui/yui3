@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <title>Button Test Page</title>
     </head>
-    
+
     <body class='yui3-skin-sam'>
 
         <div id="log"></div>
@@ -14,7 +14,7 @@
         <script src="../../../../build/yui/yui.js"></script>
         <script>
             YUI({
-                coverage: ['button'],
+                coverage: ['button', 'button-core', 'button-plugin', 'button-group'],
                 filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
                 modules: {
                     'button-core-test': {
@@ -41,7 +41,7 @@
                 Y.Test.Runner.run();
             });
         </script>
-        
+
     </body>
-    
+
 </html>

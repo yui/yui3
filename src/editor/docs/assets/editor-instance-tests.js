@@ -1,5 +1,5 @@
 YUI.add('editor-instance-tests', function (Y) {
-    
+
     var suite = new Y.Test.Suite('editor instance example test suite'),
         Assert = Y.Assert;
 
@@ -29,7 +29,7 @@ YUI.add('editor-instance-tests', function (Y) {
                 cTagsButton  = Y.one('#buttons #ctags');
 
             bTagsButton.simulate('click');
-            
+
             Assert.areEqual(Y.one('#out').getHTML(),
                 'There are (2) B tags in the iframe.',
                 'Bold tags output is unexpected');

@@ -1,27 +1,21 @@
 /**
+ * Provides functionality for creating a marker series.
+ *
+ * @module charts
+ * @submodule series-marker
+ */
+/**
  * The MarkerSeries class renders quantitative data by plotting relevant data points
  * on a graph.
  *
- * @module charts
- * @submodule charts-base
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-marker
  */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
-    /**
-     * @protected
-     *
-     * Draws the series.
-     *
-     * @method drawSeries
-     */
-    drawSeries: function()
-    {
-        this.drawPlots();
-    },
-
     /**
      * @protected
      *
@@ -39,21 +33,6 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         }
         val = this._parseMarkerStyles(val);
         return Y.MarkerSeries.superclass._mergeStyles.apply(this, [val, this._getDefaultStyles()]);
-    },
-
-    /**
-     * @protected
-     *
-     * Gets the default value for the `styles` attribute. Overrides
-     * base implementation.
-     *
-     * @method _getDefaultStyles
-     * @return Object
-     */
-    _getDefaultStyles: function()
-    {
-        var styles = this._mergeStyles({marker:this._getPlotDefaults()}, Y.MarkerSeries.superclass._getDefaultStyles());
-        return styles;
     }
 },{
     ATTRS : {

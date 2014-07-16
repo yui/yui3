@@ -16,6 +16,7 @@ var ALT      = "+alt",
     eventDef = {
         KEY_MAP: {
             enter    : 13,
+            space    : 32,
             esc      : 27,
             backspace: 8,
             tab      : 9,
@@ -134,7 +135,7 @@ eventDef.detachDelegate = eventDef.detach;
  * <p>Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
  * specification is a string that is defined as:</p>
- * 
+ *
  * <dl>
  *   <dt>spec</dt>
  *   <dd><code>[{type}:]{code}[,{code}]*</code></dd>
@@ -145,7 +146,7 @@ eventDef.detachDelegate = eventDef.detach;
  *   <dt>modifier</dt>
  *   <dd><code>"shift", "ctrl", "alt", or "meta"</code></dd>
  *   <dt>keyName</dt>
- *   <dd><code>"enter", "backspace", "esc", "tab", "pageup", or "pagedown"</code></dd>
+ *   <dd><code>"enter", "space", "backspace", "esc", "tab", "pageup", or "pagedown"</code></dd>
  * </dl>
  *
  * <p>Examples:</p>
@@ -154,7 +155,7 @@ eventDef.detachDelegate = eventDef.detach;
  *   <li><code>Y.delegate("key", preventSubmit, "#forms", "enter", "input[type=text]");</code></li>
  *   <li><code>Y.one("doc").on("key", viNav, "j,k,l,;");</code></li>
  * </ul>
- *   
+ *
  * @event key
  * @for YUI
  * @param type {string} 'key'

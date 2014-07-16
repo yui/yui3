@@ -1,22 +1,22 @@
 /**
-* A Widget to create groups of buttons
-*
-* @module button-group
-* @since 3.5.0
-*/
+ * A Widget to create groups of buttons
+ *
+ * @module button-group
+ * @since 3.5.0
+ */
 
 var CONTENT_BOX = "contentBox",
     CLICK_EVENT = "click",
     CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
 
 /**
-* Creates a ButtonGroup
-*
-* @class ButtonGroup
-* @extends Widget
-* @param config {Object} Configuration object
-* @constructor
-*/
+ * Creates a ButtonGroup
+ *
+ * @class ButtonGroup
+ * @extends Widget
+ * @param config {Object} Configuration object
+ * @constructor
+ */
 function ButtonGroup() {
     ButtonGroup.superclass.constructor.apply(this, arguments);
 }
@@ -43,13 +43,21 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             cb = group.get(CONTENT_BOX);
 
         cb.delegate(CLICK_EVENT, group._handleClick, Y.ButtonGroup.BUTTON_SELECTOR, group);
+        group.after('disabledChange', group._afterDisabledChange);
+    },
+
+    _afterDisabledChange: function (e) {
+        this.getButtons().each(e.newVal
+            ? Y.ButtonCore.prototype.disable
+            : Y.ButtonCore.prototype.enable
+        );
     },
 
     /**
-    * @method getButtons
-    * @description Returns all buttons inside this this button group
-    * @public
-    */
+     * @method getButtons
+     * @description Returns all buttons inside this this button group
+     * @public
+     */
     getButtons: function() {
         var cb = this.get(CONTENT_BOX);
 
@@ -57,10 +65,10 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     },
 
     /**
-    * @method getSelectedButtons
-    * @description Returns all Y.Buttons instances that are selected
-    * @public
-    */
+     * @method getSelectedButtons
+     * @description Returns all Y.Buttons instances that are selected
+     * @public
+     */
     getSelectedButtons: function() {
         var group = this,
             selected = [],
@@ -77,33 +85,29 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     },
 
     /**
-    * @method getSelectedValues
-    * @description Returns the values of all Y.Button instances that are selected
-    * @public
-    */
+     * @method getSelectedValues
+     * @description Returns the values of all Y.Button instances that are selected
+     * @public
+     */
     getSelectedValues: function() {
-        var group = this,
-            value,
+        var selected = this.getSelectedButtons(),
             values = [],
-            selected = group.getSelectedButtons(),
-            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+            value;
 
         Y.Array.each(selected, function(node){
-            if (node.hasClass(selectedClass)){
-                value = node.getContent();
-                values.push(value);
-            }
+            value = node.getContent();
+            values.push(value);
         });
 
         return values;
     },
 
     /**
-    * @method _handleClick
-    * @description A delegated click handler for when any button is clicked in the content box
-    * @param e {Object} An event object
-    * @private
-    */
+     * @method _handleClick
+     * @description A delegated click handler for when any button is clicked in the content box
+     * @param e {Object} An event object
+     * @private
+     */
     _handleClick: function(e){
         var group = this,
             clickedNode = e.target.ancestor('.' + ButtonGroup.CLASS_NAMES.BUTTON, true),
@@ -113,7 +117,6 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             buttons;
 
         // TODO: Anything for 'push' groups?
-
         if (type === 'checkbox') {
             clickedNode.toggleClass(selectedClass, !isSelected);
             /**
@@ -124,13 +127,11 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
              */
             group.fire('selectionChange', {originEvent: e});
         }
-        else if (type === 'radio') {
-            if (!isSelected) {
-                buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
-                buttons.removeClass(selectedClass);
-                clickedNode.addClass(selectedClass);
-                group.fire('selectionChange', {originEvent: e});
-            }
+        else if (type === 'radio' && !isSelected) {
+            buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
+            buttons.removeClass(selectedClass);
+            clickedNode.addClass(selectedClass);
+            group.fire('selectionChange', {originEvent: e});
         }
     }
 
@@ -150,15 +151,20 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     NAME: 'buttongroup',
 
     /**
-    * Static property used to define the default attribute configuration of
-    * the Widget.
-    *
-    * @property ATTRS
-    * @type {Object}
-    * @protected
-    * @static
-    */
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property ATTRS
+     * @type {Object}
+     * @protected
+     * @static
+     */
     ATTRS: {
+
+        /**
+         * @attribute type
+         * @type String
+         */
         type: {
             writeOnce: 'initOnly',
             value: 'radio'
@@ -173,9 +179,10 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * @static
      */
     CLASS_NAMES: CLASS_NAMES,
-    
+
     /**
      * Selector used to find buttons inside a ButtonGroup
+     * @property BUTTON_SELECTOR
      * @type {String}
      */
     BUTTON_SELECTOR: "button, input[type=button], input[type=reset], input[type=submit], input[type=radio], input[type=checkbox]"

@@ -6,7 +6,7 @@ YUI.add('graphics-muddyglass-manual-tests', function(Y) {
 
         "Test glass" : function()
         {
-            Y.Assert.isTrue((false), "Ensure there is a transparent glass with chocolate milk on the page. Note: IE 6 - 8 does not support transparency."); 
+            Y.Assert.isTrue((false), "Ensure there is a transparent glass with chocolate milk on the page. Note: IE 6 - 8 does not support transparency.");
         }
     }));
 

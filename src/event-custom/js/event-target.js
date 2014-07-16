@@ -40,14 +40,14 @@ var L = Y.Lang,
      * @method _getType
      * @private
      */
-    _getType = Y.cached(function(type, pre) {
+    _getType = function(type, pre) {
 
-        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || !type || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
         return pre + PREFIX_DELIMITER + type;
-    }),
+    },
 
     /**
      * Returns an array with the detach key (if provided),
@@ -69,7 +69,6 @@ var L = Y.Lang,
         if (i > -1) {
             after = true;
             t = t.substr(AFTER_PREFIX.length);
-            // Y.log(t);
         }
 
         i = t.indexOf(CATEGORY_DELIMITER);
@@ -77,7 +76,7 @@ var L = Y.Lang,
         if (i > -1) {
             detachcategory = t.substr(0, (i));
             t = t.substr(i+1);
-            if (t == '*') {
+            if (t === '*') {
                 t = null;
             }
         }
@@ -88,40 +87,38 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
-        // Y.log('EventTarget constructor executed: ' + this._yuid);
+        var etState = this._yuievt,
+            etConfig;
 
-        var o = (L.isObject(opts)) ? opts : {};
+        if (!etState) {
+            etState = this._yuievt = {
+                events: {},    // PERF: Not much point instantiating lazily. We're bound to have events
+                targets: null, // PERF: Instantiate lazily, if user actually adds target,
+                config: {
+                    host: this,
+                    context: this
+                },
+                chain: Y.config.chain
+            };
+        }
 
-        this._yuievt = this._yuievt || {
+        etConfig = etState.config;
 
-            id: Y.guid(),
+        if (opts) {
+            mixConfigs(etConfig, opts, true);
 
-            events: {},
-
-            targets: {},
-
-            config: o,
-
-            chain: ('chain' in o) ? o.chain : Y.config.chain,
-
-            bubbling: false,
-
-            defaults: {
-                context: o.context || this,
-                host: this,
-                emitFacade: o.emitFacade,
-                fireOnce: o.fireOnce,
-                queuable: o.queuable,
-                monitored: o.monitored,
-                broadcast: o.broadcast,
-                defaultTargetOnly: o.defaultTargetOnly,
-                bubbles: ('bubbles' in o) ? o.bubbles : true
+            if (opts.chain !== undefined) {
+                etState.chain = opts.chain;
             }
-        };
+
+            if (opts.prefix) {
+                etConfig.prefix = opts.prefix;
+            }
+        }
     };
 
-
 ET.prototype = {
+
     constructor: ET,
 
     /**
@@ -176,7 +173,7 @@ ET.prototype = {
      * is configured with a default prefix.
      * @method parseType
      * @param {String} type the type
-     * @param {String} [pre=this._yuievt.config.prefix] the prefix
+     * @param {String} [pre] The prefix. Defaults to this._yuievt.config.prefix
      * @since 3.3.0
      * @return {Array} an array containing:
      *  * the detach category, if supplied,
@@ -319,6 +316,11 @@ ET.prototype = {
         if (!handle) {
             ce = yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
+
+            // TODO: More robust regex, accounting for category
+            if (type.indexOf("*:") !== -1) {
+                this._hasSiblings = true;
+            }
         }
 
         if (detachcategory) {
@@ -358,8 +360,11 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i,
-            Node = Y.Node, isNode = Node && (Y.instanceOf(this, Node));
+
+        var evts = this._yuievt.events,
+            i,
+            Node = Y.Node,
+            isNode = Node && (Y.instanceOf(this, Node));
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -552,53 +557,102 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      */
     publish: function(type, opts) {
-        var events, ce, ret, defaults,
-            edata = this._yuievt,
-            pre = edata.config.prefix;
 
-        if (L.isObject(type)) {
+        var ret,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            pre = etConfig.prefix;
+
+        if (typeof type === "string")  {
+            if (pre) {
+                type = _getType(type, pre);
+            }
+            ret = this._publish(type, etConfig, opts);
+        } else {
             ret = {};
+
             Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts);
+                if (pre) {
+                    k = _getType(k, pre);
+                }
+                ret[k] = this._publish(k, etConfig, v || opts);
             }, this);
 
-            return ret;
         }
 
-        type = (pre) ? _getType(type, pre) : type;
+        return ret;
+    },
 
-        events = edata.events;
-        ce = events[type];
+    /**
+     * Returns the fully qualified type, given a short type string.
+     * That is, returns "foo:bar" when given "bar" if "foo" is the configured prefix.
+     *
+     * NOTE: This method, unlike _getType, does no checking of the value passed in, and
+     * is designed to be used with the low level _publish() method, for critical path
+     * implementations which need to fast-track publish for performance reasons.
+     *
+     * @method _getFullType
+     * @private
+     * @param {String} type The short type to prefix
+     * @return {String} The prefixed type, if a prefix is set, otherwise the type passed in
+     */
+    _getFullType : function(type) {
 
-        this._monitor('publish', type, {
-            args: arguments
-        });
+        var pre = this._yuievt.config.prefix;
 
-        if (ce) {
-            // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
-            if (opts) {
-                ce.applyConfig(opts, true);
-            }
+        if (pre) {
+            return pre + PREFIX_DELIMITER + type;
         } else {
-            // TODO: Lazy publish goes here.
-            defaults = edata.defaults;
+            return type;
+        }
+    },
 
-            // apply defaults
-            ce = new Y.CustomEvent(type, defaults);
-            if (opts) {
-                ce.applyConfig(opts, true);
-            }
+    /**
+     * The low level event publish implementation. It expects all the massaging to have been done
+     * outside of this method. e.g. the `type` to `fullType` conversion. It's designed to be a fast
+     * path publish, which can be used by critical code paths to improve performance.
+     *
+     * @method _publish
+     * @private
+     * @param {String} fullType The prefixed type of the event to publish.
+     * @param {Object} etOpts The EventTarget specific configuration to mix into the published event.
+     * @param {Object} ceOpts The publish specific configuration to mix into the published event.
+     * @return {CustomEvent} The published event. If called without `etOpts` or `ceOpts`, this will
+     * be the default `CustomEvent` instance, and can be configured independently.
+     */
+    _publish : function(fullType, etOpts, ceOpts) {
 
-            events[type] = ce;
+        var ce,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            host = etConfig.host,
+            context = etConfig.context,
+            events = etState.events;
+
+        ce = events[fullType];
+
+        // PERF: Hate to pull the check out of monitor, but trying to keep critical path tight.
+        if ((etConfig.monitored && !ce) || (ce && ce.monitored)) {
+            this._monitor('publish', fullType, {
+                args: arguments
+            });
         }
 
-        // make sure we turn the broadcast flag off if this
-        // event was published as a result of bubbling
-        // if (opts instanceof Y.CustomEvent) {
-          //   events[type].broadcast = false;
-        // }
+        if (!ce) {
+            // Publish event
+            ce = events[fullType] = new Y.CustomEvent(fullType, etOpts);
 
-        return events[type];
+            if (!etOpts) {
+                ce.host = host;
+                ce.context = context;
+            }
+        }
+
+        if (ceOpts) {
+            mixConfigs(ce, ceOpts, true);
+        }
+
+        return ce;
     },
 
     /**
@@ -638,22 +692,22 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         }
     },
 
-   /**
+    /**
      * Fire a custom event by name.  The callback functions will be executed
      * from the context specified when the event was created, and with the
      * following parameters.
-     *
-     * If the custom event object hasn't been created, then the event hasn't
-     * been published and it has no subscribers.  For performance sake, we
-     * immediate exit in this case.  This means the event won't bubble, so
-     * if the intention is that a bubble target be notified, the event must
-     * be published on this object first.
      *
      * The first argument is the event type, and any additional arguments are
      * passed to the listeners as parameters.  If the first of these is an
      * object literal, and the event is configured to emit an event facade,
      * that object is mixed into the event facade and the facade is provided
      * in place of the original object.
+     *
+     * If the custom event object hasn't been created, then the event hasn't
+     * been published and it has no subscribers.  For performance sake, we
+     * immediate exit in this case.  This means the event won't bubble, so
+     * if the intention is that a bubble target be notified, the event must
+     * be published on this object first.
      *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
@@ -663,30 +717,63 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
-     * @return {EventTarget} the event host
+     * @return {Boolean} True if the whole lifecycle of the event went through,
+     * false if at any point the event propagation was halted.
      */
     fire: function(type) {
 
-        var typeIncluded = L.isString(type),
-            t = (typeIncluded) ? type : (type && type.type),
+        var typeIncluded = (typeof type === "string"),
+            argCount = arguments.length,
+            t = type,
             yuievt = this._yuievt,
-            pre = yuievt.config.prefix, 
-            ce, ret, 
+            etConfig = yuievt.config,
+            pre = etConfig.prefix,
+            ret,
+            ce,
             ce2,
-            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
+            args;
 
-        t = (pre) ? _getType(t, pre) : t;
+        if (typeIncluded && argCount <= 3) {
 
-        ce = this.getEvent(t, true);
-        ce2 = this.getSibling(t, ce);
+            // PERF: Try to avoid slice/iteration for the common signatures
 
-        if (ce2 && !ce) {
-            ce = this.publish(t);
+            // Most common
+            if (argCount === 2) {
+                args = [arguments[1]]; // fire("foo", {})
+            } else if (argCount === 3) {
+                args = [arguments[1], arguments[2]]; // fire("foo", {}, opts)
+            } else {
+                args = []; // fire("foo")
+            }
+
+        } else {
+            args = nativeSlice.call(arguments, ((typeIncluded) ? 1 : 0));
         }
 
-        this._monitor('fire', (ce || t), {
-            args: args
-        });
+        if (!typeIncluded) {
+            t = (type && type.type);
+        }
+
+        if (pre) {
+            t = _getType(t, pre);
+        }
+
+        ce = yuievt.events[t];
+
+        if (this._hasSiblings) {
+            ce2 = this.getSibling(t, ce);
+
+            if (ce2 && !ce) {
+                ce = this.publish(t);
+            }
+        }
+
+        // PERF: trying to avoid function call, since this is a critical path
+        if ((etConfig.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            this._monitor('fire', (ce || t), {
+                args: args
+            });
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -697,8 +784,12 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             // otherwise there is nothing to be done
             ret = true;
         } else {
-            ce.sibling = ce2;
-            ret = ce.fire.apply(ce, args);
+
+            if (ce2) {
+                ce.sibling = ce2;
+            }
+
+            ret = ce._fire(args);
         }
 
         return (yuievt.chain) ? this : ret;
@@ -706,17 +797,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
     getSibling: function(type, ce) {
         var ce2;
+
         // delegate to *:type events if there are subscribers
         if (type.indexOf(PREFIX_DELIMITER) > -1) {
             type = _wildType(type);
-            // console.log(type);
             ce2 = this.getEvent(type, true);
             if (ce2) {
-                // console.log("GOT ONE: " + type);
                 ce2.applyConfig(ce);
                 ce2.bubbles = false;
                 ce2.broadcast = 0;
-                // ret = ce2.fire.apply(ce2, a);
             }
         }
 
@@ -733,6 +822,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     getEvent: function(type, prefixed) {
         var pre, e;
+
         if (!prefixed) {
             pre = this._yuievt.config.prefix;
             type = (pre) ? _getType(type, pre) : type;
@@ -831,7 +921,9 @@ Y.Global = YUI.Env.globalEvents;
     treating that method as an event</li>
 </ul>
 
-For custom event subscriptions, pass the custom event name as the first argument and callback as the second. The `this` object in the callback will be `Y` unless an override is passed as the third argument.
+For custom event subscriptions, pass the custom event name as the first argument
+and callback as the second. The `this` object in the callback will be `Y` unless
+an override is passed as the third argument.
 
     Y.on('io:complete', function () {
         Y.MyApp.updateStatus('Transaction complete');
@@ -857,7 +949,7 @@ selector or other identifier.
 `defaultFn` can prevent the default behavior with `e.preventDefault()` from the
 event object passed as the first parameter to the subscription callback.
 
-To subscribe to the execution of an object method, pass arguments corresponding to the call signature for 
+To subscribe to the execution of an object method, pass arguments corresponding to the call signature for
 <a href="../classes/Do.html#methods_before">`Y.Do.before(...)`</a>.
 
 NOTE: The formal parameter list below is for events, not for function

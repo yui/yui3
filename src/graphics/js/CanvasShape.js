@@ -9,7 +9,7 @@
  * @class CanvasShape
  * @constructor
  */
-CanvasShape = function(cfg)
+CanvasShape = function()
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
@@ -75,7 +75,6 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.CanvasGraphic({
                 render: render
             });
@@ -92,8 +91,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	addClass: function(className)
 	{
-		var node = Y.one(this.get("node"));
-		node.addClass(className);
+		var node = this.get("node");
+		Y.DOM.addClass(node, className);
 	},
 
 	/**
@@ -104,8 +103,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	removeClass: function(className)
 	{
-		var node = Y.one(this.get("node"));
-		node.removeClass(className);
+		var node = this.get("node");
+		Y.DOM.removeClass(node, className);
 	},
 
 	/**
@@ -149,7 +148,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -161,8 +161,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	test: function(selector)
 	{
-		return Y.one(this.get("node")).test(selector);
-		//return Y.Selector.test(this.node, selector);
+		return Y.Selector.test(this.node, selector);
 	},
 
 	/**
@@ -273,7 +272,15 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 		node.setAttribute("id", id);
 		id = "#" + id;
         host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
+		host.addClass(
+            _getClassName(SHAPE) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+            " " +
+            _getClassName(name) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, name))
+        );
 	},
 
 	/**
@@ -289,7 +296,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -337,7 +344,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
                 this._strokeStyle = color;
             }
             this._linecap = linecap;
-            if(linejoin == "round" || linejoin == "bevel")
+            if(linejoin === "round" || linejoin === "bevel")
             {
                 this._linejoin = linejoin;
             }
@@ -368,8 +375,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
      */
 	set: function()
 	{
-		var host = this,
-			val = arguments[0];
+		var host = this;
 		AttributeLite.prototype.set.apply(host, arguments);
 		if(host.initialized)
 		{
@@ -394,7 +400,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         {
             color = fill.color;
             type = fill.type;
-            if(type == "linear" || type == "radial")
+            if(type === "linear" || type === "radial")
             {
                 this._fillType = type;
             }
@@ -473,7 +479,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-    skew: function(x, y)
+    skew: function()
     {
         this._addTransform("skew", arguments);
     },
@@ -484,7 +490,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-    skewX: function(x)
+    skewX: function()
     {
         this._addTransform("skewX", arguments);
     },
@@ -495,7 +501,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-    skewY: function(y)
+    skewY: function()
     {
         this._addTransform("skewY", arguments);
     },
@@ -506,9 +512,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-    rotate: function(deg)
+    rotate: function()
     {
-        this._rotation = deg;
         this._addTransform("rotate", arguments);
     },
 
@@ -518,19 +523,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-    scale: function(x, y)
+    scale: function()
     {
         this._addTransform("scale", arguments);
     },
-
-    /**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	_rotation: 0,
 
     /**
      * Storage for the transform attribute.
@@ -663,7 +659,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
-                argsLen = (args[0] == "quadraticCurveTo" || args[0] == "bezierCurveTo") ? args.length : 3;
+                argsLen = (args[0] === "quadraticCurveTo" || args[0] === "bezierCurveTo") ? args.length : 3;
 				for(j = 1; j < argsLen; ++j)
 				{
 					if(j % 2 === 0)
@@ -687,12 +683,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 					method = args.shift();
 					if(method)
 					{
-                        if(method == "closePath")
+                        if(method === "closePath")
                         {
                             context.closePath();
                             this._strokeAndFill(context);
                         }
-						else if(method && method == "lineTo" && this._dashstyle)
+						else if(method && method === "lineTo" && this._dashstyle)
 						{
 							args.unshift(this._xcoords[i] - this._left, this._ycoords[i] - this._top);
 							this._drawDashedLine.apply(this, args);
@@ -724,11 +720,11 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     {
         if (this._fillType)
         {
-            if(this._fillType == "linear")
+            if(this._fillType === "linear")
             {
                 context.fillStyle = this._getLinearGradient();
             }
-            else if(this._fillType == "radial")
+            else if(this._fillType === "radial")
             {
                 context.fillStyle = this._getRadialGradient();
             }
@@ -806,17 +802,6 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 		context.moveTo(xEnd, yEnd);
 	},
 
-	//This should move to CanvasDrawing class.
-    //Currently docmented in CanvasDrawing class.
-    clear: function() {
-		this._initProps();
-        if(this.node)
-        {
-            this._context.clearRect(0, 0, this.node.width, this.node.height);
-        }
-        return this;
-	},
-
 	/**
 	 * Returns the bounds for a shape.
 	 *
@@ -833,7 +818,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			h = this.get("height"),
 			x = this.get("x"),
 			y = this.get("y");
-        if(type == "path")
+        if(type === "path")
         {
             x = x + this._left;
             y = y + this._top;
@@ -865,7 +850,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             transform,
             key,
             contentRect;
-        if(this._type == "path")
+        if(this._type === "path")
         {
             transformX = transformX + x;
             transformY = transformY + y;
@@ -986,7 +971,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     {
         if(this.node)
         {
-            Y.one(this.node).remove(true);
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.style.visibility = "";
+                this.node.parentNode.removeChild(this.node);
+            }
             this._context = null;
             this.node = null;
         }
@@ -1211,7 +1201,7 @@ CanvasShape.ATTRS =  {
 			fill = (val) ? Y.merge(tmpl, val) : null;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
 					fill.color = null;
 				}

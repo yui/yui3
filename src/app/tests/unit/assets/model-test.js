@@ -78,6 +78,7 @@ modelSuite.add(new Y.Test.Case({
 
         model.destroy({remove: true}, mock.callback);
         Y.Mock.verify(mock);
+        Assert.areSame(1, calls);
     },
 
     'destroy() should remove the model from all lists': function () {
@@ -99,6 +100,38 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(0, listOne.size(), 'model should be removed from list one');
         Assert.areSame(0, listTwo.size(), 'model should be removed from list two');
         Assert.areSame(0, listThree.size(), 'model should be removed from list three');
+    },
+
+    'destroy() should not remove the model lists when sync has an error': function () {
+        var calls     = 0,
+            model     = new Y.Model(),
+            listOne   = new Y.ModelList(),
+            listTwo   = new Y.ModelList(),
+            listThree = new Y.ModelList();
+
+        model.sync = function (action, options, callback) {
+            calls += 1;
+            Assert.areSame('delete', action, 'sync action should be "delete"');
+            callback('Delete failed');
+        };
+
+        listOne.add(model);
+        listTwo.add(model);
+        listThree.add(model);
+
+        Assert.areSame(1, listOne.size(), 'model should be added to list one');
+        Assert.areSame(1, listTwo.size(), 'model should be added to list two');
+        Assert.areSame(1, listThree.size(), 'model should be added to list three');
+
+        model.destroy({remove: true}, function (err) {
+            Assert.areSame('Delete failed', err, 'Sync err was not "Delete failed"');
+        });
+
+        Assert.areSame(1, listOne.size(), 'model should be removed from list one');
+        Assert.areSame(1, listTwo.size(), 'model should be removed from list two');
+        Assert.areSame(1, listThree.size(), 'model should be removed from list three');
+
+        Assert.areSame(1, calls);
     }
 }));
 
@@ -268,6 +301,175 @@ modelSuite.add(new Y.Test.Case({
         model.set('foo', 'foo');
 
         Assert.areSame(2, calls);
+    },
+
+    'Resetting the custom id attribute should reset `id`': function () {
+        var model = new this.TestModel({id: '1'});
+
+        model.set('id', '2');
+
+        Assert.areSame('2', model.get('id'));
+        Assert.areSame('2', model.get('customId'));
+
+        model.reset('id');
+
+        Assert.areSame('1', model.get('id'));
+        Assert.areSame('1', model.get('customId'));
+
+        model.set('customId', '2');
+
+        Assert.areSame('2', model.get('id'));
+        Assert.areSame('2', model.get('customId'));
+
+        model.reset('customId');
+
+        Assert.areSame('1', model.get('id'));
+        Assert.areSame('1', model.get('customId'));
+
+        model.setAttrs({
+            id      : '2',
+            customId: '2'
+        });
+
+        Assert.areSame('2', model.get('id'));
+        Assert.areSame('2', model.get('customId'));
+
+        // Reset all.
+        model.reset();
+
+        Assert.areSame('1', model.get('id'));
+        Assert.areSame('1', model.get('customId'));
+    },
+
+    'A custom id attribute should not be set when `id` fails validation': function () {
+        var CustomTestModel, model;
+
+        CustomTestModel = Y.Base.create('customTestModel', Y.Model, [], {
+            idAttribute: 'customId'
+        }, {
+            ATTRS: {
+                id: {
+                    validator: Y.Lang.isString,
+                    value    : null
+                },
+
+                customId: {value: null}
+            }
+        });
+
+        model = new CustomTestModel({id: 'foo'});
+        Assert.areSame('foo', model.get('id'), '`id` is not "foo"');
+        Assert.areSame('foo', model.get('customId'), '`customId` is not "foo"');
+
+        model = new CustomTestModel({customId: 'bar'});
+        Assert.areSame('bar', model.get('id'), '`id` is not "bar"');
+        Assert.areSame('bar', model.get('customId'), '`customId` is not "bar"');
+
+        model = new CustomTestModel({id: 1});
+        Assert.isNull(model.get('id'), '`id` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('customId'), '`customId` is not `null`');
+
+        model.set('id', 1);
+        Assert.isNull(model.get('id'), '`id` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('customId'), '`customId` is not `null`');
+
+        model = new CustomTestModel({customId: 1});
+        Assert.isNull(model.get('id'), '`id` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('customId'), '`customId` is not `null`');
+
+        model.set('customId', 1);
+        Assert.isNull(model.get('id'), '`id` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('customId'), '`customId` is not `null`');
+    },
+
+    '`id` should not be set when the custom id attribute fails validation': function () {
+        var CustomTestModel, model;
+
+        CustomTestModel = Y.Base.create('customTestModel', Y.Model, [], {
+            idAttribute: 'customId'
+        }, {
+            ATTRS: {
+                id: {value: null},
+
+                customId: {
+                    validator: Y.Lang.isString,
+                    value    : null
+                }
+            }
+        });
+
+        model = new CustomTestModel({id: 'foo'});
+        Assert.areSame('foo', model.get('id'), '`id` is not "foo"');
+        Assert.areSame('foo', model.get('customId'), '`customId` is not "foo"');
+
+        model = new CustomTestModel({customId: 'bar'});
+        Assert.areSame('bar', model.get('id'), '`id` is not "bar"');
+        Assert.areSame('bar', model.get('customId'), '`customId` is not "bar"');
+
+        model = new CustomTestModel({id: 1});
+        Assert.isNull(model.get('customId'), '`customId` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('id'), '`id` is not `null`');
+
+        model.set('id', 1);
+        Assert.isNull(model.get('customId'), '`customId` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('id'), '`id` is not `null`');
+
+        model = new CustomTestModel({customId: 1});
+        Assert.isNull(model.get('customId'), '`customId` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('id'), '`id` is not `null`');
+
+        model.set('customId', 1);
+        Assert.isNull(model.get('customId'), '`customId` is not `null`');
+        // BUG this *should* be `null`.
+        Assert.areSame(1, model.get('id'), '`id` is not `null`');
+    },
+
+    'A custom id attribute should be same as what is returned from `id` setter': function () {
+        var CustomTestModel, model;
+
+        function setId(id) {
+            return 'foo' + id;
+        }
+
+        CustomTestModel = Y.Base.create('customTestModel', Y.Model, [], {
+            idAttribute: 'customId'
+        }, {
+            ATTRS: {
+                id: {
+                    setter: setId,
+                    value : null
+                },
+
+                customId: {value: null}
+            }
+        });
+
+        model = new CustomTestModel({id: 1});
+        Assert.areSame('foo1', model.get('id'), '`id` is not "foo1"');
+        // BUG this *should* be `"foo1"`.
+        Assert.areSame(1, model.get('customId'), '`customId` is not "foo1"');
+
+        model.set('id', 2);
+        Assert.areSame('foo2', model.get('id'), '`id` is not "foo2"');
+        // BUG this *should* be `"foo2"`.
+        Assert.areSame(2, model.get('customId'), '`customId` is not "foo2"');
+
+        model = new CustomTestModel({customId: 1});
+        Assert.areSame('foo1', model.get('id'), '`id` is not "foo1"');
+        // BUG this *should* be `"foo1"`.
+        Assert.areSame(1, model.get('customId'), '`customId` is not "foo1"');
+
+        model.set('customId', 2);
+        Assert.areSame('foo2', model.get('id'), '`id` is not "foo2"');
+        // BUG this *should* be `"foo2"`.
+        Assert.areSame(2, model.get('customId'), '`customId` is not "foo2"');
     }
 }));
 
@@ -305,11 +507,51 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(Y.Escape.html(value), model.getAsHTML('foo'));
     },
 
+    'getAsHTML() should return an empty string for null attribute values': function () {
+        var model = new this.TestModel({
+            nullish1: undefined,
+            nullish2: null,
+            nullish3: NaN,
+
+            falsy1: false,
+            falsy2: 0,
+            falsy3: ''
+        });
+
+        Assert.areSame('', model.getAsHTML('nullish1'));
+        Assert.areSame('', model.getAsHTML('nullish2'));
+        Assert.areSame('', model.getAsHTML('nullish3'));
+
+        Assert.areSame('false', model.getAsHTML('falsy1'));
+        Assert.areSame('0', model.getAsHTML('falsy2'));
+        Assert.areSame('', model.getAsHTML('falsy3'));
+    },
+
     'getAsURL() should return a URL-encoded attribute value': function () {
         var value = 'foo & bar = baz',
             model = new this.TestModel({foo: value});
 
         Assert.areSame(encodeURIComponent(value), model.getAsURL('foo'));
+    },
+
+    'getAsURL() should return an empty string for null attribute values': function () {
+        var model = new this.TestModel({
+            nullish1: undefined,
+            nullish2: null,
+            nullish3: NaN,
+
+            falsy1: false,
+            falsy2: 0,
+            falsy3: ''
+        });
+
+        Assert.areSame('', model.getAsURL('nullish1'));
+        Assert.areSame('', model.getAsURL('nullish2'));
+        Assert.areSame('', model.getAsURL('nullish3'));
+
+        Assert.areSame('false', model.getAsURL('falsy1'));
+        Assert.areSame('0', model.getAsURL('falsy2'));
+        Assert.areSame('', model.getAsURL('falsy3'));
     },
 
     'isModified() should return true if the model is new': function () {
@@ -484,6 +726,18 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame('bar', model.get('bar'));
     },
 
+    'setAttrs() should not modify the passed-in `options` object': function () {
+        var model   = new this.TestModel(),
+            options = {foo: 'foo'};
+
+        ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(options));
+
+        model.setAttrs({bar: 'bar'}, options);
+
+        Assert.areSame('bar', model.get('bar'));
+        ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(options));
+    },
+
     'sync() should just call the supplied callback by default': function () {
         var calls = 0,
             model = new this.TestModel();
@@ -572,6 +826,34 @@ modelSuite.add(new Y.Test.Case({
         });
 
         model.undo();
+    },
+
+    'undo() should only fire one change when a custom id attribute changes': function () {
+        var calls = 0,
+            CustomTestModel, model;
+
+        // When there's a custom id attribute, the 'id' attribute should be
+        // excluded.
+        CustomTestModel = Y.Base.create('customTestModel', Y.Model, [], {
+            idAttribute: 'userId'
+        }, {
+            ATTRS: {
+                customId: {value: ''},
+                foo     : {value: ''}
+            }
+        });
+
+        model = new CustomTestModel({foo: 'foo'});
+        model.setAttrs({userId: '1', foo: 'bar'});
+
+        model.after('change', function (e) {
+            calls += 1;
+            Assert.isNull(this.get('userId'));
+            Assert.areSame('foo', this.get('foo'));
+        });
+
+        model.undo();
+        Assert.areSame(1, calls);
     },
 
     'validate() should only be called on save()': function () {

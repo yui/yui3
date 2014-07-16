@@ -147,6 +147,9 @@ YUI.add('attribute-core', function (Y, NAME) {
             return obj;
         }
     };
+    /*For log lines*/
+    /*jshint maxlen:200*/
+
     /**
      * The attribute module provides an augmentable Attribute implementation, which
      * adds configurable attributes and attribute change events to the class being
@@ -184,10 +187,8 @@ YUI.add('attribute-core', function (Y, NAME) {
         // Used for internal state management
         ADDED = "added",
         BYPASS_PROXY = "_bypassProxy",
-        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         LAZY = "lazy",
-        IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE;
 
@@ -216,8 +217,10 @@ YUI.add('attribute-core', function (Y, NAME) {
      * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>
      *
      * @class AttributeCore
-     * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
-     * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+     * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>).
+     *        These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+     * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>).
+     *        These are not merged/cloned. The caller is responsible for isolating user provided values if required.
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      */
     function AttributeCore(attrs, values, lazy) {
@@ -288,8 +291,10 @@ YUI.add('attribute-core', function (Y, NAME) {
          * constructor.
          *
          * @method _initAttrHost
-         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
-         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These are not merged/cloned. The caller is responsible for isolating user provided values if required.
          * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
          * @private
          */
@@ -330,7 +335,8 @@ YUI.add('attribute-core', function (Y, NAME) {
          *        Whether or not the attribute is "write once". Attributes having writeOnce set to true,
          *        can only have their values set once, be it through the default configuration,
          *        constructor configuration arguments, or by invoking set.
-         *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+         *        <p>The writeOnce attribute can also be set to the string "initOnly",
+         *         in which case the attribute can only be set during initialization
          *        (when used with Base, this means it can only be set during construction)</p>
          *    </dd>
          *
@@ -395,51 +401,64 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @chainable
          */
-        addAttr: function(name, config, lazy) {
+        addAttr : function(name, config, lazy) {
 
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
             var host = this, // help compression
                 state = host._state,
+                data = state.data,
                 value,
+                added,
                 hasValue;
 
             config = config || {};
 
-            lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
+            if (LAZY_ADD in config) {
+                lazy = config[LAZY_ADD];
+            }
 
-            if (lazy && !host.attrAdded(name)) {
-                state.addAll(name, {
+            added = state.get(name, ADDED);
+
+            if (lazy && !added) {
+                state.data[name] = {
                     lazy : config,
                     added : true
-                });
+                };
             } else {
 
-                if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (added && !config.isLazyAdd) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
+                if (!added || config.isLazyAdd) {
 
                     hasValue = (VALUE in config);
 
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if (hasValue) {
+
                         // We'll go through set, don't want to set value in config directly
+
+                        // PERF TODO: VALIDATE: See if setting this to undefined is sufficient. We use to delete before.
+                        // In certain code paths/use cases, undefined may not be the same as not present.
+                        // If not, we can set it to some known fixed value (like INVALID_VALUE, say INITIALIZING_VALUE) for performance,
+                        // to avoid a delete which seems to help a lot.
+
                         value = config.value;
-                        delete config.value;
+                        config.value = undefined;
                     }
 
                     config.added = true;
                     config.initializing = true;
 
-                    state.addAll(name, config);
+                    data[name] = config;
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
                         host.set(name, value);
                     }
 
-                    state.remove(name, INITIALIZING);
+                    config.initializing = false;
                 }
             }
 
@@ -451,10 +470,11 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @method attrAdded
          * @param {String} name The name of the attribute to check.
-         * @return {boolean} true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.
+         * @return {boolean} true if an attribute with the given name has been added, false if it hasn't.
+         *         This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
-            return !!this._state.get(name, ADDED);
+            return !!(this._state.get(name, ADDED));
         },
 
         /**
@@ -492,14 +512,26 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @method _addLazyAttr
          * @private
          * @param {Object} name The name of the attribute
+         * @param {Object} [lazyCfg] Optional config hash for the attribute. This is added for performance
+         * along the critical path, where the calling method has already obtained lazy config from state.
          */
-        _addLazyAttr: function(name, cfg) {
-            var state = this._state,
-                lazyCfg = state.get(name, LAZY);
+        _addLazyAttr: function(name, lazyCfg) {
+            var state = this._state;
 
-            state.add(name, IS_LAZY_ADD, true);
-            state.remove(name, LAZY);
-            this.addAttr(name, lazyCfg);
+            lazyCfg = lazyCfg || state.get(name, LAZY);
+
+            if (lazyCfg) {
+
+                // PERF TODO: For App's id override, otherwise wouldn't be
+                // needed. It expects to find it in the cfg for it's
+                // addAttr override. Would like to remove, once App override is
+                // removed.
+                state.data[name].lazy = undefined;
+
+                lazyCfg.isLazyAdd = true;
+
+                this.addAttr(name, lazyCfg);
+            }
         },
 
         /**
@@ -511,13 +543,12 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @param {String} name The name of the attribute. If the
          * current value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object (e.g. <code>set("x.y.z", 5)</code>).
-         *
          * @param {Any} value The value to set the attribute to.
-         *
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
          * @return {Object} A reference to the host object.
          */
-        set : function(name, val) {
-            return this._setAttr(name, val);
+        set : function(name, val, opts) {
+            return this._setAttr(name, val, opts);
         },
 
         /**
@@ -529,10 +560,11 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @param {String} name The name of the attribute.
          * @param {Any} val The value to set the attribute to.
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
          * @return {Object} A reference to the host object.
          */
-        _set : function(name, val) {
-            return this._setAttr(name, val, null, true);
+        _set : function(name, val, opts) {
+            return this._setAttr(name, val, opts, true);
         },
 
         /**
@@ -546,25 +578,17 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @param {String} name The name of the attribute.
          * @param {Any} value The value to set the attribute to.
-         * @param {Object} opts (Optional) Optional event data to be mixed into
-         * the event facade passed to subscribers of the attribute's change event.
-         * This is currently a hack. There's no real need for the AttributeCore implementation
-         * to support this parameter, but breaking it out into AttributeObservable, results in
-         * additional function hops for the critical path.
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
          * @param {boolean} force If true, allows the caller to set values for
          * readOnly or writeOnce attributes which have already been set.
          *
          * @return {Object} A reference to the host object.
          */
         _setAttr : function(name, val, opts, force)  {
-
-            // HACK - no real reason core needs to know about opts, but
-            // it adds fn hops if we want to break it out.
-            // Not sure it's worth it for this critical path
-
             var allowSet = true,
                 state = this._state,
                 stateProxy = this._stateProxy,
+                tCfgs = this._tCfgs,
                 cfg,
                 initialSet,
                 strPath,
@@ -575,17 +599,24 @@ YUI.add('attribute-core', function (Y, NAME) {
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
+
                 path = name.split(DOT);
                 name = path.shift();
             }
 
-            if (this._isLazyAttr(name)) {
-                this._addLazyAttr(name);
+            // On Demand - Should be rare - handles out of order valueFn, setter, getter references
+            if (tCfgs && tCfgs[name]) {
+                this._addOutOfOrder(name, tCfgs[name]);
             }
 
-            cfg = state.getAll(name, true) || {};
+            cfg = state.data[name] || {};
 
-            initialSet = (!(VALUE in cfg));
+            if (cfg.lazy) {
+                cfg = cfg.lazy;
+                this._addLazyAttr(name, cfg);
+            }
+
+            initialSet = (cfg.value === undefined);
 
             if (stateProxy && name in stateProxy && !cfg._bypassProxy) {
                 // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set?
@@ -630,16 +661,53 @@ YUI.add('attribute-core', function (Y, NAME) {
 
                 if (allowSet) {
                     if (!this._fireAttrChange || initializing) {
-                        this._setAttrVal(name, strPath, currVal, val);
+                        this._setAttrVal(name, strPath, currVal, val, opts, cfg);
                     } else {
                         // HACK - no real reason core needs to know about _fireAttrChange, but
                         // it adds fn hops if we want to break it out. Not sure it's worth it for this critical path
-                        this._fireAttrChange(name, strPath, currVal, val, opts);
+                        this._fireAttrChange(name, strPath, currVal, val, opts, cfg);
                     }
                 }
             }
 
             return this;
+        },
+
+        /**
+         * Utility method used by get/set to add attributes
+         * encountered out of order when calling addAttrs().
+         *
+         * For example, if:
+         *
+         *     this.addAttrs({
+         *          foo: {
+         *              setter: function() {
+         *                 // make sure this bar is available when foo is added
+         *                 this.get("bar");
+         *              }
+         *          },
+         *          bar: {
+         *              value: ...
+         *          }
+         *     });
+         *
+         * @method _addOutOfOrder
+         * @private
+         * @param name {String} attribute name
+         * @param cfg {Object} attribute configuration
+         */
+        _addOutOfOrder : function(name, cfg) {
+
+            var attrs = {};
+            attrs[name] = cfg;
+
+            delete this._tCfgs[name];
+
+            // TODO: The original code went through addAttrs, so
+            // sticking with it for this pass. Seems like we could
+            // just jump straight to _addAttr() and get some perf
+            // improvement.
+            this._addAttrs(attrs, this._tVals);
         },
 
         /**
@@ -656,41 +724,41 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @return {Any} The value of the attribute.
          */
         _getAttr : function(name) {
-            var host = this, // help compression
-                fullName = name,
-                state = host._state,
+            var fullName = name,
+                tCfgs = this._tCfgs,
                 path,
                 getter,
                 val,
-                cfg;
+                attrCfg;
 
             if (name.indexOf(DOT) !== -1) {
                 path = name.split(DOT);
                 name = path.shift();
             }
 
-            // On Demand - Should be rare - handles out of order valueFn references
-            if (host._tCfgs && host._tCfgs[name]) {
-                cfg = {};
-                cfg[name] = host._tCfgs[name];
-                delete host._tCfgs[name];
-                host._addAttrs(cfg, host._tVals);
+            // On Demand - Should be rare - handles out of
+            // order valueFn, setter, getter references
+            if (tCfgs && tCfgs[name]) {
+                this._addOutOfOrder(name, tCfgs[name]);
             }
+
+            attrCfg = this._state.data[name] || {};
 
             // Lazy Init
-            if (host._isLazyAttr(name)) {
-                host._addLazyAttr(name);
+            if (attrCfg.lazy) {
+                attrCfg = attrCfg.lazy;
+                this._addLazyAttr(name, attrCfg);
             }
 
-            val = host._getStateVal(name);
+            val = this._getStateVal(name, attrCfg);
 
-            getter = state.get(name, GETTER);
+            getter = attrCfg.getter;
 
             if (getter && !getter.call) {
                 getter = this[getter];
             }
 
-            val = (getter) ? getter.call(host, val, fullName) : val;
+            val = (getter) ? getter.call(this, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
@@ -703,11 +771,19 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @method _getStateVal
          * @private
          * @param {String} name The name of the attribute
+         * @param {Object} [cfg] Optional config hash for the attribute. This is added for performance along the critical path,
+         * where the calling method has already obtained the config from state.
+         *
          * @return {Any} The stored value of the attribute
          */
-        _getStateVal : function(name) {
+        _getStateVal : function(name, cfg) {
             var stateProxy = this._stateProxy;
-            return stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY) ? stateProxy[name] : this._state.get(name, VALUE);
+
+            if (!cfg) {
+                cfg = this._state.getAll(name) || {};
+            }
+
+            return (stateProxy && (name in stateProxy) && !(cfg._bypassProxy)) ? stateProxy[name] : cfg.value;
         },
 
         /**
@@ -738,18 +814,21 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
          * @param {Any} prevVal The currently stored value of the attribute.
          * @param {Any} newVal The value which is going to be stored.
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
+         * @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
+         * where the calling method has already obtained the config from state.
          *
-         * @return {booolean} true if the new attribute value was stored, false if not.
+         * @return {Boolean} true if the new attribute value was stored, false if not.
          */
-        _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
+        _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
 
             var host = this,
                 allowSet = true,
-                cfg = this._state.getAll(attrName, true) || {},
+                cfg = attrCfg || this._state.data[attrName] || {},
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
-                prevRawVal = this._getStateVal(attrName),
+                prevRawVal = this._getStateVal(attrName, cfg),
                 name = subAttrName || attrName,
                 retVal,
                 valid;
@@ -760,7 +839,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                     validator = this[validator];
                 }
                 if (validator) {
-                    valid = validator.call(host, newVal, name);
+                    valid = validator.call(host, newVal, name, opts);
 
                     if (!valid && initializing) {
                         newVal = cfg.defaultValue;
@@ -776,11 +855,16 @@ YUI.add('attribute-core', function (Y, NAME) {
                         setter = this[setter];
                     }
                     if (setter) {
-                        retVal = setter.call(host, newVal, name);
+                        retVal = setter.call(host, newVal, name, opts);
 
                         if (retVal === INVALID_VALUE) {
-                            Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
-                            allowSet = false;
+                            if (initializing) {
+                                Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal + ', initializing to default value', 'warn', 'attribute');
+                                newVal = cfg.defaultValue;
+                            } else {
+                                Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
+                                allowSet = false;
+                            }
                         } else if (retVal !== undefined){
                             Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
                             newVal = retVal;
@@ -814,11 +898,12 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @method setAttrs
          * @param {Object} attrs  An object with attributes name/value pairs.
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
          * @return {Object} A reference to the host object.
          * @chainable
          */
-        setAttrs : function(attrs) {
-            return this._setAttrs(attrs);
+        setAttrs : function(attrs, opts) {
+            return this._setAttrs(attrs, opts);
         },
 
         /**
@@ -827,14 +912,15 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @method _setAttrs
          * @protected
          * @param {Object} attrs  An object with attributes name/value pairs.
+         * @param {Object} [opts] Optional data providing the circumstances for the change
          * @return {Object} A reference to the host object.
          * @chainable
          */
-        _setAttrs : function(attrs) {
+        _setAttrs : function(attrs, opts) {
             var attr;
             for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
-                    this.set(attr, attrs[attr]);
+                    this.set(attr, attrs[attr], opts);
                 }
             }
             return this;
@@ -844,7 +930,7 @@ YUI.add('attribute-core', function (Y, NAME) {
          * Gets multiple attribute values.
          *
          * @method getAttrs
-         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {String[]|Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
          */
@@ -857,7 +943,7 @@ YUI.add('attribute-core', function (Y, NAME) {
          *
          * @method _getAttrs
          * @protected
-         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {String[]|Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
          */
@@ -904,15 +990,14 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
-            var host = this; // help compression
             if (cfgs) {
-                host._tCfgs = cfgs;
-                host._tVals = host._normAttrVals(values);
-                host._addAttrs(cfgs, host._tVals, lazy);
-                host._tCfgs = host._tVals = null;
+                this._tCfgs = cfgs;
+                this._tVals = (values) ? this._normAttrVals(values) : null;
+                this._addAttrs(cfgs, this._tVals, lazy);
+                this._tCfgs = this._tVals = null;
             }
 
-            return host;
+            return this;
         },
 
         /**
@@ -933,7 +1018,8 @@ YUI.add('attribute-core', function (Y, NAME) {
          * See <a href="#method_addAttr">addAttr</a>.
          */
         _addAttrs : function(cfgs, values, lazy) {
-            var host = this, // help compression
+            var tCfgs = this._tCfgs,
+                tVals = this._tVals,
                 attr,
                 attrCfg,
                 value;
@@ -946,17 +1032,17 @@ YUI.add('attribute-core', function (Y, NAME) {
                     attrCfg.defaultValue = attrCfg.value;
 
                     // Handle simple, complex and user values, accounting for read-only
-                    value = host._getAttrInitVal(attr, attrCfg, host._tVals);
+                    value = this._getAttrInitVal(attr, attrCfg, tVals);
 
                     if (value !== undefined) {
                         attrCfg.value = value;
                     }
 
-                    if (host._tCfgs[attr]) {
-                        delete host._tCfgs[attr];
+                    if (tCfgs[attr]) {
+                        tCfgs[attr] = undefined;
                     }
 
-                    host.addAttr(attr, attrCfg, lazy);
+                    this.addAttr(attr, attrCfg, lazy);
                 }
             }
         },
@@ -976,9 +1062,8 @@ YUI.add('attribute-core', function (Y, NAME) {
         _protectAttrs : AttributeCore.protectAttrs,
 
         /**
-         * Utility method to split out simple attribute name/value pairs ("x")
-         * from complex attribute name/value pairs ("x.y.z"), so that complex
-         * attributes can be keyed by the top level attribute name.
+         * Utility method to normalize attribute values. The base implementation
+         * simply merges the hash to protect the original.
          *
          * @method _normAttrVals
          * @param {Object} valueHash An object with attribute name/value pairs
@@ -990,32 +1075,38 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @private
          */
         _normAttrVals : function(valueHash) {
-            var vals = {},
-                subvals = {},
+            var vals,
+                subvals,
                 path,
                 attr,
                 v, k;
 
-            if (valueHash) {
-                for (k in valueHash) {
-                    if (valueHash.hasOwnProperty(k)) {
-                        if (k.indexOf(DOT) !== -1) {
-                            path = k.split(DOT);
-                            attr = path.shift();
-                            v = subvals[attr] = subvals[attr] || [];
-                            v[v.length] = {
-                                path : path,
-                                value: valueHash[k]
-                            };
-                        } else {
-                            vals[k] = valueHash[k];
-                        }
-                    }
-                }
-                return { simple:vals, complex:subvals };
-            } else {
+            if (!valueHash) {
                 return null;
             }
+
+            vals = {};
+
+            for (k in valueHash) {
+                if (valueHash.hasOwnProperty(k)) {
+                    if (k.indexOf(DOT) !== -1) {
+                        path = k.split(DOT);
+                        attr = path.shift();
+
+                        subvals = subvals || {};
+
+                        v = subvals[attr] = subvals[attr] || [];
+                        v[v.length] = {
+                            path : path,
+                            value: valueHash[k]
+                        };
+                    } else {
+                        vals[k] = valueHash[k];
+                    }
+                }
+            }
+
+            return { simple:vals, complex:subvals };
         },
 
         /**
@@ -1034,11 +1125,11 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-
             var val = cfg.value,
                 valFn = cfg.valueFn,
                 tmpVal,
                 initValSet = false,
+                readOnly = cfg.readOnly,
                 simple,
                 complex,
                 i,
@@ -1047,7 +1138,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                 subval,
                 subvals;
 
-            if (!cfg.readOnly && initValues) {
+            if (!readOnly && initValues) {
                 // Simple Attributes
                 simple = initValues.simple;
                 if (simple && simple.hasOwnProperty(attr)) {
@@ -1066,7 +1157,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                 }
             }
 
-            if (!cfg.readOnly && initValues) {
+            if (!readOnly && initValues) {
 
                 // Complex Attributes (complex values applied, after simple, in case both are set)
                 complex = initValues.complex;
@@ -1085,12 +1176,15 @@ YUI.add('attribute-core', function (Y, NAME) {
         },
 
         /**
-         * Utility method to set up initial attributes defined during construction, either through the constructor.ATTRS property, or explicitly passed in.
+         * Utility method to set up initial attributes defined during construction,
+         * either through the constructor.ATTRS property, or explicitly passed in.
          *
          * @method _initAttrs
          * @protected
-         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
-         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These are not merged/cloned. The caller is responsible for isolating user provided values if required.
          * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
          */
         _initAttrs : function(attrs, values, lazy) {

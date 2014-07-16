@@ -102,11 +102,11 @@ JSONPRequest.prototype = {
             }, callback, { on: subs });
     },
 
-    /** 
+    /**
      * Override this method to provide logic to default the success callback if
      * it is not provided at construction.  This is overridden by jsonp-url to
      * parse the callback from the url string.
-     * 
+     *
      * @method _defaultCallback
      * @param url {String} the url passed at construction
      * @param config {Object} (optional) the config object passed at
@@ -115,7 +115,7 @@ JSONPRequest.prototype = {
      */
     _defaultCallback: function () {},
 
-    /** 
+    /**
      * Issues the JSONP request.
      *
      * @method send
@@ -129,7 +129,7 @@ JSONPRequest.prototype = {
             config = self._config,
             proxy  = self._proxy || Y.guid(),
             url;
-            
+
         // TODO: support allowCache as time value
         if (config.allowCache) {
             self._proxy = proxy;
@@ -193,13 +193,17 @@ JSONPRequest.prototype = {
         // TODO: queuing
         YUI.Env.JSONP[proxy] = wrap(config.on.success);
 
-        Y.Get.script(url, {
+        // Y.Get transactions block each other by design, but can easily
+        //  be made non-blocking by just calling execute() on the transaction.
+        // https://github.com/yui/yui3/pull/393#issuecomment-11961608
+        Y.Get.js(url, {
             onFailure : wrap(config.on.failure),
             onTimeout : wrap(config.on.timeout, true),
             timeout   : config.timeout,
             charset   : config.charset,
-            attributes: config.attributes
-        });
+            attributes: config.attributes,
+            async     : config.async
+        }).execute();
 
         return self;
     },

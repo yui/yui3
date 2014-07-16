@@ -37,6 +37,9 @@ A beta version of Router was first introduced in YUI 3.4.0, but was named Contro
     <p>
     The function signature for route handlers has changed. Previously, the second argument passed to all route handlers was the `next()` function. As of YUI 3.5.0, the second argument is a response object, and the third argument is the `next()` function. To preserve backwards compatibility, the response object is also a function that will call `next()`, but you should still update your code to take the new argument order into account.
     </p>
+    <p>
+    <b>Note:</b> As of YUI 3.13.0, the response object is no longer callable, use the `next()` function passed as the thrid argument to route handlers.
+    </p>
   </li>
 </ul>
 
@@ -151,6 +154,24 @@ When instantiating Router, you may optionally pass in a config object containing
     </tr>
 
     <tr>
+      <td>`params`</td>
+      <td>`{}`</td>
+      <td>
+        <p>
+        Map of params handlers in the form: `name` -> RegExp | Function.
+        </p>
+
+        <p>
+        This attribute is intended to be used to set params at init time, or to completely reset all params after init. To add params after init without resetting all existing params, use the `param()` method.
+        </p>
+
+        <p>
+        See [[#Router Params]] for details.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
       <td>`root`</td>
       <td>`''`</td>
       <td>
@@ -169,7 +190,7 @@ When instantiating Router, you may optionally pass in a config object containing
         </p>
 
         <p>
-        Each item in the array must be an object with the following properties:
+        Each item in the array must be an object with the following properties in order to be processed by the router:
         </p>
 
         <dl style="margin-top:1em">
@@ -183,6 +204,26 @@ When instantiating Router, you may optionally pass in a config object containing
             A function or a string representing the name of a function on the Router instance that should be called when the route is triggered. An array of functions and/or strings may also be provided. See [[#Routing]] for more details.
           </dd>
         </dl>
+
+        <p>
+        If a route object contains a `regex` or `regexp` property, or if its `path` is a regular express, then the route will be considered to be fully-processed. Any fully-processed routes may contain the following properties:
+        </p>
+
+        <dl style="margin-top:1em">
+          <dt>`regex`</dt>
+          <dd>
+            The regular expression representing the path to match, this property may also be named `regexp` for greater compatibility.
+          </dd>
+
+          <dt>`keys`</dt>
+          <dd>
+            Array of named path parameters used to populate `req.params` objects when dispatching to route handlers.
+          </dd>
+        </dl>
+
+        <p>
+        Any additional data contained on these route objects will be retained. This is useful to store extra metadata about a route; e.g., a `name` to give routes logical names.
+        </p>
       </td>
     </tr>
   </tbody>
@@ -250,6 +291,23 @@ This is where the `root` config attribute comes in. If you set `root` to `'/mysi
     </tr>
   </tbody>
 </table>
+
+<p>
+The `root` path also acts a mount point for the router and will only consider paths that fall under the `root` (when set). The following example demonstrates these semantics:
+</p>
+
+```js
+router.set('root', '/mysite/');
+
+router.route('/',    function () { alert('Hello!'); });
+router.route('/pie', function () { alert('Mmm. Pie.'); });
+
+Y.log(router.hasRoute('/'));           // => false
+Y.log(router.hasRoute('/pie'));        // => false
+
+Y.log(router.hasRoute('/mysite/'));    // => true
+Y.log(router.hasRoute('/mysite/pie')); // => true
+```
 
 <h3>Extending `Y.Router`</h3>
 
@@ -321,7 +379,7 @@ Now all instances of `Y.CustomRouter` will inherit all the custom defaults and c
 <h3>Routing</h3>
 
 <p>
-Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, and the remaining parameters are callback functions, function names, or arrays of either to execute (middleware) when the route is matched.
+Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, or alternatively a route object. The remaining parameters are callback functions, function names, or arrays of either to execute (middleware) when the route is matched.
 </p>
 
 ```
@@ -339,7 +397,7 @@ router.route(/^\/cake$/, function () {
 ```
 
 <p>
-Routes are always evaluated in the order they're added. The first route that matches a given URL is executed, and any subsequent routes that also match the URL will not be executed unless the first route passes control to the next callback (middleware) or route. See [[#Chanining Routes and Middleware]] for more info on executing more than one route callback for a given URL.
+Routes are always evaluated in the order they're added. The first route that matches a given URL is executed, and any subsequent routes that also match the URL will not be executed unless the first route passes control to the next callback (middleware) or route. See [[#Chaining Routes and Middleware]] for more info on executing more than one route callback for a given URL.
 </p>
 
 <p>
@@ -469,6 +527,42 @@ router.save('/pie/maple+custard/infinity');
 // => "You ordered infinity slices of maple custard pie."
 ```
 
+<h4>Route Objects</h4>
+
+<p>
+Alternatively, instead of specifying only a route's path, entire route objects can be specified when calling Router's `route()` method. These route objects are the same as those specified as [[#Config Attributes]] and what Router uses for its internal storage of its routes.
+</p>
+
+<p>
+Using route objects to specify routes allows for greater interoperability between routing system and allows for a place to attach metadata for a route. Two examples are adding a `name` property to routes to give them a logical name, or getting fully-processed route data from the server or another Router instance.
+</p>
+
+<p>
+The following example shows how to add extra metadata to routes by using route objects:
+</p>
+
+```
+var router = new Y.Router({
+  routes: [
+    {path     : '/',
+     name     : 'home',
+     callbacks: 'logRoute'}
+  ]
+});
+
+router.route({
+  path: '/users/*',
+  name: 'users'
+}, 'logRoute');
+
+router.logRoute = function (req, res, next) {
+  Y.log('Route: ' + req.route.name);
+};
+
+router.save('/');       // => "Route: home"
+router.save('/users/'); // => "Route: users"
+```
+
 <h4>Route Callbacks</h4>
 
 <p>
@@ -522,10 +616,17 @@ When a route is matched, the callback functions associated with that route will 
         </p>
       </dd>
 
-      <dt><strong>`url` (String)</strong></dt>
+      <dt><strong>`route` (Object)</strong></dt>
       <dd>
         <p>
-        The full URL.
+        Reference to the current route object whose callbacks are being dispatched.
+        </p>
+      </dd>
+
+      <dt><strong>`router` (Object)</strong></dt>
+      <dd>
+        <p>
+        Reference to this router instnace.
         </p>
       </dd>
 
@@ -536,7 +637,14 @@ When a route is matched, the callback functions associated with that route will 
         </p>
 
         <p>
-        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate".
+        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate". When the `dispath()` method is called, the `src` will be `"dispatch"`.
+        </p>
+      </dd>
+
+      <dt><strong>`url` (String)</strong></dt>
+      <dd>
+        <p>
+        The full URL.
         </p>
       </dd>
     </dl>
@@ -546,10 +654,6 @@ When a route is matched, the callback functions associated with that route will 
   <dd>
     <p>
     An object that contains methods and information that relate to responding to a request.
-    </p>
-
-    <p>
-    <strong>Note:</strong> For backwards compatibility, the response object is also a function that when called will behave the same as directly calling `next()`. This backcompat behavior will eventually be removed.
     </p>
 
     <p>
@@ -584,6 +688,97 @@ When a route is matched, the callback functions associated with that route will 
 
 <p>
 Inside a route callback, the `this` keyword will always refer to the Router instance that executed that route.
+</p>
+
+<h4>Router Params</h4>
+
+<p>
+Usually it's desirable to define routes using string paths because doing so results in easily readable routes and named request parameters. When route params require specific validation or formatting there's a tendency to rewrite a string-based route path as a regular expression. Instead of switching to more complex regex-based routes, route param handlers can be registered to validate more complex routes.
+</p>
+
+<p>
+A common example of route param validation and formatting is resource `id`s which should be a number and formatted as such (instead of a string). The following registers a param handler for `id` and it will always make sure it's a number:
+</p>
+
+```javascript
+router.param('id', function (value) {
+  return parseInt(value, 10);
+});
+```
+
+<p>
+Now any routes registered that use the `:id` parameter will have that value validated and formatted using the above function.
+</p>
+
+```javascript
+router.route('/posts/:id', function (req) {
+  Y.log('Post: ' + req.params.id);
+});
+
+router.save('/posts/10'); // => "Post: 10"
+```
+
+<p>
+The above first validates and formats the original value of the `:id` placeholder from the URL (in this case the string `"10"`) by passing it to the registered `id` param handler function. That function returns the number `10` which is then assigned to `req.params.id` before the route handler is called.
+</p>
+
+<p>
+Route param handlers can also be defined as regular expressions. Regex param handlers will have their `exec()` called with the param value parsed from the URL, and the resulting matches object/array (or `null`) will become the new param value. The following defines regex for `username` which will match alphanumeric and underscore characters:
+</p>
+
+```javascript
+router.param('username', /^\w+$/);
+```
+
+<p>
+If a param handler regex or function returns a value of `false`, `null`, `undefined`, or `NaN`, the current route will not match and be skipped. All other return values will be used in place of the original param value parsed from the URL.
+</p>
+
+<p>
+The following defines two additional routes, one for `"/users/:username"`, and a catch-all route which will be called when none of the other routes match:
+</p>
+
+```javascript
+router.route('/users/:username', function (req) {
+  // `req.params.username` is an array because the result of calling `exec()`
+  // on the regex is assigned as the param's value.
+  Y.log('User: ' + req.params.username[0]);
+});
+
+router.route('*', function () {
+  Y.log('Catch-all no routes matched!');
+});
+
+// URLs which match routes:
+router.save('/users/ericf'); // => "User: ericf"
+
+// URLs which do not match routes because params fail validation:
+router.save('/posts/a');            // => "Catch-all no routes matched!"
+router.save('/users/ericf,rgrove'); // => "Catch-all no routes matched!"
+```
+
+<p>
+The last two `router.save()` calls above skip the main posts and users route handlers because the param values parsed from the URL fail validation of the `id` and `username` param handlers. When a param value fails validation, that route is skipped, and in this case the catch-all `"*"` route handler is called.
+</p>
+
+<p>
+A router's param handlers are also accessible through its `params` attribute and can be set, in bulk, at init time or to reset all existing param handlers. The above param handlers could have been registered via the `params` attribute:
+</p>
+
+```javascript
+var router = new Y.Router({
+  params: {
+    id: function (value) {
+      return parseInt(value, 10);
+    },
+
+    username: /^\w+$/
+  }
+});
+```
+
+<p>
+This is functionally equivalent to adding the param handlers via the `param()` method, except that it will replace any default params, and the params are added during the Router's initialization stage rather than after.
 </p>
 
 <h4>Chaining Routes and Middleware</h4>

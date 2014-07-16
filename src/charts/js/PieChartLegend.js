@@ -1,4 +1,4 @@
-var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
+PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
     /**
      * Redraws the chart instance.
      *
@@ -42,7 +42,8 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
                 legendHeight = legend.get("height");
                 gap = legend.get("styles").gap;
 
-                if((direction == "vertical" && (graphWidth + legendWidth + gap !== w)) || (direction == "horizontal" &&  (graphHeight + legendHeight + gap !== h)))
+                if((direction === "vertical" && (graphWidth + legendWidth + gap !== w)) ||
+                    (direction === "horizontal" &&  (graphHeight + legendHeight + gap !== h)))
                 {
                     switch(legend.get("position"))
                     {

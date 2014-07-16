@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Benchmarks</title>
+
+    <style>
+        #demo {
+            background: #ccc;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<p><button id="start">Start Benchmarks</button></p>
+
+<div id="log"></div>
+<div id="demo"></div>
+<applet code="nano" archive="../../../vendor/benchmarkjs/nano.jar" style="display: none;"></applet>
+<script src="../../../common/vendor/benchmarkjs/benchmark.js"></script>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    modules: {
+        'transition-benchmark': {
+            fullpath: 'transition-benchmark.js',
+            requires: ['transition']
+        },
+
+        'test-console': {
+            fullpath : '../../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../../common/tests/assets/test-console.css',
+            type    : 'css'
+        }
+    },
+
+    useBrowserConsole: false
+}).use('transition-benchmark', 'test-console', function (Y) {
+    var suite = Y.BenchmarkSuite,
+        start = Y.one('#start');
+
+    suite.on('start', function () {
+        start.set('disabled', true);
+        Y.log('Starting benchmarks.');
+    });
+
+    suite.on('cycle', function (e) {
+        Y.log(String(e.target));
+    });
+
+    suite.on('complete', function () {
+        start.set('disabled', false);
+        Y.log('Finished.');
+    });
+
+    start.on('click', function () {
+        suite.run({async:true});
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 /**
  * Provides methods for managing custom Node data.
- * 
+ *
  * @module node
  * @main node
  * @submodule node-data
@@ -74,8 +74,9 @@ Y.mix(Y.Node.prototype, {
     },
 
     _getDataAttribute: function(name) {
-        var name = this.DATA_PREFIX + name,
-            node = this._node,
+        name = this.DATA_PREFIX + name;
+
+        var node = this._node,
             attrs = node.attributes,
             data = attrs && attrs[name] && attrs[name].value;
 
@@ -133,7 +134,7 @@ Y.mix(Y.NodeList.prototype, {
     * @see Node
     * @param {string} name Optional name of the data field to retrieve.
     * If no name is given, all data is returned.
-    * @return {Array} An array containing all of the data for each Node instance. 
+    * @return {Array} An array containing all of the data for each Node instance.
     * or an object hash of all fields.
     */
     getData: function(name) {

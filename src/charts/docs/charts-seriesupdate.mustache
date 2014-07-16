@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 #mychart {
@@ -29,21 +29,37 @@
 
 
 <p>You can update a series after the `Chart` has rendered through the `getSeries` method. This method returns a reference to a series instance based on either the
-instance's `seriesCollection` index or the key value associated with the value data of the series. This example uses the value key of each series to update the fill color, 
+instance's `seriesCollection` index or the key value associated with the value data of the series. This example uses the value key of each series to update the fill color,
 border color and border weight of its markers.</p>
 
+<h4>CSS</h4>
 ```
-YUI().use('charts', function (Y) 
-{ 
-    var myDataValues = [ 
-        {category:"Q1", expenses:137000, revenue:532200}, 
-        {category:"Q2", expenses:211000, revenue:689100}, 
-        {category:"Q3", expenses:151000, revenue:521500}, 
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+```
+
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+
+<h4>JavaScript</h4>
+```
+YUI().use('charts', function (Y)
+{
+    var myDataValues = [
+        {category:"Q1", expenses:137000, revenue:532200},
+        {category:"Q2", expenses:211000, revenue:689100},
+        {category:"Q3", expenses:151000, revenue:521500},
         {category:"Q4", expenses:163000, revenue:892650}
     ];
-    
+
     var mychart = new Y.Chart({type:"bar", dataProvider:myDataValues, render:"#mychart"});
-    
+
     //Click handler
     Y.on("click", function(e) {
         var seriesName = Y.one("#seriesSelector").get("value"),

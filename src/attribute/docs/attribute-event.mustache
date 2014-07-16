@@ -1,8 +1,8 @@
-<style type="text/css" scoped>
+<style>
     #example-out .event {
         padding:2px 2px 2px 5px;
     }
-    
+
     #example-out .event-props {
         font-family:courier;
         margin-top:2px;
@@ -66,7 +66,7 @@
 </style>
 
 <div class="intro">
-    <p>Attribute change events are one of the key benefits of using attributes to maintain state for your objects, instead of regular object properties. This example shows how you can listen for attribute change events and work with the event payload they receive.</p> 
+    <p>Attribute change events are one of the key benefits of using attributes to maintain state for your objects, instead of regular object properties. This example shows how you can listen for attribute change events and work with the event payload they receive.</p>
 </div>
 
 <div class="example">
@@ -92,11 +92,11 @@ YUI().use("attribute", "node", function(Y) {
             "foo" : {
                 value:5
             },
-     
+
             "bar" : {
                 value:"Hello World!"
             },
-    
+
             "foobar" : {
                 value:true
             }
@@ -146,8 +146,8 @@ o1.on("foobarChange", function(e) {
 
 o1.after("foobarChange", function(e) {
 
-    // This foobar after listener will not get called, 
-    // if we end up preventing default in the "on" 
+    // This foobar after listener will not get called,
+    // if we end up preventing default in the "on"
     // listener above.
 
     displayEvent(e, "After foobarChange");
@@ -191,7 +191,7 @@ o1.on("foobarChange", function(event) {
     <dt>attrName</dt>
     <dd>The name of the attribute which is being set</dd>
     <dt>subAttrName</dt>
-    <dd>Attribute also allows you to set nested properties of attributes which have values which are objects through the 
+    <dd>Attribute also allows you to set nested properties of attributes which have values which are objects through the
     `set` method (e.g. `o1.set("x.y.z")`). This property will contain the path to the property which was changed.</dd>
     <dt>preventDefault()<dt>
     <dd>This method can be called in an "on" subscriber to prevent the attribute's value from being updated (the default behavior). Calling this method in an "after" listener has no impact, since the default behavior has already been invoked.</dd>

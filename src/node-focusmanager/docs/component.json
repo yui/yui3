@@ -5,7 +5,7 @@
     "author"     : "drgath",
 
     "tags": [
-        "utility", "node", "plugin", "focus", "keyboard", "navigation", "beta"
+        "utility", "node", "plugin", "focus", "keyboard", "navigation", "beta", "deprecated"
     ],
 
     "use": ["node-focusmanager"],

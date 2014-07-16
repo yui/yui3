@@ -1,4 +1,4 @@
-<style scoped>
+<style>
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 #mygraphiccontainer {
@@ -10,13 +10,13 @@
 <div class="intro">
 <p>
 This example shows how to create gradient fills for a shape. By default, the `fill` attribute of a shape instance will generate a solid fill for the shape. Setting the `type` property on the `fill` attribute to `linear` or `radial` will create corresponding
-gradient fill. Each gradient type has its own set of properties for defining the fill. Both share the `stop` property. The `stop` property defines the colors and their opacity and position in a 
+gradient fill. Each gradient type has its own set of properties for defining the fill. Both share the `stop` property. The `stop` property defines the colors and their opacity and position in a
 gradient fill. It is an array of objects containing the following information.
 </p>
    <dl>
        <dt>color</dt><dd>The color of the stop.</dd>
        <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
-       <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+       <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd>
    </dl>
 
 <p>

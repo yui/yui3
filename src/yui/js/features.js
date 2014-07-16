@@ -12,21 +12,21 @@ Contains the core of YUI's feature test architecture.
 */
 
 Y.mix(Y.namespace('Features'), {
-    
+
     /**
     * Object hash of all registered feature tests
     * @property tests
     * @type Object
     */
     tests: feature_tests,
-    
+
     /**
     * Add a test to the system
-    * 
+    *
     *   ```
     *   Y.Features.add("load", "1", {});
     *   ```
-    * 
+    *
     * @method add
     * @param {String} cat The category, right now only 'load' is supported
     * @param {String} name The number sequence of the test, how it's reported in the URL or config: 1, 2, 3
@@ -63,7 +63,7 @@ Y.mix(Y.namespace('Features'), {
         return (result.length) ? result.join(';') : '';
     },
     /**
-    * Run a sepecific test and return a Boolean response.
+    * Run a specific test and return a Boolean response.
     *
     *   ```
     *   Y.Features.test("load", "1");

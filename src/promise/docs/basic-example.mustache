@@ -1,0 +1,108 @@
+{{>github-cache-css}}
+{{>github-mock-config}}
+
+<div class="intro">
+    <p>
+        This example shows how to create a cache for the GitHub Contributors API that returns promises representing the values you fetched. In order to access the API we use the JSONP module.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>github-cache-markup}}
+    {{>github-cache-js}}
+</div>
+
+<h3>Creating a Cache</h3>
+
+<p>
+    A cache is an object that keeps track of which operations have already been performed, stores the results and returns the stored result if the operation was already performed. In this case, since we are fetching content with JSONP, the operations are asynchronous so we will store promises representing them.
+</p>
+
+```
+// We create a simple module with a private cache object
+var GitHub = (function () {
+
+    var cache = {};
+
+    return {
+        getUser: function (name) {
+            // This method will return a promise
+        }
+    };
+}());
+```
+
+<p>
+    Given a certain function that takes a user name and returns the corresponding GitHub API URL, then a method that caches the user data will simply check the private cache object or fetch the result.
+</p>
+
+```
+getUser: function (name) {
+    var url = getUserURL(name);
+
+    if (cache[url]) {
+        // If we have already stored the promise in the cache we just return it
+        return cache[url];
+    } else {
+        // fetch() will make a JSONP request, cache the promise and return it
+        return fetch(url);
+    }
+}
+```
+
+<h3>Resolving and Returning Promises</h3>
+
+<p>Our `fetch()` function will create a promise and fulfill it or reject it based on the result of the JSONP request. Following the steps described in the <a href="index.html##creating-a-promise">User Guide</a>, we create a promise and call `Y.jsonp` inside its initialization function.</p>
+
+```
+// Fetches a URL, stores a promise in the cache and returns it
+function fetch(url) {
+    var promise = new Y.Promise(function (fulfill, reject) {
+        Y.jsonp(url, function (res) {
+            var meta = res.meta,
+                data = res.data;
+
+            // Check for a successful response, otherwise reject the
+            // promise with the message returned by the GitHub API.
+            if (meta.status >= 200 && meta.status < 300) {
+                fulfill(data);
+            } else {
+                reject(new Error(data.message));
+            }
+        });
+
+        // Add a timeout in case the URL is completely wrong
+        // or GitHub is too busy
+        setTimeout(function () {
+            // Once a promise has been fulfilled or rejected it will never
+            // change its state again, so we can safely call reject() after
+            // some time. If it was already fulfilled or rejected, nothing will
+            // happen
+            reject(new Error('Timeout'));
+        }, 10000);
+    });
+
+    // store the promise in the cache object
+    cache[url] = promise;
+
+    return promise;
+}
+```
+
+<h3>Wiring It All Together</h3>
+
+<p>Here is the complete code for this example. You will notice that it contains a request for a user called "y u i" which likely does not exist. This illustrates how promises help you handle errors. While it may be tempting to skip adding an error callback, it is highly recommended that you add one and provide feedback to your users when things go wrong.</p>
+<h4>HTML</h4>
+```
+{{>github-cache-markup}}
+```
+
+<h4>CSS</h4>
+```
+{{>github-cache-css}}
+```
+
+<h4>JavaScript</h4>
+```
+{{>github-cache-js}}
+```

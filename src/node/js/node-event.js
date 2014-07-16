@@ -21,6 +21,8 @@ Y_Node.DOM_EVENTS = {
     close: 1,
     command: 1,
     contextmenu: 1,
+    copy: 1,
+    cut: 1,
     dblclick: 1,
     DOMMouseScroll: 1,
     drag: 1,
@@ -48,6 +50,7 @@ Y_Node.DOM_EVENTS = {
     mouseup: 1,
     mousewheel: 1,
     orientationchange: 1,
+    paste: 1,
     reset: 1,
     resize: 1,
     select: 1,
@@ -55,7 +58,8 @@ Y_Node.DOM_EVENTS = {
     submit: 1,
     scroll: 1,
     textInput: 1,
-    unload: 1
+    unload: 1,
+    invalid: 1
 };
 
 // Add custom event adaptors to this list.  This will make it so

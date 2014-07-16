@@ -4,9 +4,39 @@
             "json-parse",
             "json-stringify"
         ],
+
+        "plugins": {
+            "json-parse-shim": {
+                "requires": [
+                    "json-parse"
+                ],
+                "condition": {
+                    "trigger": "json-parse",
+                    "test": "parse-native-test.js"
+                }
+            },
+            "json-stringify-shim": {
+                "requires": [
+                    "json-stringify"
+                ],
+                "condition": {
+                    "trigger": "json-stringify",
+                    "test": "stringify-native-test.js"
+                }
+            }
+        },
+
         "submodules": {
-            "json-parse": { "requires": [ "yui-base" ] },
-            "json-stringify": { "requires": [ "yui-base" ] }
+            "json-parse": {
+                "requires": [
+                    "yui-base"
+                ]
+            },
+            "json-stringify": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 }

@@ -1,0 +1,17 @@
+<script>
+YUI.GlobalConfig = {
+    modules: {
+        'xdr-mock': {
+            fullpath: '../assets/io/xdr-mock.js',
+            requires: [],
+            condition: {
+                trigger: 'io',
+                when: 'instead',
+                test: function () {
+                    return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
+                }
+            }
+        }
+    }
+};
+</script>
