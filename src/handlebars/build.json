@@ -11,8 +11,10 @@
             "jsfiles": [
                 "yui-handlebars-copyright.js",
                 "yui-handlebars-base-before.js",
-                "handlebars-base.js",
+                "handlebars-safe-string.js",
                 "handlebars-utils.js",
+                "handlebars-exception.js",
+                "handlebars-base.js",
                 "handlebars-runtime.js",
                 "yui-handlebars-base-after.js"
             ]
@@ -23,10 +25,13 @@
                 "yui-handlebars-copyright.js",
                 "yui-handlebars-compiler-before.js",
                 "handlebars-compiler-parser.js",
-                "handlebars-compiler-base.js",
                 "handlebars-compiler-ast.js",
+                "handlebars-compiler-base.js",
                 "handlebars-compiler-compiler.js",
-                "yui-handlebars-compiler-after.js"
+                "handlebars-compiler-javascript-compiler.js",
+                "yui-handlebars-compiler-after.js",
+                "handlebars.runtime.js",
+                "handlebars.js"
             ]
         }
     }
