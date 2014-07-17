@@ -1,12 +1,12 @@
 <div class="intro">
 
   <p>
-    Often pages will have a number of images below the fold, hidden from the user's view. 
+    Often pages will have a number of images below the fold, hidden from the user's view.
     These are prime candidates to load with the <a href="http://developer.yahoo.com/yui/imageloader/">ImageLoader Utility</a>.
   </p>
 
   <p>
-    All the images in this example belong to the same group, and each loads immediately only when it appears above, 
+    All the images in this example belong to the same group, and each loads immediately only when it appears above,
     or within the specified distance (25px) of, the page fold.
   </p>
 
@@ -83,15 +83,15 @@
 <h2>Loading Images Below the Fold</h2>
 
 <p>
-  You can easily have images load immediately if they are above the fold while delaying the load of images below the fold. 
+  You can easily have images load immediately if they are above the fold while delaying the load of images below the fold.
   This saves you from loading any images that the user can't see because they are beyond her browser's viewable area.
 </p>
 
 <p>
-  All we need is one group, and we specify its <code>foldDistance</code> attribute to <code>25</code> (25px). 
-  Any group with this attribute set will, at the DOM ready state, examine the page coordinates of all images registered 
-  to that group. Any images located above the fold, or no farther than the specified distance below the fold, will load immediately. 
-  The rest will be checked again at any <code>scroll</code> or <code>resize</code> event and be loaded only when they're near enough 
+  All we need is one group, and we specify its <code>foldDistance</code> attribute to <code>25</code> (25px).
+  Any group with this attribute set will, at the DOM ready state, examine the page coordinates of all images registered
+  to that group. Any images located above the fold, or no farther than the specified distance below the fold, will load immediately.
+  The rest will be checked again at any <code>scroll</code> or <code>resize</code> event and be loaded only when they're near enough
   to the fold.
 </p>
 
@@ -105,12 +105,12 @@ foldGroup.registerImage({ domId: 'img5', srcUrl: 'http://yui.yahooapis.com/testa
 ```
 
 <p>
-  When you specify a <code>foldDistance</code> value, <code>scroll</code> and <code>resize</code> triggers are added to the 
+  When you specify a <code>foldDistance</code> value, <code>scroll</code> and <code>resize</code> triggers are added to the
   group automatically. Thus you will typically not need to set any triggers for the group explicitly.
 </p>
 
 <p>
-  How do you know that the images below the fold are, in fact, not loaded immediately? There are several tools available to 
-  monitor the HTTP requests of your browser, including Firebug for Firefox and HTTPWatch for IE. With these tools you can 
+  How do you know that the images below the fold are, in fact, not loaded immediately? There are several tools available to
+  monitor the HTTP requests of your browser, including Firebug for Firefox and HTTPWatch for IE. With these tools you can
   monitor precisely when each image on a page is loaded.
 </p>

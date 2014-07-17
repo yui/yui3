@@ -9,8 +9,8 @@ YUI.add('multipleshapes-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("MultipleShapes", function() { 
+
+    suite.add("MultipleShapes", function() {
         var circle = graphic.addShape({
                 type: "circle",
                 radius: 8,
@@ -57,5 +57,5 @@ YUI.add('multipleshapes-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

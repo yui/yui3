@@ -877,9 +877,9 @@ YUI.add('mock-tests', function(Y) {
     //-------------------------------------------------------------------------
     // Test Case for returns expectations
     //-------------------------------------------------------------------------
-    
+
     suite.add(new Y.Test.Case({
-    
+
         name : "Returns Tests",
         groups: ["mock", "common"],
 
@@ -939,9 +939,9 @@ YUI.add('mock-tests', function(Y) {
     //-------------------------------------------------------------------------
     // Test Case for run expectations
     //-------------------------------------------------------------------------
-    
+
     suite.add(new Y.Test.Case({
-    
+
         name : "Run Tests",
         groups: ["mock", "common"],
 

@@ -6,12 +6,12 @@ YUI.add('yui-isa-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Example tests',
         'check buttons click': function() {
-        
+
             var checkButton = function(id) {
                 var button = Y.one('#demo-' + id),
                     before = Y.all('#demo tr').item(id).all('td').size(),
                     after;
-                
+
                 button.simulate('click');
                 after = Y.all('#demo tr').item(id).all('td').size();
 

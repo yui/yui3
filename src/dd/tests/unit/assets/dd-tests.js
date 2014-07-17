@@ -14,7 +14,7 @@ YUI.add('dd-tests', function(Y) {
     moveCount = 729,
     dropCount = 30;
 
-            
+
             if (Y.UA.ie) {
                 if (Y.UA.ie >= 9) {
                     dropCount = 30;
@@ -27,7 +27,7 @@ YUI.add('dd-tests', function(Y) {
                 }
             }
 
-            
+
         var _count = {},
         _resetCount = function() {
             Y.each(_count, function(v, k) {
@@ -47,7 +47,7 @@ YUI.add('dd-tests', function(Y) {
                 preventDefault: noop,
                 halt: noop
             });
-            node.set('activeHandle', node.get('node'));                    
+            node.set('activeHandle', node.get('node'));
             node._setStartPosition(node.get('node').getXY());
             Y.DD.DDM.activeDrag = node;
             Y.DD.DDM._start();
@@ -101,7 +101,7 @@ YUI.add('dd-tests', function(Y) {
 
         setUp : function() {
         },
-        
+
         tearDown : function() {
         },
         test_shim: function() {
@@ -155,7 +155,7 @@ YUI.add('dd-tests', function(Y) {
             Y.each(dd._yuievt.targets, function(v, k) {
                 Y.Assert.areSame(v, dd.target._yuievt.targets[k], 'bubbleTargets are not the same');
             });
-            
+
         },
         test_drag_invalids: function() {
             var len = Y.Object.keys(dd._invalids).length;
@@ -163,7 +163,7 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.areSame((len + 1), Y.Object.keys(dd._invalids).length, 'Failed to add to invalid list');
             dd.removeInvalid('foo');
             Y.Assert.areSame(len, Y.Object.keys(dd._invalids).length, 'Failed to remove from invalid list');
-            
+
         },
         test_drag_groups: function() {
             Y.Assert.areSame(1, dd.get('groups').length, 'DD already in a group');
@@ -231,7 +231,7 @@ YUI.add('dd-tests', function(Y) {
             dd.target._handleOutEvent();
             var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
             Y.Assert.areSame(1, zIndex, 'Failed to change zIndex of shim');
-            
+
             dd.target.overTarget = true;
             Y.DD.DDM.activeDrag = dd.target;
             dd.target._handleOut(true);
@@ -383,7 +383,7 @@ YUI.add('dd-tests', function(Y) {
         /* This test is iffey on Chrome/IE9 and sometimes on FF. Removing until I find a better solution.
         test_proxy_move: function() {
             _fakeMove(proxy, moveCount);
-            
+
             Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
             Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
             Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
@@ -507,7 +507,7 @@ YUI.add('dd-tests', function(Y) {
             var ticks = [1, 25, 75, 100 ];
             var tick = Y.DD.DDM._calcTickArray(15, ticks, 1, 150);
             Y.Assert.areSame(25, tick, 'Failed to calculate tick');
-            
+
             var tick = Y.DD.DDM._calcTickArray(2, ticks, 1, 150);
             Y.Assert.areSame(1, tick, 'Failed to calculate tick');
 
@@ -544,7 +544,7 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isInstanceOf(Y.Plugin.DDNodeScroll, dd.nodescroll, 'NodeScroll: NodeScroll Instance');
 
             dd.destroy();
-            
+
         },
         test_window_scroll: function() {
             //Skip this test on mobile devices, they don't like the scrollTop settings to test against.
@@ -707,7 +707,7 @@ YUI.add('dd-tests', function(Y) {
 
             Y.Assert.areSame(xy1[0], xy11[0], 'Did not set position');
             Y.Assert.areSame(xy2[0], xy21[0], 'Did not set position');
-    
+
             Y.DD.DDM.swapPosition(n1, n2);
 
             var xy12 = n1.getXY(),
@@ -724,18 +724,18 @@ YUI.add('dd-tests', function(Y) {
                 n2 = Y.Node.create('<div>Foo2</div>'),
                 wrap = Y.Node.create('<div></div>');
 
-            
+
 
             wrap.prepend(n1);
             wrap.append(n2);
-            
+
             Y.Assert.isTrue((n1.get('nextSibling') ? true : false), '1, Node has a sibling');
             Y.Assert.isNull((n2.get('nextSibling')), '2, Node has a sibling');
             Y.DD.DDM.swapNode(n1, n2);
 
             Y.Assert.isTrue((n2.get('nextSibling') ? true : false), '3, Node has a sibling');
             Y.Assert.isNull((n1.get('nextSibling')), '4, Node has a sibling');
-            
+
         },
         'test: proxy plugin on widget': function() {
             var test = this,
@@ -749,13 +749,13 @@ YUI.add('dd-tests', function(Y) {
                     bodyContent: "<h1>Some content goes here <br> Content</h1>",
                     render: true
                 });
-                
+
                 panel.plug(Y.Plugin.Drag);
 
                 Assert.isInstanceOf(Y.Plugin.Drag, panel.dd);
 
                 panel.dd.plug(Y.Plugin.DDProxy);
-                
+
                 Assert.isInstanceOf(Y.Plugin.DDProxy, panel.dd.proxy);
 
                 Assert.areSame(2, panel.dd._widgetHandles.length, 'Should have 2 event listeners');
@@ -769,7 +769,7 @@ YUI.add('dd-tests', function(Y) {
 
                 Assert.areSame(2, panel.dd._widgetHandles.length, 'Should have 2 event listeners');
 
-                panel.dd._updateStopPosition({  
+                panel.dd._updateStopPosition({
                     target: {
                         realXY: [100, 100]
                     }
@@ -822,9 +822,9 @@ YUI.add('dd-tests', function(Y) {
             }, 100);
         }
     };
-    
+
     var suite = new Y.Test.Suite('DragDrop');
-    
+
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
 });

@@ -14,7 +14,7 @@ YUI.add('resize-tests', function(Y) {
                 preventDefault: noop,
                 halt: noop
             });
-            node.set('activeHandle', node.get('node'));                    
+            node.set('activeHandle', node.get('node'));
             node._setStartPosition(node.get('node').getXY());
             Y.DD.DDM.activeDrag = node;
             Y.DD.DDM._start();
@@ -45,7 +45,7 @@ YUI.add('resize-tests', function(Y) {
             _fakeEnd(node);
         },
         activeHandle;
-    
+
 
     var template = {
         name: 'Resize Test',

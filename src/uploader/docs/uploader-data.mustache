@@ -5,7 +5,7 @@
    Along with each file, this example also submits an additional POST variable (the file's name).
    Once each upload completes, the server sends the received file name POST variable back, along with a time
    stamp, and the example displays them next to the file.</p>
-   
+
 <p><strong>Please note:</strong> This example will not work when run from a local filesystem because of security restrictions in the transport protocols used. If you’d like to run this example locally, set up a local web server and launch it from there.</p>
 
 <p><strong>Also note:</strong> You will need compile and host your own <code>flashuploader.swf</code> file to enable Flash mode which is needed for IE <= 9. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>
@@ -30,19 +30,19 @@ your tests to a few small files to avoid overloading the system.</p>
 uploader.after("fileselect", function (event) {
 
    ...
-            
+
    var perFileVars = {};
-   
+
    Y.each(fileList, function (fileInstance) {
-       fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" + 
-                             "<td class='filename'>" + fileInstance.get("name") + "</td>" + 
-                             "<td class='filesize'>" + fileInstance.get("size") + "</td>" + 
+       fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" +
+                             "<td class='filename'>" + fileInstance.get("name") + "</td>" +
+                             "<td class='filesize'>" + fileInstance.get("size") + "</td>" +
                              "<td class='percentdone'>Hasn't started yet</td>" +
-                             "<td class='serverdata'>&nbsp;</td>"); 
-  
+                             "<td class='serverdata'>&nbsp;</td>");
+
        perFileVars[fileInstance.get("id")] = {filename: fileInstance.get("name")};
    });
-   
+
    uploader.set("postVarsPerFile", Y.merge(uploader.get("postVarsPerFile"), perFileVars));
 });
 ```

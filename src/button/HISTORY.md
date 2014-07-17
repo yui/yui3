@@ -6,6 +6,11 @@ Button Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
 3.17.1
 ------
 
@@ -34,7 +39,7 @@ Button Change History
 3.14.0
 ------
 
-* Fixed `disabledChange` listener to correctly disable or enable 
+* Fixed `disabledChange` listener to correctly disable or enable
   buttons. ([#1374][]: @drjayvee)
 
 [#1374]: https://github.com/yui/yui3/pull/1374

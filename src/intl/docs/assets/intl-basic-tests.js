@@ -1,7 +1,7 @@
 YUI.add('intl-basic-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('intl-basic example test suite')
-    
+
     suite.add(new Y.Test.Case({
 
         name : 'Example Tests',

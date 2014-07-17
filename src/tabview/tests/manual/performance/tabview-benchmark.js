@@ -1,7 +1,7 @@
 YUI.add('tabview-benchmark', function (Y) {
     var suite = Y.BenchmarkSuite = new Benchmark.Suite();
-        
-    suite.add('new Y.TabView()', function() { 
+
+    suite.add('new Y.TabView()', function() {
         var tabview = new Y.TabView({
             children: [{
                 label: 'foo',
@@ -16,7 +16,7 @@ YUI.add('tabview-benchmark', function (Y) {
         });
     });
 
-    suite.add('new Y.TabView().destroy', function() { 
+    suite.add('new Y.TabView().destroy', function() {
         var tabview = new Y.TabView({
             children: [{
                 label: 'foo',

@@ -126,13 +126,13 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
 
     // 08/20/2012 - Based on a conversation with Adam Moore, original Custom Event author,
     // broadcast was designed to be completely independent of bubbling, and broadcast
-    // listeners do no participate in the propagation flow. The tests below were modified, 
-    // (and enabled) based on that feedback, to reflect current 'as designed' behavior and 
+    // listeners do no participate in the propagation flow. The tests below were modified,
+    // (and enabled) based on that feedback, to reflect current 'as designed' behavior and
     // implementation.
 
     suite.add(new Y.Test.Case({
         name : "Broadcast With Facade",
-            
+
         setUp : function () {
             this.source = new Y.EventTarget({
                 emitFacade:true
@@ -150,7 +150,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         test_broadcast_0: function () {
             var results = '';
 
-            this.source.publish('foo', { 
+            this.source.publish('foo', {
                 broadcast: 0,
 
                 defaultFn : function() {
@@ -179,9 +179,9 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
 
             var results = '';
 
-            this.source.publish('foo', { 
+            this.source.publish('foo', {
                 broadcast: 1,
-                
+
                 defaultFn : function() {
                     results += 'B';
                 }
@@ -206,7 +206,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         test_broadcast_2: function () {
             var results = '';
 
-            this.source.publish('foo', { 
+            this.source.publish('foo', {
                 broadcast: 2,
 
                 defaultFn : function() {
@@ -258,7 +258,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             Y.Assert.areSame('ABCDE', results);
         },
 
-        // Bug. e.preventDefault() in the Y on listener should not stop the source after listener - 
+        // Bug. e.preventDefault() in the Y on listener should not stop the source after listener -
         'test_broadcast_1_prevented_at_YUI_Instance': function () {
             var results = '';
 
@@ -316,7 +316,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
 
             this.source.fire('foo');
 
-            // Based on current impl, we only broadcast if !stopped. In this case we have stopped. 
+            // Based on current impl, we only broadcast if !stopped. In this case we have stopped.
             // There's something wrong with this if the working definition is that broadcast is independent of bubble, but it's explicitly implemented this way.
             Y.Assert.areSame('ABCD', results);
         },
@@ -465,7 +465,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
 
             this.source.fire('foo');
 
-            // Based on current impl, we only broadcast if !stopped. In this case we have stopped. 
+            // Based on current impl, we only broadcast if !stopped. In this case we have stopped.
             // There's something wrong with this if the working definition is that broadcast is independent of bubble, but it's explicitly implemented this way.
             Y.Assert.areSame('ABCD', results);
         },
@@ -518,8 +518,8 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
                 Y.on('foo', function (e) {results += 'C';}),
                 Y.after('foo', function () { results += 'D'; }),
 
-                Y.Global.on('foo', function (e) { 
-                    results += 'E'; 
+                Y.Global.on('foo', function (e) {
+                    results += 'E';
                     e.stopPropagation();
                 }),
                 Y.Global.after('foo', function () { results += 'G'; })
@@ -971,4 +971,4 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
 
     Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-custom', 'test']}); 
+}, '@VERSION@' ,{requires:['event-custom', 'test']});

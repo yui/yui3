@@ -10,7 +10,7 @@ YUI.add('simple-resize-plugin-tests', function(Y) {
             this.wrapper = this.overlay.get('parentNode');
         },
         'is rendered': function() {
-            
+
             var el = this.overlay;
             Assert.isNotNull(el);
             Assert.isTrue(el.hasClass('yui3-overlay-content'));
@@ -39,13 +39,13 @@ YUI.add('simple-resize-plugin-tests', function(Y) {
         },
         'did resize render': function() {
             var handles = this.wrapper.all('.yui3-resize-handle');
-            
+
             Assert.areEqual(8, handles.size());
         },
         'dd is active on resize': function() {
             var test = this,
                 handle = this.wrapper.one('.yui3-resize-handle');
-            
+
             Assert.isFalse(handle.hasClass('yui3-dd-draggable'));
             Assert.isFalse(handle.hasClass('yui3-dd-dragging'));
             Assert.isFalse(handle.hasClass('yui3-resize-handle-active'));

@@ -13,12 +13,12 @@
 
 <script type="text/javascript">
 
-// Get a new instance of YUI and 
+// Get a new instance of YUI and
 // load it with the required set of modules
 
 YUI().use("node", "attribute", function(Y) {
 
-    // Setup custom class which we want to 
+    // Setup custom class which we want to
     // add managed attribute support to
 
     function MyClass(cfg) {
@@ -29,11 +29,11 @@ YUI().use("node", "attribute", function(Y) {
             "foo" : {
                 value:5
             },
-     
+
             "bar" : {
                 value:"Hello World!"
             },
-    
+
             "foobar" : {
                 value:true
             }
@@ -46,11 +46,11 @@ YUI().use("node", "attribute", function(Y) {
     Y.augment(MyClass, Y.Attribute);
 
     function displayValues(o, title, node) {
-        var str = 
-            '<div class="myclass"><div class="myclass-title">' 
-            + title + 
-            '</div><ul class="myclass-attrs"><li>foo: ' 
-            + o.get("foo") 
+        var str =
+            '<div class="myclass"><div class="myclass-title">'
+            + title +
+            '</div><ul class="myclass-attrs"><li>foo: '
+            + o.get("foo")
             + '</li><li>bar: '
             + o.get("bar")
             + '</li><li>foobar: '

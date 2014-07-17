@@ -62,7 +62,8 @@
             },
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base",
+                    "selector-css2"
                 ]
             },
             "dd-drop": {

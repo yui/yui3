@@ -1,7 +1,7 @@
 html, body {
     margin:0;
     padding:0;
-    font-family: arial,helvetica,clean,sans-serif;    
+    font-family: arial,helvetica,clean,sans-serif;
 }
 
 #additional-content {
@@ -61,7 +61,7 @@ html, body {
         color-stop(0.01, #b0bccc),
         color-stop(0.49, #889bb3),
         color-stop(0.50, #8094ae),
-        to(#6d83a1)     
+        to(#6d83a1)
     );
 }
 
@@ -75,5 +75,5 @@ html, body {
 
 	font-size:150%;
 	font-weight:bold;
-    text-shadow: 0 -1px 0 rgba(0,0,0,0.7);    
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.7);
 }

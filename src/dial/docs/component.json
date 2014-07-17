@@ -7,7 +7,7 @@
     "tags": ["widget", "beta", "dial", "round", "knob", "gauge", "wheel"],
     "use" : ["dial"],
     "dialPathAssets" : "http://yuilibrary.com/yui/docs/assets/dial",
-    
+
     "examples": [
         {
             "name"       : "dial-basic",

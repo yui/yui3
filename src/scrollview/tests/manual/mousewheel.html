@@ -9,7 +9,7 @@
 			    background:#ccc;
 			}
 		</style>
-		
+
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
 
 	</head>
@@ -68,9 +68,9 @@
         <h2>Footer</h2>
 
 		<script type="text/javascript">
-		
+
 		YUI.add('scrollview-mousewheel', function(Y){
-		    
+
             function MouseWheelPlugin(config) {
                 MouseWheelPlugin.superclass.constructor.apply(this, arguments);
             }
@@ -78,15 +78,15 @@
             MouseWheelPlugin.NAME = 'pluginScrollViewMouseWheel';
             MouseWheelPlugin.NS = 'mousewheel';
             MouseWheelPlugin.ATTRS = {
-                
+
             }
-            
+
             Y.extend(MouseWheelPlugin, Y.Plugin.Base, {
                 initializer: function() {
                     this.host = this.get('host');
                     this.afterHostEvent('render', this._afterRender);
                 },
-                
+
                 _afterRender: function() {
                     var host = this.host;
                     var contentBox = host.get("contentBox");
@@ -111,10 +111,10 @@
                     });
                 }
             });
-            
+
             Y.Base.plug(Y.ScrollView, MouseWheelPlugin);
 		});
-		
+
         YUI({
             filter:"raw",
             modules:{
@@ -135,12 +135,12 @@
                     axis: "y"
                 }
             }).render();
-            
+
             scrollView.get("contentBox").on('mouseover', function(e){
-               console.log(e); 
+               console.log(e);
             });
 		});
-		
+
 		</script>
 	</body>
 </html>

@@ -9,7 +9,7 @@
 	font-size: 100%;
     line-height: 1.5;  /* 18px */
     *line-height: 1.45; /* For IE */
-    
+
 }
 
 .yui3-menu-horizontal {
@@ -32,7 +32,7 @@
 
 }
 
-.yui3-menu a:hover, 
+.yui3-menu a:hover,
 .yui3-menu a:focus {
 
 	text-decoration: underline;
@@ -74,7 +74,7 @@
 
     border: 0;
 	margin: 0;
-	padding: 0;    
+	padding: 0;
 
 }
 
@@ -82,14 +82,14 @@
 .yui3-menu-horizontal .yui3-menuitem-content {
 
     padding: 0 5px;
-    
+
     margin-right: 5px;
 	border: solid 1px #fff;
 	border-width: 1px 1px 0 1px;
 	font-weight: bold;
 	float: left;
     width: auto;
-	_display: inline;	/* Fixes IE margin doubling bug in IE 6 (Standards Mode and Quirks Mode) 
+	_display: inline;	/* Fixes IE margin doubling bug in IE 6 (Standards Mode and Quirks Mode)
 						and IE 7 (Quirks Mode only) */
 
 }
@@ -100,13 +100,13 @@
     padding: 0 40px 0 5px;
 
 	/*
-		Necessary specify values for border, margin, float, display, and font-weight to override 
+		Necessary specify values for border, margin, float, display, and font-weight to override
 		values specified in the preceeding selectors.
 	*/
 
 	margin: 0;
 	border: 0;
-	font-weight: normal;	
+	font-weight: normal;
 	float: none;
 	_display: block;
 
@@ -128,7 +128,7 @@
 }
 
 .yui3-menu-horizontal .yui3-menu-label .yui3-menu-toggle {
-	
+
 	border-left: dotted 1px #ccc;
 	padding: 15px 0 0 0;	/* Hide the text inside the menu toggle with top padding. */
 	width: 17px;

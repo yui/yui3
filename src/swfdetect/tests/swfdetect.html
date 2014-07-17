@@ -8,14 +8,14 @@
 <body class="yui3-skin-sam">
     <h1>SWFDetect Tests</h1>
     <div id="testoutput"></div>
-<script type="text/javascript">  
-    
+<script type="text/javascript">
+
 YUI({
     base: '../../../build/',
     filter: "raw",
-	modules:  { 
-		swfdetect: { 
-			path: "swfdetect/swfdetect.js" 
+	modules:  {
+		swfdetect: {
+			path: "swfdetect/swfdetect.js"
 		}
 	}
 }).use('swfdetect', function (Y) {
@@ -23,7 +23,7 @@ YUI({
 		flashMinor = String(Y.UA.flashMinor),
 		flashRev = String(Y.UA.flashRev),
 		output = "";
-	
+
 	output += "Flash Major: " + flashMajor + "<br/>";
 	output += "Flash Minor: " + flashMinor + "<br/>";
 	output += "Flash Revision: " + flashRev + "<br/>";

@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('number-tests');
-    
+
     Y.Test.Runner.setName('number cli tests');
-    
+
 });
 

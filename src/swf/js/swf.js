@@ -3,7 +3,7 @@
  * via External Interface.
  * @module swf
  * @deprecated The swf module is deprecated and will not be replaced. YUI has
- * no plans for providing a utility for embedding Flash into HTML pages. 
+ * no plans for providing a utility for embedding Flash into HTML pages.
  */
 
     var Event = Y.Event,
@@ -49,7 +49,7 @@
          *              tabindex, wmode.</code> event from the thumb</dd>
          *        </dl>
          */
-Y.log("The swf module is deprecated as of v3.13.0. YUI has no plans for providing a utility for embedding Flash into HTML pages.", "warn"); 
+Y.log("The swf module is deprecated as of v3.13.0. YUI has no plans for providing a utility for embedding Flash into HTML pages.", "warn");
 function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
 
     this._id = Y.guid("yuiswf");

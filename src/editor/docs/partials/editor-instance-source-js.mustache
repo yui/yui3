@@ -15,21 +15,21 @@ YUI().use('editor', function(Y) {
     Y.on('click', function(e) {
         var inst = editor.getInstance(),
             bs = inst.all('b');
-        
+
         log('There are (' + bs.size() + ') B tags in the iframe.');
     }, '#btags');
 
     Y.on('click', function(e) {
         var inst = editor.getInstance(),
             bs = inst.all('i');
-        
+
         log('There are (' + bs.size() + ') I tags in the iframe.');
     }, '#itags');
 
     Y.on('click', function(e) {
         var inst = editor.getInstance(),
             bs = inst.all('.foo');
-        
+
         log('There are (' + bs.size() + ') items with class foo in the iframe.');
     }, '#ctags');
 

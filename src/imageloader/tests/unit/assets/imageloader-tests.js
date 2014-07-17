@@ -1,10 +1,10 @@
 YUI.add('imageloader-tests', function(Y) {
 
     var bgImgUrlTestCase = new Y.Test.Case({
-        /* 
+        /*
          * Test case to check the URL setting on bg-url images
          */
-        
+
         name: 'Setting Background Urls',
 
         setUp: function() {
@@ -14,7 +14,7 @@ YUI.add('imageloader-tests', function(Y) {
             this.mainGroup.addTrigger('#topmain', 'mouseover');
             this.mainGroup.registerImage({ domId: 'topmain', bgUrl: this.bgImgUrl });
             this.mainGroupImage = document.getElementById('topmain');
-            
+
         },
 
         testBgImg: function() {
@@ -22,14 +22,14 @@ YUI.add('imageloader-tests', function(Y) {
             // style.bgImg is "url('...')", but we can't rely on those quotes across browsers. indexOf is sufficient
             Y.Assert.areNotEqual(this.mainGroupImage.style.backgroundImage.indexOf(this.bgImgUrl), -1);
         }
-        
+
     });
 
     var srcImgUrlTestCase = new Y.Test.Case({
-        /* 
+        /*
          * Test case to check the URL setting on src-url images
          */
-        
+
         name: 'Setting Source Urls',
 
         setUp: function() {
@@ -65,10 +65,10 @@ YUI.add('imageloader-tests', function(Y) {
             // classname group
             this.classGroup = new Y.ImgLoadGroup({ name: 'classNameTest', className: 'yui-imgload' });
             this.classGroup.addTrigger('#duo1', 'mouseover');
-            
+
             this.classGroup2 = new Y.ImgLoadGroup({ name: 'classNameTest1', className: 'yui-newimgload', classNameAction: 'enhanced'});
             this.classGroup2.addTrigger('#duo3', 'mouseover');
-            
+
         },
 
         testClassNames: function() {
@@ -78,7 +78,7 @@ YUI.add('imageloader-tests', function(Y) {
             Y.one('#duo1').simulate('mouseover');
             Y.Assert.areEqual(this.duo1Image.className, 'duo1');
             Y.Assert.areEqual(this.duo2Image.className, '');
-            
+
             //enhanced behavior
             Y.one('#duo3').simulate('mouseover');
             Y.Assert.areEqual('', this.duo3Image.className);
@@ -115,7 +115,7 @@ YUI.add('imageloader-tests', function(Y) {
         /*
          * Test case for checking adding custom event triggers to a group, for which the custom event is attached to the Y instance
          */
-        
+
         name: 'custom trigger test',
 
         setUp: function() {
@@ -140,7 +140,7 @@ YUI.add('imageloader-tests', function(Y) {
         /*
          * Test case for checking adding custom event triggers to a group, for which the custom event is attached to an instance of a local object
          */
-        
+
         name: 'local object custom trigger test',
 
         setUp: function() {
@@ -159,7 +159,7 @@ YUI.add('imageloader-tests', function(Y) {
             this.customEvent2Obj.fire('imageloader_unit_test:custom_trigger_test_2');
             Y.Assert.areNotEqual(this.triggerImage2.style.backgroundImage.indexOf(this.imageUrl), -1);
         }
-        
+
     });
 
     var imgSizingTestCase = new Y.Test.Case({
@@ -288,7 +288,7 @@ YUI.add('imageloader-tests', function(Y) {
         /*
          * Test case for checking the time limit functionality of a group
          */
-        
+
         name: 'time limit test',
 
         setUp: function() {

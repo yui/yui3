@@ -1,5 +1,5 @@
 YUI.add('yql-api-mock', function (Y) {
-    Y.YQL = function (query, callback) {    
+    Y.YQL = function (query, callback) {
         var description = '<img src="http://l.yimg.com/a/i/us/we/52/34.gif"/><br />'
             + '<b>Current Conditions:</b><br />'
             + 'Fair, 60 F<BR />'
@@ -40,12 +40,12 @@ YUI.add('yql-api-mock', function (Y) {
         if (typeof callback !== 'function') {
             callback = callback.on.success;
         }
-        
+
         callback(data);
-        
+
         return {
             send: function () {
-                callback(data);             
+                callback(data);
             }
         };
     };

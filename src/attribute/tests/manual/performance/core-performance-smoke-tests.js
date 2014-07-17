@@ -183,6 +183,6 @@ YUI.add("attribute-core-performance-smoke-tests", function(Y) {
         }
     }));
 
-    Y.Test.Runner.add(perfSuite);    
+    Y.Test.Runner.add(perfSuite);
 
 }, "@VERSION@", {requires : ["attribute-core", "dump", "test"]});

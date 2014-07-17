@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('yql-tests');
-    
+
     Y.Test.Runner.setName('yql cli tests');
-    
+
 });
 

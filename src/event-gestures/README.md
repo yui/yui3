@@ -1,9 +1,9 @@
-The gestures module provides gesture events such as "flick" 
-and "gesturemove", which normalize user interactions across 
-touch and mouse or pointer based input devices. 
+The gestures module provides gesture events such as "flick"
+and "gesturemove", which normalize user interactions across
+touch and mouse or pointer based input devices.
 
-This layer can be used by application developers to build 
-input device agnostic components which behave the same in 
+This layer can be used by application developers to build
+input device agnostic components which behave the same in
 response to either touch or mouse based interaction.
 
 It rolls up the following submodules:
@@ -16,6 +16,6 @@ time and velocity information.
 
 event-move
 
-Provides "gesturemovestart", "gesturemove" and "gesturemoveend" 
+Provides "gesturemovestart", "gesturemove" and "gesturemoveend"
 events, which can be used to normalize drag type interactions
 across touch and mouse devices.

@@ -26,7 +26,7 @@
 				filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
                 useBrowserConsole: false
             }).use('generate-dataprovider', 'charts', 'perfcomboseriesgroup-benchmark', 'test-console', function (Y) {
-                
+
                 var suite = Y.BenchmarkSuite,
                     start = Y.one('#start');
 

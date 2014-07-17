@@ -19,17 +19,17 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
         name: "Charts Series Update Tests",
 
         dataProvider: [
-            {category:"Q1", expenses:137000, revenue:532200}, 
-            {category:"Q2", expenses:211000, revenue:689100}, 
-            {category:"Q3", expenses:151000, revenue:521500}, 
-            {category:"Q4", expenses:163000, revenue:892650} 
+            {category:"Q1", expenses:137000, revenue:532200},
+            {category:"Q2", expenses:211000, revenue:689100},
+            {category:"Q3", expenses:151000, revenue:521500},
+            {category:"Q4", expenses:163000, revenue:892650}
         ],
 
         seriesKeys: [
             "expenses",
             "revenue"
         ],
-        
+
         _should: {
             ignore: {
                 testMouseEvents:  isTouch,
@@ -40,7 +40,7 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -55,7 +55,7 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
-                handleEvent = function(event) 
+                handleEvent = function(event)
                 {
                     result = event;
                 },
@@ -70,7 +70,7 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
                 seriesMarkers = Y.all(CHART_SERIESMARKER),
                 tooltip = Y.all(CHART_TOOLTIP).shift();
             seriesMarkers.each(function(node) {
-                var domNode = node.getDOMNode(), 
+                var domNode = node.getDOMNode(),
                     xy = node.getXY(),
                     x = xy[0] - Y.one('document').get('scrollLeft'),
                     y = xy[1] - Y.one('document').get('scrollTop');
@@ -120,8 +120,8 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },

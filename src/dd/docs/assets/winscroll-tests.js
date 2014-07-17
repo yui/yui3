@@ -1,5 +1,5 @@
 YUI.add('winscroll-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('winscroll');
 

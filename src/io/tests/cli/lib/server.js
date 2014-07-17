@@ -1,6 +1,6 @@
 var http = require('http');
 var server = http.createServer(function (req, res) {
-    
+
 
     var url = req.url.split('?');
 
@@ -75,11 +75,11 @@ var server = http.createServer(function (req, res) {
 
             break;
         case '/get':
-            
+
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(url[1]);
             break;
-        default: 
+        default:
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end('Hello World\n');
     }

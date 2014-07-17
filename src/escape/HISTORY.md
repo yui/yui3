@@ -6,6 +6,11 @@ Escape Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
 3.17.1
 ------
 

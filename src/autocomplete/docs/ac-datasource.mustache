@@ -44,7 +44,7 @@ YUI().use('autocomplete', 'autocomplete-highlighters', 'datasource-get', functio
     // Use the DataSource instance as the result source.
     source: ds,
 
-    // YQL query to use for each request. This will be appended to the URL 
+    // YQL query to use for each request. This will be appended to the URL
     // that was supplied to the DataSource's "source" config above.
     requestTemplate: '&q=select * from geo.places where text="{query}" and placeTypeName.content="Town" and country.content="United States"',
 

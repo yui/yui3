@@ -6,6 +6,11 @@ CSS Base Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
 3.17.1
 ------
 
@@ -79,7 +84,7 @@ CSS Base Change History
 3.9.0
 -----
 
-* Deprecated. If you're currently using CSSBase, consider switching to using CSSNormalize, which ships with 3.9.0. Please file any issues that you come across.  
+* Deprecated. If you're currently using CSSBase, consider switching to using CSSNormalize, which ships with 3.9.0. Please file any issues that you come across.
 
 3.8.1
 -----

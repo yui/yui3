@@ -17,7 +17,7 @@ YUI.add('perfcolumnseriesgroup-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
+
     suite.add("PerfColumnSeriesGroup", function() {
         var i,
             key,
@@ -40,7 +40,7 @@ YUI.add('perfcolumnseriesgroup-benchmark', function (Y) {
             });
             seriesTypeCollection.push(series);
             series.render();
-            seriesObject[key] = series; 
+            seriesObject[key] = series;
         }
         graphic._redraw();
         for(key in seriesObject)
@@ -64,7 +64,7 @@ YUI.add('perfcolumnseriesgroup-benchmark', function (Y) {
             });
             mockGraph = {
                 seriesTypes: {
-                    column: []   
+                    column: []
                 }
             };
             graphic = new Y.Graphic({
@@ -97,5 +97,5 @@ YUI.add('perfcolumnseriesgroup-benchmark', function (Y) {
             };
         }
     });
-    
+
 }, '@VERSION@', {requires: ['charts']});

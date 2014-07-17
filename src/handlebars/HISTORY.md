@@ -8,6 +8,11 @@ Handlebars Change History
 
 [v1.3.0]: https://github.com/wycats/handlebars.js/blob/master/release-notes.md#v130---january-1st-2014
 
+3.17.2
+------
+
+* No changes.
+
 3.17.1
 ------
 

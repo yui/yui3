@@ -9,8 +9,8 @@ YUI.add('multipleshapesnofill-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("MultipleShapesNoFill", function() { 
+
+    suite.add("MultipleShapesNoFill", function() {
         var circle = graphic.addShape({
                 type: "circle",
                 radius: 8,
@@ -48,5 +48,5 @@ YUI.add('multipleshapesnofill-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

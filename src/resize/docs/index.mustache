@@ -14,14 +14,14 @@ YUI().use('resize', function(Y) {
     var resize = new Y.Resize({
         //Selector of the node to resize
         node: '#demo'
-    });   
+    });
 });
 ```
 
 <h2 id="events">Events</h2>
 
 <p>Resize provides useful events to allow the implementer to control the end-user experience.</p>
-				
+
 <table>
     <thead>
         <tr>
@@ -108,7 +108,7 @@ YUI().use('overlay', 'resize-plugin', function(Y) {
        height: "300px",
        srcNode: "#overlay",
        visible: "true",
-       centered: "true" 
+       centered: "true"
     });
     //Plug in the resizability plugin
     overlay.plug(Y.Plugin.Resize);
@@ -124,7 +124,7 @@ YUI().use('overlay', 'resize-plugin', function(Y) {
     overlay.render();
 
     overlay.resize.on('resize:resize', function(event) {
-       //this function will be called on resize. 
+       //this function will be called on resize.
     });
 });
 ```

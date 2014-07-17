@@ -1,5 +1,5 @@
 YUI.add('swipe-example-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('swipe-example test suite'),
         SWIPE_DURATION = 0,
         SWIPE_WAIT_DURATION = 100;
@@ -57,7 +57,7 @@ YUI.add('swipe-example-tests', function(Y) {
 
         simulateSwipeLeft : function(node, distance, duration, cb) {
             var test = this;
-            
+
             node.simulateGesture("move", {
                 path : {
                     xdist: -distance
@@ -72,7 +72,7 @@ YUI.add('swipe-example-tests', function(Y) {
 
         simulateTap : function(node, cb) {
             var test = this;
-            
+
             node.simulateGesture("tap", function() {
                 test.resume(cb);
             });

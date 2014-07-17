@@ -4,41 +4,41 @@ YUI.add('node-create-benchmark', function (Y) {
         testBefore = Y.one('#test-before'),
         testAppendTo = Y.one('#test-append'),
         bodyNode = Y.one('body');
-        
 
-    suite.add('Y.Node.create("<div/>")', function() { 
+
+    suite.add('Y.Node.create("<div/>")', function() {
         var node = Y.Node.create('<div/>');
     });
-    
-    suite.add('node.append()', function() { 
+
+    suite.add('node.append()', function() {
         bodyNode.append(testNode);
     });
 
-    suite.add('node.insert())', function() { 
+    suite.add('node.insert())', function() {
         bodyNode.insert(testNode);
     });
 
-    suite.add('node.prepend()', function() { 
+    suite.add('node.prepend()', function() {
         bodyNode.prepend(testNode);
     });
 
-    suite.add('node.appendChild()', function() { 
+    suite.add('node.appendChild()', function() {
         bodyNode.appendChild(testNode);
     });
 
-    suite.add('node.insertBefore())', function() { 
+    suite.add('node.insertBefore())', function() {
         bodyNode.insertBefore(testNode, testBefore);
     });
 
-    suite.add('node.appendTo())', function() { 
+    suite.add('node.appendTo())', function() {
         testAppendTo.appendTo(bodyNode);
     });
 
-    suite.add('node.setHTML("<div/>"))', function() { 
+    suite.add('node.setHTML("<div/>"))', function() {
         testNode.setHTML('<div/>');
     });
 
-    suite.add('node.getHTML())', function() { 
+    suite.add('node.getHTML())', function() {
         testNode.getHTML();
     });
 

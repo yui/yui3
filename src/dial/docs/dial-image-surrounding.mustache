@@ -1,5 +1,5 @@
 <div class="intro">
-<p>This example shows how to create a `Dial` widget using an image 
+<p>This example shows how to create a `Dial` widget using an image
 that surrounds (or is larger than) the Dial.</p>
 </div>
 
@@ -35,7 +35,7 @@ signifying the temperature of air conditioning or heat.
 <p>The same JavaScript can be used as in the basic Dial example, with a bit of
 extra code to add the image object.</p>
 
-<p>Some commonly used configuration attributes are shown below. 
+<p>Some commonly used configuration attributes are shown below.
 This example also shows how to modify the visible UI strings before the `Dial` renders.</p>
 ```
 YUI().use('dial', function(Y) {
@@ -60,19 +60,19 @@ YUI().use('dial', function(Y) {
 ```
 //Create an image node.
 var im = Y.Node.create('<img src="{{{dialPathAssets}}}/images/cold_hot.png"/>');
-    
+
 //Position it absolutely to the correct spot depending on it's size.
 im.setStyles({'position':'absolute', 'top':'-3px', 'left':'-9px'});
-    
+
 //Insert it in the DOM.
 //The north-mark is the first object inside the ring.
-//depending on the image, you may need to insert it before the yui3-dial-label 
+//depending on the image, you may need to insert it before the yui3-dial-label
 Y.one('.yui3-dial-north-mark').insert(im, 'before');
 ```
 
 <h4>The CSS</h4>
-<p> 
-In the CSS, we're just cleaning out the visible styles of the ring and the 
+<p>
+In the CSS, we're just cleaning out the visible styles of the ring and the
 center button to allow for the images.
 </p>
 

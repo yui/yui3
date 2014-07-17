@@ -2,7 +2,7 @@ YUI.add('constrain-resize-plugin-tests', function(Y) {
 
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('constrain-resize-plugin');
-    
+
     suite.add(new Y.Test.Case({
         name: 'constrain-resize-plugin',
         'is rendered': function() {
@@ -46,7 +46,7 @@ YUI.add('constrain-resize-plugin-tests', function(Y) {
             var test = this,
                 wrapper = Y.one('#weatherWidget').get('parentNode'),
                 handle = wrapper.one('.yui3-resize-handle');
-            
+
             Assert.isFalse(handle.hasClass('yui3-dd-draggable'));
             Assert.isFalse(handle.hasClass('yui3-dd-dragging'));
             Assert.isFalse(handle.hasClass('yui3-resize-handle-active'));

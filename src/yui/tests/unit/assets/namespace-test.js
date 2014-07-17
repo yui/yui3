@@ -1,5 +1,5 @@
 YUI.add('namespace-test', function(Y) {
-    
+
     var Assert = Y.Assert;
 
     var testNamespace = new Y.Test.Case({
@@ -28,7 +28,7 @@ YUI.add('namespace-test', function(Y) {
             Assert.isObject(Y.my.namespace2, 'New namespace not created');
         },
         test_multi_args: function() {
-            
+
             Assert.isUndefined(Y.foo, 'Namespace Y.foo existed before test');
             Assert.isUndefined(Y.bar, 'Namespace Y.bar existed before test');
 
@@ -44,7 +44,7 @@ YUI.add('namespace-test', function(Y) {
             Assert.areEqual(ns.test, 'davglass', 'Returned object was not correct');
         },
         test_multi_args_dotted: function() {
-            
+
             Assert.isUndefined(Y.foo2, 'Namespace Y.foo2 existed before test');
             Assert.isUndefined(Y.bar2, 'Namespace Y.bar2 existed before test');
 
@@ -62,8 +62,8 @@ YUI.add('namespace-test', function(Y) {
         }
 
     });
-        
+
 
     Y.SeedTests.add(testNamespace);
-    
+
 });

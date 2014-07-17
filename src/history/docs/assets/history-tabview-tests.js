@@ -21,7 +21,7 @@ YUI.add('history-tabview-tests', function(Y) {
 
                 tabs.each(function(tab, index){
                     var anchor = tab.one('a').getAttribute('href').replace('#', '');
-                    Y.Assert.areSame(anchor, panels.item(index).get('id'), 
+                    Y.Assert.areSame(anchor, panels.item(index).get('id'),
                         'Panel at index ' + index + ' does not match the anchor \'' + anchor + '\' for tab');
                 });
             }, 0);
@@ -49,9 +49,9 @@ YUI.add('history-tabview-tests', function(Y) {
 
             tabs.item(tabToSelect).simulate('click');
 
-            Y.Assert.isTrue(tabs.item(tabToSelect).hasClass('yui3-tab-selected'), 
+            Y.Assert.isTrue(tabs.item(tabToSelect).hasClass('yui3-tab-selected'),
                 'Tab #' + tabToSelect + ' was not selected.');
-            Y.Assert.isTrue(panels.item(tabToSelect).hasClass('yui3-tab-panel-selected'), 
+            Y.Assert.isTrue(panels.item(tabToSelect).hasClass('yui3-tab-panel-selected'),
                 'Panel #' + tabToSelect + ' was not selected.');
 
             // if we just selected the tab that was previously selected, abort happily
@@ -71,7 +71,7 @@ YUI.add('history-tabview-tests', function(Y) {
                 history.back();
             }, 100);
             this.wait(function() {
-                Y.Assert.areSame(selectedTab, Y.one('#demo .yui3-tabview-list .yui3-tab-selected'), 
+                Y.Assert.areSame(selectedTab, Y.one('#demo .yui3-tabview-list .yui3-tab-selected'),
                     'Initial tab was not selected.');
             }, 200);
         },
@@ -86,9 +86,9 @@ YUI.add('history-tabview-tests', function(Y) {
 
             tabs.item(tabToSelect).simulate('click');
 
-            Y.Assert.isTrue(tabs.item(tabToSelect).hasClass('yui3-tab-selected'), 
+            Y.Assert.isTrue(tabs.item(tabToSelect).hasClass('yui3-tab-selected'),
                 'Tab #' + tabToSelect + ' was not selected.');
-            Y.Assert.isTrue(panels.item(tabToSelect).hasClass('yui3-tab-panel-selected'), 
+            Y.Assert.isTrue(panels.item(tabToSelect).hasClass('yui3-tab-panel-selected'),
                 'Panel #' + tabToSelect + ' was not selected.');
 
             // if we just selected the tab that was previously selected, abort happily
@@ -108,7 +108,7 @@ YUI.add('history-tabview-tests', function(Y) {
                 history.back();
             }, 100);
             this.wait(function() {
-                Y.Assert.areSame(selectedTab, Y.one('#demo .yui3-tabview-list .yui3-tab-selected'), 
+                Y.Assert.areSame(selectedTab, Y.one('#demo .yui3-tabview-list .yui3-tab-selected'),
                     'Initial tab was not selected.');
             }, 200);
         },
@@ -123,9 +123,9 @@ YUI.add('history-tabview-tests', function(Y) {
 
             tabs.item(tabToSelect).simulate('click');
 
-            Y.Assert.isTrue(tabs.item(tabToSelect).hasClass('yui3-tab-selected'), 
+            Y.Assert.isTrue(tabs.item(tabToSelect).hasClass('yui3-tab-selected'),
                 'Tab #' + tabToSelect + ' was not selected.');
-            Y.Assert.isTrue(panels.item(tabToSelect).hasClass('yui3-tab-panel-selected'), 
+            Y.Assert.isTrue(panels.item(tabToSelect).hasClass('yui3-tab-panel-selected'),
                 'Panel #' + tabToSelect + ' was not selected.');
 
             // if we just selected the tab that was previously selected, abort happily
@@ -145,7 +145,7 @@ YUI.add('history-tabview-tests', function(Y) {
                 history.back();
             }, 100);
             this.wait(function() {
-                Y.Assert.areSame(selectedTab, Y.one('#demo .yui3-tabview-list .yui3-tab-selected'), 
+                Y.Assert.areSame(selectedTab, Y.one('#demo .yui3-tabview-list .yui3-tab-selected'),
                     'Initial tab was not selected.');
             }, 200);
         }

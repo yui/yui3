@@ -6,11 +6,11 @@
         as schema normalization, caching, and polling of data.
     </p>
 </div>
-				
+
 {{>getting-started}}
-				
+
 <h2 id="using">Using DataSources</h2>
-			
+
 <h3 id="basics">DataSource basics</h3>
 
 <p>
@@ -36,7 +36,7 @@ myDataSource.sendRequest({
 });
 ```
 
-				
+
 <p>
     You must instantiate the appropriate DataSource subclass for your source of
     data.
@@ -61,7 +61,7 @@ var myDataSource = new Y.DataSource.Local({source:["a", "b", "c"]});
     the need for a proxy, but the server must return JSON data and support a
     script callback parameter in order for the response to return properly.
     This parameter specifies the name of the internally defined function that
-    the return data will be wrapped in when it returns to the page. 
+    the return data will be wrapped in when it returns to the page.
 </p>
 
 ```
@@ -160,7 +160,7 @@ var myDataSource = new Y.DataSource.Function({
     taking advantage of the built-in infrastructure, including using a
     DataSchema plugin to normalize the data that is sent to your callback.
 </p>
-                
+
 ```
 var myDataSource = new Y.DataSource.Function({
     source: function (request) {
@@ -219,7 +219,7 @@ YUI().use('datasource-io', 'datasource-polling', 'json-parse', function(Y) {
     var onlineFriends = Y.one('#friend-count'),
         friendData,
         intervalId;
-        
+
     friendData = new Y.DataSource.IO({
         source: '/services/friends/'
     });

@@ -19,12 +19,12 @@ YUI.add('charts-objectstyles-tests', function(Y) {
         name: "Charts Object Styles Tests",
 
         dataProvider: [
-            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100}, 
-            {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500}, 
-            {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800}, 
+            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100},
+            {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500},
+            {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800},
             {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
-            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}  
+            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}
         ],
 
         seriesKeys: [
@@ -43,7 +43,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
         {
             return this.seriesDisplayNames[seriesKey];
         },
-        
+
         _should: {
             ignore: {
                 testMouseEvents:  isTouch,
@@ -54,7 +54,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
         testChartLoaded : function()
         {
             var boundingBox = Y.all(CHART_BOUNDINGBOX),
-                contentBox = Y.all(CHART_CONTENTBOX); 
+                contentBox = Y.all(CHART_CONTENTBOX);
             Y.Assert.areEqual(ONE, boundingBox.size(), "There should be one chart bounding box.");
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
@@ -69,7 +69,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
-                handleEvent = function(event) 
+                handleEvent = function(event)
                 {
                     result = event;
                 },
@@ -82,7 +82,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
                 seriesMarkers = Y.all(CHART_SERIESMARKER),
                 tooltip = Y.all(CHART_TOOLTIP).shift();
             seriesMarkers.each(function(node) {
-                var domNode = node.getDOMNode(), 
+                var domNode = node.getDOMNode(),
                     xy = node.getXY(),
                     x = xy[0] - Y.one('document').get('scrollLeft'),
                     y = xy[1] - Y.one('document').get('scrollTop');
@@ -129,8 +129,8 @@ YUI.add('charts-objectstyles-tests', function(Y) {
                            test.resume(function() {
                                 test.poll(condition, interval, timeout, success, failure);
                             });
-                        }); 
-                        test.wait();        
+                        });
+                        test.wait();
                     }
 
                 },
@@ -149,7 +149,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-        
+
         markerLabelFunction: function(seriesIndex, index)
         {
             var seriesKey = this.seriesKeys[seriesIndex],
@@ -158,7 +158,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
             return Y.Node.create("<div><div>Date: " + item.date + "<br>" + seriesDisplayName + ": " + item[seriesKey] + "</div></div>").get("innerHTML");
         }
     }));
-    
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});
 

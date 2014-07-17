@@ -207,17 +207,17 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         coverage: ['scrollview-list']
     }).use("test-console", "test", "dump", "scrollview-base", 'scrollview-list', function(Y) {
-	
+
 
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert;
 
 		new Y.Test.Console().render();
-		
+
         var testBasic = new Y.Test.Case({
             name: "API Tests",
-			
+
 			svCfg1: {
 			    contentBox: '#scrollable1',
 			    height: 372,
@@ -251,8 +251,8 @@
 		    tearDown : function () {
 
 		    },
-		
-			
+
+
 			//---------------------------------------------
 		    // Instantiation
 		    //---------------------------------------------
@@ -309,7 +309,7 @@
 
 
 			}
-			
+
         });
 
         var suite = new Y.Test.Suite("Scrollview: List");

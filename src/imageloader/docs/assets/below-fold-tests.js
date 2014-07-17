@@ -1,4 +1,4 @@
-YUI.add('below-fold-tests', function(Y){ 
+YUI.add('below-fold-tests', function(Y){
 
     var suite = new Y.Test.Suite('below-fold example test suite');
 

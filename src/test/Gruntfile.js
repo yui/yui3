@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-    
+
     var path = require('path'),
         LIB = path.join(process.cwd(), '../../../', 'yuitest', 'javascript', 'src');
 
@@ -78,7 +78,7 @@ module.exports = function(grunt) {
         files.forEach(function(file) {
             grunt.log.writeln('Processing: '.green + file.cyan);
             var str = grunt.file.read(file);
-            
+
             str = str.replace(/\r\n/g, '\n');
             str = str.replace(/module yuitest/g, 'module test');
             str = str.replace(/namespace YUITest/g, 'namespace Test');
@@ -93,7 +93,7 @@ module.exports = function(grunt) {
         });
     });
 
-    
+
     grunt.registerTask('import', [
         'import-core',
         'import-asserts',
@@ -109,7 +109,7 @@ module.exports = function(grunt) {
         'import',
         'fix-docs'
     ]);
-    
+
     grunt.registerTask('default', ['all']);
 
 };

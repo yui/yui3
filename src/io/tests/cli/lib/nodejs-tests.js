@@ -1,5 +1,5 @@
 YUI.add('nodejs-tests', function(Y) {
-    
+
     var http = require('http');
     var suite = new Y.Test.Suite('NodeJS IO tests');
 
@@ -20,14 +20,14 @@ YUI.add('nodejs-tests', function(Y) {
                 }
             });
 
-            this.wait(null, 1000); 
+            this.wait(null, 1000);
         },
         'test: Get Request with empty data object': function() {
             var test = this,
                 status,
                 handler = function() {
                     Y.Assert.areSame(200, status);
-                };  
+                };
 
             Y.io(Y.IO.URLS.get, {
                 data: {},
@@ -39,7 +39,7 @@ YUI.add('nodejs-tests', function(Y) {
                 }
             });
 
-            this.wait(null, 1000); 
+            this.wait(null, 1000);
         },
         'test: Get Request with data object': function() {
             var test = this;
@@ -60,7 +60,7 @@ YUI.add('nodejs-tests', function(Y) {
                 }
             });
 
-            this.wait(null, 1000); 
+            this.wait(null, 1000);
         },
         'test: Get Request with data string': function() {
             var test = this;
@@ -77,7 +77,7 @@ YUI.add('nodejs-tests', function(Y) {
                 }
             });
 
-            this.wait(null, 1000); 
+            this.wait(null, 1000);
         },
         'test: Get Request with data string and querystring': function() {
             var test = this;
@@ -94,7 +94,7 @@ YUI.add('nodejs-tests', function(Y) {
                 }
             });
 
-            this.wait(null, 1000); 
+            this.wait(null, 1000);
         }
     }));
 
