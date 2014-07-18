@@ -130,6 +130,19 @@ Sortable.ATTRS = {
     },
 
     /**
+    The type of sorting being performed:  local or remote
+
+    @attribute sortType
+    @type {String}
+    @default "local"
+    @since 3.18.0
+    **/
+    sortType: {
+        value: 'local',
+        validator: '_validateSortType'
+    },
+
+    /**
     The current sort configuration to maintain in the data.
 
     Accepts column `key` strings or objects with a single property, the column
@@ -301,7 +314,7 @@ Y.mix(Sortable.prototype, {
         this._setSortBy();
 
         // Don't sort unless sortBy has been set
-        if (this._sortBy.length) {
+        if (this._sortBy.length && this.get('sortType') === 'local') {
             if (!this.data.comparator) {
                  this.data.comparator = this._sortComparator;
             }
@@ -324,7 +337,8 @@ Y.mix(Sortable.prototype, {
         // call _initSortFn if the value passed to the `data` attribute was a
         // new ModelList, not a set of new data as an array, or even the same
         // ModelList.
-        if (e.prevVal !== e.newVal || e.newVal.hasOwnProperty('_compare')) {
+        if ((e.prevVal !== e.newVal || e.newVal.hasOwnProperty('_compare')) &&
+            this.get('sortType') === 'local') {
             this._initSortFn();
         }
     },
@@ -341,10 +355,12 @@ Y.mix(Sortable.prototype, {
     _afterSortRecordChange: function (e) {
         var i, len;
 
-        for (i = 0, len = this._sortBy.length; i < len; ++i) {
-            if (e.changed[this._sortBy[i].key]) {
-                this.data.sort();
-                break;
+        if (this.get('sortType') === 'local') {
+            for (i = 0, len = this._sortBy.length; i < len; ++i) {
+                if (e.changed[this._sortBy[i].key]) {
+                    this.data.sort();
+                    break;
+                }
             }
         }
     },
@@ -454,7 +470,9 @@ Y.mix(Sortable.prototype, {
 
         this._setSortBy();
 
-        this._initSortFn();
+        if (this.get('sortType') === 'local') {
+            this._initSortFn();
+        }
 
         this._initSortStrings();
 
@@ -875,6 +893,19 @@ Y.mix(Sortable.prototype, {
     **/
     _validateSortable: function (val) {
         return val === 'auto' || isBoolean(val) || isArray(val);
+    },
+
+    /**
+    Allows values "local" or "remote" through.
+
+    @method _validateSortable
+    @param {Any} val The input value to `set("sortType", VAL)`
+    @return {Boolean}
+    @protected
+    @since 3.18.0
+    **/
+    _validateSortType: function (val) {
+        return val === 'local' || val === 'remote';
     },
 
     /**
