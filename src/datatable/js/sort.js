@@ -580,6 +580,9 @@ Y.mix(Sortable.prototype, {
                 }
 
                 if (i >= len) {
+                    if (!isArray(sortBy)) {
+                        sortBy = [sortBy];
+                    }
                     sortBy.push(column._id);
                 }
             } else {
