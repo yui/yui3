@@ -14,7 +14,7 @@ var KEY_DOWN  = 40,
     KEY_UP    = 38;
 
 function ListKeys() {
-    Y.before(this._bindKeys, this, 'bindUI');
+    Y.after(this._bindKeys, this, 'bindUI');
     this._initKeys();
 }
 
