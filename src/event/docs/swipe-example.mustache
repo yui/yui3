@@ -17,7 +17,7 @@
 <p>For the example, the two core modules we'll use are:</p>
 
 <dl>
-    <dt>The `event-move` module</dt> 
+    <dt>The `event-move` module</dt>
     <dd>
         Provides the `gesturemovestart`, `gesturemove` and `gesturemoveend`
         low-level gesture events. These events are fired whenever the user
@@ -57,7 +57,7 @@ YUI().use("node-base", "node-event-delegate", "transition", "event-move", functi
     performance and avoids having to add/remove listeners each time the
     contents of the list change.  The `gesturemovestart`, `gesturemove` and
     `gesturemoveend` are synthetic events, and can all be used with `delegate`,
-    just like any DOM event. 
+    just like any DOM event.
 </p>
 
 <p>
@@ -123,7 +123,7 @@ Y.Node.one("#swipe").delegate("gesturemovestart", function(e) {
     `gesturemoveend` event. This way it's stored on the node instance, and we
     don't need to pass it along separately to the `gesturemoveend` event, or
     store it globally.
-</p> 
+</p>
 
 <p>
     `getData`, `setData` and `clearData` are useful methods to store ad-hoc

@@ -239,7 +239,7 @@ YUI.add('axis-category-tests', function(Y) {
             //use labels that include the first (to hit another branch)
             labelValues = ["01/01/2009", "01/11/2009", "01/21/2009"];
             assertFn.apply(this);
-            
+
             //add a label that's not in the axis (to hit an else branch)
             labelValues.push("nonexistent");
             len =  labelValues.length;

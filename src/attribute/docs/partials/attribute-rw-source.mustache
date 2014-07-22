@@ -30,7 +30,7 @@ YUI().use("node", "attribute", "escape", function(Y) {
                 value: "Default Foo",
                 readOnly: true
             },
-     
+
             "bar" : {
                 value: "Default Bar",
                 writeOnce: true
@@ -45,7 +45,7 @@ YUI().use("node", "attribute", "escape", function(Y) {
         // MyClass to change the value
         // of foo ...
 
-        // Host code can reset value of 
+        // Host code can reset value of
         // readOnly attributes interally,
         // by working with the private _set
         // property
@@ -56,11 +56,11 @@ YUI().use("node", "attribute", "escape", function(Y) {
     Y.augment(MyClass, Y.Attribute);
 
     function displayValues(o, title, node) {
-        var str = 
-            '<div class="myclass"><div class="myclass-title">' 
-            + title + 
-            '</div><ul class="myclass-attrs"><li>foo (readOnly): ' 
-            + Y.Escape.html(o.get("foo")) 
+        var str =
+            '<div class="myclass"><div class="myclass-title">'
+            + title +
+            '</div><ul class="myclass-attrs"><li>foo (readOnly): '
+            + Y.Escape.html(o.get("foo"))
             + '</li><li>bar (writeOnce): '
             + Y.Escape.html(o.get("bar"))
             + '</li></ul></div>';
@@ -73,7 +73,7 @@ YUI().use("node", "attribute", "escape", function(Y) {
     Y.on("submit", function(e) {
 
         e.preventDefault();
-    
+
         var fooVal = Y.one("#writeInitial .fooVal").get("value");
         var barVal = Y.one("#writeInitial .barVal").get("value");
 
@@ -97,7 +97,7 @@ YUI().use("node", "attribute", "escape", function(Y) {
             // Attempt to reset values:
             o1.set("foo", fooVal);
             o1.set("bar", barVal);
-    
+
             displayValues(o1, "Attempt to set values again, using set", "#writeAgain .example-out");
         }
 

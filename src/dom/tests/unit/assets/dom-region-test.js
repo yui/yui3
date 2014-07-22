@@ -15,10 +15,10 @@ YUI.add('dom-region-test', function(Y) {
 
             Assert.areEqual(xy[0], r.left);
             Assert.areEqual(xy[1], r.top);
-            
+
             Assert.areEqual(node.offsetWidth + xy[0], r.right);
             Assert.areEqual(node.offsetHeight + xy[1], r.bottom);
-            
+
             Assert.areEqual(xy[0], r[0]);
             Assert.areEqual(xy[1], r[1]);
         },

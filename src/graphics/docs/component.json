@@ -70,18 +70,18 @@
 			"tags" : ["graphics"],
             		"hideTableOfContents": true
 		}
-	],	
+	],
     "pages": {
         "graphics-path-tool-example": {
             "layout"     : "graphics-path-tool-example"
         },
         "graphics-path-tool": {
             "displayName": "Graphics: Path Drawing Tool",
-            		"hideTableOfContents": true            
+            		"hideTableOfContents": true
         },
         "graphics-radial-tool": {
             "displayName": "Graphics: Radial Gradient Tool",
-            		"hideTableOfContents": true            
+            		"hideTableOfContents": true
         }
-    }	
+    }
 }

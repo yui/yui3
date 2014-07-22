@@ -22,7 +22,7 @@ YUI.add('series-bar-stacked-tests', function(Y) {
                     indexStyles: null,
 
                     set: function(prop, val) {
-                        
+
                         if(Y.Lang.isObject(prop)) {
                             this.indexStyles = prop;
                         } else {
@@ -35,7 +35,7 @@ YUI.add('series-bar-stacked-tests', function(Y) {
                         y: {
                             getter: function() {
                                 return this.indexStyles.y;
-                            }   
+                            }
                         }
                     }
                 }),
@@ -44,7 +44,7 @@ YUI.add('series-bar-stacked-tests', function(Y) {
                         return val;
                     }
                 }, {
-                    ATTRS: {   
+                    ATTRS: {
                         xcoords: {},
                         ycoords: {
                             value: [380, 340, 300, 260, 220, 180, 140, 100, 60, 20]
@@ -58,13 +58,13 @@ YUI.add('series-bar-stacked-tests', function(Y) {
                         order: 0,
                         graphOrder: 0,
                         xcoords: [280, 100, 60, 49, 38, 42, 120, 90, 45, 60],
-                        seriesTypeCollection: seriesTypeCollection 
+                        seriesTypeCollection: seriesTypeCollection
                     }),
                     new updateMarkerStateMockBarSeries({
                         order: 1,
                         graphOrder: 1,
                         xcoords: [210, 150, 40, 89, 78, 142, 130, 80, 65, 90],
-                        seriesTypeCollection: seriesTypeCollection   
+                        seriesTypeCollection: seriesTypeCollection
                     })
                 ],
                 markerStyles,
@@ -126,7 +126,7 @@ YUI.add('series-bar-stacked-tests', function(Y) {
                         order: 2,
                         graphOrder: 2,
                         xcoords: [null, null, null, null, null, null, null, null, null, null],
-                        seriesTypeCollection: seriesTypeCollection   
+                        seriesTypeCollection: seriesTypeCollection
                     })
             );
             for(seriesIterator = 0; seriesIterator < len; seriesIterator = seriesIterator + 1) {
@@ -204,13 +204,13 @@ YUI.add('series-bar-stacked-tests', function(Y) {
             for(key in testFill) {
                 if(testFill.hasOwnProperty(key)) {
                     Y.Assert.isTrue(plotDefaults.fill.hasOwnProperty(key), "The fill should have a " + key + " value.");
-                    Y.Assert.areEqual(testFill[key], plotDefaults.fill[key], "The " + key + " value of fill should be " + testFill[key] + "."); 
+                    Y.Assert.areEqual(testFill[key], plotDefaults.fill[key], "The " + key + " value of fill should be " + testFill[key] + ".");
                 }
             }
             for(key in testBorder) {
                 if(testBorder.hasOwnProperty(key)) {
                     Y.Assert.isTrue(plotDefaults.border.hasOwnProperty(key), "The border should have a " + key + " value.");
-                    Y.Assert.areEqual(testBorder[key], plotDefaults.border[key], "The " + key + " value of border should be " + testBorder[key] + "."); 
+                    Y.Assert.areEqual(testBorder[key], plotDefaults.border[key], "The " + key + " value of border should be " + testBorder[key] + ".");
                 }
             }
             Y.Assert.areEqual(testWidth, plotDefaults.width, "The width should be " + testWidth + ".");

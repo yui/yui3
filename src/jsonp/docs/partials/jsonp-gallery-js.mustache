@@ -4,7 +4,7 @@ YUI().use("jsonp", "transition",function (Y) {
     var url = "http://yuilibrary.com/gallery/api/random?callback={callback}",
         outputDiv = Y.one("#out"),
         gallery;
-        
+
     // Using the configuration object syntax
     gallery = new Y.JSONPRequest(url, {
         on: {

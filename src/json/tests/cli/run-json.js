@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('json-tests');
-    
+
     Y.Test.Runner.setName('json cli tests');
-    
+
 });
 

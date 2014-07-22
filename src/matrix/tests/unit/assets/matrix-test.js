@@ -56,7 +56,7 @@ suite.add(new Y.Test.Case({
         ],
         determinant = -80;
         Y.Assert.areEqual(Y.MatrixUtil.getDeterminant(matrix),  determinant, "The determinant should be: " + determinant + ".");
-        
+
         matrix = [
             [-3, -5, 3, 4],
             [1, 2, 3, 2],
@@ -99,7 +99,7 @@ suite.add(new Y.Test.Case({
         ],
         result = Y.MatrixUtil.inverse(matrix),
         i,
-        j, 
+        j,
         len = matrix.length;
 
         for(i = 0; i < len; ++i)
@@ -109,7 +109,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [-3, 2, 1],
             [2, 4, 0],
@@ -149,7 +149,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [-3, -7, -3],
             [-1, 0, -1],
@@ -161,7 +161,7 @@ suite.add(new Y.Test.Case({
             [0, 0, -0.167]
         ];
         result = Y.MatrixUtil.inverse(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -171,7 +171,7 @@ suite.add(new Y.Test.Case({
         }
     },
 
-    test4x4Inverse: function() 
+    test4x4Inverse: function()
     {
         var matrix = [
             [2, 3, 1, 9],
@@ -183,13 +183,13 @@ suite.add(new Y.Test.Case({
             [0.2, -0.25, -0.9, 0.85],
             [-0.1, 0.625, 0.45, -0.425],
             [0, -0.25, 0, 0.25],
-            [0.1, -0.125, 0.05, -0.075] 
+            [0.1, -0.125, 0.05, -0.075]
         ],
         len = matrix.length,
         i,
         j,
         result = Y.MatrixUtil.inverse(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -197,7 +197,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [-3, -5, 3, 4],
             [1, 2, 3, 2],
@@ -211,7 +211,7 @@ suite.add(new Y.Test.Case({
             [0.111, 0.221, 0.083, 0.01]
         ];
         result = Y.MatrixUtil.inverse(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -219,7 +219,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [1, -4, .5, -7],
             [1, 0, 3, 1],
@@ -233,7 +233,7 @@ suite.add(new Y.Test.Case({
             [-6, 3.75, 2.5, -5.25]
         ];
         result = Y.MatrixUtil.inverse(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -241,7 +241,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [14, 3, 11, -4],
             [-5, 9, 0, 3],
@@ -255,7 +255,7 @@ suite.add(new Y.Test.Case({
             [-0.015, -0.031, 0.109, 0.027]
         ];
         result = Y.MatrixUtil.inverse(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -281,7 +281,7 @@ suite.add(new Y.Test.Case({
         j,
         len = matrix.length,
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -289,7 +289,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(transpose[i][j]), Round(result[i][j]), "The result of transpose" + (j + 1) + "," + (i +1) + " should be " + transpose[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [-3, 2, 1],
             [2, 4, 0],
@@ -301,7 +301,7 @@ suite.add(new Y.Test.Case({
             [1, 0, 3]
         ];
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -309,7 +309,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(transpose[i][j]), Round(result[i][j]), "The result of transpose" + (j + 1) + "," + (i +1) + " should be " + transpose[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [1, 0, 2],
             [1, 2, 1],
@@ -321,7 +321,7 @@ suite.add(new Y.Test.Case({
             [2, 1, 0]
         ];
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -329,7 +329,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(transpose[i][j]), Round(result[i][j]), "The result of transpose" + (j + 1) + "," + (i +1) + " should be " + transpose[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [-3, -7, -3],
             [-1, 0, -1],
@@ -341,7 +341,7 @@ suite.add(new Y.Test.Case({
             [-3, -1, -6]
         ];
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -369,7 +369,7 @@ suite.add(new Y.Test.Case({
         j,
         len = matrix.length,
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -377,7 +377,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(transpose[i][j]), Round(result[i][j]), "The result of transpose" + (j + 1) + "," + (i +1) + " should be " + transpose[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [-3, -5, 3, 4],
             [1, 2, 3, 2],
@@ -391,7 +391,7 @@ suite.add(new Y.Test.Case({
             [4, 2, 1, 3]
         ];
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -399,7 +399,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(transpose[i][j]), Round(result[i][j]), "The result of transpose" + (j + 1) + "," + (i +1) + " should be " + transpose[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [1, -4, .5, -7],
             [1, 0, 3, 1],
@@ -413,7 +413,7 @@ suite.add(new Y.Test.Case({
             [-7, 1, 1, 9]
         ];
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -421,7 +421,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(transpose[i][j]), Round(result[i][j]), "The result of transpose" + (j + 1) + "," + (i +1) + " should be " + transpose[i][j] + ", not " + result[i][j]);
             }
         }
-        
+
         matrix = [
             [14, 3, 11, -4],
             [-5, 9, 0, 3],
@@ -435,7 +435,7 @@ suite.add(new Y.Test.Case({
             [-4, 3, 9, 2]
         ];
         result = Y.MatrixUtil.transpose(matrix);
-        
+
         for(i = 0; i < len; ++i)
         {
             for(j = 0; j < len; ++j)
@@ -466,16 +466,16 @@ suite.add(new Y.Test.Case({
         /*
             [1, 0, 15]
             [0, 1, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
-        
+
         Y.Assert.areEqual(Round(mymatrix.getDeterminant()),  determinant, "The determinant should be: " + determinant + ".");
 
         mymatrix.skewX(15);
         /*
             [1, 0.26795, 15]
             [0, 1, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         Y.Assert.areEqual(Round(mymatrix.getDeterminant()),  determinant, "The determinant should be: " + determinant + ".");
 
@@ -483,11 +483,11 @@ suite.add(new Y.Test.Case({
         /*
             [33, 2.9474500000000003, 15]
             [0, 11, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         determinant = 363;
         Y.Assert.areEqual(Round(mymatrix.getDeterminant()),  determinant, "The determinant should be: " + determinant + ".");
-        
+
         mymatrix.skewY(67);
         /*
             [39.9437500825, 2.9474500000000003, 15]
@@ -499,7 +499,7 @@ suite.add(new Y.Test.Case({
 
     testGetInverse: function() {
         var result,
-        i, 
+        i,
         j,
         inverse,
         len = 3,
@@ -514,7 +514,7 @@ suite.add(new Y.Test.Case({
         inverse = [
             [0.707, 0.707, 0.000],
             [-0.707, 0.707, 0.000],
-            [0.000, 0.000, 1.000] 
+            [0.000, 0.000, 1.000]
         ];
         result = mymatrix.inverse();
 
@@ -532,7 +532,7 @@ suite.add(new Y.Test.Case({
         /*
             [1, 0, 15]
             [0, 1, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         //inverse test
         inverse = [
@@ -554,7 +554,7 @@ suite.add(new Y.Test.Case({
         /*
             [1, 0.26795, 15]
             [0, 1, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         //inverse test
         inverse = [
@@ -571,21 +571,21 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-        
-        //add a scale 
+
+        //add a scale
         mymatrix.scale(33, 11);
         /*
             [33, 2.9474500000000003, 15]
             [0, 11, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         //inverse test
         inverse = [
             [0.030, -0.008, -0.333],
             [0.000, 0.091, -1.364],
-            [0.000, 0.000, 1.000] 
+            [0.000, 0.000, 1.000]
         ];
-        
+
         result = mymatrix.inverse();
 
         for(i = 0; i < len; ++i)
@@ -595,7 +595,7 @@ suite.add(new Y.Test.Case({
                  Y.Assert.areEqual(Round(inverse[i][j]), Round(result[i][j]), "The result of inverse" + (j + 1) + "," + (i +1) + " should be " + inverse[i][j] + ", not " + result[i][j]);
             }
         }
-       
+
         //add a skewY
         mymatrix.skewY(67);
         /*
@@ -607,9 +607,9 @@ suite.add(new Y.Test.Case({
         inverse = [
             [0.030, -0.008, -0.333],
             [-0.071, 0.110, -0.580],
-            [0.000, 0.000, 1.000] 
+            [0.000, 0.000, 1.000]
         ];
-        
+
         result = mymatrix.inverse();
 
         for(i = 0; i < len; ++i)
@@ -620,10 +620,10 @@ suite.add(new Y.Test.Case({
             }
         }
     },
-    
+
     testGetTranspose: function() {
         var result,
-        i, 
+        i,
         j,
         transpose,
         len = 3,
@@ -634,7 +634,7 @@ suite.add(new Y.Test.Case({
             [0.70711, 0.70711, 0]
             [0, 0, 1]
         */
-        
+
         transpose = [
             [0.707, 0.707, 0.000],
             [-0.707, 0.707, 0.000],
@@ -655,7 +655,7 @@ suite.add(new Y.Test.Case({
         /*
             [1, 0, 15]
             [0, 1, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         transpose = [
             [1.000, 0.000, 0.000],
@@ -676,7 +676,7 @@ suite.add(new Y.Test.Case({
         /*
             [1, 0.26795, 15]
             [0, 1, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         transpose = [
             [1.000, 0.000, 0.000],
@@ -692,12 +692,12 @@ suite.add(new Y.Test.Case({
             }
         }
 
-        //add a scale 
+        //add a scale
         mymatrix.scale(33, 11);
         /*
             [33, 2.9474500000000003, 15]
             [0, 11, 15]
-            [0, 0, 1] 
+            [0, 0, 1]
          */
         transpose = [
             [33.000, 0.000, 0.000],

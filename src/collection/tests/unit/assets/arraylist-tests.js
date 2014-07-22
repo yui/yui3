@@ -20,7 +20,7 @@ suite.add( new Y.Test.Case({
         var list = new C(['foo']);
 
         Y.Assert.areSame(1, list._items.length);
-        list.each(function () {}); // trigger AL constructor from augmentation 
+        list.each(function () {}); // trigger AL constructor from augmentation
 
         Y.Assert.areSame(1, list._items.length);
         Y.Assert.areSame(1, list.size());

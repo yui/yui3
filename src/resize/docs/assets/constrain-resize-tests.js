@@ -21,7 +21,7 @@ YUI.add('constrain-resize-tests', function(Y) {
         'dd is active on resize': function() {
             var test = this,
                 handle = Y.one('#demo .yui3-resize-handle');
-            
+
             Assert.isFalse(handle.hasClass('yui3-dd-draggable'));
             Assert.isFalse(handle.hasClass('yui3-dd-dragging'));
             Assert.isFalse(handle.hasClass('yui3-resize-handle-active'));

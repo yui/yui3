@@ -28,8 +28,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('dump-tests');
-    
+
     Y.Test.Runner.setName('Dump cli tests');
-    
+
 });
 

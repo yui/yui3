@@ -57,7 +57,7 @@ YUI.add('jsonp-github-tests', function(Y) {
             };
         })(user);
     });
-    
+
     suite.add(testCase);
 
     Y.Test.Runner.add(suite);

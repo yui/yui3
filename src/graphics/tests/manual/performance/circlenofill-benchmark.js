@@ -9,8 +9,8 @@ YUI.add('circlenofill-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("CircleNoFill", function() { 
+
+    suite.add("CircleNoFill", function() {
         var circle = graphic.addShape({
                 type: "circle",
                 radius: 8,
@@ -30,5 +30,5 @@ YUI.add('circlenofill-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

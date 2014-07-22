@@ -14,7 +14,7 @@ YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y) {
                 Y.one('#debugShim').set('disabled', true);
             }
         });
-        
+
         Y.one('#debugShim').on('click', function(e) {
             var value = e.target.get('value');
             if (value == 'off' || value == 'Turn Debugging On') {
@@ -27,7 +27,7 @@ YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y) {
                 e.target.set('innerHTML', 'Turn Debugging On');
             }
         });
-        
+
         var dd = new Y.DD.Drag({
             //Selector of the node to make draggable
             node: '#demo',

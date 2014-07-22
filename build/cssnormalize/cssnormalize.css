@@ -579,5 +579,6 @@ table {
 [hidden] {
     display: none !important;
 }
+
 /* YUI CSS Detection Stamp */
 #yui3-css-stamp.cssnormalize { display: none; }

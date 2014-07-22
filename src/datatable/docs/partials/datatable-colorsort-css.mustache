@@ -1,0 +1,71 @@
+.example {
+    zoom: 1;
+}
+.example:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.left-column {
+    overflow: hidden;
+    float: left;   
+}
+.right-column {
+    margin-left: 390px;
+}
+/* Swatch styling */
+.yui3-skin-sam td.yui3-datatable-cell {
+    /* override vertical cell padding so swatches fill cells */
+    padding: 0 0.5em;
+}
+.yui3-skin-sam td.yui3-datatable-col-swatch {
+    padding: 0;
+}
+.swatch {
+    height: 1.4em;
+}
+#cTable .yui3-datatable-cell {
+    font-size: 70%;
+}
+#cTable .view-small .yui3-datatable-cell {
+    font-size: 25%;
+}
+
+/* layout styles */
+#small-swatch-checkbox {
+    margin-top: 4em;
+}
+.filter-radios label {
+    display: block;
+}
+.example .content {
+    padding: 0 5px;
+}
+
+/* Styles for UI sample swatches in filtering radios */
+.filter-radios label span {
+    background: url({{{componentAssets}}}/img/swatch_colors.png) no-repeat;
+    display: inline-block;
+    vertical-align: middle;
+    height: 30px;
+    width: 80px;
+    margin: 0.3em;
+}
+.filter-radios .examples-all {
+    background-position: 0px 0px;
+}
+.filter-radios .examples-tint {
+    background-position: 0px -30px;
+}
+.filter-radios .examples-midtone {
+    background-position: 0px -60px;
+}
+.filter-radios .examples-shade {
+    background-position: 0px -90px;
+}
+.filter-radios .examples-mute {
+    background-position: 0px -120px;
+}
+.filter-radios .examples-gray {
+    background-position: 0px -150px;
+}

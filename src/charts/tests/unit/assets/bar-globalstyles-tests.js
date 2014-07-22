@@ -26,7 +26,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-       
+
         testGlobalStyles: function()
         {
             var chart = this.chart,
@@ -39,8 +39,8 @@ YUI.add('bar-globalstyles-tests', function(Y) {
                 seriesStyles = styles.series,
                 graphStyles = styles.graph,
                 i;
-            Y.Assert.areEqual(axesTestStyles.values.label.rotation, axesStyles.values.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + "."); 
-            Y.Assert.areEqual(axesTestStyles.date.label.rotation, axesStyles.date.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
+            Y.Assert.areEqual(axesTestStyles.values.label.rotation, axesStyles.values.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + ".");
+            Y.Assert.areEqual(axesTestStyles.date.label.rotation, axesStyles.date.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + ".");
             Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
             for(i in seriesTestStyles)
             {
@@ -71,7 +71,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
                 styles,
                 i;
             Y.Assert.areEqual(axesTestStyles.values.label.rotation, valueAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + ".");
-            Y.Assert.areEqual(axesTestStyles.date.label.rotation, categoryAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
+            Y.Assert.areEqual(axesTestStyles.date.label.rotation, categoryAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + ".");
             Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
             for(i in seriesTestStyles)
             {
@@ -95,14 +95,14 @@ YUI.add('bar-globalstyles-tests', function(Y) {
         }
     });
 
-    var basicDataValues = [ 
-        {date:"5/1/2010", international:2000, expenses:3700, domestic:2200}, 
-        {date:"5/2/2010", international:50, expenses:9100, domestic:100}, 
-        {date:"5/3/2010", international:400, expenses:1100, domestic:1500}, 
-        {date:"5/4/2010", international:200, expenses:1900, domestic:2800}, 
+    var basicDataValues = [
+        {date:"5/1/2010", international:2000, expenses:3700, domestic:2200},
+        {date:"5/2/2010", international:50, expenses:9100, domestic:100},
+        {date:"5/3/2010", international:400, expenses:1100, domestic:1500},
+        {date:"5/4/2010", international:200, expenses:1900, domestic:2800},
         {date:"5/5/2010", international:5000, expenses:5000, domestic:2650}
     ],
-    
+
     hashSeriesStyles = {
         international:{
             marker:{
@@ -128,7 +128,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
         },
         domestic: {
             marker: {
-                fill: 
+                fill:
                 {
                     color: "#5aa"
                 },
@@ -139,7 +139,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
             }
         }
     },
-    
+
     arraySeriesStyles = [
         {
             marker:{
@@ -165,7 +165,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
         },
         {
             marker: {
-                fill: 
+                fill:
                 {
                     color: "#5aa"
                 },
@@ -176,7 +176,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
             }
         }
     ],
-    
+
     axesStyles = {
         values:{
             label:{
@@ -191,7 +191,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
             }
         }
     },
-    
+
     graphStyles = {
         background: {
             fill:{
@@ -239,7 +239,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
         }
         return new GlobalStylesTestTemplate(cfg, globalCfg);
     };
-    
+
     suite.add(getGlobalStylesTest("bar", null, hashSeriesStyles, null, false));
     suite.add(getGlobalStylesTest("bar", null, arraySeriesStyles, null, false));
     suite.add(getGlobalStylesTest("bar", null, hashSeriesStyles, null, true));

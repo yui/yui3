@@ -10,13 +10,13 @@
         </select>
         <button type="submit" id="setHTML">Set Content</button>
         <button type="button" class="fail" id="tryMove">move() (should fail)</button>
-    
+
         <div id="widget1">
             <div class="yui3-widget-hd">Module Header</div>
             <div class="yui3-widget-bd">Module Body</div>
             <div class="yui3-widget-ft">Module Footer</div>
         </div>
-    
+
         <p class="filler">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam.</p>
     </form>
 </dd>
@@ -29,14 +29,14 @@
         <label>Y: <input type="text" id="y" value="0" ></label>
         <button type="submit" id="move">Move</button>
         <button type="button" class="fail" id="tryContent">setStdModContent() (should fail)</button>
-    
+
         <div id="widget2"><strong>Positionable Widget</strong></div>
-    
+
         <p class="filler">
             <select>
                 <option>Prevent IE6 Bleedthrough</option>
             </select>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est. 
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est.
         </p>
     </form>
 </dd>
@@ -75,7 +75,7 @@ YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", 
 
     Y.on("submit", function(e) {
         e.preventDefault();
-        
+
         var content = Y.Escape.html(contentInput.get("value"));
         var section = sectionInput.get("value");
 
@@ -114,7 +114,7 @@ YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", 
 
     Y.on("submit", function(e) {
         e.preventDefault();
-        
+
         var x = parseInt(xInput.get("value"));
         var y = parseInt(yInput.get("value"));
 
@@ -177,7 +177,7 @@ YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", 
         }
     ];
 
-    var runBtn = Y.one("#run"); 
+    var runBtn = Y.one("#run");
     var label = runBtn.get("text");
 
     var q = new Y.AsyncQueue();
@@ -196,7 +196,7 @@ YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", 
                     fn:steps[i]
                 });
             }
-    
+
             q.run();
             this.set("text", "Stop");
         }

@@ -83,7 +83,7 @@ Y.mix(Y.namespace("Number"), {
         if (typeof data === 'string' && Y.Lang.trim(data) !== '') {
             data = +data;
         }
-        
+
         // catch NaN and ±Infinity
         if (typeof data !== 'number' || !isFinite(data)) {
             data = null;

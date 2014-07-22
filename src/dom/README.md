@@ -11,6 +11,6 @@ The following modules are available:
   * `dom-base`: Provides the basic support for querying, creating, and using
     DOM nodes.
   * `dom-screen`: Provides methods for positioning elements, measuring the
-    document and viewport, and working with regions. 
+    document and viewport, and working with regions.
   * `dom-style`: Adds setStyle()/getStyle() and getComputedStyle() methods
     for working with style properties.

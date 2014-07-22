@@ -62,7 +62,7 @@ YUI.add('node-focusmanager-toolbar-tests', function (Y) {
             }
 
             // Then go to the left
-            
+
             for (var j = buttons.length - 1; j > 0; j--) {
                 var currID = '#' + buttons[j].toLowerCase() + '-btn',
                     nextID = '#' + buttons[j-1].toLowerCase() + '-btn';
@@ -98,7 +98,7 @@ YUI.add('node-focusmanager-toolbar-tests', function (Y) {
                 keyCode: LEFT_ARROW_KEY
             });
 
-            Assert.isTrue(saveBtn.hasClass('focus'), 
+            Assert.isTrue(saveBtn.hasClass('focus'),
                 'Last button does not have focus');
 
             // Right direction should also wrap around
@@ -108,7 +108,7 @@ YUI.add('node-focusmanager-toolbar-tests', function (Y) {
             });
 
             Assert.isTrue(addBtn.hasClass('focus'),
-                'First button does not have focus'); 
+                'First button does not have focus');
         }
     }));
 

@@ -9,7 +9,7 @@
     <h1>Cookie Tests</h1>
     <div id="log"></div>
 
-<script type="text/javascript">  
+<script type="text/javascript">
 YUI({
     coverage: [ 'cookie' ],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
@@ -22,7 +22,7 @@ YUI({
 }).use('cookie-tests', 'test-console', function (Y) {
 
     (new Y.Test.Console()).render('#log');
-    
+
     Y.Test.Runner.run();
 
 });

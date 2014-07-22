@@ -60,7 +60,7 @@ YUI({ filter: 'raw' }).use( "datatable-sort", "datatable-scroll", "cssbutton", f
     table.delegate("click", function(e){
         // undefined to trigger the emptyCellValue
         var checked = e.target.get('checked') || undefined;
-        
+
         // Don't pass `{silent:true}` if there are other objects in your app
         // that need to be notified of the checkbox change.
         this.getRecord(e.target).set('select', checked, { silent: true });

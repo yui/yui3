@@ -2,7 +2,7 @@
 <html>
     <head>
         <style type="text/css">
-            
+
         .yui3-scrollview-loading {
             visibility:hidden;
             height:0;
@@ -35,7 +35,7 @@
                 color-stop(0.01, #b0bccc),
                 color-stop(0.49, #889bb3),
                 color-stop(0.50, #8094ae),
-                to(#6d83a1)     
+                to(#6d83a1)
             );
         }
 
@@ -48,7 +48,7 @@
         }
 
         .horiz-content ul, .vert-content ul {
-            font:13px/1.231 arial,helvetica,clean,sans-serif;            
+            font:13px/1.231 arial,helvetica,clean,sans-serif;
             margin:0;
             padding:0;
             list-style:none;
@@ -118,7 +118,7 @@
         <div class="container vert-container">
             <div class="hd">Vertical</div>
 
-            <!-- SV starts here -->        
+            <!-- SV starts here -->
             <div id="sv-vert-content" class="vert-content yui3-scrollview-loading">
                 <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
             </div>
@@ -226,7 +226,7 @@
                         minDistance: 10,
                         minVelocity:0.3,
                         axis:"y"
-                    },                    
+                    },
                     render:true
                 });
 
@@ -241,11 +241,11 @@
                         axis:"x"
                     },
                     plugins: [{
-                        fn:Y.Plugin.ScrollViewPaginator, 
+                        fn:Y.Plugin.ScrollViewPaginator,
                         cfg:{
                             selector:">ul>li"
                         }
-                    }],    
+                    }],
                     render:true
                 });
 
@@ -260,11 +260,11 @@
                         axis:"y"
                     },
                     plugins: [{
-                        fn:Y.Plugin.ScrollViewPaginator, 
+                        fn:Y.Plugin.ScrollViewPaginator,
                         cfg:{
                             selector:">ul>li"
                         }
-                    }],                    
+                    }],
                     render:true
                 });
                 svHorizPagedDA = new Y.ScrollView({
@@ -279,12 +279,12 @@
                         axis:"y"
                     },
                     plugins: [{
-                        fn:Y.Plugin.ScrollViewPaginator, 
+                        fn:Y.Plugin.ScrollViewPaginator,
                         cfg:{
                             axis:"x",
                             selector:">ul>li"
                         }
-                    }],    
+                    }],
                     render:true
                 });
 
@@ -300,15 +300,15 @@
                         axis:"x"
                     },
                     plugins: [{
-                        fn:Y.Plugin.ScrollViewPaginator, 
+                        fn:Y.Plugin.ScrollViewPaginator,
                         cfg:{
                             axis:"y",
                             selector:">ul>li"
                         }
-                    }],                    
+                    }],
                     render:true
                 });
-                
+
                 svHoriz._origFlick = svHoriz.get("flick");
                 svVert._origFlick = svVert.get("flick");
                 svVertPaged._origFlick = svVertPaged.get("flick");
@@ -328,7 +328,7 @@
 
                         position = (position === 250) ? 100 : 250;
 
-                        sv.set(scrollDim, position, {duration:350});                            
+                        sv.set(scrollDim, position, {duration:350});
                     },
 
                     add: function(sv) {
@@ -343,7 +343,7 @@
                         this._scrollToNonZero(sv);
                     },
                     remove: function(sv) {
-                        var list = sv.get("contentBox").one("ul");                        
+                        var list = sv.get("contentBox").one("ul");
                         var children = list.get("children");
                         var lastItem;
 
@@ -389,7 +389,7 @@
                             sv._scrollPositionIndex = i+1;
 
                         if (sv.get('axis').x) {
-                            sv.set("scrollX", position, {duration:350});    
+                            sv.set("scrollX", position, {duration:350});
                         } else {
                             sv.set("scrollY", position, {duration:350});
                         }
@@ -402,13 +402,13 @@
                         var index = (sv.pages.get("index") == 2) ? 1 : 2;
                         sv.pages.set("index", index);
                     },
-    
+
                     scrollTo: function(sv) {
                         var pages = sv.pages.get("total"),
                             current = sv.pages.get("index"),
                             position = (current + 1) % pages;
 
-                        sv.pages.set("index", position);    
+                        sv.pages.set("index", position);
                     }
                 }, true);
 

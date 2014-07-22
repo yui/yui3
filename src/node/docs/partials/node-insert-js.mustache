@@ -72,14 +72,14 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
 
             // Smooth out insert with transition
             transitionObject(obj);
-            
-            // Cheese button becomes available 
+
+            // Cheese button becomes available
             // only when there's a patty to insert before
-            Y.one('.buttons-list .cheese')._node.disabled = false; 
+            Y.one('.buttons-list .cheese')._node.disabled = false;
         } else if (this.hasClass('lettuce')) {
             obj = Y.Node.create('<li class="lettuce"><img src="' + imgPath + 'burg_lettuce.png" width="302" height="87" alt="Lettuce"/></li>');
             demo.insert(obj, Y.one('.bun-bottom'));
-            transitionObject(obj);        
+            transitionObject(obj);
         } else if (this.hasClass('cheese')) {
             obj = Y.Node.create('<li class="cheese"><img src="' + imgPath + 'burg_cheese.png" width="274" height="89" alt="Cheese"/></li>');
             demo.insert(obj, Y.one('.patty'));
@@ -103,10 +103,10 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
         } else if (this.hasClass('done')) {
             objList = Y.all('.demo li');
             myZIndex = objList.size();  // for resetting z-index of burger parts
-            
+
             // Hide all the buttons when done
             btnList.setStyle('display', 'none');
-            
+
             // Show the "Another Please" button
             Y.one('.buttons-list .another').setStyle('display', 'block');
 
@@ -123,7 +123,7 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
                     duration: 0.5,
                     height: parseInt(objList.item(i).one('img').getStyle('height'), 10) * 0.15 + 'px'
                 });
-            }    
+            }
         } else if (this.hasClass('another')) {
             // Empty out the content of the burger image
             demo.setContent('');

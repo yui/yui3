@@ -118,7 +118,7 @@ YUI.add("attribute-performance-smoke-tests", function(Y) {
     Y.extend(Test, Y.Base, {
         foo: function() {}
     });
-            
+
     var perfSuite = new Y.Test.Suite({name:"Attribute Performance Tests"});
     perfSuite.add(new Y.Test.Case({
 

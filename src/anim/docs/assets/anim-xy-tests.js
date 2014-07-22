@@ -26,8 +26,8 @@ YUI.add('anim-xy-tests', function(Y) {
 
             setTimeout(function() {
                 node.simulate('click', {
-                    clientX: xy[0], 
-                    clientY: xy[1] 
+                    clientX: xy[0],
+                    clientY: xy[1]
                 });
             }, 0);
             test.wait(1500);

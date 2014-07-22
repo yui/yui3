@@ -20,15 +20,15 @@ YUI.add('series-areaspline-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: drawSeries()" : function() {
             var series = this.series,
                 mockAreaSplineSeries = new MockAreaSplineSeries();
             series.drawSeries.apply(mockAreaSplineSeries);
-            Y.Assert.isTrue(mockAreaSplineSeries._areaSplineDrawn, "The drawAreaSpline method should have been called.");     
+            Y.Assert.isTrue(mockAreaSplineSeries._areaSplineDrawn, "The drawAreaSpline method should have been called.");
         }
     });
-    
+
     suite.add(new Y.AreaSplineSeriesTest({
         name: "AreaSplineSeries Tests"
     }));

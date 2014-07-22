@@ -1,5 +1,5 @@
 YUI.add('photo-browser-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('photo-browser');
 

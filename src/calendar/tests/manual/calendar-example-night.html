@@ -81,8 +81,8 @@ console.log(newrules);
 function myFilter (oDate, oNode, rules) {
 if (rules.indexOf("theweekends") >= 0) {
 	//oNode.addClass('redtext');
-}	
-};	     
+}
+};
 
          var calendar = new Y.Calendar({
 	        showNextMonth: true,
@@ -93,7 +93,7 @@ if (rules.indexOf("theweekends") >= 0) {
 	        date: new Date(2011,10,1),
 	        headerRenderer: myHeaderRenderer,
 			width:'600px'});
-			
+
 		calendar.render("#mycalendar");
 
 		calendar.set("customRenderer", {rules: myRules, filterFunction: myFilter});

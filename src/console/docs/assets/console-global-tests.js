@@ -2,7 +2,7 @@ YUI.add('console-global-tests', function(Y) {
 
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('console-global');
-    
+
     var clearAllLogs = function() {
         Y.all('#yconsole .yui3-console-entry').remove();
     };

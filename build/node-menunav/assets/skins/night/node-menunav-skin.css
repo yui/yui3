@@ -1,9 +1,9 @@
 /* Vertical menus and submenus */
 
-.yui3-skin-night .yui3-menu-content, 
+.yui3-skin-night .yui3-menu-content,
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menu-content {
 
-    font-size: 100%;  
+    font-size: 100%;
     line-height: 2.25;  /* 18px 1.5*/
     *line-height: 1.45; /* For IE */
     border: solid 1px #303030;
@@ -15,7 +15,7 @@
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menu-content {
 
 	font-size: 100%;
-    
+
 }
 
 
@@ -26,8 +26,8 @@
     *line-height: 1.9; /* For IE */
     background-color:#3b3c3d;
 	background: -moz-linear-gradient(
-		0% 100% 90deg, 
-		#242526 0%, 
+		0% 100% 90deg,
+		#242526 0%,
 		#3b3c3d 96%,
 		#2C2D2F 100%
 	);
@@ -37,7 +37,7 @@
         left top,
         from(#242526),
         color-stop(0.96, #3b3c3d),
-        to(#2C2D2F)     
+        to(#2C2D2F)
     );
     padding: 0;
 
@@ -57,7 +57,7 @@
 
     border: 0;
 	margin: 0;
-	padding: 0;    
+	padding: 0;
 
 }
 
@@ -74,9 +74,9 @@
 .yui3-skin-night .yui3-menu .yui3-menu li {
 
     /*
-        For and IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode only): 
-		Used to collapse superfluous white space between <li> elements that is 
-		triggered by the "display" property of the <a> elements being set to 
+        For and IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode only):
+		Used to collapse superfluous white space between <li> elements that is
+		triggered by the "display" property of the <a> elements being set to
 		"block" by node-menunav-core.css file.
     */
 
@@ -121,19 +121,19 @@
     /*padding: 0 20px;*/
     padding: 0 1em;
     /*background-color: #2F3030;*/
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     color: #fff;
     text-decoration: none;
     cursor: default;
 
 	/*
-		Necessary specify values for border, position and margin to override 
-		values specified in the selectors that follow. 
+		Necessary specify values for border, position and margin to override
+		values specified in the selectors that follow.
 	*/
 
 	float: none;
@@ -151,8 +151,8 @@
     border-width: 1px 0;
     margin: -1px 0;
 
-    float: left; 	/*	Ensures that menu labels clear floated descendents. 
-    					Also gets negative margins working in IE 7 
+    float: left; 	/*	Ensures that menu labels clear floated descendents.
+    					Also gets negative margins working in IE 7
 						(Strict Mode). */
     width: auto;
 
@@ -212,14 +212,14 @@
 }
 
 .yui3-skin-night .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
-	
+
 	padding: 0;	/* Overide padding applied by the preceeding rule. */
-	border-left: solid 1px #303030; 
+	border-left: solid 1px #303030;
 	width: 15px;
 	overflow: hidden;
 	text-indent: -1000px;
-    background: url(horizontal-menu-submenu-indicator.png) 3px center no-repeat;	
-	
+    background: url(horizontal-menu-submenu-indicator.png) 3px center no-repeat;
+
 }
 
 
@@ -251,9 +251,9 @@
         from(#333434),
         to(#252626)
     );
-    
+
     /*
-    	Undo values set for "border-left-width" and "margin-left" when the root 
+    	Undo values set for "border-left-width" and "margin-left" when the root
     	menu has a class of "yui-menubuttonnav" or "yui-splitbuttonnav" applied.
     */
 
@@ -269,8 +269,8 @@
     border-color: #303030;
 	background-color:#555658;
 	background: -moz-linear-gradient(
-		0% 100% 90deg, 
-		#343536 0%, 
+		0% 100% 90deg,
+		#343536 0%,
 		#555658 96%,
 		#3E3F41 100%
 	);
@@ -280,7 +280,7 @@
         left top,
         from(#343536),
         color-stop(0.96, #555658),
-        to(#3E3F41)     
+        to(#3E3F41)
     );
 
 }
@@ -307,6 +307,6 @@
 .yui3-skin-night .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
 
     border-color: #303030;
-    background-color: #505050;   
-    
+    background-color: #505050;
+
 }

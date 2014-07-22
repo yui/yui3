@@ -1,31 +1,31 @@
 YUI.add('verticalarea-dataprovider-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: VerticalAreaDataProvider"),
-        allPositiveDataProvider =  [ 
-            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        allPositiveDataProvider =  [
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
-        positiveAndNegativeDataProvider = [ 
-            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:-100}, 
-            {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:-2800}, 
+        positiveAndNegativeDataProvider = [
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:-100},
+            {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:-2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:-5000, revenue:2650}
         ],
-        allNegativeDataProvider = [ 
-            {category:"5/1/2010", miscellaneous:-2000, expenses:-3700, revenue:-2200}, 
-            {category:"5/2/2010", miscellaneous:-50, expenses:-9100, revenue:-100}, 
-            {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:-1500}, 
-            {category:"5/4/2010", miscellaneous:-200, expenses:-1900, revenue:-2800}, 
+        allNegativeDataProvider = [
+            {category:"5/1/2010", miscellaneous:-2000, expenses:-3700, revenue:-2200},
+            {category:"5/2/2010", miscellaneous:-50, expenses:-9100, revenue:-100},
+            {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:-1500},
+            {category:"5/4/2010", miscellaneous:-200, expenses:-1900, revenue:-2800},
             {category:"5/5/2010", miscellaneous:-5000, expenses:-5000, revenue:-2650}
         ],
-        decimalDataProvider = [ 
-            {category:"5/1/2010", miscellaneous:2.45, expenses:3.71, revenue:2.2}, 
-            {category:"5/2/2010", miscellaneous:0.5, expenses:9.1, revenue:0.16}, 
-            {category:"5/3/2010", miscellaneous:1.4, expenses:1.14, revenue:1.25}, 
-            {category:"5/4/2010", miscellaneous:0.05, expenses:1.9, revenue:2.8}, 
+        decimalDataProvider = [
+            {category:"5/1/2010", miscellaneous:2.45, expenses:3.71, revenue:2.2},
+            {category:"5/2/2010", miscellaneous:0.5, expenses:9.1, revenue:0.16},
+            {category:"5/3/2010", miscellaneous:1.4, expenses:1.14, revenue:1.25},
+            {category:"5/4/2010", miscellaneous:0.05, expenses:1.9, revenue:2.8},
             {category:"5/5/2010", miscellaneous:5.53, expenses:5.21, revenue:2.65}
         ],
         missingDataSmallDataProvider = [
@@ -48,18 +48,18 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
             {category:"11/1/2010", miscellaneous:1200, expenses:2500, revenue:2800},
             {category:"12/1/2010", revenue:2000, expenses:1200}
         ],
-        nullValuesDataProvider =  [ 
-            {category:"5/1/2010", miscellaneous:null, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:null, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:null}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        nullValuesDataProvider =  [
+            {category:"5/1/2010", miscellaneous:null, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:null, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:null},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
-        missingFirstValuesDataProvider =  [ 
-            {category:"5/1/2010"}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        missingFirstValuesDataProvider =  [
+            {category:"5/1/2010"},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
         missingFirstValuesDataLargeDataProvider = [
@@ -123,7 +123,7 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
         DOC = Y.config.doc;
     DOC.body.appendChild(parentDiv);
-    
+
     //-------------------------------------------------------------------------
     // Chart dataProvider Test Case
     //-------------------------------------------------------------------------
@@ -137,19 +137,19 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         this.attrCfg.render = "#testdiv";
         this.name = type + " DataProvider Tests";
     }
-        
+
     Y.extend(ChartDataProviderTestCase, Y.Test.Case, {
         //---------------------------------------------------------------------
         // Setup and teardown of test harnesses
         //---------------------------------------------------------------------
-        
-        setUp : function() 
+
+        setUp : function()
         {
             this.chart = new Y.Chart(this.attrCfg);
             this.contentBox = this.chart.get("contentBox");
         },
-        
-        tearDown : function() 
+
+        tearDown : function()
         {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
@@ -172,12 +172,12 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         }
     });
 
-    Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
-    
+    Y.ChartDataProviderTestCase = ChartDataProviderTestCase;
+
     getDataProviderTest = function(dataProvider, name, stacked)
     {
         var cfg = {
-            dataProvider: dataProvider 
+            dataProvider: dataProvider
         };
         if(stacked)
         {
@@ -186,10 +186,10 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         }
         return new Y.ChartDataProviderTestCase(cfg, name);
     };
-    
+
     suite.add(getDataProviderTest(allPositiveDataProvider, "All Positive"));
     suite.add(getDataProviderTest(allNegativeDataProvider, "All Negative"));
-    suite.add(getDataProviderTest(positiveAndNegativeDataProvider, "Positive and Negative"));      
+    suite.add(getDataProviderTest(positiveAndNegativeDataProvider, "Positive and Negative"));
     suite.add(getDataProviderTest(decimalDataProvider, "Decimal"));
     suite.add(getDataProviderTest(missingDataSmallDataProvider, "Missing Small"));
     suite.add(getDataProviderTest(missingDataLargeDataProvider, "Missing Large"));
@@ -197,7 +197,7 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
     suite.add(getDataProviderTest(missingFirstValuesDataProvider, "Missing First Values"));
     suite.add(getDataProviderTest(allPositiveDataProvider, "All Positive", true));
     suite.add(getDataProviderTest(allNegativeDataProvider, "All Negative", true));
-    suite.add(getDataProviderTest(positiveAndNegativeDataProvider, "Positive and Negative", true));      
+    suite.add(getDataProviderTest(positiveAndNegativeDataProvider, "Positive and Negative", true));
     suite.add(getDataProviderTest(decimalDataProvider, "Decimal", true));
     suite.add(getDataProviderTest(missingDataSmallDataProvider, "Missing Small", true));
     suite.add(getDataProviderTest(missingDataLargeDataProvider, "Missing Large", true));
@@ -213,7 +213,7 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
     suite.add(getDataProviderTest(splitTrailingSeriesDataProvider, "Split Trailing Series DataProvider", true));
     suite.add(getDataProviderTest(twoSeriesEndTogetherDataProvider, "Two Series End Together DataProvider"));
     suite.add(getDataProviderTest(twoSeriesEndTogetherDataProvider, "Two Series End Together DataProvider", true));
-   
+
 
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

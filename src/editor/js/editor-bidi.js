@@ -130,7 +130,7 @@
             var parent = node, divNode, firstChild;
 
             root = root || Y.EditorSelection.ROOT;
-            
+
             if (!parent) {
                 parent = root;
             }

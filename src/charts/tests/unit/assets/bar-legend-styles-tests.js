@@ -3,10 +3,10 @@ YUI.add('bar-legend-styles-tests', function(Y) {
         barStylesTest,
         barGlobalStylesTest,
         dataProvider = [
-            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
         seriesStyles = {
@@ -45,7 +45,7 @@ YUI.add('bar-legend-styles-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
@@ -95,7 +95,7 @@ YUI.add('bar-legend-styles-tests', function(Y) {
         type: "bar",
         render: "#testdiv"
     });
-    
+
     barGlobalStylesTest = new ChartsLegendStylesTest({
         dataProvider: dataProvider,
         styles: {
@@ -107,7 +107,7 @@ YUI.add('bar-legend-styles-tests', function(Y) {
         type: "bar",
         render: "#testdiv"
     });
-    
+
     suite.add(barStylesTest);
     suite.add(barGlobalStylesTest);
     Y.Test.Runner.add(suite);

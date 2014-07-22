@@ -1,5 +1,5 @@
 YUI.add('simple-drag-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('simple-drag');
 

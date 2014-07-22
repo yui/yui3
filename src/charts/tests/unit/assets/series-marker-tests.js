@@ -20,12 +20,12 @@ YUI.add('series-marker-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: drawSeries()" : function() {
             var series = this.series,
                 mockMarkerSeries = new MockMarkerSeries();
             series.drawSeries.apply(mockMarkerSeries);
-            Y.Assert.isTrue(mockMarkerSeries._markersDrawn, "The drawPlots method should have been called.");     
+            Y.Assert.isTrue(mockMarkerSeries._markersDrawn, "The drawPlots method should have been called.");
         },
 
         "test: _setStyles()" : function() {
@@ -36,7 +36,7 @@ YUI.add('series-marker-tests', function(Y) {
                 testStyles1 = {
                     border: {
                         weight: 1,
-                        color: "#000"   
+                        color: "#000"
                     },
                     fill: {
                         color: "#f00",
@@ -82,7 +82,7 @@ YUI.add('series-marker-tests', function(Y) {
             }
         }
     });
-    
+
     suite.add(new Y.MarkerSeriesTest({
         name: "MarkerSeries Tests"
     }));

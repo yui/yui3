@@ -1,17 +1,17 @@
 YUI.add('charts-axisupdate-manual-tests', function(Y) {
     var suite = new Y.Test.Suite('charts-axisupdate-manual-tests example test suite');
-    
+
     suite.add(new Y.Test.Case({
         name: "Manual Tests",
 
         "Test chart loaded" : function()
         {
-            Y.Assert.isTrue((false), "Ensure there is a column chart on the page. There should be a category axis on the bottom of the chart. There should be a numeric axis to the right."); 
+            Y.Assert.isTrue((false), "Ensure there is a column chart on the page. There should be a category axis on the bottom of the chart. There should be a numeric axis to the right.");
         },
 
         "Test marker interactivity" : function()
         {
-            Y.Assert.isTrue((false), "Mouse over markers and ensure a tooltip appears."); 
+            Y.Assert.isTrue((false), "Mouse over markers and ensure a tooltip appears.");
         },
 
         "Test category axis update" : function()

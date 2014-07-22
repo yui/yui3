@@ -9,15 +9,15 @@ YUI.add('multipleshapesnostroke-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("MultipleShapesNoStroke", function() { 
+
+    suite.add("MultipleShapesNoStroke", function() {
         var circle = graphic.addShape({
                 type: "circle",
                 radius: 8,
                 fill: {
                     color: "#9aa"
                 },
-                stroke: null 
+                stroke: null
             }),
             rect = graphic.addShape({
                 type: "rect",
@@ -26,7 +26,7 @@ YUI.add('multipleshapesnostroke-benchmark', function (Y) {
                 fill: {
                     color: "#9aa"
                 },
-                stroke: null 
+                stroke: null
             }),
             ellipse = graphic.addShape({
                 type: "ellipse",
@@ -35,7 +35,7 @@ YUI.add('multipleshapesnostroke-benchmark', function (Y) {
                 fill: {
                     color: "#9aa"
                 },
-                stroke: null 
+                stroke: null
             });
     }, {
         onStart: function() {
@@ -48,5 +48,5 @@ YUI.add('multipleshapesnostroke-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

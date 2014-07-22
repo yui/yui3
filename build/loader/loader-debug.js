@@ -11,7 +11,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2014.05.29-15-46',
+        GALLERY_VERSION = 'gallery-2014.06.12-21-45',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
@@ -4190,7 +4190,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dd-drag": {
         "requires": [
-            "dd-ddm-base"
+            "dd-ddm-base",
+            "selector-css2"
         ]
     },
     "dd-drop": {
@@ -4661,7 +4662,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
+
     return svg && (useSVG || !canvas);
 },
             "trigger": "graphics"
@@ -4678,7 +4679,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
+
     return svg && (useSVG || !canvas);
 },
             "trigger": "graphics"
@@ -4880,7 +4881,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     function workingNative( k, v ) {
         return k === "ok" ? true : v;
     }
-    
+
     // Double check basic functionality.  This is mainly to catch early broken
     // implementations of the JSON API in Firefox 3.1 beta1 and beta2
     if ( nativeSupport ) {
@@ -6002,7 +6003,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '45357bb11eddf7fd0a89c0b756599df2';
+YUI.Env[Y.version].md5 = '7ef189c2dd804768209f77293bfb00d9';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
