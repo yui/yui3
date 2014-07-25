@@ -279,7 +279,12 @@ var WIDGET       = 'widget',
             oldTI = bb.get('tabIndex');
 
             bb.set('tabIndex', oldTI >= 0 ? oldTI : 0);
-            this.focus();
+
+            setTimeout( function() {
+                    this.focus();
+                },
+                0
+            );
         },
         /**
          * Blurs the widget.
