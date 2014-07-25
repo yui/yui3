@@ -165,21 +165,20 @@
             * to walk through and filter to pass off the event to before firing..
             */
 
-            switch (e.changedType) {
-                case 'tab':
-                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
-                        e.changedEvent.frameEvent.preventDefault();
-                        Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
-                        if (Y.UA.webkit) {
-                            this.execCommand('inserttext', '\t');
-                        } else if (Y.UA.gecko) {
-                            this.frame.exec._command('inserthtml', EditorBase.TABKEY);
-                        } else if (Y.UA.ie) {
-                            this.execCommand('inserthtml', EditorBase.TABKEY);
-                        }
+            if (e.changedType === 'tab') {
+                if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
+                    e.changedEvent.frameEvent.preventDefault();
+                    Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
+                    if (Y.UA.webkit) {
+                        this.execCommand('inserttext', '\t');
+                    } else if (Y.UA.gecko) {
+                        this.frame.exec._command('inserthtml', EditorBase.TABKEY);
+                    } else if (Y.UA.ie) {
+                        this.execCommand('inserthtml', EditorBase.TABKEY);
                     }
-                    break;
+                }
             }
+            
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
                 /*
                 * When executing execCommand 'indent or 'outdent' Webkit applies
