@@ -6,6 +6,7 @@ This module includes [asap.js](https://github.com/kriskowal/asap) for scheduling
 asynchronous tasks.
 
 @module timers
+@main timers
 @author Steven Olmsted
 **/
 
