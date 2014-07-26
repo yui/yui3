@@ -1,4 +1,8 @@
 /**
+@module timers
+**/
+
+/**
 Y.soon accepts a callback function.  The callback function will be called
 once in a future turn of the JavaScript event loop.  If the function
 requires a specific execution context or arguments, wrap it with Y.bind.
