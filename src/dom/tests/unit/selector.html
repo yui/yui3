@@ -218,6 +218,11 @@ onload = function() {
                 Assert.isTrue(Selector.test(Y.DOM.byId('foo-bar'), 'input#foo-bar', form));
                 Assert.isFalse(Selector.test(Y.DOM.byId('foo-bar'), '#test-inputs input#foo-bar', form));
                 Assert.isTrue(Selector.test(Y.DOM.byId('foo-bar'), '#test-inputs input#foo-bar', form.parentNode));
+
+                var strongEl = document.getElementsByTagName('strong')[0];
+                Selector.test(strongEl, 'strong');
+                Assert.isFalse(strongEl.hasAttribute('id'), 'The strong element shouldn\'t have an ID');
+
             },
 
             testRootQuery: function() {
@@ -816,5 +821,7 @@ onload = function() {
     <form id="test-chars-form">
         <input id="test-chars" type="hidden" value="ML キshigo, Mfg.,& Co.">
     </form>
+
+    <strong>Foo</strong>
 </body>
 </html>
