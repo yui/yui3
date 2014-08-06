@@ -17,7 +17,7 @@
 <input type="button" id="updateButton" href="update.php" value="Update 2nd Last Record">
 <script>
 YUI().use("recordset-base", "node", function (Y) {
-	
+
 	var state_census_data = [
         {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
         {ANSI: "02000", STATE: "ALASKA", TOTAL_POP: 698473, LAND_AREA: 571951.26, POP_PER_SQ_MILE: 1.1},
@@ -71,14 +71,14 @@ YUI().use("recordset-base", "node", function (Y) {
         {ANSI: "56000", STATE: "WYOMING", TOTAL_POP: 544270, LAND_AREA: 97100.4, POP_PER_SQ_MILE: 5.1	}
     ],
 	TEMPLATE_TR = '<tr id="row_{ANSI}"><td>{STATE}</td><td>{TOTAL_POP}</td><td>{LAND_AREA}</td></tr>';
-	
+
   	// Create a Recordset instance.
   	var recordset = new Y.Recordset({records:state_census_data.splice(0,5)});
-	
+
 	createRows(recordset);
 	setUpEvents(recordset);
 	setUpButtons(recordset);
-	
+
 	function setUpEvents(rs) {
 		/*Edits the table based on Recordset events that are fired*/
 		rs.after('add', function(e) {
@@ -87,7 +87,7 @@ YUI().use("recordset-base", "node", function (Y) {
 
 		rs.after('remove', function(e) {
 			Y.one('#row_'+e.removed[0].getValue('ANSI')).remove();
-			
+
 			//add the object back to the data array so it can be added again later
 			state_census_data.push(e.removed[0].getValue());
 		});
@@ -95,7 +95,7 @@ YUI().use("recordset-base", "node", function (Y) {
 		rs.after('empty', function(e) {
 			Y.all('#demo tbody tr').remove();
 		});
-		
+
 		rs.after('update', function(e) {
 			var tr = Y.Lang.sub(TEMPLATE_TR, e.updated[0].getValue());
 			Y.one('#row_'+e.overwritten[0].getValue('ANSI')).replace(Y.Node.create(tr));
@@ -108,48 +108,48 @@ YUI().use("recordset-base", "node", function (Y) {
 		{
 		  return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
-		
+
 		Y.one('#addButton').on('click', function(e) {
 			//prevent default behavior (stop link)
 			e.preventDefault();
-			
+
 			//get a random state and add it to the Recordset
 			var rand = getRandomInt(0, state_census_data.length-1);
 			rs.add(state_census_data[rand]);
-			
+
 			//remove the state from the array so that it doesn't get added again later
 			state_census_data.splice(rand,1);
 		});
-		
+
 		Y.one('#removeButton').on('click', function(e) {
 			e.preventDefault();
 			if (rs.getLength() > 0) {
 				rs.remove(0);
 			}
 		});
-		
+
 		Y.one('#emptyButton').on('click', function(e) {
 			e.preventDefault();
 			rs.empty();
 		});
-		
+
 		Y.one('#updateButton').on('click', function(e) {
 			var index = rs.getLength() - 2,
 			newState = state_census_data[getRandomInt(0, state_census_data.length-1)];
-			
+
 			e.preventDefault;
-			
+
 			if (index >= 0) {
-				rs.update(newState, index);			
+				rs.update(newState, index);
 			}
 		});
 	}
-	
+
 	function createRows(rs) {
 		var i=0,
 		len = rs.getLength(),
 		html = '';
-		
+
 		for (; i < len; i++) {
 			html += Y.Lang.sub(TEMPLATE_TR, rs.getRecord(i).getValue());
 		}

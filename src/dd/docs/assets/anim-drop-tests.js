@@ -1,5 +1,5 @@
 YUI.add('anim-drop-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('anim-drop');
 

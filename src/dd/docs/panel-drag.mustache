@@ -1,0 +1,187 @@
+<div class="intro">
+<p>This example shows a YUI Panel which an be dragged by it's header area.</p>
+</div>
+
+<div class="example">
+    {{>overlay-drag-source}}
+</div>
+
+<h3>Setting up the Node</h3>
+<p>First we need the form to make draggable.</p>
+```
+<div class="yui3-skin-sam">
+    <div id="demo">
+        <div class="yui3-widget-hd">An example Draggable Panel</div>
+        <div class="yui3-widget-bd">
+            <form id="example-form" action="?">
+                <fieldset>
+                    <legend>This Panel can be moved by dragging it's title area. It contains an example form for you to complete.</legend>
+                    <div class="formfield">
+                        <label for="input-name">Name</label>
+                        <input type="text" name="name" id="input-name" placeholder="Name">
+                    </div>
+                    <div class="formfield">
+                        <label for="input-email">Email</label>
+                        <input type="email" name="email" id="input-email" placeholder="Email">
+                    </div>
+                    <div class="formfield">
+                        <label for="input-password">Password</label>
+                        <input type="password" name="password" id="input-password" placeholder="Password">
+                    </div>
+                    <div class="controls">
+                        <button class='primary'>Submit</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="yui3-widget-ft"></div>
+    </div>
+</div>
+```
+
+<p>Now we give that Node some CSS to make it visible and style it appropriately.</p>
+
+```
+    .yui3-widget-hd {
+        cursor: move
+    }
+
+    .yui3-widget-ft {
+        display: none;
+    }
+
+    .yui3-skin-sam .yui3-panel-content {
+        border: #ccc;
+        border-radius: 4px;
+    }
+
+    #example-form,
+    #example-form input {
+        font-family: "proxima-nova", sans-serif;
+        color: #777;
+    }
+
+    #example-form fieldset {
+        border: 0;
+        margin: 0;
+        padding: .35em 0 .75em;
+    }
+
+    #example-form legend {
+        display: block;
+        width: 100%;
+        padding: .3em 0;
+        color: #333;
+        border-bottom: 1px solid #e5e5e5;
+        margin: 1em 0;
+    }
+
+    #example-form label {
+        display: inline-block;
+        width: 10em;
+        margin: 0 1em 0 0;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    #example-form .controls {
+        margin: 1.5em 0 0 10em;
+    }
+
+    #example-form input {
+        width: 15em;
+        padding: .5em .6em;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 3px #ddd;
+        border-radius: 4px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: .25em 0;
+        font-size: 100%;
+    }
+
+    #example-form button {
+        display: inline-block;
+        zoom: 1;
+        line-height: normal;
+        white-space: nowrap;
+        vertical-align: baseline;
+        text-align: center;
+        cursor: pointer;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        font-family: inherit;
+        font-size: 100%;
+        padding: .5em 1em;
+        color: #444;
+        color: rgba(0,0,0,.8);
+        border: 1px solid #999;
+        border: 0 rgba(0,0,0,0);
+        background-color: #E6E6E6;
+        text-decoration: none;
+        border-radius: 2px;
+    }
+
+    #example-form button.hover,
+    #example-form button:hover,
+    #example-form button:focus {
+        filter:
+        progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000',
+        endColorstr='#1a000000', GradientType=0);
+        background-image: -webkit-gradient(linear,0 0,0
+        100%,from(transparent),color-stop(40%,rgba(0,0,0,.05)),to(rgba(0,0,0,.1)));
+        background-image: -webkit-linear-gradient(transparent,rgba(0,0,0,.05)
+        40%,rgba(0,0,0,.1));
+        background-image: -moz-linear-gradient(top,rgba(0,0,0,.05)
+        0,rgba(0,0,0,.1));
+        background-image: -o-linear-gradient(transparent,rgba(0,0,0,.05)
+        40%,rgba(0,0,0,.1));
+        background-image: linear-gradient(transparent,rgba(0,0,0,.05)
+        40%,rgba(0,0,0,.1));
+    }
+
+    #example-form button.primary {
+        background-color: #0078e7;
+        color: #fff;
+    }
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `panel` and `dd-plugin` modules.</p>
+
+```
+YUI().use('panel', 'dd-plugin');
+```
+
+
+<h3>Creating the Panel and making it draggable</h3>
+<p>Now that we have a YUI instance with the `panel`  module, we can set up the Panel to contain the form.</p>
+
+```
+YUI().use('panel', 'dd-plugin', function(Y) {
+    var panel = new Y.Panel({
+        srcNode: '#demo',
+        render: true,
+        centered: true,
+        width: '400px'
+    });
+});
+```
+
+
+<h3>Making the Panel draggable</h3>
+<p>And then Plug the header with the Drag plugin</p>
+
+```
+    // Make the panel draggable.
+    panel.plug(Y.Plugin.Drag, {
+        handles: [
+            '.yui3-widget-hd'
+        ]
+    });
+```

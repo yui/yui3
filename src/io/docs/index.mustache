@@ -23,7 +23,7 @@
 
 <div class="notice">
     <h2 id="migration-intro">Upgrading to version 3.13.0 or newer?</h2>
-    <p>Due to Security issues, as of YUI 3.13.0, YUI <a href="https://github.com/yui/yui3/issues/845">has removed all the Flash files from the repository</a>. As a result, you will need compile and host your own <code>io.swf</code> file to enable flash transport for the <code>io-xdr</code> (deprecated) module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>	
+    <p>Due to Security issues, as of YUI 3.13.0, YUI <a href="https://github.com/yui/yui3/issues/845">has removed all the Flash files from the repository</a>. As a result, you will need compile and host your own <code>io.swf</code> file to enable flash transport for the <code>io-xdr</code> (deprecated) module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>
     </div>
 {{>getting-started}}
 
@@ -141,6 +141,14 @@ YUI().use("io-base", function(Y) {
             <td>Specific HTTP headers and values to be sent with the transaction (e.g., <code>{ 'Content-Type': 'application/xml; charset=utf-8' } </code>).</td>
         </tr>
         <tr>
+            <td>username (string).</td>
+            <td>Username for a basic HTTP authentication (e.g. .htaccess).</td>
+        </tr>
+        <tr>
+            <td>password (string).</td>
+            <td>Password for a basic HTTP authentication (e.g. .htaccess).</td>
+        </tr>
+        <tr>
             <td>on (object)</td>
             <td>This object can be used to register transaction event handlers for the set of supported io events, listed below. These events fire in addition to the global io events.  All events handlers are optional.
                 <ul class="topspace">
@@ -248,6 +256,23 @@ var cfg = {
     }
 };
 
+```
+
+<p>Example of authentication with `Y.io`.</p>
+
+```
+Y.io('priv/data.json', {
+    username: 'foo',
+    password: 'bar',
+    on: {
+        success: function () {
+            //got the data, carry on
+        },
+        failure: function () {
+            //err, 401
+        }
+    }
+});
 ```
 
 <h3>The Response Object</h3>

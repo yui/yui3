@@ -504,7 +504,10 @@ YUI.add('frame', function (Y, NAME) {
                 var inst = this.getInstance(),
                     node = inst.one('#extra_css');
 
-                node.remove();
+                if (node) {
+                    node.remove();
+                }
+
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');
             } else {
                 //This needs to be wrapped in a contentready callback for the !_ready state
@@ -558,7 +561,7 @@ YUI.add('frame', function (Y, NAME) {
 
                 });
             }
-            
+
             return inst.__use.apply(inst, args);
         },
         /**

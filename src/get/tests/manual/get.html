@@ -16,8 +16,8 @@
                 var d1 = +(new Date()), d2;
 
                 Y.Get.script([
-                        "http://127.0.0.1:8014/a.js?delay=500&dt=" + new Date().getTime(), 
-                        "http://127.0.0.1:8014/b.js?delay=700&dt=?" + new Date().getTime(), 
+                        "http://127.0.0.1:8014/a.js?delay=500&dt=" + new Date().getTime(),
+                        "http://127.0.0.1:8014/b.js?delay=700&dt=?" + new Date().getTime(),
                         "http://127.0.0.1:8014/c.js?delay=100&dt=" + new Date().getTime()
                     ], {
                     onSuccess: function(o) {

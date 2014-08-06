@@ -11,7 +11,7 @@ YUI.add('intl-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: "Lookup Best Language Tests",
-    
+
         testArray: function() {
             var language = Y.Intl.lookupBestLang(["de-DE", "en-SG", "ja-JP"], ["fr-FR", "en", "en-SG"]);
             Assert.areSame(language, "en-SG", "Expected en-SG.");
@@ -32,7 +32,7 @@ YUI.add('intl-tests', function(Y) {
             Assert.areSame(language, "zh-Hant-CN", "Expected zh-Hant-CN.");
         }
     }));
-    
+
     suite.add(new Y.Test.Case({
         name: "Basic Intl Language Store Tests",
 
@@ -79,7 +79,7 @@ YUI.add('intl-tests', function(Y) {
                 }
                 return equal;
             });
-            
+
             h.detach();
         },
 

@@ -198,7 +198,7 @@ YUI.add('node-traversal-test', function(Y) {
             Assert.areEqual('test-ancestor-stop',
                     Y.one(node).ancestor('#test-ancestor-stop', null, '#test-ancestor-stop')._node.id);
         },
-        'should find TD ancestor': function() {   
+        'should find TD ancestor': function() {
             var node = Y.one('#test-table div div').ancestor('td');
 
             Y.Assert.areEqual(document.getElementById('test-td'), node._node);

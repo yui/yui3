@@ -26,26 +26,26 @@ YUI.add('pie-legend-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         }
     });
 
-    var basicDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    var basicDataValues = [
+            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
-    
-    pieDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000}, 
-            {date:"5/2/2010", miscellaneous:50}, 
-            {date:"5/3/2010", miscellaneous:400}, 
-            {date:"5/4/2010", miscellaneous:200}, 
+
+    pieDataValues = [
+            {date:"5/1/2010", miscellaneous:2000},
+            {date:"5/2/2010", miscellaneous:50},
+            {date:"5/3/2010", miscellaneous:400},
+            {date:"5/4/2010", miscellaneous:200},
             {date:"5/5/2010", miscellaneous:5000}
     ],
     topLegend = function()
@@ -57,7 +57,7 @@ YUI.add('pie-legend-tests', function(Y) {
             }
         };
     },
-    
+
     bottomLegend = function()
     {
         return {
@@ -155,7 +155,7 @@ YUI.add('pie-legend-tests', function(Y) {
             assert.areEqual(displayName, legendItems[i].text);
         }
     },
-    
+
     PieNoLegendTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -171,7 +171,7 @@ YUI.add('pie-legend-tests', function(Y) {
             assert.isUndefined(legend);
         }
     }),
-    
+
     PieTopLegendTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -182,7 +182,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testLegend
     }),
-    
+
     PieRightLegendTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -193,7 +193,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testLegend
     }),
-    
+
     PieBottomLegendTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -204,7 +204,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testLegend
     }),
-    
+
     PieLeftLegendTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -215,7 +215,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testLegend
     }),
-    
+
     PieTopLegendPositionTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -228,7 +228,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegendPosition: testLegendPosition
     }),
-    
+
     PieRightLegendPositionTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -241,7 +241,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testLegendPosition
     }),
-    
+
     PieBottomLegendPositionTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -254,7 +254,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testLegendPosition
     }),
-    
+
     PieLeftLegendPositionTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -262,7 +262,7 @@ YUI.add('pie-legend-tests', function(Y) {
         legend: leftLegend()
     }, {
         name: "Pie Left Legend Position Test",
-        
+
         legendPosition: "left",
 
         testLegend: testLegendPosition
@@ -278,7 +278,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsLength
     }),
-    
+
     PieRightLegendItemsLengthTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -289,7 +289,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsLength
     }),
-    
+
     PieBottomLegendItemsLengthTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -300,7 +300,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsLength
     }),
-    
+
     PieLeftLegendItemsLengthTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -311,7 +311,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsLength
     }),
-    
+
     PieTopLegendItemsTextTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -322,7 +322,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsText
     }),
-    
+
     PieRightLegendItemsTextTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -333,7 +333,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsText
     }),
-    
+
     PieBottomLegendItemsTextTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -344,7 +344,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsText
     }),
-    
+
     PieLeftLegendItemsTextTest = new LegendTestTemplate({
         type: "pie",
         dataProvider: pieDataValues,
@@ -355,7 +355,7 @@ YUI.add('pie-legend-tests', function(Y) {
 
         testLegend: testPieLegendItemsText
     });
-    
+
     suite.add(PieNoLegendTest);
     suite.add(PieTopLegendTest);
     suite.add(PieRightLegendTest);

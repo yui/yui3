@@ -132,7 +132,7 @@ YUI.add('editor-bidi', function (Y, NAME) {
             var parent = node, divNode, firstChild;
 
             root = root || Y.EditorSelection.ROOT;
-            
+
             if (!parent) {
                 parent = root;
             }
@@ -335,5 +335,6 @@ YUI.add('editor-bidi', function (Y, NAME) {
         ns._checkForChange();
         return returnValue;
     };
+
 
 }, '@VERSION@', {"requires": ["editor-base"]});

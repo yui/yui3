@@ -9,7 +9,7 @@
     "builds": {
         "loader-base": {
             "replace": {
-                "@GALLERY@": "gallery-2014.02.26-18-54",
+                "@GALLERY@": "gallery-2014.06.12-21-45",
                 "@TNT@": "4",
                 "@YUI2@": "2.9.0"
             },

@@ -1,6 +1,7 @@
 Reviewers
 =========
 
+* [@caridy](https://github.com/caridy)
 * [@davglass](https://github.com/davglass)
 * [@ericf](https://github.com/ericf)
 * [@lsmith](https://github.com/lsmith)
@@ -10,14 +11,15 @@ Committers
 ==========
 
 * [@allenrabinovich](https://github.com/allenrabinovich)
+* [@andrewnicols](https://github.com/andrewnicols)
 * [@apipkin](https://github.com/apipkin)
-* [@caridy](https://github.com/caridy)
 * [@clarle](https://github.com/clarle)
 * [@derek](https://github.com/derek)
 * [@ekashida](https://github.com/ekashida)
 * [@ezequiel](https://github.com/ezequiel)
 * [@jconniff](https://github.com/jconniff)
 * [@jenny](https://github.com/jenny)
+* [@jlecomte](https://github.com/jlecomte)
 * [@juandopazo](https://github.com/juandopazo)
 * [@msweeney](https://github.com/msweeney)
 * [@okuryu](https://github.com/okuryu)

@@ -58,7 +58,8 @@ Y_Node.DOM_EVENTS = {
     submit: 1,
     scroll: 1,
     textInput: 1,
-    unload: 1
+    unload: 1,
+    invalid: 1
 };
 
 // Add custom event adaptors to this list.  This will make it so

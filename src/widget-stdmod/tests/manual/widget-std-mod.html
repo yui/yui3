@@ -9,7 +9,7 @@
 	}
 	.yui3-widget { border: 1px solid blue; }
 </style>
-<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -18,9 +18,9 @@
 	<script type="text/javascript">
 
 		YUI.add('wid', function(Y){
-		    
+
 		    Y.Wid = Y.Base.create('wid', Y.Widget, [Y.WidgetStdMod], {
-		        
+
 		        renderUI : function() {
 		            this.setStdModContent('body', 'first');
 		            this.setStdModContent('body', 'second', 'after');
@@ -29,7 +29,7 @@
 		            this.setStdModContent('body', '5', 'after');
 		            this.setStdModContent('body', '6', 'before');
 		        },
-		        
+
 		        syncUI : function() {
 
 		            this.setStdModContent('body', '<strong>third</strong><br>', 'after');
@@ -39,17 +39,17 @@
 		            footer.setContent("Footer");
 
 		        }
-		        
+
 		    }, {
 		        ATTRS : {}
 		    });
-		    
+
 		}, '0.1', {requires : ['widget','widget-stdmod', 'base-build'] });
 
 		YUI({filter:"raw"}).use('wid', function(Y){
-		   
+
 		    new Y.Wid().render();
-		    
+
 		});
 	</script>
 

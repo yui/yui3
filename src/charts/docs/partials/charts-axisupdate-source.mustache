@@ -25,18 +25,18 @@
 </form>
 <script type="text/javascript">
 (function() {
-    YUI().use('escape', 'charts', function (Y) 
-    { 
+    YUI().use('escape', 'charts', function (Y)
+    {
         //dataProvider source
-        var myDataValues = [ 
-            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100}, 
-            {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500}, 
-            {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800}, 
+        var myDataValues = [
+            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100},
+            {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500},
+            {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800},
             {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
-            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200} 
+            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}
         ];
-        
+
         //Define our axes for the chart.
         var myAxes = {
             financials:{
@@ -69,13 +69,13 @@
         var myChart = new Y.Chart({
                             type:"column",
                             categoryKey:"date",
-                            dataProvider:myDataValues, 
-                            axes:myAxes, 
+                            dataProvider:myDataValues,
+                            axes:myAxes,
                             horizontalGridlines: true,
                             verticalGridlines: true,
                             render:"#mychart"
                         });
-        
+
         //Click handler
         Y.on("click", function(e) {
             var axisName = Y.one("#axisSelector").get("value"),

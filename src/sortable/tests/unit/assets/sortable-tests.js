@@ -58,7 +58,7 @@ YUI.add('sortable-tests', function(Y) {
                 _2len2 = sort2.delegate.dd.get('groups').length;
             Assert.areEqual((_1len + 1), _1len2, 'Failed to add outer join to sort');
             Assert.areEqual(_2len, _2len2, 'Failed to add outer join to sort');
-            
+
             sort.join(sort2, 'none');
         },
         'test: inner join': function() {
@@ -70,13 +70,13 @@ YUI.add('sortable-tests', function(Y) {
                 _2len2 = sort2.delegate.dd.get('groups').length;
             Assert.areEqual(_1len, _1len2, 'Failed to add inner join to sort');
             Assert.areEqual((_2len + 1), _2len2, 'Failed to add inner join to sort');
-            
+
             sort.join(sort2, 'none');
         },
         'test: no join': function() {
             var groups = sort.delegate.dd.get('groups');
             sort.join(sort, 'none');
-            var groups = sort.delegate.dd.get('groups');
+            groups = sort.delegate.dd.get('groups');
             Assert.areEqual(0, groups, 'Group removal failed');
         },
         'test: ordering': function() {
@@ -114,13 +114,18 @@ YUI.add('sortable-tests', function(Y) {
         },
         'test: dragEnd event': function() {
             var oNode = sort.delegate.get(sort.get('opacityNode')),
-                opacity = oNode.getStyle('opacity');
+                opacity = oNode.getStyle('opacity'),
+                zindex = oNode.getStyle('zIndex');
 
             sort._onDragEnd();
 
             var opacity2 = oNode.getStyle('opacity');
             Assert.areSame('0.75', opacity);
             Assert.areSame('1', opacity2);
+
+            var zindex2 = oNode.getStyle('zIndex'), expected = ['', 'auto'];
+            Assert.areSame(999, parseInt(zindex, 10));
+            Y.assert(Y.Array.indexOf(expected, zindex2)>=0, 'Expect z-index not to be set on moved node');
         },
         'test: DD passthru for errors': function() {
             sort.sync();
@@ -140,7 +145,7 @@ YUI.add('sortable-tests', function(Y) {
     };
 
 
-    var suite = new Y.Test.Suite("Sortable");
+    var suite = new Y.Test.Suite('Sortable');
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
 

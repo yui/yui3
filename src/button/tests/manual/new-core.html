@@ -5,15 +5,15 @@
 
         <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
         <script type="text/javascript">
-        
+
         YUI({
             filter: 'raw'
         }).use('button-core', function(Y) {
-    
+
             var button = new Y.ButtonCore({
                 host: Y.one('#my-button')
             })
-            
+
             button.getNode().on('click', function(){
                 Y.log('a');
             });

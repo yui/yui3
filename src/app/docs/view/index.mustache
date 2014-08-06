@@ -241,11 +241,11 @@ model.after('destroy', this.destroy, this);
 ```
 
 <p>
-Alternatively, you can use 
-<a href="{{apiDocs}}/classes/View.html#method_addTarget">addTarget()</a> 
+Alternatively, you can use
+<a href="{{apiDocs}}/classes/View.html#method_addTarget">addTarget()</a>
 to create a bubbling chain.
 In the example below, the view automatically receives events from the model,
-which means you can now choose to set change event listeners on the view. 
+which means you can now choose to set change event listeners on the view.
 </p>
 
 ```
@@ -255,8 +255,8 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
 
   initializer: function () {
     var model = this.get('model');
-    
-    // If this view has a model, bubble model events to the view. 
+
+    // If this view has a model, bubble model events to the view.
     model && model.addTarget(this);
 
     // If the model gets swapped out, reset targets accordingly.
@@ -269,13 +269,13 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
     this.after('*:change', this.render, this);
   },
 
-  ... 
+  ...
 ```
 
 <p>
 The `modelChange` listener is not strictly necessary, but it does make your code more robust.
 If you decide to swap in another model instance sometime after initialization,
-this listener ensures that the new model gets wired up properly to the view.  
+this listener ensures that the new model gets wired up properly to the view.
 </p>
 
 <h3>View Properties</h3>

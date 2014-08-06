@@ -21,7 +21,7 @@ function onContextmenu(e) {
           visible: false,
           constrain: true
       });
-      contextmenu.render(Y.one("body"));                    
+      contextmenu.render(Y.one("body"));
     }
 
     contextmenu.set("xy", [e.pageX, e.pageY]);
@@ -67,46 +67,46 @@ This code will work great if the "contextmenu" is triggered via the mouse. Howev
 <p>Here's a working example. The following button has a custom context menu. Try to invoke it via the keyboard to see the problems yourself:</p>
 
 <style type="text/css">
-  
+
   .contextmenu {
       background: #ccc;
       padding: 0;
       margin: 0;
       list-style-type: none;
   }
-  
+
   .contextmenu li {
       white-space: nowrap;
   }
-  
+
 </style>
 <button type="button" id="btn-1">I've got a context menu</button>
 <script type="text/javascript">
 
     YUI().use("overlay", function (Y) {
-  
-      var btn = Y.one("#btn-1"), 
+
+      var btn = Y.one("#btn-1"),
           contextmenu;
-  
+
       function onContextmenu(e) {
           e.preventDefault();
-  
+
           if (!contextmenu) {
             contextmenu = new Y.Overlay({
                 bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
                 visible: false,
                 constrain: true
             });
-            contextmenu.render(Y.one("body"));                    
+            contextmenu.render(Y.one("body"));
           }
-  
+
           contextmenu.set("xy", [e.pageX, e.pageY]);
           contextmenu.show();
       }
-  
-      
+
+
       btn.on("contextmenu", onContextmenu);
-  
+
     });
 
 </script>
@@ -134,28 +134,28 @@ YUI().use("event-contextmenu", function (Y) {
 <script type="text/javascript">
 
     YUI().use("event-contextmenu", "overlay", function (Y) {
-  
-      var btn = Y.one("#btn-2"), 
+
+      var btn = Y.one("#btn-2"),
           contextmenu;
-  
+
       function onContextmenu(e) {
-  
+
           if (!contextmenu) {
             contextmenu = new Y.Overlay({
                 bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
                 visible: false,
                 constrain: true
             });
-            contextmenu.render(Y.one("body"));                    
+            contextmenu.render(Y.one("body"));
           }
-  
+
           contextmenu.set("xy", [e.pageX, e.pageY]);
           contextmenu.show();
       }
-  
-      
+
+
       btn.on("contextmenu", onContextmenu);
-  
+
     });
 
 </script>
@@ -164,7 +164,7 @@ YUI().use("event-contextmenu", function (Y) {
 ```
 YUI().use("event-contextmenu", "overlay", function (Y) {
 
-  var btn = Y.one("#btn-2"), 
+  var btn = Y.one("#btn-2"),
       contextmenu;
 
   function onContextmenu(e) {
@@ -175,14 +175,14 @@ YUI().use("event-contextmenu", "overlay", function (Y) {
             visible: false,
             constrain: true
         });
-        contextmenu.render(Y.one("body"));                    
+        contextmenu.render(Y.one("body"));
       }
 
       contextmenu.set("xy", [e.pageX, e.pageY]);
       contextmenu.show();
   }
 
-  
+
   btn.on("contextmenu", onContextmenu);
 
 });

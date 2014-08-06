@@ -7,7 +7,7 @@
                 width:100%;
                 height:100%;
             }
-            
+
             #output {
                 width:100%;
                 height:45%;
@@ -16,46 +16,46 @@
                 border:dotted;
                 font-family: Terminal, monospace;
             }
-            
+
             #keyboard{
                 width:100%;
                 text-align:center;
                 display:inline-block;
                 padding:10px;
                 background-color: #444444;
-                background-image: -webkit-linear-gradient(top, #ccc, #999); 
+                background-image: -webkit-linear-gradient(top, #ccc, #999);
                 background-image: -moz-linear-gradient(top, #ccc, #999);
                 position: absolute;
                 bottom: 0;
             }
-            
+
             body .yui3-button-selected {
                 background-color:#666;
                 color:white;
             }
-            
+
             body .yui3-button{
                 font-size:2em;
                 height:3em;
                 width:3em;
                 margin:3px;
             }
-            
-            
+
+
             body .yui3-button.wide {
                 width:6em;
                 margin:3px 6px 3px 6px;
             }
-            
+
             body .yui3-button.space {
                 width:34em;;
             }
         </style>
-      
+
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
-            
+
         /*globals YUI */
         YUI({
             debug: true,
@@ -73,7 +73,7 @@
             keys = [
                 '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[del]',
                 '[tab]', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
-                '[caps]', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", '[return]', 
+                '[caps]', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", '[return]',
                 '[shift]', 'z', 'x', 'c', 'v', 'b', 'n', ',', '.', '/', '[shift]',
                 '[space]'];
 
@@ -104,7 +104,7 @@
 
             Y.Array.each(keys, function(key){
                 node = Y.Node.create('<button>' + key + '</button>');
-                
+
                 node.set('name', key);
                 if (key[0] === "[" && key.length > 1) {
                     node.addClass('wide');
@@ -126,7 +126,7 @@
                 }
                 i+=1;
             });
-            
+
             new Y.ButtonGroup({
                 srcNode: "#keyboard",
                 type: 'push'
@@ -134,7 +134,7 @@
 
             function goAlt() {
                 var x, y, nodeList;
-                
+
                 nodeList = Y.all('#keyboard .yui3-button');
 
                 if (alt) {
@@ -157,7 +157,7 @@
 
             function goCaps() {
                 var nodeList = Y.all('#keyboard .yui3-button');
-                
+
                 nodeList.each(function(node){
                     var key = node.getContent();
                     if (key.length === 1) { // Only need to worry about the 1-character 'input' buttons
@@ -167,18 +167,18 @@
                         else {
                             key = key.toLowerCase();
                         }
-                        node.setContent(key);   
+                        node.setContent(key);
                     }
                 });
             }
-            
-            
+
+
             Y.one("#keyboard").delegate("click", function(e){
                 var key, content, newContent;
 
                 key = e.target.getContent();
                 content = Y.one("#output").get("value");
-                
+
                 switch(key) {
                     case "[del]":
                          newContent = content.substr(0, content.length-1);
@@ -215,7 +215,7 @@
 
             Y.one("#output").on(["keydown", "keyup"], function(e){
                 var pressed, node, codes;
-                
+
                 codes = {
                     a:65,b:66,c:67,d:68,e:69,f:70,g:71,h:72,i:73,
                     j:74,k:75,l:76,m:77,n:78,o:79,p:80,q:81,r:82,
@@ -231,13 +231,13 @@
 
                 node = Y.one('#keyboard .yui3-button[name='+ pressed +']');
                 if (node){
-                    node.toggleClass('yui3-button-selected');   
+                    node.toggleClass('yui3-button-selected');
                 }
             });
         });
         </script>
     </head>
-    
+
     <body>
         <textarea id="output">... typed text will appear here</textarea>
         <div id="keyboard"></div>

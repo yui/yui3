@@ -1,10 +1,12 @@
 .yui3-calendar-header {
-	padding-left:15px;
-	padding-right:15px;
+	text-align: center;
+	position: relative;
+	/* ie6 width fix */
+	width: 100%;
 }
 
 .yui3-calendar-header-label {
-	width:100%;
+	display: inline;
 }
 
 .yui3-calendarnav-prevmonth {

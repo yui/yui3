@@ -6,6 +6,29 @@ YUI Core Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Allow arbitrary categories for logging, fixes logging issues with YUI Test.
+  ([#1746][])
+
+[#1746]: https://github.com/yui/yui3/pull/1746
+
 3.15.0
 ------
 

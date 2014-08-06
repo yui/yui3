@@ -27,8 +27,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('date-math-tests');
-    
+
     Y.Test.Runner.setName('date-math cli tests');
-    
+
 });
 

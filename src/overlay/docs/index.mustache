@@ -1,7 +1,7 @@
 <div class="intro">
     <p>Overlay is a positionable and stackable widget, which also provides support for the standard module format layout, with a header, body and footer section.
 
-    <p>The overlay is built by extending the <a href="{{apiDocs}}/Widget.html">`Widget`</a> class and adding the <a href="{{apiDocs}}/WidgetPosition.html">`WidgetPosition`</a>, <a href="{{apiDocs}}/WidgetStack.html">`WidgetStack`</a>, <a href="{{apiDocs}}/WidgetPositionAlign.html">`WidgetPositionAlign`</a>, <a href="{{apiDocs}}/WidgetPositionConstrain.html">`WidgetPositionConstrain`</a> and <a href="{{apiDocs}}/WidgetStdMod.html">`WidgetStdMod`</a> extensions, 
+    <p>The overlay is built by extending the <a href="{{apiDocs}}/Widget.html">`Widget`</a> class and adding the <a href="{{apiDocs}}/WidgetPosition.html">`WidgetPosition`</a>, <a href="{{apiDocs}}/WidgetStack.html">`WidgetStack`</a>, <a href="{{apiDocs}}/WidgetPositionAlign.html">`WidgetPositionAlign`</a>, <a href="{{apiDocs}}/WidgetPositionConstrain.html">`WidgetPositionConstrain`</a> and <a href="{{apiDocs}}/WidgetStdMod.html">`WidgetStdMod`</a> extensions,
     and doesn't actually need to add any implementation code of its own. The <a href="../widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.</p>
 </div>
 
@@ -31,7 +31,7 @@
 
 ```
 
-<p>The header, body and footer sections provided in markup need to be marked with the class name which `Overlay` (or more accurately, `WidgetStdMod`) expects for the section ("yui3-widget-hd", "yui3-widget-bd" and "yui3-widget-ft") as shown above. 
+<p>The header, body and footer sections provided in markup need to be marked with the class name which `Overlay` (or more accurately, `WidgetStdMod`) expects for the section ("yui3-widget-hd", "yui3-widget-bd" and "yui3-widget-ft") as shown above.
 All of these sections are optional. If content is set via the API at a later point the corresponding section will be created dynamically.</p>
 
 <p>When instantiating from markup, a reference to the `srcNode` is provided in the configuration object. This reference can be a node reference, or a selector string which can be used to identify the node. If the selector string is too broad (returns multiple nodes), the first node found will be used.
@@ -42,7 +42,7 @@ YUI({...}).use("overlay", function(Y) {
 
     //...
     var overlay = new Y.Overlay({
-        // Specify a reference to a node which already exists 
+        // Specify a reference to a node which already exists
         // on the page and contains header/body/footer content
         srcNode:"#myContent",
 
@@ -65,7 +65,7 @@ overlay.render();
 
 ```
 
-<p>Note that you could set the state of the Overlay multiple times (modifying content, changing dimensions etc.) before rendering. 
+<p>Note that you could set the state of the Overlay multiple times (modifying content, changing dimensions etc.) before rendering.
 When the `render` method is invoked, the state of the Overlay at that point in time will be reflected in the DOM.</p>
 
 <p>When `render` is invoked, the overlay's content box will be wrapped by the bounding box (another DIV), to provide the <a href="../widget/index.html#markup">nested box structure</a> common to all widgets.</p>
@@ -88,7 +88,7 @@ overlay.render("#parentNode");
 <p>Content can be strings containing markup (innerHTML will be used to set the content), or `Node` references, in which case they will be appended to the section (header, body or footer) node.</p>
 
 <p>The `render` method can be passed a node reference (or a selector string) as shown above, to specify the node
-under which the overlay's bounding box should be added to the DOM. When rendering an overlay instance which has not been created from markup 
+under which the overlay's bounding box should be added to the DOM. When rendering an overlay instance which has not been created from markup
 (so it does not have a position in the DOM) if this argument is not provided the overlay will be added to the document's body element (inserted as the first child to avoid the potential for "operation aborted" errors in IE6).
 </p>
 
@@ -158,12 +158,12 @@ overlay.on("xyChange", function(e) {
     var newPosition = e.newVal;
 
     if (newPosition[0] > MAX_X || newPosition[1] > MAX_Y) {
-        // Stop move from occurring. 
+        // Stop move from occurring.
         e.preventDefault();
     }
 });
 
-// Listen to the "after" moment, if you're just interested 
+// Listen to the "after" moment, if you're just interested
 // in being notified when the position has been changed.
 overlay.after("xyChange", function(e) {
     var position = e.newVal;
@@ -172,7 +172,7 @@ overlay.after("xyChange", function(e) {
 
 ```
 
-<p>Note that changing just the `x` or `y` attribute value, individually, will still fire the `xy` change event. The `x` and 
+<p>Note that changing just the `x` or `y` attribute value, individually, will still fire the `xy` change event. The `x` and
 `y` attribute values are simply convenience wrappers which end up setting the `xy` attribute.</p>
 
 <p>XY position can also be set after construction, as with any attribute, using `set` to change the attribute value directly, or using the `move` method:</p>
@@ -194,7 +194,7 @@ overlay.move([100,200]);
 
 <h4>Extended XY Positioning</h4>
 
-<p>Overlay also provides support to help position it relative to another node on the page, or the viewport, through the `align` and `centered` attributes, as well as 
+<p>Overlay also provides support to help position it relative to another node on the page, or the viewport, through the `align` and `centered` attributes, as well as
 the corresponding `align()` and `centered()` convenience methods, through the application of the `WidgetPositionAlign` extension.</p>
 
 <p>The `align` attribute accepts as a value an object literal with the following properties:</p>
@@ -211,7 +211,7 @@ the corresponding `align()` and `centered()` convenience methods, through the ap
       </p>
       <p>
       `[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TL]` aligns the Top-Right corner of the Overlay with the
-      Top-Left corner of the node/viewport, and `[Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TC]` aligns the Center of the 
+      Top-Left corner of the node/viewport, and `[Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TC]` aligns the Center of the
       Overlay with the Top-Center edge of the node/viewport.
       </p>
     </dd>
@@ -219,7 +219,7 @@ the corresponding `align()` and `centered()` convenience methods, through the ap
 
 ```
 // Align the:
-// top-left corner of the overlay, with the 
+// top-left corner of the overlay, with the
 // top-right corner of the node with id = "okBtn"
 overlay.set("align", {
     node:"#okBtn",
@@ -227,14 +227,14 @@ overlay.set("align", {
 });
 
 // Align the:
-// right-center edge of the overlay, with the 
+// right-center edge of the overlay, with the
 // right-center edge of the viewport (no node specified)
 overlay.set("align", {
     points:[Y.WidgetPositionAlign.RC, Y.WidgetPositionAlign.RC]
 });
 
 // Align the:
-// center of the overlay, with the 
+// center of the overlay, with the
 // top-left corner of the node with id = "okBtn"
 overlay.align("#okBtn", [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TL]);
 
@@ -253,7 +253,7 @@ overlay.set("centered", true);
 
 <p>The <a href="overlay-align.html">"Alignment Support"</a> example shows aligned positioning support in action.</p>
 
-<p>Note that currently alignment/centering is not maintained when the viewport is scrolled, window resized etc. Support to re-align the overlay on a default and custom set of trigger events will be 
+<p>Note that currently alignment/centering is not maintained when the viewport is scrolled, window resized etc. Support to re-align the overlay on a default and custom set of trigger events will be
 provided in a future release.</p>
 
 <p>In addition to being able to align the overlay to a given element (or the viewport), overlay also supports the ability to constrain its XY position to a given node, or to the viewport.</p>
@@ -271,7 +271,7 @@ overlay.set("constrain", true);
 <h3 id="stacking">Stacking</h3>
 
 <p>
-The Overlay provides basic stacking support in the form of a `zIndex` attribute and a `shim` attribute. The shimming support protects against &lt;select&gt; box bleed through on 
+The Overlay provides basic stacking support in the form of a `zIndex` attribute and a `shim` attribute. The shimming support protects against &lt;select&gt; box bleed through on
 IE6 (It is enabled by default for IE6) by adding an iframe shim to the overlay's bounding box (positioned underneath the content box). The default value of the `zIndex` attribute is 0.</p>
 
 <p>Using the `zIndex` and `shim` attributes is the same as any other attribute, with the ability to set values in the constructor, or at a later point in time:</p>
@@ -291,7 +291,7 @@ var overlay = new Y.Overlay({
 
 ```
 
-<p>The <a href="overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the `zIndex` attribute. 
+<p>The <a href="overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the `zIndex` attribute.
 This support will be provided as part of Overlay itself (or more precisely, as part of `WidgetStack`) in a future release.</p>
 
 <h3 id="content">Setting Section Content</h3>
@@ -301,7 +301,7 @@ This support will be provided as part of Overlay itself (or more precisely, as p
 <h4>Replacing Content</h4>
 
 <p>The content for each of these sections is settable either through the `headerContent`, `bodyContent` and `footerContent` attributes. Setting the content
-through these properties will replace any existing content in the section. The content can either be specified as a string, in which case innerHTML will be used to set the new content, or 
+through these properties will replace any existing content in the section. The content can either be specified as a string, in which case innerHTML will be used to set the new content, or
 specified as a `Node` instance, in which case the content will be added to the respective section using `appendChild` after clearing existing content.</p>
 
 ```
@@ -311,20 +311,20 @@ var overlay = new Y.Overlay({
     // Don't want a footer
 });
 
-// or 
+// or
 
 overlay.set("headerContent", '<span class="title">My Header Content</span>');
 
-// or 
+// or
 
 var headerContent = Y.Node.create("<span></span>");
 headerContent.set("innerHTML", "My Header Content");
-headerContent.addClass("title"); 
+headerContent.addClass("title");
 
 overlay.set("headerContent", headerContent);
 
 ```
-            
+
 <p>Overlay will not create the section if there has been no content set for it. (So, for example, the overlay above will not have a footer section). Also, if the section doesn't exist it will be created,
 the first time content is set for it.</p>
 
@@ -411,7 +411,7 @@ overlay.setStdModContent(
 
 <p>The bounding box is absolutely positioned by default, and top/left positioning and z-index values are applied to it. The nested bounding box/content box structure is discussed in detail on the <a href="../widget/index.html#markup">Widget markup discussion</a>.</p>
 
-<p>In addition to the default classes applied to the bounding box and content box for all widgets ("yui3-overlay", "yui3-overlay-content", "yui3-widget"), the `WidgetStdMod`, `WidgetPositioned` and `WidgetStack` extensions also mark the appropriate boxes with 
+<p>In addition to the default classes applied to the bounding box and content box for all widgets ("yui3-overlay", "yui3-overlay-content", "yui3-widget"), the `WidgetStdMod`, `WidgetPositioned` and `WidgetStack` extensions also mark the appropriate boxes with
 "yui3-widget-stdmod", "yui3-widget-positioned" and "yui3-widget-stacked" classes as shown above.</p>
 
 <p>The iframe shim, added if `shim` is enabled, is added to the bounding box, as sibling to the content box and stacked underneath it (using a -ve z-index).</p>
@@ -447,9 +447,9 @@ overlay.setStdModContent(
     z-index: -1;
     width: 100%;
     height: 100%;
-    /* 
-       We'll be setting these programmatically for IE6, 
-       to account for cases where height is not set 
+    /*
+       We'll be setting these programmatically for IE6,
+       to account for cases where height is not set
     */
     _width: 0;
     _height: 0;

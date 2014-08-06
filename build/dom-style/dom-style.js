@@ -1,6 +1,5 @@
 YUI.add('dom-style', function (Y, NAME) {
 
-(function(Y) {
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -19,22 +18,20 @@ var DOCUMENT_ELEMENT = 'documentElement',
     GET_COMPUTED_STYLE = 'getComputedStyle',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
 
-    WINDOW = Y.config.win,
     DOCUMENT = Y.config.doc,
-    UNDEFINED = undefined,
 
     Y_DOM = Y.DOM,
 
-    TRANSFORM = 'transform',
-    TRANSFORMORIGIN = 'transformOrigin',
+    TRANSFORM,
+    TRANSFORMORIGIN,
     VENDOR_TRANSFORM = [
         'WebkitTransform',
         'MozTransform',
         'OTransform',
-        'msTransform'
+        'msTransform',
+        'transform'
     ],
 
-    re_color = /color$/i,
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
@@ -54,9 +51,10 @@ Y.mix(Y_DOM, {
     /**
      * Sets a style property for a given element.
      * @method setStyle
-     * @param {HTMLElement} An HTMLElement to apply the style to.
+     * @param {HTMLElement} node The HTMLElement to apply the style to.
      * @param {String} att The style property to set.
      * @param {String|Number} val The value.
+     * @param {Object} [style] The style node. Defaults to `node.style`.
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
@@ -65,7 +63,7 @@ Y.mix(Y_DOM, {
         if (style) {
             if (val === null || val === '') { // normalize unsetting
                 val = '';
-            } else if (!isNaN(new Number(val)) && re_unit.test(att)) { // number values may need a unit
+            } else if (!isNaN(Number(val)) && re_unit.test(att)) { // number values may need a unit
                 val += Y_DOM.DEFAULT_UNIT;
             }
 
@@ -87,8 +85,9 @@ Y.mix(Y_DOM, {
     /**
      * Returns the current style value for the given property.
      * @method getStyle
-     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {HTMLElement} node The HTMLElement to get the style from.
      * @param {String} att The style property to get.
+     * @param {Object} [style] The style node. Defaults to `node.style`.
      */
     getStyle: function(node, att, style) {
         style = style || node.style;
@@ -115,7 +114,7 @@ Y.mix(Y_DOM, {
     /**
      * Sets multiple style properties.
      * @method setStyles
-     * @param {HTMLElement} node An HTMLElement to apply the styles to.
+     * @param {HTMLElement} node The HTMLElement to apply the styles to.
      * @param {Object} hash An object literal of property:value pairs.
      */
     setStyles: function(node, hash) {
@@ -128,7 +127,7 @@ Y.mix(Y_DOM, {
     /**
      * Returns the computed style for the given node.
      * @method getComputedStyle
-     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {HTMLElement} node The HTMLElement to get the style from.
      * @param {String} att The style property to get.
      * @return {String} The computed value of the style property.
      */
@@ -148,25 +147,10 @@ Y.mix(Y_DOM, {
 });
 
 // normalize reserved word float alternatives ("cssFloat" or "styleFloat")
-if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
+if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== undefined) {
     Y_DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
-} else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
+} else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== undefined) {
     Y_DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
-}
-
-// fix opera computedStyle default color unit (convert to rgb)
-if (Y.UA.opera) {
-    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
-        var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
-            val = view[GET_COMPUTED_STYLE](node, '')[att];
-
-        if (re_color.test(att)) {
-            val = Y.Color.toRGB(val);
-        }
-
-        return val;
-    };
-
 }
 
 // safari converts transparent to rgba(), others use "transparent"
@@ -239,28 +223,27 @@ Y.DOM._getOffset = function(node) {
 
 };
 
-Y_DOM.CUSTOM_STYLES.transform = {
-    set: function(node, val, style) {
-        style[TRANSFORM] = val;
-    },
+if (TRANSFORM) {
+    Y_DOM.CUSTOM_STYLES.transform = {
+        set: function(node, val, style) {
+            style[TRANSFORM] = val;
+        },
 
-    get: function(node, style) {
-        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
-    }
-};
+        get: function(node) {
+            return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
+        }
+    };
 
-Y_DOM.CUSTOM_STYLES.transformOrigin = {
-    set: function(node, val, style) {
-        style[TRANSFORMORIGIN] = val;
-    },
+    Y_DOM.CUSTOM_STYLES.transformOrigin = {
+        set: function(node, val, style) {
+            style[TRANSFORMORIGIN] = val;
+        },
 
-    get: function(node, style) {
-        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
-    }
-};
-
-
-})(Y);
+        get: function(node) {
+            return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
+        }
+    };
+}
 
 
-}, '@VERSION@', {"requires": ["dom-base", "color-base"]});
+}, '@VERSION@', {"requires": ["dom-base"]});

@@ -11,14 +11,14 @@ YUI.add('perfarea-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-    
+
     suite.add("PerfAreaChart", function() {
         chart = new Y.Chart({
             dataProvider: dataProvider,
             type: "area",
             categoryType: "time",
             categoryKey: "date",
-            render: container 
+            render: container
         });
         chart.destroy(true);
     });

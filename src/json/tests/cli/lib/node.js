@@ -1,5 +1,5 @@
 YUI.add('node-tests', function (Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('json Node.js tests');
 

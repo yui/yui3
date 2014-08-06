@@ -43,7 +43,7 @@ YUI.add('tests-promise-utils', function (Y) {
             test.wait();
         }
     });
-    
+
     Y.fulfilledAfter = function fulfilledAfter(ms) {
         return new Promise(function (fulfill) {
             setTimeout(function () {

@@ -4,7 +4,37 @@ Widget Modality Change History
 @VERSION@
 ------
 
+* [#1897][]: Fixed an invalid `Y.Log()` syntax (@jonmak08)
+
+[#1897]: https://github.com/yui/yui3/pull/1897
+
+3.17.2
+------
+
 * No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Fixed the positioning of the modal mask for stacked modals.
+  ([#1684][]: @moiraine)
+
+[#1684]: https://github.com/yui/yui3/pull/1684
+
+* Fixed an issue where Widget-Modality did not function correctly when a modal widget
+  and its mask were subsequently cloned by something else. ([#1175][]: @jinty)
+
+[#1175]: https://github.com/yui/yui3/pull/1175
 
 3.15.0
 ------
@@ -78,7 +108,7 @@ Widget Modality Change History
 -----
 
   * No changes.
-  
+
 3.7.3
 -----
 

@@ -1,4 +1,4 @@
-<p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the core library.
+<p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the core library.</p>
 
 
 <h2>Array</h2>
@@ -98,4 +98,40 @@ Y.Lang.isUndefined(false); // false
 Y.Lang.isUndefined(null); // false
 ```
 
+<h2>String substitution</h2>
 
+<p>`Y.Lang.sub()` lets you replace placeholders within a string:</p>
+
+```
+Y.Lang.sub('hello {name}', { name: 'john' });
+//=>"hello john"
+
+Y.Lang.sub('{question} {answer}', {
+    question: 'universe, life and everything?',
+    answer: '42'
+});
+//=>"universe, life and everything? 42"
+```
+
+<p>`Y.Lang.sub()` also supports nested placeholders:</p>
+
+```
+Y.Lang.sub('year of birth: {user.birthyear}', {
+    user: {
+        birthyear: 1981
+    }
+});
+//=>"year of birth: 1981"
+```
+
+<p>However `Y.Lang.sub()` avoids going deep into your object if it can:</p>
+
+```
+Y.Lang.sub('year of birth: {user.birthyear}', {
+    'user.birthyear': 1984,
+    user: {
+        birthyear: 1981
+    }
+});
+//=>"year of birth: 1984"
+```

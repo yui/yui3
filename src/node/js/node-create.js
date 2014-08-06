@@ -134,22 +134,26 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Appends the node to the given node.
+     * @example
+     *      // appendTo returns the node that has been created beforehand
+     *      Y.Node.create('<p></p>').appendTo('body').set('text', 'hello world!');
      * @method appendTo
-     * @param {Node | HTMLElement} node The node to append to
+     * @param {Node | HTMLElement | String} node The node to append to.
+     *  If `node` is a string it will be considered as a css selector and only the first matching node will be used.
      * @chainable
      */
     appendTo: function(node) {
         Y.one(node).append(this);
         return this;
     },
-    
+
     // This method is deprecated, and is intentionally left undocumented.
     // Use `setHTML` instead.
     setContent: function(content) {
         this._insert(content, 'replace');
         return this;
     },
-    
+
     // This method is deprecated, and is intentionally left undocumented.
     // Use `getHTML` instead.
     getContent: function() {

@@ -283,7 +283,6 @@ Y.mix(HistoryBase.prototype, {
      *       and <code>null</code> or <code>undefined</code> values will be
      *       removed from the state.
      *       </p>
-     *
      *       <p>
      *       If <code>false</code>, the existing state will be discarded as a
      *       whole and the new state will take its place.

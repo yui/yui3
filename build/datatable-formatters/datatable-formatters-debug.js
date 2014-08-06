@@ -559,4 +559,5 @@ and autocomplete-based editors, where the order of the items in the dropdown mat
 @for DataTable.Column
  */
 
+
 }, '@VERSION@', {"requires": ["datatable-body", "datatype-number-format", "datatype-date-format", "escape"]});

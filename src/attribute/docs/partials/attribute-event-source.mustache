@@ -2,7 +2,7 @@
     <div class="header">Enter a new value and click the "Change Value" button:</div>
     <div class="body">
         <p>
-            <label for="attrSel">Attribute</label>: 
+            <label for="attrSel">Attribute</label>:
             <select id="attrSel">
                 <option value="foo">foo</option>
                 <option value="bar">bar</option>
@@ -21,7 +21,7 @@
 <div id="example-out"></div>
 
 <script type="text/javascript">
-// Get a new YUI instance 
+// Get a new YUI instance
 YUI().use("node", "attribute", "escape", function(Y) {
 
     // Setup a custom class with attribute support
@@ -32,11 +32,11 @@ YUI().use("node", "attribute", "escape", function(Y) {
             "foo" : {
                 value:5
             },
-     
+
             "bar" : {
                 value:"Hello World!"
             },
-    
+
             "foobar" : {
                 value:true
             }
@@ -53,9 +53,9 @@ YUI().use("node", "attribute", "escape", function(Y) {
         var str = '<div class="event"><div class="event-title">' + title + '</div>';
 
         if (e) {
-            str += 
-            '<ul class="event-props"><li>e.attrName: ' 
-            + e.attrName 
+            str +=
+            '<ul class="event-props"><li>e.attrName: '
+            + e.attrName
             + '</li><li>e.prevVal: '
             + Y.Escape.html(e.prevVal + "")
             + '</li><li>e.newVal: '
@@ -64,7 +64,7 @@ YUI().use("node", "attribute", "escape", function(Y) {
         }
 
         str += '</div>';
- 
+
         Y.one("#example-out").prepend(str);
     }
 
@@ -79,7 +79,7 @@ YUI().use("node", "attribute", "escape", function(Y) {
 
     function updateVal(e) {
         e.preventDefault();
-        
+
         var selIndex = attrSel.get("selectedIndex");
         var attr = attrOpts.item(selIndex).get("value");
         o1.set(attr, newValTxt.get("value"));
@@ -134,8 +134,8 @@ YUI().use("node", "attribute", "escape", function(Y) {
 
     o1.after("foobarChange", function(e) {
 
-        // This foobar after listener will not get called, 
-        // if we end up preventing default in the "on" 
+        // This foobar after listener will not get called,
+        // if we end up preventing default in the "on"
         // listener above.
 
         displayEvent(e, "After foobarChange");

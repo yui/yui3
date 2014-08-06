@@ -16,9 +16,9 @@
                     requires: ["datatype-date"]
                 }
             }
-            
+
         }).use("oop" /* just some random module */, function(Y) {
-            
+
             // lazy load module with datatype-date dependency
             Y.use("mymod", function(Y) {
                 Y.log("NESTED USE RESULT: module which requires datatype-date: " + Y.MyMod.formatDate());

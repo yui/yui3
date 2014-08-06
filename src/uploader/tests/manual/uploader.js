@@ -14,7 +14,7 @@ YUI({
 var myuploader;
 
 if (Y.Uploader.TYPE != "none") {
-            myuploader = new Y.Uploader({ multipleFiles: true, 
+            myuploader = new Y.Uploader({ multipleFiles: true,
                                           uploadURL: "http://localhost/yui3/src/uploader/tests/manual/uploadwithrandomerrors.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
@@ -27,12 +27,12 @@ if (Y.Uploader.TYPE != "none") {
                                           withCredentials: false
                                         });
 
-            myuploader.set("fileFilterFunction", function (file) { 
-                if (file.get("size") < 50 || file.get("size") > 8000000) { 
+            myuploader.set("fileFilterFunction", function (file) {
+                if (file.get("size") < 50 || file.get("size") > 8000000) {
                     return false;
-                } 
-                else { 
-                    return true; 
+                }
+                else {
+                    return true;
                 }
             });
 
@@ -79,8 +79,8 @@ if (Y.Uploader.TYPE != "none") {
             	 	out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
                     console.log(ev.file.get("xhr").status);
             });
-            	 
-            	 
+
+
             myuploader.on("totaluploadprogress", function (ev) {
             	 	Y.one("#totalpercent").setContent("Total upload progress: " + ev.percentLoaded);
             });
@@ -92,7 +92,7 @@ if (Y.Uploader.TYPE != "none") {
             myuploader.on("uploaderror", function (ev) {
                     out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "ERROR!");
                     console.log("There's been an error uploading " + ev.file.get("name"));
-            });	                                    	                                       
+            });
 
             Y.one("#uploadButton").on("click", function () {
             	 myuploader.uploadAll();

@@ -408,7 +408,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         this.set("height", h);
         return this;
     },
-    
+
     /**
      * Removes all nodes.
      *

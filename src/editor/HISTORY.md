@@ -4,7 +4,32 @@ Rich Text Editor Change History
 @VERSION@
 ------
 
+* [#1895][]: Fixed an issue with backspace breaks on Chrome and Safari. (@macjohnny)
+
+[#1895]: https://github.com/yui/yui3/pull/1895
+
+3.17.2
+------
+
 * No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* Increase specificity of when to set cursor.
+* Check for the existence of `node` before removing it.
+
+3.16.0
+------
+
+* Fixed an issue where the `yui-cursor` selector was used as an `id` instead of a `class`. ([#1648][]: @alaaibrahim)
+
+[#1648]: https://github.com/yui/yui3/pull/1648
 
 3.15.0
 ------

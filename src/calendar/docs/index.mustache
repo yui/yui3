@@ -30,7 +30,7 @@ Here's an easy way to create an instance of a Calendar with just a few lines of 
 ```
 YUI().use('calendar', function (Y) {
 
-  // Create a new instance of Calendar, setting its width 
+  // Create a new instance of Calendar, setting its width
   // and height, allowing the dates from the previous
   // and next month to be visible and setting the initial
   // date to be November, 1982.
@@ -182,7 +182,7 @@ Calendar allows the developer to customize the rendering of individual cells bas
 specific dates. To create a set of custom rules and a custom renderer function that is triggered when a rule is matched, set the `customRenderer` property to an `Object` with two keys: `rules` and `filterFunction`:
 </p>
 ```
-calendar.set("customRenderer", {rules: myRules, 
+calendar.set("customRenderer", {rules: myRules,
                                 filterFunction: myFilterFunction});
 ```
 <h4>Rendering Rules</h4>
@@ -195,11 +195,11 @@ var rules = {
       "all": "rule_name"
       }
     }
-  }  
+  }
 };
 ```
 <p>
-At the top level, the rules object specifies years that dates should match; the next level is months (indexed 
+At the top level, the rules object specifies years that dates should match; the next level is months (indexed
 starting at 0), the next is days of the month (indexed starting at 1), and the last is days of the week (indexed
 from Sunday, starting at 0). The actual value is the name of the rule that is matched by a date. In the example
 above, the rule "rule_name" is matched by the 5th, 6th and 8th days of January, February, June, July and August of
@@ -211,7 +211,7 @@ Note that the keyword `'all'` can appear at any level of the `rule` object and w
 var rules = {
 "2011": {
   "5-7": "summer-2011"
-  }  
+  }
 };
 ```
 <p>
@@ -228,9 +228,9 @@ var rules = {
    "all": {
       "all": {
         "0,6": "all-weekends-in-2012"
-      } 
+      }
    }
-  }  
+  }
 };
 ```
 <h4>Custom Rendering Function</h4>
@@ -238,7 +238,7 @@ var rules = {
 ```
 filterFunction = function (date /*Date*/, node /*Node*/, rules /*Array*/) {
   if (rules.indexOf("rule_name") >= 0) {
-  
+
   }
 };
 ```
@@ -292,7 +292,7 @@ var rules = {
 <p>Using the template logic, the developer can easily switch from a single pane calendar, to a calendar with
 an arbitrary number of panes. Consider the main `CONTENT_TEMPLATE` in `CalendarBase`:
 ```
-  CONTENT_TEMPLATE:  '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +  
+  CONTENT_TEMPLATE:  '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +
                               '{header_template}' +
                             '<div class="yui3-u-1">' +
                               '{calendar_grid_template}' +
@@ -304,8 +304,8 @@ multiple times, and the calendar will automatically adjust to generate multiple 
 calendar</p>
 <p>For convenience, we provide a two-pane and a three-pane calendar templates. Here is the two-pane template:</p>
 ```
-  TWO_PANE_TEMPLATE: 
-      '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +  
+  TWO_PANE_TEMPLATE:
+      '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +
                    '{header_template}' +
                  '<div class="yui3-u-1-2">'+
                          '<div class = "{calendar_left_grid_class}">' +
@@ -316,7 +316,7 @@ calendar</p>
                          '<div class = "{calendar_right_grid_class}">' +
                       '{calendar_grid_template}' +
                          '</div>' +
-                 '</div>' +                   
+                 '</div>' +
       '</div>'
 ```
 <p>Switching to the two-pane template is as simple as assigning the value of `CalendarBase.CONTENT_TEMPLATE`:</p>
@@ -329,7 +329,7 @@ Custom templates may also be constructed, with as many `{calendar_grid_template}
 <p>The Calendar ships with a default `CalendarNavigator` plugin, which adds the
 simple navigation controls to the top of the widget. The plugin is located on the `navigator` namespace (that is, to access it and its properties, you would reference `mycalendar.navigator`). For future releases, more complex calendar navigation plugins
 are planned.</p>
-<p>In addition, in future releases, Calendar will also have a Popup plugin that will 
+<p>In addition, in future releases, Calendar will also have a Popup plugin that will
 allow it to be easily hidden, shown, and associated with other UI elements.</p>
 <h2>Known Issues</h2>
 

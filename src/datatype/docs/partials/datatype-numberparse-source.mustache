@@ -15,14 +15,14 @@
 <script>
 YUI().use("node", "datatype-number", function (Y) {
     Y.on("click", function(e){
-        
+
         var input = Y.one("#demo_input").get("value"),
             output = Y.Number.parse(input);
-                
+
         if(output === "") {
             output += "(Invalid value)"
         }
-        
+
         if (output == null) {
             output = "null";
         }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
+
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
@@ -10,33 +10,33 @@
                 combo: false,
                 filter: 'raw'
             }).use('button-group', 'console', function(Y){
-                
+
                 new Y.Console().render();
-                
+
                 Y.one("#generator").on("click", function(){
-                    
+
                     var count, type, group;
-                    
+
                     count = Y.one('#count').get('value');
                     type = Y.one('input[name=type]:checked').get('value');
-                    
+
                     Y.one("#container").empty(true);
-                    
+
                     for(var i=1; i < count; i++) {
                         node = Y.Plugin.Button.createNode({label: i});
                         Y.one("#container").append(node);
                     }
-                    
+
                     group = new Y.ButtonGroup({
                         srcNode: '#container',
                         type: type
                     }).render();
-                    
+
                     group.on('selectionChange', function(e){
                         Y.log('Changed');
                     });
                 });
-                
+
             });
         </script>
 
@@ -49,24 +49,24 @@
 
         </style>
     </head>
-    
+
     <body class='yui3-skin-sam'>
-        
+
         <div id='yconsole'></div>
-        
+
         <h1>Button Example: Generator</h1>
-        
+
         <hr />
-        
+
         How many buttons would you like? <input type="text" value="100" id="count">
-        
+
         Type: <input type='radio' name='type' value='radio' checked='true'> Radio
               <input type='radio' name='type' value='checkbox'> Checkbox
-        
+
         <button id="generator" class="yui3-button">Make buttons!</button>
-        
+
         <br><br>
-        
+
         <div id="container"></div>
     </body>
 </html>

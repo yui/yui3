@@ -44,7 +44,7 @@ YUI.add('cache-offline-tests', function (Y) {
             addKeyOne.set('value', 'foo');
             addValueOne.set('value', 'bar');
             addBtnOne.simulate('click');
-            
+
             Assert.areEqual('Value cached. Cache 1 "size" is now 1.', out.getHTML(), 'Example demo #1 did not set key/value pair');
 
             addKeyTwo.set('value', 'baz');
@@ -98,7 +98,7 @@ YUI.add('cache-offline-tests', function (Y) {
             flushBtnTwo.simulate('click');
 
             Assert.areEqual('Cache 2 flushed.', out.getHTML(), 'Cache #2 should be flushed');
-            
+
             retrieveKeyOne.set('value', 'foo');
             retrieveBtnOne.simulate('click');
 

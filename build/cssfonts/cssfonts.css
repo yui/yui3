@@ -10,7 +10,7 @@ body {
 
 /**
  * Nudge down to get to 13px equivalent for these form elements
- */ 
+ */
 select,
 input,
 button,
@@ -38,5 +38,6 @@ tt {
 	*font-size:108%;
 	line-height:100%;
 }
+
 /* YUI CSS Detection Stamp */
 #yui3-css-stamp.cssfonts { display: none; }

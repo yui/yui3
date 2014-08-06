@@ -615,12 +615,12 @@ YUI.add('dd-drag', function (Y, NAME) {
         */
         _invalids: null,
         /**
-        * A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true}
+        * A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true, '[contenteditable]': true}
         * @private
         * @property _invalidsDefault
         * @type {Object}
         */
-        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true, '[contenteditable]': true },
         /**
         * Private flag to see if the drag threshhold was met
         * @private
@@ -757,6 +757,9 @@ YUI.add('dd-drag', function (Y, NAME) {
         * @param {EventFacade} ev  The Event
         */
         _handleMouseDownEvent: function(ev) {
+            if (this.validClick(ev)) {
+                ev.preventDefault();
+            }
             this.fire(EV_MOUSE_DOWN, { ev: ev });
         },
         /**
@@ -1261,4 +1264,4 @@ YUI.add('dd-drag', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {"requires": ["dd-ddm-base"]});
+}, '@VERSION@', {"requires": ["dd-ddm-base", "selector-css2"]});

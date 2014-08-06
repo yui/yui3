@@ -40,7 +40,7 @@ YUI.add('core-nodejs-tests', function(Y) {
             Assert.isTrue(Y.LOADHOOK);
             Assert.isTrue(YUI._HOOK_LOADED);
             delete YUI._HOOK_LOADED;
-                
+
         }
     }));
 

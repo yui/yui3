@@ -51,7 +51,7 @@ YUI.add('editor-tests', function(Y) {
             iframeLinkedCSS = iframe.get('linkedcss');
 
             Y.ArrayAssert.doesNotContain(undefined, iframeLinkedCSS);
-            Y.ArrayAssert.doesNotContain('undefined', iframeLinkedCSS); 
+            Y.ArrayAssert.doesNotContain('undefined', iframeLinkedCSS);
 
             this.wait(function() {
                 Y.Assert.isTrue(iframeReady, 'IFRAME ready event did not fire');
@@ -540,6 +540,21 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areEqual(1, out.length);
             Y.Assert.isTrue(out[0].test('p'));
 
+        },
+        test_is_visible: function () {
+            // Unfortunately required because a lot
+            // of Editor's tests depend on each other...
+            if (editor) {
+                editor.destroy();
+            }
+
+            editor = new Y.EditorBase({
+                content: "wtf?"
+            });
+
+            editor.render("#editor");
+
+            Y.Assert.areEqual(Y.one("#editor iframe").getStyle("visibility"), "inherit");
         },
         _should: {
             fail: {

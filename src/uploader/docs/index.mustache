@@ -37,7 +37,7 @@
 </div>
     <div class="notice">
         <h2 id="migration-intro">Upgrading to version 3.13.0 or newer?</h2>
-        <p>Due to Security issues, as of YUI 3.13.0, YUI has made the decision to <a href="https://github.com/yui/yui3/issues/845">remove all Flash files from the repository</a>. As a result, you will need compile and host your own <code>flashuploader.swf</code> file to enable Flash mode. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>	
+        <p>Due to Security issues, as of YUI 3.13.0, YUI has made the decision to <a href="https://github.com/yui/yui3/issues/845">remove all Flash files from the repository</a>. As a result, you will need compile and host your own <code>flashuploader.swf</code> file to enable Flash mode. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>
     </div>
 
 {{>getting-started}}
@@ -67,12 +67,12 @@
     <li>Because of security requirements of crossorigin requests in XMLHttpRequest Level 2, the <strong>Uploader in HTML5 mode sends out a preflight `OPTIONS` request to the target server</strong> for file uploads (if the target server is different from the one that is hosting the page originating the request). See the <a href="#backend-setup">Backend Setup</a> section below for more information, or read more about CORS on the <a href="http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request">HTML5Rocks website.</a></li>
     <li>Because of variations in browser support for multiple concurrent XMLHttpRequests, <strong>we recommend limiting the number of simultaneous uploads to 2</strong>.</li>
     </ul>
-</div>  			
-			
+</div>
+
 				<h2>Using the Uploader</h2>
-			
+
 				<p>In this section, we'll describe how to use the uploader in detail. First, let's look at the structure of the uploader module under the hood.</p>
-				
+
 
 				<h3>Anatomy of the Uploader</h3>
 
@@ -90,10 +90,10 @@
 				   In order to properly instantiate the Flash player and communicate with it, the Uploader uses YUI SWF utility. The SWF utility
 				   encapsulates the instance of the Flash player and standardizes communication with it (e.g., all Flash player method calls are
 				   wrapped in SWF's `callSWF` function; correspondingly, all method calls from the Flash player are exposed as events dispatched by SWF.)
-                </p>                
+                </p>
 
 				<h3>Instantiating and Configuring the Uploader</h3>
-                
+
                 <h4>Simple Instantiation</h4>
 				<p>To place the Uploader on the page, simply create a new instance of `Y.Uploader` and render it to the container in which it should be placed.
                    Since `Y.Uploader` may not resolve to a fully-featured module if the required functionality is missing, test that the `Y.Uploader.TYPE` property
@@ -105,7 +105,7 @@
 YUI({...}).use('uploader',function (Y) {
 
  if (Y.Uploader.TYPE != "none") {
-    var uploader = new Y.Uploader({width: "300px", 
+    var uploader = new Y.Uploader({width: "300px",
                                    height: "40px"}).render("#uploaderContainerID");
  }
 
@@ -148,7 +148,7 @@ YUI({...}).use('uploader', function (Y) {
        uploader.render("#selectFilesButtonContainer");
    }
    else {
-       Y.log("No Flash or HTML5 capabilities detected."); 
+       Y.log("No Flash or HTML5 capabilities detected.");
    }
 
 });
@@ -173,22 +173,22 @@ YUI({...}).use('uploader', function (Y) {
                     <tr>
                         <td>`buttonClassNames`</td>
                         <td>The names of CSS classes that correspond to different button states of the "Select Files" control. These classes are assigned to the "Select Files" control based on the mouse states reported by the Flash player or by the state of the HTML5 Uploader. The keys for the class names are:
-                            <ul>                               
-                               <li>`hover`: the class corresponding to mouse hovering over the "Select Files" button.<span class="only">UploaderFlash</span></li>    
+                            <ul>
+                               <li>`hover`: the class corresponding to mouse hovering over the "Select Files" button.<span class="only">UploaderFlash</span></li>
                                <li>`active`: the class corresponding to mouse down state of the "Select Files" button.<span class="only">UploaderFlash</span></li>
                                <li>`disabled`: the class corresponding to the disabled state of the "Select Files" button.</li>
                                <li>`focus`: the class corresponding to the focused state of the "Select Files" button.<span class="only">UploaderFlash</span></li>
                             </ul>
                         </td>
-                        <td><pre>{ 
-hover: 
-"yui3-button-hover", 
-active: 
-"yui3-button-active", 
-disabled: 
-"yui3-button-disabled", 
-focus: 
-"yui3-button-selected" 
+                        <td><pre>{
+hover:
+"yui3-button-hover",
+active:
+"yui3-button-active",
+disabled:
+"yui3-button-disabled",
+focus:
+"yui3-button-selected"
 }</pre>
                         </td>
                     </tr>
@@ -221,11 +221,11 @@ focus:
                     </tr>
                     <tr>
                         <td>`fileFilters`<span class="only">UploaderFlash</span></td>
-                        <td>An array indicating what fileFilters should be applied to the file selection dialog. Each element in the 
-                            array should be an object with the following key-value pairs: 
+                        <td>An array indicating what fileFilters should be applied to the file selection dialog. Each element in the
+                            array should be an object with the following key-value pairs:
                             ```
                             { description : String,
-                              extensions: String of the form"."ext1;.ext2;*.ext3;..." 
+                              extensions: String of the form"."ext1;.ext2;*.ext3;..."
                             }
                             ```
                         </td>
@@ -244,13 +244,13 @@ focus:
                     </tr>
                     <tr>
                         <td>`postVarsPerFile`</td>
-                        <td>An object, keyed by fileId, containing sets of key-value pairs that should be passed as POST variables along with each 
+                        <td>An object, keyed by fileId, containing sets of key-value pairs that should be passed as POST variables along with each
                             corresponding file. This attribute is only used if no POST variables are specified in the upload method call.</td>
                         <td>`{}`</td>
                     </tr>
                     <tr>
                         <td>`selectButtonLabel`</td>
-                        <td>The label for the "Select Files" widget. This is the value that replaces the `{selectButtonLabel}` token in the 
+                        <td>The label for the "Select Files" widget. This is the value that replaces the `{selectButtonLabel}` token in the
                             `Y.Uploader.SELECT_FILES_BUTTON` template.</td>
                         <td>`"Select Files"`</td>
                     </tr>
@@ -261,21 +261,21 @@ focus:
                     </tr>
                     <tr>
                         <td>`simLimit`</td>
-                        <td>The number of files that can be uploaded simultaneously if the automatic queue management is used. 
+                        <td>The number of files that can be uploaded simultaneously if the automatic queue management is used.
                             This value can be in the range between 2 and 5, with the value of 1 or 2 recommended.</td>
                         <td>`2`</td>
                     </tr>
                     <tr>
                         <td>`swfURL`<span class="only">UploaderFlash</span></td>
-                        <td>The URL to the SWF file of the flash uploader. A copy local to the server that hosts the page on 
+                        <td>The URL to the SWF file of the flash uploader. A copy local to the server that hosts the page on
                             which the uploader appears is recommended. <div class="notice"><strong>NOTE:</strong> You will need compile and host your own <code>flashuploader.swf</code> file to enable this Flash mode. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</div></td>
 
                         <td>`flashuploader.swf`</td>
                     </tr>
                     <tr>
                         <td>`tabElements`<span class="only">UploaderFlash</span></td>
-                        <td>The `id`'s or Node references of the DOM elements that precede and follow the "Select Files" button in the tab order. 
-                            Specifying these allows keyboard navigation to and from the Flash player layer of the uploader. The two keys 
+                        <td>The `id`'s or Node references of the DOM elements that precede and follow the "Select Files" button in the tab order.
+                            Specifying these allows keyboard navigation to and from the Flash player layer of the uploader. The two keys
                             corresponding to the DOM elements are:
                             <ul>
                              <li>`from`: the id or the Node reference corresponding to the DOM element that precedes the Select Files button in the tab order.</li>
@@ -303,7 +303,7 @@ focus:
 <h3>The Upload Process</h3>
 
 <h4>Automatic Queue Management</h4>
-<p> After the user has selected a file (or files) to be uploaded, the selected file list is places into the `fileList` attribute of the Uploader. At that point, 
+<p> After the user has selected a file (or files) to be uploaded, the selected file list is places into the `fileList` attribute of the Uploader. At that point,
     you can either have the user initialize the actual upload process, or initialize it automatically, without any additional user action.</p>
 <p> Each of the selected files is uploaded in its own POST request. You can either upload each file individually, and manage the queue on your own, or use the Uploader's built-in queue management. To upload a single file "manually" (without using automatic queue management), the following method call can be made:</p>
 
@@ -326,7 +326,7 @@ focus:
 
 ```
 	uploader.on("totaluploadprogress", reportProgress);
-	
+
 	function reportProgress (event) {
 		Y.log("Bytes uploaded: " + event.bytesLoaded);
         Y.log("Bytes remaining: " + (event.bytesTotal - event.bytesLoaded));
@@ -368,27 +368,27 @@ focus:
                         <td>`click`<span class="only">UploaderFlash</span></td>
                         <td>Signals that a mouse has been clicked over the `Select Files` button.</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`dragenter`<span class="only">UploaderHTML5</span></td>
                         <td>Signals that a dragged object has entered into the uploader's associated drag-and-drop area (if one is specified).</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`dragleave`<span class="only">UploaderHTML5</span></td>
                         <td>Signals that a dragged object has entered into the uploader's associated drag-and-drop area (if one is specified).</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`dragleave`<span class="only">UploaderHTML5</span></td>
                         <td>Signals that an object has been dragged off of the uploader's associated drag-and-drop area (if one is specified).</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`dragover`<span class="only">UploaderHTML5</span></td>
                         <td>Signals that an object has been dragged over the uploader's associated drag-and-drop area (if one is specified).</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`drop`<span class="only">UploaderHTML5</span></td>
                         <td>Signals that an object has been dropped over the uploader's associated drag-and-drop area (if one is specified).</td>
@@ -410,22 +410,22 @@ focus:
                         <td>`mousedown`<span class="only">UploaderFlash</span></td>
                         <td>Signals that a mouse has been pressed over the `Select Files` button.</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`mouseenter`<span class="only">UploaderFlash</span></td>
                         <td>Signals that a mouse has begun hovering over the `Select Files` button.</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`mouseleave`<span class="only">UploaderFlash</span></td>
                         <td>Signals that a mouse has stopped hovering over the `Select Files` button.</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`mouseup`<span class="only">UploaderFlash</span></td>
                         <td>Signals that a mouse has been released over the `Select Files` button.</td>
                         <td>`None`</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td>`totaluploadprogress`</td>
                         <td>Reports on the total upload progress of the file list.</td>

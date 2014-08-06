@@ -1,9 +1,32 @@
 DataTable Change History
 ========================
+
 @VERSION@
 ------
 
 * No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Fixed an issue where the UI did not render correctly in print preview for IE 11. ([#1708][]: @annumanuel)
+
+[#1708]: https://github.com/yui/yui3/pull/1708
 
 3.15.0
 ------

@@ -6,6 +6,28 @@ DOM Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [#1709][]: Move out of color-base module (@okuryu)
+
+[#1709]: https://github.com/yui/yui3/pull/1709
+
+3.16.0
+------
+
+* Optimize dom-style.js. Remove unnecessary anonymous function, unused variables. Use "Number()" instead of "new Number()". [Ryuichi Okumura]
+
 3.15.0
 ------
 

@@ -3,10 +3,10 @@ YUI.add('combospline-legend-styles-tests', function(Y) {
         combosplineStylesTest,
         combosplineGlobalStylesTest,
         dataProvider = [
-            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
         ],
         seriesStyles = {
@@ -36,7 +36,7 @@ YUI.add('combospline-legend-styles-tests', function(Y) {
         parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
         DOC = Y.config.doc;
     DOC.body.appendChild(parentDiv);
-        
+
     function ChartsLegendStylesTest(cfg)
     {
         ChartsLegendStylesTest.superclass.constructor.apply(this);
@@ -47,7 +47,7 @@ YUI.add('combospline-legend-styles-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
@@ -97,7 +97,7 @@ YUI.add('combospline-legend-styles-tests', function(Y) {
         type: "combospline",
         render: "#testdiv"
     });
-    
+
     combosplineGlobalStylesTest = new ChartsLegendStylesTest({
         dataProvider: dataProvider,
         styles: {
@@ -109,7 +109,7 @@ YUI.add('combospline-legend-styles-tests', function(Y) {
         type: "combospline",
         render: "#testdiv"
     });
-    
+
     suite.add(combosplineStylesTest);
     suite.add(combosplineGlobalStylesTest);
     Y.Test.Runner.add(suite);

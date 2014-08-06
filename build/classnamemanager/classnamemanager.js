@@ -54,7 +54,7 @@ Y.ClassNameManager = function () {
 	return {
 
 		/**
-		 * Returns a class name prefixed with the the value of the
+		 * Returns a class name prefixed with the value of the
 		 * <code>Y.config.classNamePrefix</code> attribute + the provided strings.
 		 * Uses the <code>Y.config.classNameDelimiter</code> attribute to delimit the
 		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar

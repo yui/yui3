@@ -39,7 +39,7 @@ var sl = new Y.Slider({
 
 <p>Now, we listen for the Slider's `valueChange` event. This event is fired when the value of the Slider has changed.</p>
 <p>Next we use the StyleSheet utility to dynamically change a style rule to resize the images.
-The style rule that we want to change is `#yui-main .yui-g ul li`. When the Slider's value changes, we will take the value and divide it by 2, then use that as the percentage width of the li. 
+The style rule that we want to change is `#yui-main .yui-g ul li`. When the Slider's value changes, we will take the value and divide it by 2, then use that as the percentage width of the li.
 This will give us the effect we want (resizing images) without touching all the images via the DOM.
 </p>
 
@@ -69,12 +69,12 @@ Y.delegate('mouseup' , function(e) {
     if (e.target.test('#yui-main .yui-g ul li img')) {
         e.target.addClass('selected');
     }
-}, document, '*'); 
+}, document, '*');
 ```
 
-<p>This listener, listens for all `click` events on the album list `#photoList li`. 
+<p>This listener, listens for all `click` events on the album list `#photoList li`.
 First, it stops the click, so the href is not followed. Next, it removes all the `selected` classes from the list. Then, it adds the `selected` class to the item that was clicked on.</p>
-<p>After that UI setup, it uses Selectors to change the view of the images in the browser. 
+<p>After that UI setup, it uses Selectors to change the view of the images in the browser.
 First, it checks if we are viewing "all" or a "sub album". If all is selected, it removes the `hidden` class from all the images.
 If it was an album, it adds the `hidden` class to all the images, then selects all the images with the class of its `id`, then it removes the hidden class from them.
 </p>

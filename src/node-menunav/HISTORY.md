@@ -6,6 +6,28 @@ MenuNav Change History
 
 * No changes.
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [#1772][] Correct check for IE UserAgent to make sure that the browser is IE. (Andrew Nicols)
+
+[#1772]: https://github.com/yui/yui3/pull/1772
+
+3.16.0
+------
+
+* No changes.
+
 3.15.0
 ------
 

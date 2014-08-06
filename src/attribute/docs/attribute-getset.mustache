@@ -27,7 +27,7 @@
     .attrs .body {
         padding:10px;
     }
- 
+
     .attrs .body .hints li {
         padding-bottom:10px;
     }
@@ -69,7 +69,7 @@
 </style>
 
 <div class="intro">
-    <p>The <a href="attribute-basic.html">"Basic Attribute Configuration" example</a> shows how you can add attributes to a host class, and set up default values for them using the attribute configuration object. This example explores how you can configure `setter`, `getter` and `validator` functions for individual attributes, which can be used to modify or normalize attribute values during get and set invocations, and prevent invalid values from being stored.</p> 
+    <p>The <a href="attribute-basic.html">"Basic Attribute Configuration" example</a> shows how you can add attributes to a host class, and set up default values for them using the attribute configuration object. This example explores how you can configure `setter`, `getter` and `validator` functions for individual attributes, which can be used to modify or normalize attribute values during get and set invocations, and prevent invalid values from being stored.</p>
 </div>
 
 <div class="example">
@@ -88,8 +88,8 @@
 
 <p>In this example, we'll set up a custom `Box` class representing a positionable element, with `x`, `y` and `xy` attributes.</p>
 
-<p>Only the `xy` attribute will actually store the page co-ordinate position of the box. The `x` and `y` attributes provide the user a convenient way to set only one of the co-ordinates. 
-However we don't want to store the actual values in the `x` and `y` attributes, to avoid having to constantly synchronize all three. 
+<p>Only the `xy` attribute will actually store the page co-ordinate position of the box. The `x` and `y` attributes provide the user a convenient way to set only one of the co-ordinates.
+However we don't want to store the actual values in the `x` and `y` attributes, to avoid having to constantly synchronize all three.
 
 The `getter` and `setter` functions provide us with an easy way to achieve this. We'll define `getter` and `setter` functions for both the `x` and `y` attributes, which simply pass through to the `xy` attribute to store and retrieve values:</p>
 
@@ -98,7 +98,7 @@ The `getter` and `setter` functions provide us with an easy way to achieve this.
 function Box(cfg) {
 
     ...
-          
+
     // Attribute configuration
     var attrs = {
 
@@ -144,8 +144,8 @@ function Box(cfg) {
 
             validator: function(val, name) {
                 // Ensure we only store a valid data value
-                return (Y.Lang.isArray(val) && 
-                        val.length == 2 && 
+                return (Y.Lang.isArray(val) &&
+                        val.length == 2 &&
                         Y.Lang.isNumber(val[0]) && Y.Lang.isNumber(val[1]));
             }
         },
@@ -240,7 +240,7 @@ Box.prototype.constrain = function(val) {
     },
 
     validator: function(val, name) {
-        return (Y.Color.re_RGB.test(val) || Y.Color.re_hex.test(val) 
+        return (Y.Color.re_RGB.test(val) || Y.Color.re_hex.test(val)
                     || Y.Color.KEYWORDS[val]);
     }
 }
@@ -288,7 +288,7 @@ Y.delegate("click", function(e) {
     // Get Node target from the event object
 
     // We already know it's a button which has an action because
-    // of our selector (button.action), so all we need to do is 
+    // of our selector (button.action), so all we need to do is
     // route it based on the id.
     var id = e.currentTarget.get("id");
 

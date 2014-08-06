@@ -4,6 +4,30 @@ AutoComplete Change History
 @VERSION@
 ------
 
+* Fixed: Unable to use the keyboard to access the suggestion list when using the
+  node-tokeninput plugin. ([#1913][]: @marclundgren)
+
+[#1913]:https://github.com/yui/yui3/issues/1913
+
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
 * No changes.
 
 3.15.0

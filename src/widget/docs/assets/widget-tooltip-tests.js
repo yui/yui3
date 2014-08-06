@@ -1,5 +1,5 @@
 YUI.add('widget-tooltip-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('widget-tooltip example test suite'),
         TIMEOUT = 10000;
 
@@ -175,7 +175,7 @@ YUI.add('widget-tooltip-tests', function(Y) {
         },
 
         'test mouseover tt2' : function() {
-            
+
             var tooltip = Y.one(".yui3-tooltip"),
                 test = this,
                 trigger = this.tt2,
@@ -225,7 +225,7 @@ YUI.add('widget-tooltip-tests', function(Y) {
 
                 trigger2.simulate("mouseover", {
                     clientX : clientXY2[0],
-                    clientY : clientXY2[1] 
+                    clientY : clientXY2[1]
                 });
 
                 test.assertTooltipVisible(tooltip);
@@ -238,7 +238,7 @@ YUI.add('widget-tooltip-tests', function(Y) {
         },
 
         'test mouseover tt3' : function() {
-            
+
             var tooltip = Y.one(".yui3-tooltip"),
                 test = this,
                 trigger = this.tt3,

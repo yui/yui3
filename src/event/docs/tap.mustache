@@ -70,9 +70,9 @@ myParentNode.delegate("tap", function (event) {
 
 <h2>Caveats and other information</h2>
 
-As of now, `event-tap` does not work on Windows 8 Tablets. Windows 8 does not support 'touchstart', 'touchmove', 'touchend', and 'touchcancel'. Instead, it uses MSPointer events. 
+As of now, `event-tap` does not work on Windows 8 Tablets. Windows 8 does not support 'touchstart', 'touchmove', 'touchend', and 'touchcancel'. Instead, it uses MSPointer events.
 
 <h3>Click Events on Touch Devices</h3>
-A `click` event is still fired after the `tap` event on touch devices. This can be useful to developers since input elements will not reflect their true value on `tap`. For example, a radio button will not reflect the correct state on `tap`, but will on `click`. 
+A `click` event is still fired after the `tap` event on touch devices. This can be useful to developers since input elements will not reflect their true value on `tap`. For example, a radio button will not reflect the correct state on `tap`, but will on `click`.
 
-For this reason, it's best to use the `tap` event callback as a way to improve your user experience, and use the click event callback to listen for DOM updates. On mouse-based devices, the `click` event and `tap` event are fired simultaneously since `tap` falls back to mouse events in the absence of touch support.  
+For this reason, it's best to use the `tap` event callback as a way to improve your user experience, and use the click event callback to listen for DOM updates. On mouse-based devices, the `click` event and `tap` event are fired simultaneously since `tap` falls back to mouse events in the absence of touch support.

@@ -2,27 +2,27 @@
                     <p class="deprecated"><em>
 <strong>Note:</strong> The files "fonts.css" and "fonts-context.css" are deprecated, use "cssfonts.css" and
 "cssfonts-context.css" instead.</em></p>
-                					
+
 					<p>The foundational CSS Fonts provides cross-browser typographical normalization and control while still allowing users to choose and adjust their font size. Both Standards and Quirks modes are supported in A-grade browsers.</p>
-										
-					<p><strong>Note:</strong> <a href="../cssbase/">CSS Base</a> can complement <a href="../cssreset/">CSS Reset</a> by applying a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/3/articles/gbs">A-grade browsers</a>.</p>						
+
+					<p><strong>Note:</strong> <a href="../cssbase/">CSS Base</a> can complement <a href="../cssreset/">CSS Reset</a> by applying a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/3/articles/gbs">A-grade browsers</a>.</p>
                 </div>
-							
+
 				<h2 id="start">Getting Started</h2>
 
 				<h3 id="dependencies">Include Dependencies</h3>
-				
+
 				<p>To use CSS Fonts, include the following source file in your web page with the link element:</p>
 
 ```
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssfonts/cssfonts-min.css">
 ```
-				
+
 				<h3 id="context">Global vs. Contextual</h3>
-				
+
 				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui3-cssfonts</code> classname.</p>
-				
-				<p>Here is how to include the contextual version of CSS Fonts:</p> 
+
+				<p>Here is how to include the contextual version of CSS Fonts:</p>
 
 ```
 <!-- Source File -->
@@ -40,7 +40,7 @@
 
 ```
 #demo1 {font-size:85%;}  /*renders 11px */
-#demo2 {font-size:100%;} /*renders 13px */ 
+#demo2 {font-size:100%;} /*renders 13px */
 #demo3 {font-size:108%;} /*renders 14px */
 #demo4 {font-size:123.1%;} /*renders 16px */
 #demo5 {font-size:138.5%;} /*renders 18px */
@@ -82,13 +82,13 @@
 #demo4 {font-family:verdana;}
 #demo5 {font-family:times;}
 ```
-				
-				<h3 id="start-contextually">Using CSS Fonts In Specific Contexts</h3>				
-		
+
+				<h3 id="start-contextually">Using CSS Fonts In Specific Contexts</h3>
+
 				<p>If you're using the contextual version, CSS Fonts's rules are only applied to elements that descend from a node with a class value of <code>.yui3-cssfonts</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;html&gt;</code> element directly.</p>
-				
+
 				<p>The following code snippet show how you might apply CSS Fonts to one of two columns:</p>
-					
+
 ```
 <div>
 	<div class="yui3-cssfonts"><h1>Lorem Ipsum</h1></div>

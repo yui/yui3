@@ -30,14 +30,14 @@ YUI.add('series-area-stacked-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: drawSeries()" : function() {
             var series = this.series,
                 mockStackedAreaSeries = new MockStackedAreaSeries();
             series.drawSeries.apply(mockStackedAreaSeries);
-            Y.Assert.isTrue(mockStackedAreaSeries._fillDrawn, "The drawFill method should have been called.");     
+            Y.Assert.isTrue(mockStackedAreaSeries._fillDrawn, "The drawFill method should have been called.");
         },
-    
+
         "test: setAreaData()" : function()
         {
             var series = this.series,
@@ -51,7 +51,7 @@ YUI.add('series-area-stacked-tests', function(Y) {
             Y.StackedAreaSeries.superclass.setAreaData = storedSetAreaDataMethod;
         }
     });
-    
+
     suite.add(new Y.StackedAreaSeriesTest({
         name: "StackedAreaSeries Tests"
     }));

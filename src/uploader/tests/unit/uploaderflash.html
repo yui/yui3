@@ -24,7 +24,7 @@
         coverage: ['uploader-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "uploader-flash", "node-event-simulate", "event-custom-base", function(Y) {
-        
+
 
 
         // Set up the page
@@ -32,7 +32,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
         btnRun.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
@@ -43,7 +43,7 @@
             name: "Basic Uploader Flash Tests",
 
             setUp : function () {
-                
+
                 var basicuploader = "<div id='basicuploader'></div>";
                 Y.one('#container').appendChild(Y.Node.create(basicuploader));
                 this.basicuploader = null;
@@ -111,7 +111,7 @@
                 this.basicuploader._swfReference._swf = {};
                 this.basicuploader._swfReference._swf._node = {};
                 this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};               
+                this.basicuploader._swfReference._swf.focus = function () {};
 
 
                 this.basicuploader._swfReference.fire("swfReady");
@@ -134,10 +134,10 @@
                 this.basicuploader.render("#basicuploader");
 
                 this.basicuploader.set("multipleFiles", true);
-                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), true); 
+                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), true);
 
                 this.basicuploader.set("multipleFiles", false);
-                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);   
+                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);
             },
 
             testUpdateList : function () {
@@ -206,7 +206,7 @@
             },
 
             testTabElements : function () {
-               
+
                 var cfg = {
                   tabIndex: "0",
                   width: "100%",
@@ -243,7 +243,7 @@
                 this.basicuploader._swfReference._swf = {};
                 this.basicuploader._swfReference._swf._node = {};
                 this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};               
+                this.basicuploader._swfReference._swf.focus = function () {};
 
                 this.basicuploader._swfReference.fire("swfReady");
 

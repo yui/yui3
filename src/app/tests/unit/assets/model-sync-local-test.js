@@ -24,7 +24,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
             '`data` property should be filled with any existing `localStorage` data': !hasLocalStorage
         }
     },
-    
+
     setUp: function () {
         var store;
 
@@ -60,15 +60,15 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         Assert.areSame('model', model.root);
         Assert.areSame('list', modelList.root);
     },
-    
+
     '`root` property should be an empty string by default': function () {
         var model     = new Y.TestModel(),
             modelList = new Y.TestModelList();
-            
+
         Assert.areSame('', model.root);
         Assert.areSame('', modelList.root);
     },
-    
+
     '`localStorage` should be set to the `storage` property': function () {
         var model      = new Y.TestModel(),
             modelList  = new Y.TestModelList(),
@@ -82,11 +82,11 @@ modelSyncLocalSuite.add(new Y.Test.Case({
                     return false;
                 }
             };
-            
+
         Assert.isTrue(hasStorage(model), 'Model storage not properly set');
         Assert.isTrue(hasStorage(modelList), 'List storage not properly set');
     },
-    
+
     '`data` property should be filled with any existing `localStorage` data': function () {
         var testStore;
         try {
@@ -97,7 +97,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         } catch (e) {
             Y.log("Could not access localStorage.", "warn");
         }
-        
+
         var model     = new Y.TestModel({root: 'users', id: 'users-1'}),
             modelList = new Y.TestModelList({ root: 'users'}),
             data      = Y.ModelSync.Local._data;
@@ -111,14 +111,14 @@ modelSyncLocalSuite.add(new Y.Test.Case({
     name: 'Sync',
 
     setUp: function () {
-        if (hasLocalStorage) { 
+        if (hasLocalStorage) {
             testStore = Y.config.win.localStorage;
             testStore.clear();
             testStore.setItem('users', 'users-1|users-2|users-3');
             testStore.setItem('users-1', '{"id": "users-1", "name": "clarle"}');
             testStore.setItem('users-2', '{"id": "users-2", "name": "eric"}');
             testStore.setItem('users-3', '{"id": "users-3", "name": "ryan"}');
-        } else { 
+        } else {
             Y.ModelSync.Local._store['users'] = ['users-1', 'users-2', 'users-3'];
             Y.ModelSync.Local._data['users-1'] = { id: 'users-1', name: 'clarle' };
             Y.ModelSync.Local._data['users-2'] = { id: 'users-2', name: 'eric' };
@@ -126,7 +126,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         }
 
         Y.TestModel = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
-            root: 'users'   
+            root: 'users'
         });
 
         Y.TestModelList = Y.Base.create('users', Y.ModelList, [Y.ModelSync.Local], {
@@ -167,7 +167,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
 
     'save() of a new Model should create a new object with an ID': function () {
         var model = new Y.TestModel({name: 'dav'});
-        
+
         Assert.isUndefined(model.get('id'), 'Initial model ID should be undefined.');
         model.save();
         Assert.isNotNull(model.get('id'), 'Model ID should not be null');
@@ -190,7 +190,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         model.load();
         Assert.areSame('clarle', model.get('name'), 'Model should have correct name');
         model.destroy({remove: true});
-        
+
         data = Y.ModelSync.Local._data;
         Assert.isUndefined(data['users-1'], 'Data should be deleted');
     },

@@ -10,9 +10,9 @@
     z-index:-1;
     width:100%;
     height:100%;
-    /* 
-       We'll be setting these programmatically for IE6, 
-       to account for cases where height is not set 
+    /*
+       We'll be setting these programmatically for IE6,
+       to account for cases where height is not set
     */
     _width:0;
     _height:0;

@@ -1056,7 +1056,7 @@ oldUser.destroy({remove: true});
 newUser.save(function () {
     // The sync layer can return the user data with an `id` assigned.
     // By default, this uses the root and Y.guid() internally
-    Y.log(newUser.get('id')); 
+    Y.log(newUser.get('id'));
     // => "users_yui_3_8_0_1_1357185522298_106"
 });
 ```
@@ -1085,7 +1085,7 @@ var users = new Y.Users();
 users.load(function () {
     var firstUser = users.item(0);
 
-    Y.log(firstUser.get('id')); 
+    Y.log(firstUser.get('id'));
     // => "users-1"
 
     // Update user data at "users-1"

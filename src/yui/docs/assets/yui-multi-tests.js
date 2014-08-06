@@ -12,7 +12,7 @@ YUI.add('yui-multi-tests', function(Y) {
                 animating = [],
                 firstH = item.getStyle('height'), firstW = item.getStyle('width'),
                 lastH = item.getStyle('height'), lastW = item.getStyle('width');
-            
+
             timer = setInterval(function() {
                 i++;
                 animating.push(lastH !== item.getStyle('height'));
