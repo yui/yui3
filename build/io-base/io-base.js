@@ -28,6 +28,8 @@ Flash, if specified as a transport, for cross-domain requests.
 @constructor
 @param {Object} config Object of EventTarget's publish method configurations
                     used to configure IO's events.
+
+IO can be called statically using {{#crossLink "YUI/io:method"}}YUI.io{{/crossLink}}.
 **/
 function IO (config) {
     var io = this;
@@ -639,7 +641,25 @@ IO.prototype = {
     * @param {String} uri Qualified path to transaction resource.
     * @param {Object} config Configuration object for the transaction.
     * @param {Number} id Transaction id, if already set.
-    * @return {Object}
+    * @return {Object} An object containing:
+    * <dl>
+    *  <dt>`id`</dt>
+    *  <dd>
+    *    The transaction ID for this request.
+    *  </dd>
+    *  <dt>`abort`</dt>
+    *  <dd>
+    *    A function to abort the current transaction.
+    *  </dd>
+    *  <dt>`isInProgress`</dt>
+    *  <dd>
+    *    A helper to determine whether the current transaction is in progress.
+    *  </dd>
+    *  <dt>`io`</dt>
+    *  <dd>
+    *    A reference to the IO object for this transaction.
+    *  </dd>
+    * </dl>
     */
     send: function(uri, config, id) {
         var transaction, method, i, len, sync, data,
@@ -886,7 +906,26 @@ supports the following properties:
 @static
 @param {String} url qualified path to transaction resource.
 @param {Object} config configuration object for the transaction.
-@return {Object}
+@return {Object} An object containing:
+<dl>
+ <dt>`id`</dt>
+ <dd>
+   The transaction ID for this request.
+ </dd>
+ <dt>`abort`</dt>
+ <dd>
+   A function to abort the current transaction.
+ </dd>
+ <dt>`isInProgress`</dt>
+ <dd>
+   A helper to determine whether the current transaction is in progress.
+ </dd>
+ <dt>`io`</dt>
+ <dd>
+   A reference to the IO object for this transaction.
+ </dd>
+</dl>
+
 @for YUI
 **/
 Y.io = function(url, config) {
