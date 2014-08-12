@@ -1184,7 +1184,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should return null when given undefined input': function() {
-            var el = Y.DOM.create(undefined);
+            var el = Y.DOM.create();
 
             Assert.areEqual(null, el);
         }
