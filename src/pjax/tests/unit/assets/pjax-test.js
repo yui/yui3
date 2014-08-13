@@ -215,7 +215,7 @@ suite.add(new Y.Test.Case({
             '`navigate` event should not fire when a modifier key is pressed': !html5,
             '`navigate` event should not fire when a click element is not an anchor': !html5,
             '`navigate` event should not fire when a link is clicked with a URL from another origin': !html5,
-            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5,
+            '`navigate` event should not fire for a hash URL that resolves to the current page when allowFallThrough is set to `false`': !html5,
             '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5,
             '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': !html5
         }
@@ -427,7 +427,8 @@ suite.add(new Y.Test.Case({
         });
     },
 
-    '`navigate` event should not fire for a hash URL that resolves to the current page': function () {
+    '`navigate` event should not fire for a hash URL that resolves to the current page when allowFallThrough is set to `false`': function () {
+        this.pjax.set("allowFallThrough", false); 
         this.pjax.on('navigate', function (e) {
             Assert.fail();
         });
@@ -569,6 +570,13 @@ suite.add(new Y.Test.Case({
 
         didNavigate = this.pjax.navigate('http://some.random.host.example.com/foo/bar/');
         Assert.areSame(false, didNavigate, '`navigate()` did not return `false`');
+    },
+
+    '`navigate()` should fall through to window.location with no matching route': function() {
+        var currentLocation = win.location;
+
+        Assert.isTrue(this.pjax.navigate('#unmatched-route'), 'navigate() did not return `true`');
+        Assert.areEqual(currentLocation, win.location, 'The current `window.location` does not match the `window.location` before `navigate()`.');
     }
 }));
 
