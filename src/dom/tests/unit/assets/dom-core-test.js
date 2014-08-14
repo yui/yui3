@@ -1,5 +1,5 @@
 YUI.add('dom-core-test', function(Y) {
-    var Assert = Y.Assert;
+    var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert;
 
     Y.Test.Runner.add(new Y.Test.Case({
@@ -74,9 +74,9 @@ YUI.add('dom-core-test', function(Y) {
                     Y.DOM.byId('test-by-id-root', node));
         },
 
-        'should search the given document (frame)': function() {
+        'should search the given document': function() {
             Y.Assert.areEqual(document.getElementById('test-id'),
-                    Y.DOM.byId('demo', document));
+                    Y.DOM.byId('test-id', document));
         },
 
         'should search the given document (frame)': function() {
@@ -846,9 +846,9 @@ YUI.add('dom-core-test', function(Y) {
             var el = Y.DOM.create('<form><fieldset><legend>foo</legend>' +
                 '<label>foo:</label><input name="foo"><input type="submit"></fieldset></form>'),
                 fieldset = el.firstChild,
-                legend = fieldset.firstChild;
+                legend = fieldset.firstChild,
                 label = legend.nextSibling,
-                input = label.nextSibling;
+                input = label.nextSibling,
                 submit = input.nextSibling;
 
             Assert.areEqual('FORM', el.tagName);
@@ -886,7 +886,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should create a one item list': function() {
-            el = Y.DOM.create('<ul><li>fresh</li></ul>');
+            var el = Y.DOM.create('<ul><li>fresh</li></ul>');
             Assert.areEqual(1, el.childNodes.length);
 
         },
@@ -1058,8 +1058,8 @@ YUI.add('dom-core-test', function(Y) {
         'should create an iframe with attributes': function() {
             var html = '<iframe border="0" frameBorder="0" marginWidth="0"' +
                     ' marginHeight="0" leftMargin="0" topMargin="0"' +
-                    ' allowTransparency="true" width="100%" height="99%"></iframe>';
-            el = Y.DOM.create(html);
+                    ' allowTransparency="true" width="100%" height="99%"></iframe>',
+                el = Y.DOM.create(html);
             Assert.areEqual('IFRAME', el.tagName);
             Assert.areEqual(0, el.frameBorder);
             Assert.areEqual(document, el.ownerDocument);
@@ -1123,7 +1123,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should return a fragment with the correct selected option': function() {
-            var html = '<option>foo</option><option selected>bar</option><option>baz</option>';
+            var html = '<option>foo</option><option selected>bar</option><option>baz</option>',
                 el = Y.DOM.create(html);
 
             Assert.areEqual(11, el.nodeType);
@@ -1184,8 +1184,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should return null when given undefined input': function() {
-            var html = undefined,
-                el = Y.DOM.create(html);
+            var el = Y.DOM.create();
 
             Assert.areEqual(null, el);
         }
@@ -1209,8 +1208,6 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should handle bad input': function() {
-            var node = document.createElement('div');
-
             Y.DOM.getAttribute(null);
             Y.DOM.getAttribute();
             Assert.isTrue(true);
@@ -1302,7 +1299,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'select value should match html value': function() {
-            var node = document.getElementById('test-select-value');
+            var node = document.getElementById('test-select-value'),
                 val = 'option value';
 
             Assert.areEqual(val, Y.DOM.getValue(node));
@@ -1327,14 +1324,14 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'option value should match html value': function() {
-            var node = document.getElementById('test-option-value');
+            var node = document.getElementById('test-option-value'),
                 val = 'option value';
 
             Assert.areEqual(val, Y.DOM.getValue(node));
         },
 
         'option value should match html content': function() {
-            var node = document.getElementById('test-option-value-text');
+            var node = document.getElementById('test-option-value-text'),
                 val = 'option text';
 
             Assert.areEqual(val, Y.DOM.getValue(node));
@@ -1359,7 +1356,7 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'button value should match html value': function() {
-            var node = document.getElementById('test-button-value');
+            var node = document.getElementById('test-button-value'),
                 val = 'button value';
 
             Assert.areEqual(val, Y.DOM.getValue(node));
@@ -1373,14 +1370,14 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'button value should ignore html content': function() {
-            var node = document.getElementById('test-button-text-value');
+            var node = document.getElementById('test-button-text-value'),
                 val = '';
 
             Assert.areEqual(val, Y.DOM.getValue(node));
         },
 
         'button value should match empty value': function() {
-            var node = document.getElementById('test-button-empty-value');
+            var node = document.getElementById('test-button-empty-value'),
                 val = '';
 
             Assert.areEqual(val, Y.DOM.getValue(node));
@@ -1415,7 +1412,7 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.setValue(node, val);
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
-            node.removeAttribute('value')
+            node.removeAttribute('value');
         },
 
         'value updated from null should be empty string': function() {
@@ -1480,7 +1477,7 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.setValue(node, val);
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
-            node.removeAttribute('value')
+            node.removeAttribute('value');
         },
 
         'button value updated from null should be empty string': function() {
@@ -1527,7 +1524,7 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.setValue(node, val);
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
-            node.removeAttribute('value')
+            node.removeAttribute('value');
         },
 
         'option value updated from null should be null': function() {
@@ -1607,11 +1604,9 @@ YUI.add('dom-core-test', function(Y) {
         name: 'Y.DOM._removeChildNodes',
 
         'should remove all childNodes': function() {
-            var node = document.createElement('div'),
-                html = '<em>foo</em><strong>bar</strong><span>baz</span>';
+            var node = document.createElement('div');
 
-            node.innerHTML = html;
-
+            node.innerHTML = '<em>foo</em><strong>bar</strong><span>baz</span>';
             Y.DOM._removeChildNodes(node);
             Assert.areEqual(0, node.childNodes.length);
         }
@@ -1834,7 +1829,7 @@ YUI.add('dom-core-test', function(Y) {
 
         'should return window from window': function() {
             var win = Y.DOM._getWin(window);
-            Assert.areSame(window.window, window.window);
+            Assert.areSame(window.window, win.window);
         },
 
         'should return window from document': function() {
@@ -1884,7 +1879,7 @@ YUI.add('dom-core-test', function(Y) {
             var node = document.createElement('div'),
                 val = 'new text';
 
-            node.innerHTML = '<span>foo</span><span>bar</span><span>baz</span>',
+            node.innerHTML = '<span>foo</span><span>bar</span><span>baz</span>';
 
             Y.DOM._batch(node.childNodes, 'setText', val);
 
@@ -1933,14 +1928,13 @@ YUI.add('dom-core-test', function(Y) {
         'should return all matching sibling nodes': function() {
             var parent = Y.DOM.byId('test-siblings'),
                 node = parent.getElementsByTagName('span')[0],
-                node2 = parent.getElementsByTagName('em')[0],
-                node3 = parent.getElementsByTagName('strong')[0],
+                node2 = parent.getElementsByTagName('strong')[0],
                 siblings = Y.DOM.siblings(node, function(n) {
                     return n.tagName === 'STRONG';
                 });
 
 
-            ArrayAssert.itemsAreEqual(siblings, [node3]);
+            ArrayAssert.itemsAreEqual(siblings, [node2]);
         }
     }));
 
