@@ -1,6 +1,31 @@
 CSS Normalize Change History
 ============================
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* Import Base from Pure 0.4.2. You can now set a `[hidden]` attribute to your HTML elements if you want them to be `display: none;`.
+
+3.15.0
+------
+
+* No changes.
+
 3.14.1
 ------
 

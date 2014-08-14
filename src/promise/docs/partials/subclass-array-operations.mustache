@@ -1,7 +1,7 @@
 log('Fetching GitHub data for users: "yui", "yahoo" and "davglass"...')
 
 // requests is a regular promise
-var requests = Y.batch(GitHub.getUser('yui'), GitHub.getUser('yahoo'), GitHub.getUser('davglass'));
+var requests = Y.Promise.all([GitHub.getUser('yui'), GitHub.getUser('yahoo'), GitHub.getUser('davglass')]);
 // users is now an ArrayPromise
 var users = toArrayPromise(requests);
 

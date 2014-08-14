@@ -209,8 +209,8 @@ Y.mix(NodeList.prototype, {
      * Returns the index of the node in the NodeList instance
      * or -1 if the node isn't found.
      * @method indexOf
-     * @param {Node | DOMNode} node the node to search for
-     * @return {Int} the index of the node value or -1 if not found
+     * @param {Node | HTMLElement} node the node to search for
+     * @return {Number} the index of the node value or -1 if not found
      */
     indexOf: function(node) {
         return Y.Array.indexOf(this._nodes, Y.Node.getDOMNode(node));
@@ -233,8 +233,8 @@ Y.mix(NodeList.prototype, {
      * remainder n % index equals r.
      * (zero-based index).
      * @method modulus
-     * @param {Int} n The offset to use (return every nth node)
-     * @param {Int} r An optional remainder to use with the modulus operation (defaults to zero)
+     * @param {Number} n The offset to use (return every nth node)
+     * @param {Number} r An optional remainder to use with the modulus operation (defaults to zero)
      * @return {NodeList} NodeList containing the updated collection
      */
     modulus: function(n, r) {
@@ -299,7 +299,7 @@ Y.mix(NodeList.prototype, {
     /**
      * Returns the current number of items in the NodeList.
      * @method size
-     * @return {Int} The number of items in the NodeList.
+     * @return {Number} The number of items in the NodeList.
      */
     size: function() {
         return this._nodes.length;

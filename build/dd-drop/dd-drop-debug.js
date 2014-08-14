@@ -89,7 +89,7 @@ YUI.add('dd-drop', function (Y, NAME) {
 
     Drop.ATTRS = {
         /**
-        * Y.Node instanace to use as the element to make a Drop Target
+        * Y.Node instance to use as the element to make a Drop Target
         * @attribute node
         * @type Node
         */
@@ -189,7 +189,6 @@ YUI.add('dd-drop', function (Y, NAME) {
         * Add this Drop instance to a group, this should be used for on-the-fly group additions.
         * @method addToGroup
         * @param {String} g The group to add this Drop Instance to.
-        * @return {Self}
         * @chainable
         */
         addToGroup: function(g) {
@@ -200,7 +199,6 @@ YUI.add('dd-drop', function (Y, NAME) {
         * Remove this Drop instance from a group, this should be used for on-the-fly group removals.
         * @method removeFromGroup
         * @param {String} g The group to remove this Drop Instance from.
-        * @return {Self}
         * @chainable
         */
         removeFromGroup: function(g) {

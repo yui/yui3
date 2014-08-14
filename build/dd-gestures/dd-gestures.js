@@ -44,7 +44,9 @@ YUI.add('dd-gestures', function (Y, NAME) {
 
         this._createPG();
         this._active = true;
-        Y.one(Y.config.doc).on('gesturemove', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), { standAlone: true });
+        Y.one(Y.config.doc).on('gesturemove', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')), {
+            standAlone: true
+        });
     };
 
 

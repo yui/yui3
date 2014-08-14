@@ -59,7 +59,7 @@ Y.Node.prototype.intersect = function(node2, altRegion) {
 };
 
 /**
- * Determines whether or not the node is within the giving region.
+ * Determines whether or not the node is within the given region.
  * @method inRegion
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Boolean} all Whether or not all of the node must be in the region.

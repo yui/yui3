@@ -32,7 +32,7 @@ QueryString.escape = encodeURIComponent;
  * @method stringify
  * @for QueryString
  * @public
- * @param obj {Variant} any arbitrary value to convert to query string
+ * @param obj {Any} any arbitrary value to convert to query string
  * @param cfg {Object} (optional) Configuration object.  The three
  * supported configurations are:
  * <ul><li>sep: When defined, the value will be used as the key-value

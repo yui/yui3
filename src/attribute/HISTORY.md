@@ -1,6 +1,31 @@
 Attribute Change History
 ========================
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* No changes.
+
+3.15.0
+------
+
+* Fixed an issue that caused `reset()` to fail when resetting an attribute called `'length'`.
+
 3.14.1
 ------
 

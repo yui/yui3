@@ -21,19 +21,6 @@ YUI.add('basic-example-tests', function (Y) {
             }, function() {
                 Assert.fail('Polling failed for success node');
             });
-        },
-
-        'loaded unexisting user': function () {
-            this.poll(function() {
-                return !!Y.one('#demo .error');
-            }, 100, 10000, function () {
-                var failure = Y.one('#demo .error');
-                // Do not check specifically for the message error.
-                // It is provided by GitHub and it might change
-                Assert.isTrue(failure.getHTML().length > 0, 'Missing error message');
-            }, function() {
-                Assert.fail('Polling failed for error node');
-            });
         }
     }));
 

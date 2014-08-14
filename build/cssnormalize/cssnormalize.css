@@ -1,16 +1,16 @@
 /*!
-Pure v0.3.0
-Copyright 2013 Yahoo! Inc. All rights reserved.
+Pure v0.4.2
+Copyright 2014 Yahoo! Inc. All rights reserved.
 Licensed under the BSD License.
 https://github.com/yui/pure/blob/master/LICENSE.md
 */
 
 /*!
-normalize.css v1.1.2 | MIT License | git.io/normalize
+normalize.css v1.1.3 | MIT License | git.io/normalize
 Copyright (c) Nicolas Gallagher and Jonathan Neal
 */
 
-/*! normalize.css v1.1.2 | MIT License | git.io/normalize */
+/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 
 /* ==========================================================================
    HTML5 display definitions
@@ -560,6 +560,24 @@ textarea {
 table {
     border-collapse: collapse;
     border-spacing: 0;
+}
+
+/*csslint important:false*/
+
+/* ==========================================================================
+   Pure Base Extras
+   ========================================================================== */
+
+/**
+ * Extra rules that Pure adds on top of Normalize.css
+ */
+
+/**
+ * Always hide an element when it has the `hidden` HTML attribute.
+ */
+
+[hidden] {
+    display: none !important;
 }
 /* YUI CSS Detection Stamp */
 #yui3-css-stamp.cssnormalize { display: none; }

@@ -73,7 +73,6 @@ YUITest.TestCase.prototype = {
      * Resumes a paused test and runs the given function.
      * @param {Function} segment (Optional) The function to run.
      *      If omitted, the test automatically passes.
-     * @return {Void}
      * @method resume
      */
     resume : function (segment) {
@@ -85,9 +84,8 @@ YUITest.TestCase.prototype = {
      * continue executing the given code.
      * @param {Function} segment (Optional) The function to run after the delay.
      *      If omitted, the TestRunner will wait until resume() is called.
-     * @param {int} delay (Optional) The number of milliseconds to wait before running
+     * @param {Number} delay (Optional) The number of milliseconds to wait before running
      *      the function. If omitted, defaults to `DEFAULT_WAIT` ms (10s).
-     * @return {Void}
      * @method wait
      */
     wait : function (segment, delay){
@@ -100,6 +98,46 @@ YUITest.TestCase.prototype = {
         }
 
         throw new YUITest.Wait(segment, delay);
+    },
+
+    /**
+    Creates a callback that automatically resumes the test. Parameters as passed
+    on to the callback.
+
+    @method next
+    @param {Function} callback Callback to call after resuming the test.
+    @param {Object} [context] The value of `this` inside the callback.
+        If not given, the original context of the function will be used.
+    @return {Function} wrapped callback that resumes the test.
+    @example
+    ```
+    // using test.resume()
+    Y.jsonp(uri, function (response) {
+        test.resume(function () {
+            Y.Assert.isObject(response);
+        });
+    });
+    test.wait();
+
+    // using test.next()
+    Y.jsonp(uri, test.next(function (response) {
+        Y.Assert.isObject(response);
+    }));
+    test.wait();
+    ```
+    **/
+    next: function (callback, context) {
+        var self = this;
+        context = arguments.length >= 2 ? arguments[1] : undefined;
+        return function () {
+            var args = arguments;
+            if (context === undefined) {
+                context = this;
+            }
+            self.resume(function () {
+                callback.apply(context, args);
+            });
+        };
     },
 
     /**
@@ -206,7 +244,6 @@ YUITest.TestCase.prototype = {
 
     /**
      * Function to run before each test is executed.
-     * @return {Void}
      * @method setUp
      */
     setUp : function () {
@@ -215,7 +252,6 @@ YUITest.TestCase.prototype = {
 
     /**
      * Function to run after each test is executed.
-     * @return {Void}
      * @method tearDown
      */
     tearDown: function () {

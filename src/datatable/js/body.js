@@ -16,7 +16,15 @@ var Lang             = Y.Lang,
     bind             = Y.bind,
     YObject          = Y.Object,
     valueRegExp      = /\{value\}/g,
-    EV_CONTENT_UPDATE = 'contentUpdate';
+    EV_CONTENT_UPDATE = 'contentUpdate',
+
+    shiftMap = {
+        above:    [-1, 0],
+        below:    [1, 0],
+        next:     [0, 1],
+        prev:     [0, -1],
+        previous: [0, -1]
+    };
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -118,7 +126,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     HTML template used to create table cells.
 
     @property CELL_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<td {headers} class="{className}">{content}</td>'
     @since 3.5.0
     **/
@@ -152,7 +160,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     HTML template used to create table rows.
 
     @property ROW_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<tr id="{rowId}" data-yui3-record="{clientId}" class="{rowClass}">{content}</tr>'
     @since 3.5.0
     **/
@@ -175,7 +183,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     HTML templates used to create the `<tbody>` containing the table rows.
 
     @property TBODY_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<tbody class="{className}">{content}</tbody>'
     @since 3.6.0
     **/
@@ -217,20 +225,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             if (isArray(seed)) {
                 row = tbody.get('children').item(seed[0]);
                 cell = row && row.get('children').item(seed[1]);
-            } else if (Y.instanceOf(seed, Y.Node)) {
+            } else if (seed._node) {
                 cell = seed.ancestor('.' + this.getClassName('cell'), true);
             }
 
             if (cell && shift) {
                 rowIndexOffset = tbody.get('firstChild.rowIndex');
                 if (isString(shift)) {
-                    // TODO this should be a static object map
-                    switch (shift) {
-                        case 'above'   : shift = [-1, 0]; break;
-                        case 'below'   : shift = [1, 0]; break;
-                        case 'next'    : shift = [0, 1]; break;
-                        case 'previous': shift = [0, -1]; break;
+                    if (!shiftMap[shift]) {
+                        Y.error('Unrecognized shift: ' + shift, null, 'datatable-body');
                     }
+                    shift = shiftMap[shift];
                 }
 
                 if (isArray(shift)) {
@@ -298,7 +303,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 seed = tbody.one('#' + seed);
             }
 
-            if (Y.instanceOf(seed, Y.Node)) {
+            if (seed && seed._node) {
                 row = seed.ancestor(function (node) {
                     return node.get('parentNode').compareTo(tbody);
                 }, true);
@@ -424,7 +429,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     advisable to always return `false` from your `nodeFormatter`s_.
 
     @method render
-    @return {BodyView} The instance
     @chainable
     @since 3.5.0
     **/
@@ -458,8 +462,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      columns to be updated.
 
      @method refreshRow
-     @param {Y.Node} row
-     @param {Y.Model} model Y.Model representation of the row
+     @param {Node} row
+     @param {Model} model Y.Model representation of the row
      @param {String[]} colKeys Array of column keys
 
      @chainable
@@ -489,8 +493,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      Uses the provided column formatter if aviable.
 
      @method refreshCell
-     @param {Y.Node} cell Y.Node pointer to the cell element to be updated
-     @param {Y.Model} [model] Y.Model representation of the row
+     @param {Node} cell Y.Node pointer to the cell element to be updated
+     @param {Model} [model] Y.Model representation of the row
      @param {Object} [col] Column configuration object for the cell
 
      @chainable
@@ -573,11 +577,11 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      Returns column data from this.get('columns'). If a Y.Node is provided as
      the key, will try to determine the key from the classname
      @method getColumn
-     @param {String|Y.Node} name
+     @param {String|Node} name
      @return {Object} Returns column configuration
      */
     getColumn: function (name) {
-        if (Y.instanceOf(name, Y.Node)) {
+        if (name && name._node) {
             // get column name from node
             name = name.get('className').match(
                 new RegExp( this.getClassName('col') +'-([^ ]*)' )
@@ -865,7 +869,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method _createDataHTML
     @param {Object[]} displayCols The column configurations to customize the
                 generated cell content or class names
-    @return {HTML} The markup for all Models in the `modelList`, each applied
+    @return {String} The markup for all Models in the `modelList`, each applied
                 to the `_rowTemplate`
     @protected
     @since 3.5.0
@@ -914,7 +918,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @param {Model} model The Model instance to apply to the row template
     @param {Number} index The index the row will be appearing
     @param {Object[]} displayCols The column configurations
-    @return {HTML} The markup for the provided Model, less any `nodeFormatter`s
+    @return {String} The markup for the provided Model, less any `nodeFormatter`s
     @protected
     @since 3.5.0
     **/
@@ -978,7 +982,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     /**
      Locates the row within the tbodyNode and returns the found index, or Null
      if it is not found in the tbodyNode
-     @param {Y.Node} row
+     @param {Node} row
      @return {Number} Index of row in tbodyNode
      */
     _getRowIndex: function (row) {
@@ -1179,7 +1183,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     configurations.
 
     @property _rowTemplate
-    @type {HTML}
+    @type {String}
     @default (initially unset)
     @protected
     @since 3.5.0

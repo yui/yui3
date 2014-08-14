@@ -1,6 +1,33 @@
 Sortable Utility Change History
 ===============================
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* No changes.
+
+3.16.0
+------
+
+* [#1486][]: Fix a issue that zIndex of 999 is kept on dragged item (Paul B.)
+
+[#1486]: https://github.com/yui/yui3/pull/1486
+
+3.15.0
+------
+
+* No changes.
+
 3.14.1
 ------
 

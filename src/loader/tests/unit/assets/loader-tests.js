@@ -6,7 +6,7 @@ YUI.add('loader-tests', function(Y) {
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
 
-    
+
     var resolvePath = function(p) {
         if (Y.UA.nodejs) {
             var path = require('path');
@@ -290,6 +290,49 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[out.js.length - 1].indexOf('&') === -1), 'Group comboSep did not work');
             Assert.isTrue((out.js[out.js.length - 1].indexOf('==!!==') === -1), 'Group comboSep contains Main comboSep');
             Assert.isTrue((out.js[out.js.length - 1].indexOf('==;;==') > 0), 'Group comboSep did not work');
+        },
+        'test comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        comboBase: 'http://secondhost.com/combo?',
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.js.length, 'Loader did not generate one URL per comboBase');
+            Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
+            Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
+        },
+        'test inherited comboBase with groups': function () {
+            var loader = new testY.Loader({
+                combine: true,
+                groups: {
+                    testGroup: {
+                        combine: true,
+                        modules: {
+                            foogg: {
+                                requires: []
+                            }
+                        }
+                    }
+                },
+                require: ['foogg', 'cookie']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Loader generated multiple URLs for a single comboBase');
+
+            var url = out.js[0];
+            Assert.isArray(url.match(/3.5.0\/foogg\/foogg-min\.js/), 'Group match should be combo-loaded with the default URL');
+            Assert.isArray(url.match(/3.5.0\/cookie\/cookie-min\.js/), 'Default match should combo-load with the group result');
         },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
@@ -603,6 +646,7 @@ YUI.add('loader-tests', function(Y) {
                 }
             }).use('mod', function(Y) {
                 test.resume(function() {
+                    Assert.isUndefined(Y.Env._loader.getModule('mod').test, 'Patterns should not carry on a `test` function');
                     Assert.isTrue(Y.MOD, 'Pattern module failed to load');
                 });
             });
@@ -655,7 +699,7 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
         },
         'test: conditional trigger is an array': function() {
-            
+
             var loader = new Y.Loader({
                 modules: {
                     test_one: {
@@ -706,7 +750,39 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
             Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
             Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
-        
+
+        },
+        'test: conditional module with alias trigger': function() {
+
+            var loader = new Y.Loader({
+                modules: {
+                    test2_one: {
+                        fullpath: '2one.js'
+                    },
+                    test2_two: {
+                        fullpath: '2two.js'
+                    },
+                    test2_three: {
+                        fullpath: '2three.js'
+                    },
+                    cond2_array: {
+                        fullpath: '2cond_array.js',
+                        condition: {
+                            trigger: ['test2_alias']
+                        }
+                    }
+                },
+                aliases: {
+                    test2_alias: ['test2_one', 'test2_two']
+                },
+                require: ['test2_two']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
+            Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
+            Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
+
         },
         'test: conditional array in modules not required': function() {
             var loader = new Y.Loader({
@@ -733,7 +809,199 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.areEqual(1, out.js.length, 'Wrong number of files returned (3)');
             Assert.areSame('3three.js', out.js[0], 'Failed to load required module (3)');
-            
+
+        },
+        'test: conditional module set to load before trigger': function () {
+            var loader = new Y.Loader({
+                modules: {
+                    test4_one: {
+                        fullpath: '4one.js'
+                    },
+                    test4_two: {
+                        fullpath: '4two.js',
+                        condition: {
+                            trigger: 'test4_one',
+                            when: 'before'
+                        }
+                    }
+                },
+                require: ['test4_one']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of modules loaded');
+            Assert.areEqual('4two.js', out.js[0], 'Loaded modules in incorrect order');
+            Assert.areEqual('4one.js', out.js[1], 'Loaded modules in incorrect order');
+        },
+        'test: optional dependencies': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
+                        path: 'foo-min.js'
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: optional dependencies with tests': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    foo: {
+                        path: 'foo-min.js',
+                        test: function (Y) {
+                            Assert.isInstanceOf(YUI, Y);
+                            return true;
+                        }
+                    },
+                    baz: {
+                        path: 'baz-min.js',
+                        test: function () {
+                            return false;
+                        }
+                    },
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foo']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: optional dependencies ignore undeclared modules': function () {
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    bar: {
+                        path: 'bar-min.js',
+                        optionalRequires: ['foobarbazasdflkj']
+                    }
+                },
+                require: ['bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('bar', out.jsMods[0].name, 'Not included required module');
+        },
+        'test: optional dependencies and patterns': function () {
+            var test = this;
+            YUI.add('a-mod-with-opt-dep', function () {}, '', {
+                optionalRequires: ['foo']
+            });
+
+            YUI({
+                groups: {
+                    patternDepIntegration: {
+                        base: '../assets/',
+                        filter: 'raw',
+                        patterns: {
+                            "part1-": {
+                                configFn: function (me) {
+                                    //change from default format of part1-mod1/part1-mod1.js to just part1-mod1.js
+                                    me.path = me.path.replace(/part1-[^\/]+\//, "");
+                                }
+                            }
+                        }
+                    }
+                },
+                modules: {
+                    'a-mod-with-opt-dep': {
+                        path: 'a-mod-with-opt-dep-min.js',
+                        optionalRequires: ['part1-mod']
+                    }
+                }
+            }).use('a-mod-with-opt-dep', function (Y) {
+                setTimeout(function () {
+                    test.resume(function () {
+
+                    });
+                }, 0);
+            });
+
+            test.wait();
+        },
+        'test: already added module with failing test': function () {
+            YUI.add('mod121-foo', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod122-bar', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                requires: ['mod121-foo']
+            });
+
+            var loader = new Y.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                modules: {
+                    'mod121-foo': {
+                        test: function () {
+                            return false;
+                        }
+                    },
+                    'mod122-bar': {
+                        requires: ['mod121-foo']
+                    }
+                },
+                require: ['mod122-bar']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(2, out.jsMods.length, 'Not included the correct number of modules');
+            Assert.areSame('mod121-foo', out.jsMods[0].name, 'Not included optional dependency');
+            Assert.areSame('mod122-bar', out.jsMods[1].name, 'Not included required module');
+        },
+        'test: correct attach order of optional dependencies': function () {
+            var test = this;
+
+            YUI.add('mod131', function (Y) {
+                Y.foo = 'hello';
+            });
+            YUI.add('mod132', function (Y) {
+                Y.bar = Y.foo + ' world';
+            }, '', {
+                optionalRequires: ['mod131']
+            });
+
+            var $Y = YUI({
+                modules: {
+                    'mod131': {
+                    },
+                    'mod132': {
+                        optionalRequires: ['mod131']
+                    }
+                }
+            });
+
+            $Y.use('mod132', function (Y, result) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Assert.areSame('hello', Y.foo);
+                        Assert.areSame('hello world', Y.bar);
+                        Assert.isTrue(result.success);
+                    });
+                });
+            });
+
+            test.wait();
         },
         test_css_stamp: function() {
             var test = this,
@@ -746,8 +1014,7 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
 
-            test.wait();
-
+            test.wait(20000);
         },
         'testing duplicate CSS loading': function() {
             var test = this,
@@ -758,7 +1025,7 @@ YUI.add('loader-tests', function(Y) {
                     'console-filters': 0,
                     'test-console': 0
                 };
-            
+
             Y.Array.each(links, function(item) {
                 var href = item.href;
                 if (/\/sam\/console\.css/.test(href)) {
@@ -1105,11 +1372,11 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
+
             Assert.areSame('plug1/lang/subplug2.js', out.js[0], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-            
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
@@ -1215,7 +1482,7 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(20000);
 
         },
         'test: aliases config option': function() {
@@ -1321,7 +1588,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(loader.async, 'Failed to set default async config option');
         },
         'test: 2 loader instances with different skins': function() {
- 
+
             var groups = {
                 'foo': {
                     ext: false,
@@ -1432,8 +1699,8 @@ YUI.add('loader-tests', function(Y) {
             });
 
             loader1resolved = loader1.resolve(true);
-            loader2resolved = loader2.resolve(true); 
-        
+            loader2resolved = loader2.resolve(true);
+
             Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
             Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
         },
@@ -1565,14 +1832,14 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            
+
             Assert.areEqual(6, out.js.length, 'Failed to resolve all cascaded modules');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1').requires.sort(), ['cas1', 'cas2', 'cas3'], 'cas1');
             ArrayAssert.itemsAreEqual(getMod('cas2').requires.sort(), ['cas1', 'cas2', 'cas4'], 'cas2');
             ArrayAssert.itemsAreEqual(getMod('cas3').requires.sort(), ['cas1', 'cas2'], 'cas3');
             ArrayAssert.itemsAreEqual(getMod('cas4').requires.sort(), ['cas1', 'cas2'], 'cas4');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
             ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
 
@@ -1592,8 +1859,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['my-module']
             });
             var out = loader.resolve(true);
-            var mod = out.js.pop();
-            var lang = out.js.pop();
+            var mod = out.js[7];
+            var lang = out.js[6];
             Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
             Assert.areEqual('scripts/my-module/lang/my-module_fr.js', lang, 'Failed to resolve local lang file');
         },
@@ -1616,8 +1883,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['my-module-group']
             });
             var out = loader.resolve(true);
-            var mod = out.js.pop();
-            var lang = out.js.pop();
+            var mod = out.js[7];
+            var lang = out.js[6];
             Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
             Assert.areEqual('scripts/my-module-group/lang/my-module-group_fr.js', lang, 'Failed to resolve local lang file');
         },
@@ -2166,7 +2433,7 @@ YUI.add('loader-tests', function(Y) {
                     test: {
                         base: resolvePath('../assets/'),
                         patterns: {
-                            'test-': {              
+                            'test-': {
                                 configFn: function(me) {
                                     //Nothing here, used for pattern matching
                                 }
@@ -2182,9 +2449,35 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
             test.wait();
+        },
+        'test loader patching mechanism': function() {
+            var loader,
+                hello,
+                out;
+
+            loader = new Y.Loader({
+                doBeforeLoader: function () {
+                    var resolve = this.context.Loader.prototype.resolve;
+
+                    this.context.Loader.prototype.resolve = function () {
+                        hello = 'world';
+                        return resolve.apply(this, arguments);
+                    };
+                },
+                modules:{
+                    'foobar':{
+                        fullpath: 'foo/bar.js'
+                    }
+                },
+                require: ['foobar']
+            });
+
+            out = loader.resolve(true);
+            Assert.areEqual('foo/bar.js', out.js[0], 'Failed to monkey patch resolve()');
+            Assert.areEqual(hello, 'world', 'Failed to monkey patch resolve()');
         }
     });
-    
+
     var name = 'Loader';
     if (typeof TestName != 'undefined') {
         name = TestName;
