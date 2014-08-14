@@ -135,6 +135,13 @@ PjaxBase.prototype = {
 
         if (!this._hasSameOrigin(url)) {
             Y.error('Security error: The new URL must be of the same origin as the current URL.');
+            return false;
+        }
+
+        if (this.get('allowFallThrough')) {
+            // Send paths with the same origin but no matching routes to window.location if specified.
+            win.location = url;
+            return true;
         }
 
         return false;
@@ -412,6 +419,19 @@ PjaxBase.ATTRS = {
     @since 3.5.0
     **/
     scrollToTop: {
+        value: true
+    },
+
+    /**
+    Whether to set `window.location` when calling `navigate()`
+    if no routes match the specified URL.
+
+    @attribute allowFallThrough
+    @type Boolean
+    @default true
+    @since @SINCE@
+    **/
+    allowFallThrough: {
         value: true
     }
 };
