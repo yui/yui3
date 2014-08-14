@@ -1,15 +1,12 @@
 {
     "name": "loader",
-    "exec": [
-        "./scripts/fetch_gallery_version.js"
-    ],
     "postexec": [
         "./scripts/build_loader_tests.js"
     ],
     "builds": {
         "loader-base": {
             "replace": {
-                "@GALLERY@": "gallery-2014.06.12-21-45",
+                "@GALLERY@": "gallery-2014.07.31-18-26",
                 "@TNT@": "4",
                 "@YUI2@": "2.9.0"
             },
