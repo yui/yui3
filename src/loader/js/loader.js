@@ -15,7 +15,16 @@
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = 1024,
+    ////////////////////////////////////////////////////////////
+    //                  BEGIN WF2 CHANGE                      //
+    // Justification: Increase combo url length to reduce     //
+    //                HTTP requests.                          //
+    ////////////////////////////////////////////////////////////
+    // MAX_URL_LENGTH = 1024,
+    MAX_URL_LENGTH = 1600,
+    ////////////////////////////////////////////////////////////
+    //                  END WF2 CHANGE                        //
+    ////////////////////////////////////////////////////////////
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
@@ -568,8 +577,8 @@ Y.Loader.prototype = {
                     }
                 }
                 this._internal = internal;
+                }
             }
-        }
         return this.moduleInfo[name];
     },
     /**
@@ -620,9 +629,9 @@ Y.Loader.prototype = {
                         trigger = t[j];
                         this.conditions[trigger] = this.conditions[trigger] || {};
                         this.conditions[trigger][rawMetaModules[i].name || i] = rawMetaModules[i].condition;
-                    }
                 }
             }
+        }
             GLOBAL_ENV._conditions = this.conditions;
         }
     },
@@ -2287,7 +2296,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 // and have we not already visited it?
                 if (required[dependency] && !visited[dependency] && !isAfter) {
                     this._visit(dependency, visited);
-                }
+            }
             }
         }
 
@@ -2682,7 +2691,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (!mod.combine && mod.ext) {
                 addSingle(mod);
                 continue;
-            }
+        }
 
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
@@ -2693,7 +2702,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
 
             comboMeta[mod.type + 'Mods'].push(mod);
-        }
+                        }
 
         // TODO: Refactor the encoding logic below into its own method.
 
