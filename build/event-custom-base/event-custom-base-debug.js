@@ -1948,61 +1948,29 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      * @param type {String} the type, or name of the event
      * @param opts {object} optional config params.  Valid properties are:
+     * @param [opts.broadcast=false] {Boolean} whether or not the YUI instance and YUI global
+     *      are notified when the event is fired.
+     * @param [opts.bubbles=true] {Boolean} Whether or not this event bubbles. Events can
+     *      only bubble if `emitFacade` is true.
+     * @param [opts.context=this] {Object} the default execution context for the listeners.
+     * @param [opts.defaultFn] {Function} the default function to execute when this event
+     *      fires if preventDefault was not called.
+     * @param [opts.emitFacade=false] {Boolean} whether or not this event emits a facade.
+     * @param [opts.prefix] {String} the prefix for this targets events, e.g., 'menu' in 'menu:click'.
+     * @param [opts.fireOnce=false] {Boolean} if an event is configured to fire once,
+     *      new subscribers after the fire will be notified immediately.
+     * @param [opts.async=false] {Boolean} fireOnce event listeners will fire synchronously
+     *      if the event has already fired unless `async` is `true`.
+     * @param [opts.preventable=true] {Boolean} whether or not `preventDefault()` has an effect.
+     * @param [opts.preventedFn] {Function} a function that is executed when `preventDefault()` is called.
+     * @param [opts.queuable=false] {Boolean} whether or not this event can be queued during bubbling.
+     * @param [opts.silent] {Boolean} if silent is true, debug messages are not provided for this event.
+     * @param [opts.stoppedFn] {Function} a function that is executed when stopPropagation is called.
+     * @param [opts.monitored] {Boolean} specifies whether or not this event should send notifications about
+     *      when the event has been attached, detached, or published.
+     * @param [opts.type] {String} the event type (valid option if not provided as the first parameter to publish).
      *
-     *  <ul>
-     *    <li>
-     *   'broadcast': whether or not the YUI instance and YUI global are notified when the event is fired (false)
-     *    </li>
-     *    <li>
-     *   'bubbles': whether or not this event bubbles (true)
-     *              Events can only bubble if emitFacade is true.
-     *    </li>
-     *    <li>
-     *   'context': the default execution context for the listeners (this)
-     *    </li>
-     *    <li>
-     *   'defaultFn': the default function to execute when this event fires if preventDefault was not called
-     *    </li>
-     *    <li>
-     *   'emitFacade': whether or not this event emits a facade (false)
-     *    </li>
-     *    <li>
-     *   'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click'
-     *    </li>
-     *    <li>
-     *   'fireOnce': if an event is configured to fire once, new subscribers after
-     *   the fire will be notified immediately.
-     *    </li>
-     *    <li>
-     *   'async': fireOnce event listeners will fire synchronously if the event has already
-     *    fired unless async is true.
-     *    </li>
-     *    <li>
-     *   'preventable': whether or not preventDefault() has an effect (true)
-     *    </li>
-     *    <li>
-     *   'preventedFn': a function that is executed when preventDefault is called
-     *    </li>
-     *    <li>
-     *   'queuable': whether or not this event can be queued during bubbling (false)
-     *    </li>
-     *    <li>
-     *   'silent': if silent is true, debug messages are not provided for this event.
-     *    </li>
-     *    <li>
-     *   'stoppedFn': a function that is executed when stopPropagation is called
-     *    </li>
-     *
-     *    <li>
-     *   'monitored': specifies whether or not this event should send notifications about
-     *   when the event has been attached, detached, or published.
-     *    </li>
-     *    <li>
-     *   'type': the event type (valid option if not provided as the first parameter to publish)
-     *    </li>
-     *  </ul>
-     *
-     *  @return {CustomEvent} the custom event
+     * @return {CustomEvent} the custom event
      *
      */
     publish: function(type, opts) {
