@@ -1638,6 +1638,8 @@ ET.prototype = {
      * Subscribe a callback function to a custom event fired by this object or
      * from an object that bubbles its events to this object.
      *
+     *      this.on("change", this._onChange, this);
+     *
      * Callback functions for events published with `emitFacade = true` will
      * receive an `EventFacade` as the first argument (typically named "e").
      * These callbacks can then call `e.preventDefault()` to disable the
@@ -1647,9 +1649,17 @@ ET.prototype = {
      * after the event name.
      *
      * To subscribe to multiple events at once, pass an object as the first
-     * argument, where the key:value pairs correspond to the eventName:callback,
-     * or pass an array of event names as the first argument to subscribe to
-     * all listed events with the same callback.
+     * argument, where the key:value pairs correspond to the eventName:callback.
+     *
+     *      this.on({
+     *          "attrChange" : this._onAttrChange,
+     *          "change"     : this._onChange
+     *      });
+     *
+     * You can also pass an array of event names as the first argument to
+     * subscribe to all listed events with the same callback.
+     *
+     *      this.on([ "change", "attrChange" ], this._onChange);
      *
      * Returning `false` from a callback is supported as an alternative to
      * calling `e.preventDefault(); e.stopPropagation();`.  However, it is
