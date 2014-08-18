@@ -83,11 +83,15 @@ YUI.add('pluginhost-base', function (Y, NAME) {
                         if (this[ns].setAttrs) {
                             this[ns].setAttrs(config);
                         }
+                        else {
+                        }
                     } else {
                         // Create new instance
                         this[ns] = new Plugin(config);
                         this._plugins[ns] = Plugin;
                     }
+                }
+                else {
                 }
             }
             return this;

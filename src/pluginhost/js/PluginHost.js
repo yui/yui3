@@ -81,14 +81,18 @@
                         if (this[ns].setAttrs) {
                             this[ns].setAttrs(config);
                         }
-                        else { Y.log("Attempt to replug an already attached plugin, and we can't setAttrs, because it's not Attribute based: " + ns); }
+                        else {
+                            Y.log("Attempt to replug an already attached plugin, and we can't setAttrs, because it's not Attribute based: " + ns, "warn", "PluginHost");
+                        }
                     } else {
                         // Create new instance
                         this[ns] = new Plugin(config);
                         this._plugins[ns] = Plugin;
                     }
                 }
-                else { Y.log("Attempt to plug in an invalid plugin. Host:" + this + ", Plugin:" + Plugin); }
+                else {
+                    Y.log("Attempt to plug in an invalid plugin. Host:" + this + ", Plugin:" + Plugin, "error", "PluginHost");
+                }
             }
             return this;
         },
