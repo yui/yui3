@@ -4,7 +4,9 @@ Plugin Host Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1944][]: Fix an issue calls to `Y.log` in PluginHost are missing filter information. (@tribis)
+
+[#1944]: https://github.com/yui/yui3/pull/1944
 
 3.17.2
 ------
