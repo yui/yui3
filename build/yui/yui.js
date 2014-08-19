@@ -3721,9 +3721,7 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
                 if (/ Android/.test(ua)) {
-                    if (/Mobile/.test(ua)) {
-                        o.mobile = 'Android';
-                    }
+                    o.mobile = 'Android';
                     m = ua.match(/Android ([^\s]*);/);
                     if (m && m[1]) {
                         o.android = numberify(m[1]);
