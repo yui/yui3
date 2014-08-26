@@ -29,6 +29,8 @@ to the `Y` object and is <a href="../classes/YUI.html#method_throttle">documente
  * @since 3.1.0
  */
 Y.throttle = function(fn, ms) {
+    var last;
+    
     ms = (ms) ? ms : (Y.config.throttleTime || 150);
 
     if (ms === -1) {
@@ -37,11 +39,10 @@ Y.throttle = function(fn, ms) {
         };
     }
 
-    var last = Y.Lang.now();
-
     return function() {
         var now = Y.Lang.now();
-        if (now - last > ms) {
+
+        if (!last || (now - last > ms)) {
             last = now;
             fn.apply(this, arguments);
         }
