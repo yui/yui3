@@ -4,7 +4,7 @@ Button Change History
 @VERSION@
 ------
 
-* No changes.
+* ButtonGroup renders as a single-box widget (contentBox === boundingBox)
 
 3.17.2
 ------
