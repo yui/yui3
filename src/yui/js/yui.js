@@ -499,7 +499,7 @@ proto = {
         Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
 
         if (!filter || (!('mindebug').indexOf(filter))) {
-            filter = '';
+            filter = 'min';
         }
         filter = (filter) ? '-' + filter : filter;
         Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
