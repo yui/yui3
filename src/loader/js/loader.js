@@ -2592,7 +2592,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     resolve: function(calc, sorted) {
         var self     = this,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
-            addSingle;
+            addSingle,
+            usePathogen = Y.config.comboLoader;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
@@ -2635,7 +2636,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         /*jslint vars: true */
         var inserted     = (self.ignoreRegistered) ? {} : self.inserted,
-            comboSources = {},
+            comboSources,
             maxURLLength,
             comboMeta,
             comboBase,
@@ -2683,7 +2684,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 addSingle(mod);
                 continue;
             }
-
+            comboSources = comboSources || {};
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
 
@@ -2693,19 +2694,46 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
 
             comboMeta[mod.type + 'Mods'].push(mod);
+            if (mod.type === JS || mod.type === CSS) {
+                resolved[mod.type + 'Mods'].push(mod);
+            }
         }
+        //only encode if we have something to encode
+        if(comboSources) {
+            if(usePathogen) {
+                resolved = this._pathogenEncodeComboSources(resolved);
+            } else {
+                resolved = this._encodeComboSources(resolved, comboSources);
+            }
+        }
+        return resolved;
+    },
 
-        // TODO: Refactor the encoding logic below into its own method.
-
-        /*jslint vars: true */
+    /**
+     * Encodes combo sources and appends them to an object hash of arrays from `loader.resolve`.
+     *
+     * @method _encodeComboSources
+     * @param {Object} resolved The object hash of arrays in which to attach the encoded combo sources.
+     * @param {Object} comboSources An object containing relevant data about modules.
+     * @return Object
+     * @private
+     */
+    _encodeComboSources: function(resolved, comboSources) {
         var fragSubset,
             modules,
             tmpBase,
             baseLen,
             frags,
             frag,
-            type;
-        /*jslint vars: false */
+            type,
+            mod,
+            maxURLLength,
+            comboBase,
+            comboMeta,
+            comboSep,
+            i,
+            len,
+            self = this;
 
         for (comboBase in comboSources) {
             if (comboSources.hasOwnProperty(comboBase)) {
@@ -2757,12 +2785,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
                             }
                         }
-                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(modules);
                     }
                 }
             }
         }
-
         return resolved;
     },
 
@@ -2803,4 +2829,3 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         self.insert();
     }
 };
-
