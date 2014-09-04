@@ -3633,7 +3633,10 @@ YUI.Env.parseUA = function(subUA) {
         secure: false,
 
         /**
-         * The operating system.  Currently only detecting windows or macintosh
+         * The operating system.
+         *
+         * Possible values are `windows`, `macintosh`, `android`, `symbos`, `linux`, `rhino` and `ios`.
+         *
          * @property os
          * @type string
          * @default null
