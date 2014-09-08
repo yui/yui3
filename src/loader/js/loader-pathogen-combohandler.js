@@ -298,7 +298,13 @@ Y.mix(Y.Loader.prototype, {
 
         // Sort the groups.
         sorted.sort(function (a, b) {
-            return a.key > b.key;
+            if(a.key < b.key) {
+                return -1;
+            } else if (a.key > b.key) {
+                return 1;
+            } else {
+                return 0;
+            }
         });
 
         // Sort the modules.
