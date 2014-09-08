@@ -2699,8 +2699,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
         //only encode if we have something to encode
-        if(comboSources) {
-            if(usePathogen) {
+        if (comboSources) {
+            if (usePathogen) {
                 resolved = this._pathogenEncodeComboSources(resolved);
             } else {
                 resolved = this._encodeComboSources(resolved, comboSources);
