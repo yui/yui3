@@ -2644,7 +2644,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             group,
             mod,
             len,
-            i;
+            i,
+            hasComboModule = false;
+
         /*jslint vars: false */
 
         for (i = 0, len = sorted.length; i < len; i++) {
@@ -2684,6 +2686,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 addSingle(mod);
                 continue;
             }
+            hasComboModule = true;
             comboSources = comboSources || {};
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
@@ -2699,7 +2702,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
         //only encode if we have something to encode
-        if (comboSources) {
+        if (hasComboModule) {
             if (usePathogen) {
                 resolved = this._pathogenEncodeComboSources(resolved);
             } else {
