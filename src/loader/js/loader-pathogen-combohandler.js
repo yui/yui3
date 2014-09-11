@@ -66,12 +66,11 @@ Y.mix(Y.Loader.prototype, {
                 // Generate custom combo urls.
                 comboUrls = this._customResolve(resolvedMods, type);
 
-                if (window.JSON) {
-                    Y.log('Default encoding resulted in ' + resolved[type].length + ' URLs', 'info', NAME);
-                    Y.log(JSON.stringify(resolved[type], null, 4), 'info', NAME);
-                    Y.log('Custom encoding resulted in ' + comboUrls.length + ' URLs', 'info', NAME);
-                    Y.log(JSON.stringify(comboUrls, null, 4), 'info', NAME);
-                }
+                Y.log('Default encoding resulted in ' + resolved[type].length + ' URLs', 'info', NAME);
+                Y.log(Y.dump(resolved[type]), 'info', NAME);
+                Y.log('Custom encoding resulted in ' + comboUrls.length + ' URLs', 'info', NAME);
+                Y.log(Y.dump(comboUrls), 'info', NAME);
+                    
                 resolved[type] = resolved[type].concat(comboUrls);
             }
         }
