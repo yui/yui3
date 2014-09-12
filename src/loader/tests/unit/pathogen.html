@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/sam/widget-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">    
+    <title>Loader Automated Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<!-- This is the main test file, notice it's using the `yui-base` seed file 
+with an include for the loader-pathogen-encoder module. -->
+<script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript" src="../../../../build/loader-pathogen-encoder/loader-pathogen-encoder.js"></script>
+<script type="text/javascript">
+var Y = YUI();
+YUI.Env[Y.version].modules = {
+    mod1: {
+        fullpath: '../assets/mod1.js',
+        attributes: {
+            id: 'early-module-meta'
+        }
+    }
+};
+YUI.Env[Y.version].groups = {
+    foo: {
+        modules: {
+            mod2: {
+                fullpath: '../assets/mod2.js',
+                attributes: {
+                    id: 'early-group-meta'
+                }
+            }
+        }
+    }
+};
+YUI.Env[Y.version].skin = {
+    'default': 'earlyDefaultSkin'
+};
+</script>
+<script type="text/javascript">
+
+var filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw';
+
+// Below, `earlyModuleMeta` indicates that module metadata was provided before
+// the loader was fetched. This configuration is used to include/exclude the
+// `test_early_module_meta` test when module metadata was not provided before
+// the loader was fetched.
+
+var YUI_config = {
+    earlyModuleMeta: true,
+    gconfig: true,
+    gfilter: "raw" 
+};
+
+var TestName = 'Loader: Fetch';
+
+YUI.applyConfig({
+    comboLoader: "pathogen-encoder",
+    extendedCore: ['loader-pathogen-encoder']
+});
+
+YUI({
+    coverage: [ 'loader' ],
+    gallery: 'gallery-2013.08.07-20-34',
+    allowRollup: false,
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true },    
+    filter: YUI_config.gfilter,
+    modules: {
+        'pathogen-encoder-tests': {
+            fullpath: './assets/pathogen-encoder-tests.js',
+            requires: ['test']
+        }
+    }
+}).use('pathogen-encoder-tests', 'test-console', 'test', function (Y) {
+    new Y.Test.Console().render('#log');
+
+    Y.Test.Runner.run();
+});
+
+</script>
+</body>
+</html>

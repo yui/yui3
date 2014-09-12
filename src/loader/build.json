@@ -27,6 +27,11 @@
             "jsfiles": [
                 "rollup.js"
             ]
+        },
+        "loader-pathogen-combohandler": {
+            "jsfiles": [
+                "loader-pathogen-combohandler.js"
+            ]
         }
     },
     "rollups": {
@@ -35,6 +40,14 @@
                 "loader-base",
                 "loader-rollup",
                 "loader-yui3"
+            ]
+        },
+        "loader-pathogen-encoder": {
+            "files": [
+                "loader-base",
+                "loader-rollup",
+                "loader-yui3",
+                "loader-pathogen-combohandler"
             ]
         }
     }

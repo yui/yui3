@@ -2669,7 +2669,8 @@ Y.Loader.prototype = {
     resolve: function(calc, sorted) {
         var self     = this,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
-            addSingle;
+            addSingle,
+            usePathogen = Y.config.comboLoader && Y.config.customComboBase;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
@@ -2711,7 +2712,7 @@ Y.Loader.prototype = {
 
         /*jslint vars: true */
         var inserted     = (self.ignoreRegistered) ? {} : self.inserted,
-            comboSources = {},
+            comboSources,
             maxURLLength,
             comboMeta,
             comboBase,
@@ -2719,7 +2720,9 @@ Y.Loader.prototype = {
             group,
             mod,
             len,
-            i;
+            i,
+            hasComboModule = false;
+
         /*jslint vars: false */
 
         for (i = 0, len = sorted.length; i < len; i++) {
@@ -2759,7 +2762,8 @@ Y.Loader.prototype = {
                 addSingle(mod);
                 continue;
             }
-
+            hasComboModule = true;
+            comboSources = comboSources || {};
             comboSources[comboBase] = comboSources[comboBase] ||
                 { js: [], jsMods: [], css: [], cssMods: [] };
 
@@ -2769,19 +2773,46 @@ Y.Loader.prototype = {
             comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
 
             comboMeta[mod.type + 'Mods'].push(mod);
+            if (mod.type === JS || mod.type === CSS) {
+                resolved[mod.type + 'Mods'].push(mod);
+            }
         }
+        //only encode if we have something to encode
+        if (hasComboModule) {
+            if (usePathogen) {
+                resolved = this._pathogenEncodeComboSources(resolved);
+            } else {
+                resolved = this._encodeComboSources(resolved, comboSources);
+            }
+        }
+        return resolved;
+    },
 
-        // TODO: Refactor the encoding logic below into its own method.
-
-        /*jslint vars: true */
+    /**
+     * Encodes combo sources and appends them to an object hash of arrays from `loader.resolve`.
+     *
+     * @method _encodeComboSources
+     * @param {Object} resolved The object hash of arrays in which to attach the encoded combo sources.
+     * @param {Object} comboSources An object containing relevant data about modules.
+     * @return Object
+     * @private
+     */
+    _encodeComboSources: function(resolved, comboSources) {
         var fragSubset,
             modules,
             tmpBase,
             baseLen,
             frags,
             frag,
-            type;
-        /*jslint vars: false */
+            type,
+            mod,
+            maxURLLength,
+            comboBase,
+            comboMeta,
+            comboSep,
+            i,
+            len,
+            self = this;
 
         for (comboBase in comboSources) {
             if (comboSources.hasOwnProperty(comboBase)) {
@@ -2830,12 +2861,10 @@ Y.Loader.prototype = {
                                 resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
                             }
                         }
-                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(modules);
                     }
                 }
             }
         }
-
         return resolved;
     },
 
@@ -2875,7 +2904,6 @@ Y.Loader.prototype = {
         self.insert();
     }
 };
-
 
 
 }, '@VERSION@', {"requires": ["get", "features"]});
@@ -4919,6 +4947,14 @@ Y.mix(YUI.Env[Y.version].modules, {
             "features"
         ]
     },
+    "loader-pathogen-encoder": {
+        "use": [
+            "loader-base",
+            "loader-rollup",
+            "loader-yui3",
+            "loader-pathogen-combohandler"
+        ]
+    },
     "loader-rollup": {
         "requires": [
             "loader-base"
@@ -5960,7 +5996,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '7ef189c2dd804768209f77293bfb00d9';
+YUI.Env[Y.version].md5 = '084b177577bc032df11f5b4034dc3e1f';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
