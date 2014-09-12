@@ -931,7 +931,7 @@ YUI.add('loader-tests', function(Y) {
             }).use('a-mod-with-opt-dep', function (Y) {
                 setTimeout(function () {
                     test.resume(function () {
-
+                        Assert.isTrue(true);
                     });
                 }, 0);
             });
