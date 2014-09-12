@@ -2593,7 +2593,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var self     = this,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             addSingle,
-            usePathogen = Y.config.comboLoader;
+            usePathogen = Y.config.comboLoader && Y.config.customComboBase;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
