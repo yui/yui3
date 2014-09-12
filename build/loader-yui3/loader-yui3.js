@@ -1939,6 +1939,14 @@ Y.mix(YUI.Env[Y.version].modules, {
             "features"
         ]
     },
+    "loader-pathogen-encoder": {
+        "use": [
+            "loader-base",
+            "loader-rollup",
+            "loader-yui3",
+            "loader-pathogen-combohandler"
+        ]
+    },
     "loader-rollup": {
         "requires": [
             "loader-base"
@@ -2980,7 +2988,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '7ef189c2dd804768209f77293bfb00d9';
+YUI.Env[Y.version].md5 = '084b177577bc032df11f5b4034dc3e1f';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
