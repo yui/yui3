@@ -359,6 +359,24 @@ YUI.add('pathogen-encoder-tests', function (Y) {
             );
         }
     }));
+
+    suite.add(new Y.Test.Case({
+        name:  'Test fallback to default combohandler when customComboBase is not defined.',
+
+        setUp: function() {
+            Y.config.customComboBase = undefined;
+        },
+
+        'test fallback to default combohandler': function() {
+            loader = new Y.Loader({
+                combine: true,
+                require: ['node', 'dd', 'console']
+            });
+            resolved = loader.resolve(true);
+            Assert.areSame(1, resolved.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue(resolved.js[0].indexOf('http://yui.yahooapis.com/combo?') > -1, 'Default YUI combo URL should be included in the result ');
+        }
+    }));
     
     Y.Test.Runner.add(suite);
 });
