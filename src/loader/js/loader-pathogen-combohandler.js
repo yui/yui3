@@ -7,7 +7,6 @@ var GROUP_DELIM = ';',
     galleryVersion,
     GALLERY_RE = /^(?:yui:)?gallery-([^\/]+)/,
     TYPES = { js: true, css: true },
-    NAMESPACE = 'p/',
     customComboBase;
 
 Y.mix(Y.Loader.prototype, {
@@ -44,7 +43,7 @@ Y.mix(Y.Loader.prototype, {
 
         // Add the pathogen namespace to the combo base.
         if (Y.config.customComboBase) {
-            customComboBase = Y.config.customComboBase + NAMESPACE;
+            customComboBase = Y.config.customComboBase;
         }
 
         if (customComboBase && combine) {

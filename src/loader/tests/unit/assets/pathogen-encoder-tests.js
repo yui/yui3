@@ -2,7 +2,6 @@ YUI.add('pathogen-encoder-tests', function (Y) {
     var suite   = new Y.Test.Suite('Pathogen Encoder Tests'),
         Assert  = Y.Assert,
 
-        NAMESPACE       = 'p/',
         GROUP_DELIM     = ';',
         SUB_GROUP_DELIM = '+',
         MODULE_DELIM    = ',',
@@ -15,8 +14,8 @@ YUI.add('pathogen-encoder-tests', function (Y) {
         name: 'Test Basic URL Formatting',
 
         setUp: function () {
-            Y.config.customComboBase = 'http://combo.yuilibrary.com/';
-            customComboBase = Y.config.customComboBase + NAMESPACE;
+            Y.config.customComboBase = 'http://combo.yuilibrary.com/p/';
+            customComboBase = Y.config.customComboBase;
         },
 
         'test basic formatting for core only': function () {
@@ -200,8 +199,8 @@ YUI.add('pathogen-encoder-tests', function (Y) {
         name: 'Test Complex URL Formatting',
 
         setUp: function () {
-            Y.config.customComboBase = 'http://combo.yuilibrary.com/';
-            customComboBase = Y.config.customComboBase + NAMESPACE;
+            Y.config.customComboBase = 'http://combo.yuilibrary.com/p/';
+            customComboBase = Y.config.customComboBase;
         },
 
         'test formatting for groups: core + gallery + root + path': function () {
@@ -316,7 +315,7 @@ YUI.add('pathogen-encoder-tests', function (Y) {
         name: 'Test non-compressed fullpath modules',
 
         setUp: function () {
-            Y.config.customComboBase = 'http://combo.yuilibrary.com/';
+            Y.config.customComboBase = 'http://combo.yuilibrary.com/p/';
         },
 
         'test fullpath compression off by default': function () {
