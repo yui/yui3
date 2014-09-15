@@ -334,6 +334,27 @@ YUI.add('loader-tests', function(Y) {
             Assert.isArray(url.match(/3.5.0\/foogg\/foogg-min\.js/), 'Group match should be combo-loaded with the default URL');
             Assert.isArray(url.match(/3.5.0\/cookie\/cookie-min\.js/), 'Default match should combo-load with the group result');
         },
+        'test inherited combine false with groups': function () {
+            var loader = new testY.Loader({
+                combine: false,
+                groups: {
+                    mods: {
+                        modules: {
+                            'mods-actioninfos': {
+                                path: 'actioninfos/actioninfos.js'
+                            },
+                            'mods-test': {
+                                path: 'test/test.js'
+                            }
+                        }
+                    }
+                },
+                require: ['mods-actioninfos', 'mods-test']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'The loader should not have combined the modules within the group.');
+        },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
                 maxURLLength: 1024,
