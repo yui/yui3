@@ -1006,11 +1006,17 @@ Y.Loader.prototype = {
      */
     addGroup: function(o, name) {
         var mods = o.modules,
-            self = this, i, v;
+            self = this,
+            baseBase = o.baseBase || Y.config.baseBase,
+            i, v;
 
         name = name || o.name;
         o.name = name;
         self.groups[name] = o;
+
+        if (!o.base && baseBase && o.root) {
+            o.base = baseBase + o.root;
+        }
 
         if (o.patterns) {
             for (i in o.patterns) {
