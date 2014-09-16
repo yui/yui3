@@ -35,8 +35,8 @@
     Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
         /**
         * Override for the createlink method from the <a href="Plugin.CreateLinkBase.html">CreateLinkBase</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.createlink
+        * @for Plugin.ExecCommand.COMMANDS
+        * @method createlink
         * @static
         * @param {String} cmd The command executed: createlink
         * @return {Node} Node instance of the item touched by this command.

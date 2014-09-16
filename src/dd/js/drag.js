@@ -458,7 +458,6 @@
         * Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @method addToGroup
         * @param {String} g The group to add this Drag Instance to.
-        * @return {Self}
         * @chainable
         */
         addToGroup: function(g) {
@@ -470,7 +469,6 @@
         * Remove this Drag instance from a group, this should be used for on-the-fly group removals.
         * @method removeFromGroup
         * @param {String} g The group to remove this Drag Instance from.
-        * @return {Self}
         * @chainable
         */
         removeFromGroup: function(g) {
@@ -758,6 +756,9 @@
         * @param {EventFacade} ev  The Event
         */
         _handleMouseDownEvent: function(ev) {
+            if (this.validClick(ev)) {
+                ev.preventDefault();
+            }
             this.fire(EV_MOUSE_DOWN, { ev: ev });
         },
         /**
@@ -900,7 +901,6 @@
         * Remove a Selector added by addHandle
         * @method removeHandle
         * @param {String} str The selector for the handle to be removed.
-        * @return {Self}
         * @chainable
         */
         removeHandle: function(str) {
@@ -918,7 +918,6 @@
         * Add a handle to a drag element. Drag only initiates when a mousedown happens on this element.
         * @method addHandle
         * @param {String} str The selector to test for a valid handle. Must be a child of the element.
-        * @return {Self}
         * @chainable
         */
         addHandle: function(str) {
@@ -937,7 +936,6 @@
         * Remove an invalid handle added by addInvalid
         * @method removeInvalid
         * @param {String} str The invalid handle to remove from the internal list.
-        * @return {Self}
         * @chainable
         */
         removeInvalid: function(str) {
@@ -952,7 +950,6 @@
         * Add a selector string to test the handle against. If the test passes the drag operation will not continue.
         * @method addInvalid
         * @param {String} str The selector to test against to determine if this is an invalid drag handle.
-        * @return {Self}
         * @chainable
         */
         addInvalid: function(str) {
@@ -1028,7 +1025,6 @@
         /**
         * Starts the drag operation
         * @method start
-        * @return {Self}
         * @chainable
         */
         start: function() {
@@ -1070,7 +1066,6 @@
         /**
         * Ends the drag operation
         * @method end
-        * @return {Self}
         * @chainable
         */
         end: function() {
@@ -1243,7 +1238,6 @@
         /**
         * Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @method stopDrag
-        * @return {Self}
         * @chainable
         */
         stopDrag: function() {

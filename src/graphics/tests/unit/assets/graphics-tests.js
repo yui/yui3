@@ -719,7 +719,36 @@ vmlTests = new Y.Test.Case({
         Y.Assert.isTrue(myrect.test(".yui3-vmlRect"), "The compareTo method should return true.");
         myrect.destroy();
     },
-    
+
+    "test setRGBA()" : function()
+    {
+        var graphic = this.graphic,
+            fillrgba = 'rgba(75, 75, 75, .5)',
+            strokergba = 'rgba(217, 217, 217, .9)',
+            toHex = Y.Color.toHex,
+            rect = graphic.addShape({
+                type: "rect",
+                width: 10,
+                height: 10,
+                fill: {
+                    color: fillrgba
+                },
+                stroke: {
+                    color: strokergba
+                }
+            }),
+            fillcolor = toHex(fillrgba),
+            strokecolor = toHex(strokergba),
+            fillopacity = .5,
+            strokeopacity = .9,
+            fill = rect.get("fill"),
+            stroke = rect.get("stroke");
+        Y.Assert.areEqual(fillcolor, fill.color, "The color of the fill should be " + fill.color + "."); 
+        Y.Assert.areEqual(strokecolor, stroke.color, "The color of the stroke should be " + stroke.color + "."); 
+        Y.Assert.areEqual(fillopacity, fill.opacity, "The opacity of the fill should be " + fill.opacity + "."); 
+        Y.Assert.areEqual(strokeopacity, stroke.opacity, "The opacity of the stroke should be " + stroke.opacity + "."); 
+    },
+
     "test addVMLPieSlice()" : function()
     {
         var graphic = this.graphic,
@@ -1337,4 +1366,4 @@ suite.add(transformTests);
 
 Y.Test.Runner.add( suite );
 
-}, '@VERSION@' ,{requires:['graphics', 'test']});
+}, '@VERSION@' ,{requires:['graphics', 'color-base', 'test']});

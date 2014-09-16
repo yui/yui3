@@ -144,6 +144,15 @@ Y.mix(Y_Node.prototype, {
 
     },
 
+    /**
+    Returns whether the node is hidden by YUI or not. The hidden status is
+    determined by the 'hidden' attribute and the value of the 'display' CSS
+    property.
+
+    @method _isHidden
+    @return {Boolean} `true` if the node is hidden.
+    @private
+    **/
     _isHidden: function() {
         return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
@@ -154,7 +163,6 @@ Y.mix(Y_Node.prototype, {
      * animates the toggling of the node using given named effect.
      * @method toggleView
      * @for Node
-     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
@@ -210,7 +218,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', '');
+        this.setAttribute('hidden', 'hidden');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
@@ -252,7 +260,6 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      * If the "transition" module is loaded, toggleView optionally
      * animates the toggling of the nodes using given named effect.
      * @method toggleView
-     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable

@@ -459,7 +459,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         * Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @method addToGroup
         * @param {String} g The group to add this Drag Instance to.
-        * @return {Self}
         * @chainable
         */
         addToGroup: function(g) {
@@ -471,7 +470,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         * Remove this Drag instance from a group, this should be used for on-the-fly group removals.
         * @method removeFromGroup
         * @param {String} g The group to remove this Drag Instance from.
-        * @return {Self}
         * @chainable
         */
         removeFromGroup: function(g) {
@@ -759,6 +757,9 @@ YUI.add('dd-drag', function (Y, NAME) {
         * @param {EventFacade} ev  The Event
         */
         _handleMouseDownEvent: function(ev) {
+            if (this.validClick(ev)) {
+                ev.preventDefault();
+            }
             this.fire(EV_MOUSE_DOWN, { ev: ev });
         },
         /**
@@ -899,7 +900,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         * Remove a Selector added by addHandle
         * @method removeHandle
         * @param {String} str The selector for the handle to be removed.
-        * @return {Self}
         * @chainable
         */
         removeHandle: function(str) {
@@ -917,7 +917,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         * Add a handle to a drag element. Drag only initiates when a mousedown happens on this element.
         * @method addHandle
         * @param {String} str The selector to test for a valid handle. Must be a child of the element.
-        * @return {Self}
         * @chainable
         */
         addHandle: function(str) {
@@ -936,7 +935,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         * Remove an invalid handle added by addInvalid
         * @method removeInvalid
         * @param {String} str The invalid handle to remove from the internal list.
-        * @return {Self}
         * @chainable
         */
         removeInvalid: function(str) {
@@ -951,7 +949,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         * Add a selector string to test the handle against. If the test passes the drag operation will not continue.
         * @method addInvalid
         * @param {String} str The selector to test against to determine if this is an invalid drag handle.
-        * @return {Self}
         * @chainable
         */
         addInvalid: function(str) {
@@ -1027,7 +1024,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         /**
         * Starts the drag operation
         * @method start
-        * @return {Self}
         * @chainable
         */
         start: function() {
@@ -1069,7 +1065,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         /**
         * Ends the drag operation
         * @method end
-        * @return {Self}
         * @chainable
         */
         end: function() {
@@ -1242,7 +1237,6 @@ YUI.add('dd-drag', function (Y, NAME) {
         /**
         * Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @method stopDrag
-        * @return {Self}
         * @chainable
         */
         stopDrag: function() {

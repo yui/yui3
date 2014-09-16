@@ -1,6 +1,54 @@
 App Framework Change History
 ============================
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [ModelSync.Local]: Stringify hash before saving.
+
+3.16.0
+------
+
+### Router
+
+* Fixed issue where Router's `hasRoute(url)` method did not follow the same
+  semantics as the route dispatching process. Now all registered param handlers
+  will process any named params, giving them a chance to validate and reject a
+  param value. This will make the `hasRoute()` method an effective way to check
+  whether a router will dispatch to a route handler for a given URL. ([#][])
+
+
+[#1722]: https://github.com/yui/yui3/issues/1722
+
+
+3.15.0
+------
+
+### Model
+
+* __[!]__ Refactored `ModelSync.Local` to use a different, more readable
+  storage system. This new storage system is backwards-incompatible with
+  the old storage system. However, the API remains the same and no application
+  code needs to be changed unless you want to maintain the data that is
+  present in `localStorage` today. ([#1597][])
+
+* Fixed an issue where `history-hash-ie` loaded on non-IE browsers.
+  ([#1613][]: @ezequiel)
+
+
+[#1613]: https://github.com/yui/yui3/issues/1613
+
+
 3.14.1
 ------
 

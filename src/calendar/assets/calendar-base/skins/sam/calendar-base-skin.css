@@ -27,6 +27,8 @@
     margin: 0;
     font-size: 1em;
     font-weight: bold;
+    text-align: center;
+    width: 100%;
 }
 
 .yui3-skin-sam .yui3-calendar-day,
@@ -67,16 +69,24 @@
     color: #000000;
 }
 
-.yui3-skin-sam .yui3-calendar-header-label {
-    text-align: center;
-}
-
 .yui3-skin-sam .yui3-calendar-left-grid {
    margin-right:1em;
 }
 
+[dir="rtl"] .yui3-skin-sam .yui3-calendar-left-grid,
+.yui3-skin-sam [dir="rtl"] .yui3-calendar-left-grid {
+    margin-right: auto;
+    margin-left: 1em;
+}
+
 .yui3-skin-sam .yui3-calendar-right-grid {
    margin-left:1em;
+}
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendar-right-grid,
+.yui3-skin-sam [dir="rtl"] .yui3-calendar-right-grid {
+    margin-left: auto;
+    margin-right: 1em;
 }
 
 .yui3-skin-sam .yui3-calendar-day-highlighted {

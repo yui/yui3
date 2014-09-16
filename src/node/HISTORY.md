@@ -1,6 +1,34 @@
 Node Change History
 ===================
 
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* Add `invalid` to event whitelist.
+
+3.16.0
+------
+
+* getCell() throws an error if `shift` is not a recognized value.
+* Switched "instanceof Y.Node" to check for `_node`, to allow instances
+  from other sandboxes.
+* Clarified Node vs NodeList method docs. (@solmsted)
+
+3.15.0
+------
+
+* No changes.
+
 3.14.1
 ------
 

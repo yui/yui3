@@ -151,6 +151,8 @@
                 n = host.get(NODE),
                 c = n.cloneNode(true);
 
+            c.all('input[type="radio"]').removeAttribute('name');
+
             delete c._yuid;
             c.setAttribute('id', Y.guid());
             c.setStyle('position', 'absolute');

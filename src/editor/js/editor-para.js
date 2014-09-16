@@ -247,17 +247,20 @@
                             }
                         }
                     }
+
                     if (Y.UA.gecko) {
-                        /*
+                       /*
                         * This forced FF to redraw the content on backspace.
                         * On some occasions FF will leave a cursor residue after content has been deleted.
                         * Dropping in the empty textnode and then removing it causes FF to redraw and
                         * remove the "ghost cursors"
                         */
-                        d = e.changedNode;
-                        t = inst.config.doc.createTextNode(' ');
-                        d.appendChild(t);
-                        d.removeChild(t);
+                        // d = e.changedNode;
+                        // t = inst.config.doc.createTextNode(' ');
+                        // d.appendChild(t);
+                        // d.removeChild(t);
+
+                        this._fixGeckoOnBackspace(inst);
                     }
                     break;
             }
@@ -271,6 +274,49 @@
             }
 
         },
+
+        //If we just backspaced into a P on FF, we have to put the cursor
+        //before the BR that FF (usually) had injected when we used <ENTER> to
+        //leave the P.
+        _fixGeckoOnBackspace: function (inst) {
+            var sel = new inst.EditorSelection(),
+                node,
+                childNodes;
+
+            //not a cursor, not in a paragraph, or anchored at paragraph start.
+            if (!sel.isCollapsed || sel.anchorNode.get('nodeName') !== 'P' ||
+                sel.anchorOffset === 0) {
+                return;
+            }
+
+            //cursor not on the injected final BR
+            childNodes = sel.anchorNode.get('childNodes');
+            node = sel.anchorNode.get('lastChild');
+            if (sel.anchorOffset !== childNodes.size() || node.get('nodeName') !== 'BR') {
+                return;
+            }
+
+            //empty P (only contains BR)
+            if (sel.anchorOffset === 1) {
+                sel.selectNode(sel.anchorNode, true);
+                return;
+            }
+
+            //We only expect injected BR behavior when last Node is text
+            node = node.get('previousSibling');
+            if (node.get('nodeType') !== Node.TEXT_NODE) {
+                return;
+            }
+
+            offset = node.get('length');
+
+            // the cursor's position is strictly
+            // at the offset when this bug occurs
+            if (sel.getEditorOffset() === offset) {
+                sel.selectNode(node, true, offset);
+            }
+        },
+
         initializer: function() {
             var host = this.get(HOST);
             if (host.editorBR) {
@@ -303,4 +349,3 @@
     Y.namespace('Plugin');
 
     Y.Plugin.EditorPara = EditorPara;
-

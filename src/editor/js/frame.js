@@ -145,7 +145,7 @@
         * takes the current EventFacade and augments it to fire on the Frame host. It adds two new properties
         * to the EventFacade called frameX and frameY which adds the scroll and xy position of the iframe
         * to the original pageX and pageY of the event so external nodes can be positioned over the frame.
-        * @param {Event.Facade} e
+        * @param {EventFacade} e
         */
         _onDomEvent: function(e) {
             var xy, node;
@@ -196,7 +196,7 @@
         * @private
         * @method _DOMPaste
         * @description Simple pass thru handler for the paste event so we can do content cleanup
-        * @param {Event.Facade} e
+        * @param {EventFacade} e
         */
         _DOMPaste: function(e) {
             var inst = this.getInstance(),
@@ -483,7 +483,7 @@
         /**
         * @private
         * @method _setLinkedCSS
-        * @description Set's the linked CSS on the instance..
+        * @description Sets the linked CSS on the instance..
         */
         _setLinkedCSS: function(css) {
             if (this._ready) {
@@ -502,7 +502,10 @@
                 var inst = this.getInstance(),
                     node = inst.one('#extra_css');
 
-                node.remove();
+                if (node) {
+                    node.remove();
+                }
+
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');
             } else {
                 //This needs to be wrapped in a contentready callback for the !_ready state
@@ -556,7 +559,7 @@
 
                 });
             }
-            
+
             return inst.__use.apply(inst, args);
         },
         /**

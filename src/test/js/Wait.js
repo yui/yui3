@@ -3,7 +3,7 @@
  * Represents a stoppage in test execution to wait for an amount of time before
  * continuing.
  * @param {Function} segment A function to run when the wait is over.
- * @param {int} delay The number of milliseconds to wait before running the code.
+ * @param {Number} delay The number of milliseconds to wait before running the code.
  * @module test
  * @class Wait
  * @namespace Test

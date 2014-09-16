@@ -38,7 +38,7 @@ YUI.add('aplus-tests', function(Y) {
         'should run the full test suite': function() {
             var test = this;
 
-            promisesAplusTests(adapter, function (err) {
+            promisesAplusTests(adapter, {reporter: 'dot'}, function (err) {
                 test.resume(function() {
                     Assert.isNull(err, 'All promises tests should pass');
                 });

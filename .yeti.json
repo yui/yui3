@@ -1,4 +1,8 @@
 {
     "basedir": ".",
-    "glob": "**/tests/unit/*.html"
+    "glob": "**/tests/unit/*.html",
+    "coverageOptions": {
+        "instrument": false,
+        "query": "filter=coverage"
+    }
 }

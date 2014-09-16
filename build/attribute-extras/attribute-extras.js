@@ -44,8 +44,20 @@ YUI.add('attribute-extras', function (Y, NAME) {
          * <p>
          * The properties which can be modified through this interface are limited
          * to the following subset of attributes, which can be safely modified
-         * after a value has already been set on the attribute: readOnly, writeOnce,
-         * broadcast and getter.
+         * after a value has already been set on the attribute:
+         * </p>
+         * <dl>
+         *  <dt>readOnly;</dt>
+         *  <dt>writeOnce;</dt>
+         *  <dt>broadcast; and</dt>
+         *  <dt>getter.</dt>
+         * </dl>
+         * <p>
+         * Note: New attributes cannot be added using this interface. New attributes must be
+         * added using {{#crossLink "AttributeCore/addAttr:method"}}addAttr{{/crossLink}}, or an
+         * appropriate manner for a class which utilises Attributes (e.g. the
+         * {{#crossLink "Base/ATTRS:property"}}ATTRS{{/crossLink}} property in
+         * {{#crossLink "Base"}}Base{{/crossLink}}).
          * </p>
          * @method modifyAttr
          * @param {String} name The name of the attribute whose configuration is to be updated.
@@ -72,9 +84,8 @@ YUI.add('attribute-extras', function (Y, NAME) {
                         }
                     }
                 }
+            } else {
             }
-            /*jshint maxlen:200*/
-            /*jshint maxlen:150 */
         },
 
         /**
@@ -105,7 +116,7 @@ YUI.add('attribute-extras', function (Y, NAME) {
                 }
                 host.set(name, host._state.get(name, INIT_VALUE));
             } else {
-                Y.each(host._state.data, function(v, n) {
+                Y.Object.each(host._state.data, function(v, n) {
                     host.reset(n);
                 });
             }

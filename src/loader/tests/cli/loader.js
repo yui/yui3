@@ -2235,7 +2235,6 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("history-base")) > -1, "Module (history-base) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1, "Module (history-hash) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("history-hash-ie")) > -1, "Module (history-hash-ie) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1, "Module (history-html5) not found in sorted array");
         },
      "Testing history-base": function(data) {

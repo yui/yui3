@@ -404,7 +404,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         @param {Number} callback.index Index of the current model.
         @param {ModelList} callback.list The ModelList being filtered.
 
-    @return {Array|ModelList} Array of models for which the callback function
+    @return {Model[]|ModelList} Array of models for which the callback function
         returned a truthy value (empty if it never returned a truthy value). If
         the `options.asList` option is truthy, a new ModelList instance will be
         returned instead of an array.
@@ -449,7 +449,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @method get
     @param {String} name Attribute name or object property path.
-    @return {Any|Array} Attribute value or array of attribute values.
+    @return {Any|Any[]} Attribute value or array of attribute values.
     @see Model.get()
     **/
     get: function (name) {
@@ -536,7 +536,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method invoke
     @param {String} name Name of the method to call on each model.
     @param {Any} [args*] Zero or more arguments to pass to the invoked method.
-    @return {Array} Array of return values, indexed according to the index of
+    @return {Any[]} Array of return values, indexed according to the index of
       the model on which the method was called.
     **/
     invoke: function (name /*, args* */) {
@@ -889,7 +889,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     Returns an array containing the models in this list.
 
     @method toArray
-    @return {Array} Array containing the models in this list.
+    @return {Model[]} Array containing the models in this list.
     **/
     toArray: function () {
         return this._items.concat();

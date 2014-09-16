@@ -317,14 +317,57 @@ YUI.add('event-tap-unit-tests', function(Y) {
             clicker.simulate('click');
 
             Assert.areSame(Y.config.win.location.href, url, 'The url should not change because preventDefault() should be called.');
-        },
+        }
+
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'DOM event simulation',
 
         _should: {
             ignore: {
-
+                'simulate MS Pointer events': Y.Event._GESTURE_MAP.start !== 'MSPointerDown',
+                'simulate W3C Pointer events': Y.Event._GESTURE_MAP.start !== 'pointerdown'
             }
-        }
+        },
 
+        'simulate MS Pointer events': function () {
+            var test = this;
+
+            node.on('tap', function () {
+                test.resume(function () {
+
+                });
+            });
+
+            node.simulate('MSPointerDown');
+            setTimeout(function () {
+                node.simulate('MSPointerUp', {
+                    pageX: 100,
+                    pageY: 100
+                });
+            }, 0);
+            test.wait();
+        },
+
+        'simulate W3C Pointer events': function () {
+            var test = this;
+
+            node.on('tap', function () {
+                test.resume(function () {
+
+                });
+            });
+
+            node.simulate('pointerdown');
+            setTimeout(function () {
+                node.simulate('pointerup', {
+                    pageX: 100,
+                    pageY: 100
+                });
+            }, 0);
+            test.wait();
+        }
     }));
 
     Y.Test.Runner.add(suite);

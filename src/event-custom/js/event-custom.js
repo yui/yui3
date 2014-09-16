@@ -229,6 +229,18 @@ Y.CustomEvent.prototype = {
      */
 
     /**
+     * Flag for the default function to execute only if the
+     * firing event is the current target. This happens only
+     * when using custom event delegation and setting the
+     * flag to `true` mimics the behavior of event delegation
+     * in the DOM.
+     *
+     * @property defaultTargetOnly
+     * @type Boolean
+     * @default false
+     */
+
+    /**
      * The function to execute if a subscriber calls
      * stopPropagation or stopImmediatePropagation
      * @property stoppedFn
@@ -537,7 +549,7 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed.
      * @param {Object}   context The context object passed to subscribe.
-     * @return {int} returns the number of subscribers unsubscribed.
+     * @return {Number} returns the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -768,7 +780,7 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method unsubscribeAll
-     * @return {int} The number of listeners unsubscribed.
+     * @return {Number} The number of listeners unsubscribed.
      * @deprecated use detachAll.
      */
     unsubscribeAll: function() {
@@ -778,7 +790,7 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method detachAll
-     * @return {int} The number of listeners unsubscribed.
+     * @return {Number} The number of listeners unsubscribed.
      */
     detachAll: function() {
         return this.detach();

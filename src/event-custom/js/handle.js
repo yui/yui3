@@ -37,7 +37,7 @@ Y.EventHandle.prototype = {
     /**
      * Detaches this subscriber
      * @method detach
-     * @return {int} the number of detached listeners
+     * @return {Number} the number of detached listeners
      */
     detach: function() {
         var evt = this.evt, detached = 0, i;

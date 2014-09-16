@@ -670,8 +670,8 @@ Y.mix( DtKeyNav.prototype, {
      the provided cell, null is returned.
      @protected
      @method _getTHParent
-     @param {Y.Node} thCell Cell to find parent of
-     @return {Y.Node} Parent of the cell provided or null
+     @param {Node} thCell Cell to find parent of
+     @return {Node} Parent of the cell provided or null
      */
     _getTHParent: function (thCell) {
         var key = this._getCellColumnName(thCell),
@@ -689,7 +689,7 @@ Y.mix( DtKeyNav.prototype, {
      available. Other wise, extracts the column name from the classname
      @protected
      @method _getCellColumnName
-     @param {Y.Node} cell Cell to get column name from
+     @param {Node} cell Cell to get column name from
      @return String Column name of the provided cell
      */
     _getCellColumnName: function (cell) {

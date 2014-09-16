@@ -121,7 +121,7 @@ Y.mix(ColumnWidths.prototype, {
     The HTML template used to create the table's `<col>`s.
 
     @property COL_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<col/>'
     @since 3.5.0
     **/
@@ -131,7 +131,7 @@ Y.mix(ColumnWidths.prototype, {
     The HTML template used to create the table's `<colgroup>`.
 
     @property COLGROUP_TEMPLATE
-    @type {HTML}
+    @type {String}
     @default '<colgroup/>'
     @since 3.5.0
     **/
