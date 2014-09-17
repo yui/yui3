@@ -247,8 +247,19 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true if a base dir isn't in the config
      */
-    self.combine = o.base &&
-        (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);
+    ////////////////////////////////////////////////////////////
+    //                  BEGIN WF2 CHANGE                      //
+    // Justification: Re-introducing meta.combine from        //
+    //                shifter.json.                           //
+    ////////////////////////////////////////////////////////////
+    // self.combine = o.base &&
+    //     (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);
+    self.combine = typeof Y.Env.meta.combine === 'boolean' ?
+        Y.Env.meta.combine :
+        (o.base && (o.base.indexOf(self.comboBase.substr(0, 20)) > -1));
+    ////////////////////////////////////////////////////////////
+    //                  END WF2 CHANGE                        //
+    ////////////////////////////////////////////////////////////
 
     /**
     * The default seperator to use between files in a combo URL
