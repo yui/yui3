@@ -79,7 +79,7 @@
         * Handler for dragMode attribute setter.
         * @private
         * @method _setDragMode
-        * @param {String|Number} mode The Number value or the String for the DragMode to default all future drag instances to.
+        * @param String/Number The Number value or the String for the DragMode to default all future drag instances to.
         * @return Number The Mode to be set
         */
         _setDragMode: function(mode) {
@@ -207,6 +207,7 @@
         /**
         * Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @method stopDrag
+        * @return {Self}
         * @chainable
         */
         stopDrag: function() {
@@ -227,7 +228,7 @@
         * Internal listener for the mousemove on Document. Checks if the shim is in place to only call _move once per mouse move
         * @private
         * @method _docMove
-        * @param {EventFacade} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _docMove: function(ev) {
             if (!this._shimming) {
@@ -238,7 +239,7 @@
         * Internal listener for the mousemove DOM event to pass to the Drag's move method.
         * @private
         * @method _move
-        * @param {EventFacade} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {

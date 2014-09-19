@@ -1003,11 +1003,11 @@ YUI.add('series-cartesian-tests', function(Y) {
             };
             DestructorMockSeries = Y.Base.create("destructorMockSeries", Y.CartesianSeries, [], {
                 init: function() {
+                    this._xAxisChangeHandle = new Destroyer(this);
+                    this._yAxisChangeHandle = new Destroyer(this);
                     DestructorMockSeries.superclass.init.apply(this, arguments);
                 },
                 addSomeListeners: function() {
-                    this._xAxisChangeHandle = new Destroyer(this);
-                    this._yAxisChangeHandle = new Destroyer(this);
                     this._xDataReadyHandle = new Destroyer(this);
                     this._xDataUpdateHandle = new Destroyer(this);
                     this._yDataReadyHandle = new Destroyer(this);
@@ -1021,19 +1021,19 @@ YUI.add('series-cartesian-tests', function(Y) {
             });
             mockSeries = new DestructorMockSeries();
             series.destructor.apply(mockSeries);
-            mockSeries.set("rendered", true);
-            series.destructor.apply(mockSeries);
-            mockSeries.addSomeListeners();
             Y.Assert.isTrue(mockSeries._xAxisChangeHandle._attached, "The _xAxisChangeHandle should be attached.");
             Y.Assert.isTrue(mockSeries._yAxisChangeHandle._attached, "The _yAxisChangeHandle should be attached.");
+            mockSeries.set("rendered", true);
+            series.destructor.apply(mockSeries);
+            Y.Assert.isFalse(mockSeries._xAxisChangeHandle._attached, "The _xAxisChangeHandle should be detached.");
+            Y.Assert.isFalse(mockSeries._yAxisChangeHandle._attached, "The _yAxisChangeHandle should be detached.");
+            mockSeries.addSomeListeners();
             Y.Assert.isTrue(mockSeries._xDataReadyHandle._attached, "The _xDataReadyHandle should be attached.");
             Y.Assert.isTrue(mockSeries._yDataReadyHandle._attached, "The _yDataReadyHandle should be attached.");
             Y.Assert.isTrue(mockSeries._xDataUpdateHandle._attached, "The _xDataUpdateHandle should be attached.");
             Y.Assert.isTrue(mockSeries._yDataUpdateHandle._attached, "The _yDataUpdateHandle should be attached.");
             mockSeries.set("markers", []);
             series.destructor.apply(mockSeries); 
-            Y.Assert.isFalse(mockSeries._xAxisChangeHandle._attached, "The _xAxisChangeHandle should be detached.");
-            Y.Assert.isFalse(mockSeries._yAxisChangeHandle._attached, "The _yAxisChangeHandle should be detached.");
             Y.Assert.isFalse(mockSeries._xDataReadyHandle._attached, "The _xDataReadyHandle should be detached.");
             Y.Assert.isFalse(mockSeries._yDataReadyHandle._attached, "The _yDataReadyHandle should be detached.");
             Y.Assert.isFalse(mockSeries._xDataUpdateHandle._attached, "The _xDataUpdateHandle should be detached.");

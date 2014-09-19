@@ -483,7 +483,7 @@
     /**
     * The id of the outer cursor wrapper
     * @static
-    * @property CURID
+    * @property DEFAULT_TAG
     */
     Y.EditorSelection.CURID = 'yui-cursor';
 
@@ -876,7 +876,7 @@
         /**
         * Wrapper for the different range creation methods.
         * @method createRange
-        * @return {Range}
+        * @return {RangeObject}
         */
         createRange: function() {
             if (Y.config.doc.selection) {
@@ -902,11 +902,7 @@
             node = Y.Node.getDOMNode(node);
             var range = this.createRange();
             if (range.selectNode) {
-                try {
-                    range.selectNode(node);
-                } catch (err) {
-                    // Ignore selection errors like INVALID_NODE_TYPE_ERR
-                }
+                range.selectNode(node);
                 this._selection.removeAllRanges();
                 this._selection.addRange(range);
                 if (collapse) {
@@ -945,7 +941,7 @@
         * @return {Node}
         */
         getCursor: function() {
-            return Y.EditorSelection.ROOT.all('.' + Y.EditorSelection.CURID);
+            return Y.EditorSelection.ROOT.all('#' + Y.EditorSelection.CURID);
         },
         /**
         * Remove the cursor placeholder from the DOM.

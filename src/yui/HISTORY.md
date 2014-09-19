@@ -1,50 +1,6 @@
 YUI Core Change History
 =======================
 
-3.17.2
-------
-
-* No changes.
-
-3.17.1
-------
-
-* No changes.
-
-3.17.0
-------
-
-* No changes.
-
-3.16.0
-------
-
-* Allow arbitrary categories for logging, fixes logging issues with YUI Test.
-  ([#1746][])
-
-[#1746]: https://github.com/yui/yui3/pull/1746
-
-3.15.0
-------
-
-* Added `Y.require()` for importing ES6 modules. It's similar to `Y.use()` but
-  it follow the following signature:
-
-```js
-YUI().require('some-es6-module', function (Y, imports) {
-  var foo = imports['some-es6-module'].foo;
-});
-```
-* Set default `logLevel` to `info` if missing or not a real category.
-  ([#1610][]: @andrewnicols)
-* Fixed value of `this` inside ES6 module definitions.
-
-* Fixed UA detection in recent versions of the Amazon Silk browser.
-  ([#1576][]: @adinardi)
-
-[#1576]: https://github.com/yui/yui3/pull/1576
-[#1610]: https://github.com/yui/yui3/pull/1610
-
 3.14.1
 ------
 

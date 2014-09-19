@@ -56,8 +56,8 @@ function Notifier(handle, emitFacade) {
  * automatically added after those passed to fire().</p>
  *
  * @method fire
- * @param {EventFacade|DOMEventFacade|any} e (see description)
- * @param {any[]} [arg*] additional arguments received by all subscriptions
+ * @param e {EventFacade|DOMEventFacade|Object|any} (see description)
+ * @param arg* {any} additional arguments received by all subscriptions
  * @private
  */
 Notifier.prototype.fire = function (e) {

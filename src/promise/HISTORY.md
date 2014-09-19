@@ -1,33 +1,10 @@
 Promise Change History
 ======================
 
-3.17.2
+3.14.1
 ------
 
 * No changes.
-
-3.17.1
-------
-
-* No changes.
-
-3.17.0
-------
-
-* No changes.
-
-3.16.0
-------
-
-* Errors thrown inside the promise initialization function reject the promise.
-
-3.15.0
-------
-
-* Deprecated `resolver.then` in favor of `resolver._addCallbacks`.
-* Added new methods following the new emerging ES6 standard for promises.
-  This includes `promise.catch`, `Promise.all`, `Promise.race`,
-  `Promise.resolve` and `Promise.reject`.
 
 3.14.0
 ------

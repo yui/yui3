@@ -54,7 +54,7 @@ DataSourceCacheExtension.prototype = {
      * First look for cached response, then send request to live data.
      *
      * @method _beforeDefRequestFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -83,7 +83,7 @@ DataSourceCacheExtension.prototype = {
      * Adds data to cache before returning data.
      *
      * @method _beforeDefResponseFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>

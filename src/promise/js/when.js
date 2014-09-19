@@ -16,7 +16,15 @@ are provided, the original promise is returned.
 @return {Promise}
 **/
 Y.when = function (promise, callback, errback) {
-    promise = Promise.resolve(promise);
+    var value;
+
+    if (!Y.Promise.isPromise(promise)) {
+        value = promise;
+
+        promise = new Y.Promise(function (fulfill) {
+            fulfill(value);
+        });
+    }
 
     return (callback || errback) ? promise.then(callback, errback) : promise;
 };

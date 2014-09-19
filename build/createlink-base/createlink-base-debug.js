@@ -37,8 +37,8 @@ YUI.add('createlink-base', function (Y, NAME) {
     Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
         /**
         * Override for the createlink method from the <a href="Plugin.CreateLinkBase.html">CreateLinkBase</a> plugin.
-        * @for Plugin.ExecCommand.COMMANDS
-        * @method createlink
+        * @for ExecCommand
+        * @method COMMANDS.createlink
         * @static
         * @param {String} cmd The command executed: createlink
         * @return {Node} Node instance of the item touched by this command.

@@ -51,7 +51,7 @@ if (YUI.Env.DOMReady) {
  * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
- * @param wrapper {CustomEvent} the custom event wrapper for this DOM event
+ * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
  */
 
     var ua = Y.UA,
@@ -198,9 +198,7 @@ Y.extend(DOMEventFacade, Object, {
     preventDefault: function(returnValue) {
         var e = this._event;
         e.preventDefault();
-        if (returnValue) {
-            e.returnValue = returnValue;
-        }
+        e.returnValue = returnValue || false;
         this._wrapper.prevented = 1;
         this.prevented = 1;
     },
@@ -224,7 +222,7 @@ Y.DOMEventFacade = DOMEventFacade;
     /**
      * The native event
      * @property _event
-     * @type {DOMEvent}
+     * @type {Native DOM Event}
      * @private
      */
 
@@ -464,7 +462,7 @@ Event = function() {
      * Custom event wrappers for DOM events.  Key is
      * 'event:' + Element uid stamp + event type
      * @property _wrappers
-     * @type CustomEvent
+     * @type Y.Event.Custom
      * @static
      * @private
      */
@@ -582,6 +580,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
         onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
             var a = Y.Array(id), i, availHandle;
+
 
             for (i=0; i<a.length; i=i+1) {
                 _avail.push({
@@ -751,6 +750,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             }
 
             if (!fn || !fn.call) {
+// throw new TypeError(type + " attach call failed, callback undefined");
                 return false;
             }
 
@@ -1251,7 +1251,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @param {HTMLElement} el      the element to bind the handler to
          * @param {string}      type   the type of event handler
          * @param {function}    fn      the callback to invoke
-         * @param {Boolean}      capture capture or bubble phase
+         * @param {boolen}      capture capture or bubble phase
          * @static
          * @private
          */
@@ -1264,7 +1264,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @param {HTMLElement} el      the element to bind the handler to
          * @param {string}      type   the type of event handler
          * @param {function}    fn      the callback to invoke
-         * @param {Boolean}      capture capture or bubble phase
+         * @param {boolen}      capture capture or bubble phase
          * @static
          * @private
          */

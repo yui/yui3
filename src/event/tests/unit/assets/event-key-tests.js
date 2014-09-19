@@ -786,7 +786,6 @@ suite.add(new Y.Test.Case({
             count = 0,
             map = {
                 enter    : 13,
-                space    : 32,
                 esc      : 27,
                 backspace: 8,
                 tab      : 9,

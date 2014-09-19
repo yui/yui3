@@ -1418,16 +1418,6 @@ YUI.add('dom-core-test', function(Y) {
             node.removeAttribute('value')
         },
 
-        'value updated from null should be empty string': function() {
-            var node = document.getElementById('test-text-no-value'),
-                val = null;
-
-            Y.DOM.setValue(node, val);
-            Assert.areEqual('', Y.DOM.getValue(node));
-            Y.DOM.setValue(node, '');
-            node.removeAttribute('value');
-        },
-
         'textarea from html value should match new value': function() {
             var node = document.getElementById('test-textarea-text-value'),
                 val = 'new textarea test';
@@ -1443,15 +1433,6 @@ YUI.add('dom-core-test', function(Y) {
 
             Y.DOM.setValue(node, val);
             Assert.areEqual(val, Y.DOM.getValue(node));
-            Y.DOM.setValue('');
-        },
-
-        'textarea from null should be empty string': function() {
-            var node = document.getElementById('test-textarea-no-value'),
-                val = null;
-
-            Y.DOM.setValue(node, val);
-            Assert.areEqual('', Y.DOM.getValue(node));
             Y.DOM.setValue('');
         },
 
@@ -1481,16 +1462,6 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
             node.removeAttribute('value')
-        },
-
-        'button value updated from null should be empty string': function() {
-            var node = document.getElementById('test-button-no-value'),
-                val = null;
-
-            Y.DOM.setValue(node, val);
-            Assert.areEqual('', Y.DOM.getValue(node));
-            Y.DOM.setValue(node, '');
-            node.removeAttribute('value');
         },
 
         'option value should match updated value': function() {
@@ -1528,16 +1499,6 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(val, Y.DOM.getValue(node));
             Y.DOM.setValue(node, '');
             node.removeAttribute('value')
-        },
-
-        'option value updated from null should be null': function() {
-            var node = document.getElementById('test-option-no-value'),
-                val = null;
-
-            Y.DOM.setValue(node, val);
-            Assert.areEqual('', Y.DOM.getValue(node));
-            Y.DOM.setValue(node, '');
-            node.removeAttribute('value');
         }
     }));
 

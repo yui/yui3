@@ -411,7 +411,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateToSelection : function (oDate, index) {
-        oDate = this._normalizeTime(oDate);
+        oDate.setHours(12);
 
         if (this._canBeSelected(oDate)) {
 
@@ -1042,7 +1042,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._renderCustomRules();
         this._renderSelectedDates();
 
-        contentBox.setStyle("visibility", "inherit");
+        contentBox.setStyle("visibility", "visible");
     },
 
 
@@ -1204,7 +1204,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
                         } else {
                             curCell.setContent("&nbsp;");
-                            curCell.removeClass(CAL_DAY).addClass(CAL_NEXTMONTH_DAY);
+                            curCell.addClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
                         }
                         break;
                     case 1:
@@ -1257,7 +1257,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._paneProperties[paneId].paneDate = newDate;
 
         // Bring the pane visibility back after all DOM changes are done
-        pane.setStyle("visibility", "inherit");
+        pane.setStyle("visibility", "visible");
 
     },
 
@@ -1284,7 +1284,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      /**
      * A rendering assist method that initializes the calendar header HTML
      * based on a given date and potentially the provided headerRenderer.
-     * @method _initCalendarHeader
+     * @method _updateCalendarHeader
      * @param {Date} baseDate The date with which to initialize the calendar header.
      * @private
      */
@@ -1506,7 +1506,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
      /**
         * A template for a single cell with a weekday name.
-        * @property WEEKDAY_TEMPLATE
+        * @property CALDAY_ROW_TEMPLATE
         * @type String
         * @protected
         * @static

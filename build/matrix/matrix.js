@@ -306,7 +306,7 @@ var MatrixUtil = {
          * Breaks up a 2d transform matrix into a series of transform operations.
          *
          * @method decompose
-         * @param {Array} matrix A 3x3 multidimensional array
+         * @param {Array} 3x3 matrix array
          * @return Array
          */
         decompose: function(matrix)

@@ -827,17 +827,12 @@ YUI.add('attribute-tests', function(Y) {
         testReset : function() {
             var h = this.createHost({A:"MyAVal", B:"MyBVal", C:"MyCVal", D:"MyDVal", E:"MyEVal", DE:"MyDEVal"});
 
-            h.addAttr('length', {
-                value: 100
-            });
-
             h.set("A", "MyNewAVal");
             h.set("B", "MyNewBVal");
             h.set("C", "MyNewCVal");
             h.set("D", "MyNewDVal");
             h.set("E", "MyNewEVal");
             h.set("DE", "MyNewDEVal");
-            h.set('length', 50);
 
             Y.Assert.areEqual("MyNewAVal", h.get("A"));
             Y.Assert.areEqual("MyNewBVal", h.get("B"));
@@ -860,7 +855,6 @@ YUI.add('attribute-tests', function(Y) {
             Y.Assert.areEqual("DVal", h.get("D"));
             Y.Assert.areEqual("MyEVal", h.get("E"));
             Y.Assert.areEqual("MyDEVal", h.get("DE"));
-            Y.Assert.areEqual(100, h.get("length"));
         },
 
         testMassSetGet : function() {

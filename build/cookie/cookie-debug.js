@@ -211,6 +211,7 @@ YUI.add('cookie', function (Y, NAME) {
          * <code>Y.config.doc</code> to change the document that the cookie
          * utility uses for everyday purposes.
          * @param {Object} newDoc The object to use as the document.
+         * @return {void}
          * @method _setDoc
          * @private
          */
@@ -249,7 +250,7 @@ YUI.add('cookie', function (Y, NAME) {
          *      function is not used if the cookie doesn't exist. The function can be
          *      passed instead of the options object for backwards compatibility. When
          *      raw is set to true, the cookie value is not URI decoded.
-         * @return {Any} If no converter is specified, returns a string or null if
+         * @return {Variant} If no converter is specified, returns a string or null if
          *      the cookie doesn't exist. If the converter is specified, returns the value
          *      returned from the converter or null if the cookie doesn't exist.
          * @method get
@@ -295,7 +296,7 @@ YUI.add('cookie', function (Y, NAME) {
          * @param {Function} converter (Optional) A function to run on the value before returning
          *      it. The function is not used if the cookie doesn't exist.
          * @param {Object} options (Optional) Containing one or more settings for cookie parsing.
-         * @return {Any} If the cookie doesn't exist, null is returned. If the subcookie
+         * @return {Variant} If the cookie doesn't exist, null is returned. If the subcookie
          *      doesn't exist, null if also returned. If no converter is specified and the
          *      subcookie exists, a string is returned. If a converter is specified and the
          *      subcookie exists, the value returned from the converter is returned.
@@ -420,7 +421,7 @@ YUI.add('cookie', function (Y, NAME) {
         /**
          * Sets a cookie with a given name and value.
          * @param {String} name The name of the cookie to set.
-         * @param {Any} value The value to set for the cookie.
+         * @param {Variant} value The value to set for the cookie.
          * @param {Object} options (Optional) An object containing one or more
          *      cookie options: path (a string), domain (a string), expires (a Date object),
          *      secure (true/false), and raw (true/false). Setting raw to true indicates
@@ -448,7 +449,7 @@ YUI.add('cookie', function (Y, NAME) {
          * Sets a sub cookie with a given name to a particular value.
          * @param {String} name The name of the cookie to set.
          * @param {String} subName The name of the subcookie to set.
-         * @param {Any} value The value to set.
+         * @param {Variant} value The value to set.
          * @param {Object} options (Optional) An object containing one or more
          *      cookie options: path (a string), domain (a string), expires (a Date object),
          *      and secure (true/false).

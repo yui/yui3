@@ -92,13 +92,6 @@ YUI.add('dd-tests', function(Y) {
 
     template = {
         name: 'DD Test',
-
-        _should: {
-            ignore: {
-                'test: proxy cloneNode with radio inputs': Y.UA.phantomjs || (Y.UA.android && Y.UA.android < 4.4)
-            }
-        },
-
         setUp : function() {
         },
         
@@ -803,23 +796,6 @@ YUI.add('dd-tests', function(Y) {
 
             });
 
-        },
-        'test: proxy cloneNode with radio inputs': function() {
-            var radioInput = Y.one('#radio input');
-
-            _resetCount();
-
-            var dd = new Y.DD.Drag({
-                node: '#radio'
-            }).plug(Y.Plugin.DDProxy, {
-                cloneNode: true
-            });
-
-            this.wait(function() {
-                _fakeMove(dd, 1000);
-
-                Y.Assert.isTrue(radioInput.get('checked'));
-            }, 100);
         }
     };
     

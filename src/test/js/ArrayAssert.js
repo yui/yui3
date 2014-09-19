@@ -18,8 +18,8 @@ YUITest.ArrayAssert = {
      * Simple indexOf() implementation for an array. Defers to native
      * if available.
      * @param {Array} haystack The array to search.
-     * @param {Any} needle The value to locate.
-     * @return {Number} The index of the needle if found or -1 if not.
+     * @param {Variant} needle The value to locate.
+     * @return {int} The index of the needle if found or -1 if not.
      * @method _indexOf
      * @private
      */
@@ -195,7 +195,7 @@ YUITest.ArrayAssert = {
      * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
-     * @param {Number} index The index at which the value should exist.
+     * @param {int} index The index at which the value should exist.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method indexOf
      * @static
@@ -262,6 +262,7 @@ YUITest.ArrayAssert = {
      * @param {Function} comparator A function that returns true if the values are equivalent
      *      or false if not.
      * @param {String} message (Optional) The message to display if the assertion fails.
+     * @return {Void}
      * @method itemsAreEquivalent
      * @static
      */
@@ -351,7 +352,7 @@ YUITest.ArrayAssert = {
      * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
-     * @param {Number} index The index at which the value should exist.
+     * @param {int} index The index at which the value should exist.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method lastIndexOf
      * @static

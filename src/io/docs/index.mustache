@@ -141,14 +141,6 @@ YUI().use("io-base", function(Y) {
             <td>Specific HTTP headers and values to be sent with the transaction (e.g., <code>{ 'Content-Type': 'application/xml; charset=utf-8' } </code>).</td>
         </tr>
         <tr>
-            <td>username (string).</td>
-            <td>Username for a basic HTTP authentication (e.g. .htaccess).</td>
-        </tr>
-        <tr>
-            <td>password (string).</td>
-            <td>Password for a basic HTTP authentication (e.g. .htaccess).</td>
-        </tr>
-        <tr>
             <td>on (object)</td>
             <td>This object can be used to register transaction event handlers for the set of supported io events, listed below. These events fire in addition to the global io events.  All events handlers are optional.
                 <ul class="topspace">
@@ -256,23 +248,6 @@ var cfg = {
     }
 };
 
-```
-
-<p>Example of authentication with `Y.io`.</p>
-
-```
-Y.io('priv/data.json', {
-    username: 'foo',
-    password: 'bar',
-    on: {
-        success: function () {
-            //got the data, carry on
-        },
-        failure: function () {
-            //err, 401
-        }
-    }
-});
 ```
 
 <h3>The Response Object</h3>

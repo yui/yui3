@@ -11,7 +11,7 @@
  * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
- * @param wrapper {CustomEvent} the custom event wrapper for this DOM event
+ * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
  */
 
     var ua = Y.UA,
@@ -158,9 +158,7 @@ Y.extend(DOMEventFacade, Object, {
     preventDefault: function(returnValue) {
         var e = this._event;
         e.preventDefault();
-        if (returnValue) {
-            e.returnValue = returnValue;
-        }
+        e.returnValue = returnValue || false;
         this._wrapper.prevented = 1;
         this.prevented = 1;
     },
@@ -184,7 +182,7 @@ Y.DOMEventFacade = DOMEventFacade;
     /**
      * The native event
      * @property _event
-     * @type {DOMEvent}
+     * @type {Native DOM Event}
      * @private
      */
 

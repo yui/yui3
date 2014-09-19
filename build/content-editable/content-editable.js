@@ -93,7 +93,7 @@ YUI.add('content-editable', function (Y, NAME) {
         * In case of ContentEditable element these will be equal to pageX and pageY of the container.
         * @private
         * @method _onDomEvent
-        * @param {EventFacade} e
+        * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
             var xy;
@@ -120,7 +120,7 @@ YUI.add('content-editable', function (Y, NAME) {
         * Simple pass thru handler for the paste event so we can do content cleanup
         * @private
         * @method _DOMPaste
-        * @param {EventFacade} e
+        * @param {Event.Facade} e
         */
         _DOMPaste: function(e) {
             var inst = this.getInstance(),
@@ -331,10 +331,10 @@ YUI.add('content-editable', function (Y, NAME) {
         },
 
         /**
-        * Sets the linked CSS on the instance.
+        * Set's the linked CSS on the instance.
         * @private
         * @method _setLinkedCSS
-        * @param {String} css The linkedcss value
+        * @param {css} String The linkedcss value
         * @return {String}
         */
         _setLinkedCSS: function(css) {
@@ -350,10 +350,10 @@ YUI.add('content-editable', function (Y, NAME) {
         },
 
         /**
-        * Sets the dir (language direction) attribute on the container.
+        * Set's the dir (language direction) attribute on the container.
         * @private
         * @method _setDir
-        * @param {String} value The language direction
+        * @param {value} String The language direction
         * @return {String}
         */
         _setDir: function(value) {
@@ -375,7 +375,7 @@ YUI.add('content-editable', function (Y, NAME) {
         * Set's the extra CSS on the instance.
         * @private
         * @method _setExtraCSS
-        * @param {String} css The CSS style to be set as extra css
+        * @param {css} String The CSS style to be set as extra css
         * @return {String}
         */
         _setExtraCSS: function(css) {
@@ -401,10 +401,10 @@ YUI.add('content-editable', function (Y, NAME) {
         },
 
         /**
-        * Sets the language value on the instance.
+        * Set's the language value on the instance.
         * @private
         * @method _setLang
-        * @param {String} value The language to be set
+        * @param {value} String The language to be set
         * @return {String}
         */
         _setLang: function(value) {

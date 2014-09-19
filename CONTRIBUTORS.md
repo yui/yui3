@@ -1,7 +1,6 @@
 Reviewers
 =========
 
-* [@caridy](https://github.com/caridy)
 * [@davglass](https://github.com/davglass)
 * [@ericf](https://github.com/ericf)
 * [@lsmith](https://github.com/lsmith)
@@ -11,8 +10,8 @@ Committers
 ==========
 
 * [@allenrabinovich](https://github.com/allenrabinovich)
-* [@andrewnicols](https://github.com/andrewnicols)
 * [@apipkin](https://github.com/apipkin)
+* [@caridy](https://github.com/caridy)
 * [@clarle](https://github.com/clarle)
 * [@derek](https://github.com/derek)
 * [@ekashida](https://github.com/ekashida)

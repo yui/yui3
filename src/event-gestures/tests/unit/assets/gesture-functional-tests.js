@@ -171,15 +171,15 @@ YUI.add('gesture-functional-tests', function(Y) {
 
         _should: {
             /* 
-                TODO: Gesture simulate issue in IE 10 and 11 (scrollview has the same issue, need to debug). Unit tests work.
+                TODO: Gesture simulate issue in IE10 (scrollview has the same issue, need to debug.) Unit tests work.
 
                 TODO: Is there a good way to simulate functional tests in PhantomJS?
             */
             ignore: {
-                'test: flick'         : (Y.UA.ie === 10 || Y.UA.ie === 11 || Y.UA.phantomjs),
-                'test: move'          : (Y.UA.ie === 10 || Y.UA.ie === 11 || Y.UA.phantomjs),
-                'test: move detach'   : (Y.UA.ie === 10 || Y.UA.ie === 11 || Y.UA.phantomjs),
-                'test: move delegate' : (Y.UA.ie === 10 || Y.UA.ie === 11 || Y.UA.phantomjs)
+                'test: flick'         : (Y.UA.ie === 10 || Y.UA.phantomjs),
+                'test: move'          : (Y.UA.ie === 10 || Y.UA.phantomjs),
+                'test: move detach'   : (Y.UA.ie === 10 || Y.UA.phantomjs),
+                'test: move delegate' : (Y.UA.ie === 10 || Y.UA.phantomjs)
             }
         }
 

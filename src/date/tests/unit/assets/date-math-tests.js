@@ -3,11 +3,11 @@ YUI.add('date-math-tests', function(Y) {
         // Set up the page
         var Assert = Y.Assert,
             suite = new Y.Test.Suite("Date.Math");
-
+    
 
         suite.add(new Y.Test.Case({
             name: "isValidDate Tests",
-
+        
             testValidDate: function() {
                 var validDate = new Date(1982, 11, 2);
                 Assert.isTrue(Y.Date.isValidDate(validDate), "Expected true.");
@@ -21,7 +21,7 @@ YUI.add('date-math-tests', function(Y) {
 
         suite.add(new Y.Test.Case({
             name: "DateMath Tests",
-
+        
             'test: addDays': function() {
                 var initDate = new Date(1983, 11, 2);
                 var finalDate = new Date (1983, 11, 4);
@@ -43,7 +43,7 @@ YUI.add('date-math-tests', function(Y) {
 
         suite.add(new Y.Test.Case({
             name: "DaysInMonth Tests",
-
+        
             'test: daysInMonth': function() {
                 var initDate = new Date(1982, 10, 1);
                 Assert.areSame(Y.Date.daysInMonth(initDate), 30, "Expected true.");
@@ -53,7 +53,7 @@ YUI.add('date-math-tests', function(Y) {
                 //Non Leap Yaer
                 var initDate = new Date(1982, 1, 1);
                 Assert.areSame(Y.Date.daysInMonth(initDate), 28, "Expected true.");
-
+                
                 //Leap Year
                 var initDate = new Date(1984, 1, 1);
                 Assert.areSame(Y.Date.daysInMonth(initDate), 29, "Expected true.");
@@ -101,6 +101,6 @@ YUI.add('date-math-tests', function(Y) {
             }
         }));
 
-
+        
         Y.Test.Runner.add(suite);
 });

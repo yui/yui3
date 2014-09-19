@@ -15,7 +15,7 @@
  *
  * @class Node
  * @constructor
- * @param {HTMLElement} node the DOM node to be mapped to the Node instance.
+ * @param {DOMNode} node the DOM node to be mapped to the Node instance.
  * @uses EventTarget
  */
 
@@ -60,7 +60,7 @@ var DOT = '.',
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
-         * @type HTMLElement
+         * @type DOMNode
          * @private
          */
         this._node = node;
@@ -137,8 +137,8 @@ Y_Node._instances = {};
  * @method getDOMNode
  * @static
  *
- * @param {Node|HTMLElement} node The Node instance or an HTMLElement
- * @return {HTMLElement} The DOM node bound to the Node instance.  If a DOM node is passed
+ * @param {Node | HTMLNode} node The Node instance or an HTMLNode
+ * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
  * as the node argument, it is simply returned.
  */
 Y_Node.getDOMNode = function(node) {
@@ -156,7 +156,7 @@ Y_Node.getDOMNode = function(node) {
  * @method scrubVal
  * @static
  *
- * @param {HTMLElement|HTMLElement[]|Node} node The Node instance or an HTMLElement
+ * @param {any} node The Node instance or an HTMLNode
  * @return {Node | NodeList | Any} Depends on what is returned from the DOM node.
  */
 Y_Node.scrubVal = function(val, node) {
@@ -587,8 +587,6 @@ Y.mix(Y_Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
-     * just element nodes will be returned(default)
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -601,8 +599,6 @@ Y.mix(Y_Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} [all] Whether text nodes as well as element nodes should be returned, or
-     * just element nodes will be returned(default)
      * @return {Node} Node instance or null if not found
      */
     next: function(fn, all) {
@@ -694,7 +690,7 @@ Y.mix(Y_Node.prototype, {
      * and does not change the node bound to the Node instance.
      * Shortcut for myNode.get('parentNode').replaceChild(newNode, myNode);
      * @method replace
-     * @param {Node | HTMLElement} newNode Node to be inserted
+     * @param {Node | HTMLNode} newNode Node to be inserted
      * @chainable
      *
      */
@@ -764,8 +760,8 @@ Y.mix(Y_Node.prototype, {
      * Invokes a method on the Node instance
      * @method invoke
      * @param {String} method The name of the method to invoke
-     * @param {any} [args*] Arguments to invoke the method with.
-     * @return {any} Whatever the underly method returns.
+     * @param {Any}  a, b, c, etc. Arguments to invoke the method with.
+     * @return Whatever the underly method returns.
      * DOM Nodes and Collections return values
      * are converted to Node/NodeList instances.
      *
@@ -840,7 +836,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns the DOM node bound to the Node instance
      * @method getDOMNode
-     * @return {HTMLElement}
+     * @return {DOMNode}
      */
     getDOMNode: function() {
         return this._node;

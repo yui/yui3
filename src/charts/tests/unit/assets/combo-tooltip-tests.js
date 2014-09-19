@@ -359,4 +359,4 @@ YUI.add('combo-tooltip-tests', function(Y) {
     suite.add(getTooltipTest("combo", null, styledTooltip, null, false));
 
     Y.Test.Runner.add(suite);
-}, '@VERSION@' ,{requires:['charts', 'color-base', 'test']});
+}, '@VERSION@' ,{requires:['charts', 'test']});

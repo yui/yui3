@@ -1,34 +1,6 @@
 YQL Change History
 ==================
 
-3.17.2
-------
-
-* No changes.
-
-3.17.1
-------
-
-* No changes.
-
-3.17.0
-------
-
-* No changes.
-
-3.16.0
-------
-
-* Fixed an issue where `yql-jsonp`, `yql-nodejs`, and `yql-winjs` were missing `yql`
-  from their `requires` list. ([#1737][]: @ezequiel)
-
-[#1737]: https://github.com/yui/yui3/issues/1737
-
-3.15.0
-------
-
-* No changes.
-
 3.14.1
 ------
 

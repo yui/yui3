@@ -164,9 +164,11 @@ YUI.add('widget-position', function (Y, NAME) {
          *
          * @method move
          *
-         * @param {Number|Number[]} x The new x position or [x, y] values passed
-         * as an array to support simple pass through of Node.getXY results
-         * @param {Number} [y] The new y position
+         * @param {Number} x The new x position
+         * @param {Number} y The new y position
+         * <p>Or</p>
+         * @param {Array} x, y values passed as an array ([x, y]), to support
+         * simple pass through of Node.getXY results
          */
         move: function () {
             var args = arguments,

@@ -24,7 +24,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
      * response is received asynchronously.
      *
      * @method _defRequestFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
