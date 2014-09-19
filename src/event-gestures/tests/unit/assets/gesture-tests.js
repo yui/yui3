@@ -367,18 +367,18 @@ YUI.add('gesture-tests', function(Y) {
             Assert.areSame(docElem.style.msTouchAction, '');
 
             this.handles.push(doc.on('gesturemovestart', noop));
-            Assert.areSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style.msTouchAction, 'none');
 
             this.handles.push(doc.on('gesturemove', noop));
-            Assert.areSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style.msTouchAction, 'none');
 
             this.handles.push(doc.on('gesturemoveend', noop));
-            Assert.areSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style.msTouchAction, 'none');
 
             var h = this.handles.pop();
             h.detach();
 
-            Assert.areSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style.msTouchAction, 'none');
 
             Y.Array.each(this.handles, function(h) {
                 h.detach();
