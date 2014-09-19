@@ -1,3 +1,4 @@
+/*jslint maxlen: 350 */
 var isFunction = Y.Lang.isFunction;
 
 /**
@@ -171,11 +172,7 @@ JSONPRequest.prototype = {
                         if (isTimeout) {
                             ++self._timeouts[proxy];
                             --self._requests[proxy];
-                            Y.log(proxy
-                                + ' timed out - timeouts(' + self._timeouts[proxy]
-                                + ') failures(' + self._failures[proxy]
-                                + ') requests(' + self._requests[proxy]
-                                + ')');
+                            Y.log(proxy + ' timed out - timeouts(' + self._timeouts[proxy] + ') failures(' + self._failures[proxy] + ') requests(' + self._requests[proxy] + ')');
                         } else if (isFailure) {
                             ++self._failures[proxy];
                             if (self._timeouts[proxy] > 0) {
@@ -183,11 +180,7 @@ JSONPRequest.prototype = {
                             } else {
                                 --self._requests[proxy];
                             }
-                            Y.log(proxy
-                                + ' failure - timeouts(' + self._timeouts[proxy]
-                                + ') failures(' + self._failures[proxy]
-                                + ') requests(' + self._requests[proxy]
-                                + ')');
+                            Y.log(proxy + ' failure - timeouts(' + self._timeouts[proxy] + ') failures(' + self._failures[proxy] + ') requests(' + self._requests[proxy] + ')');
                         } else {
                             if (!self._requests[proxy]) {
                                 execute = false;
@@ -198,11 +191,7 @@ JSONPRequest.prototype = {
                                 }
                             }
                             --self[counter][proxy];
-                            Y.log(proxy
-                                + ' response received - timeouts(' + self._timeouts[proxy]
-                                + ') failures(' + self._failures[proxy]
-                                + ') requests(' + self._requests[proxy]
-                                + ')');
+                            Y.log(proxy + ' response received - timeouts(' + self._timeouts[proxy] + ') failures(' + self._failures[proxy] + ') requests(' + self._requests[proxy] + ')');
                         }
                     //}
 
