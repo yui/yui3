@@ -310,6 +310,50 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name : "Should not have TypeError when both `timeout` and `failure` handlers are set.",
+
+    "Having timeout and failure handles should not cause a TypeError": function () {
+        var test = this,
+            callbacks = [],
+            error = false,
+            timeoutCalled,
+            successCalled,
+            windowOnError = window.onerror,
+            jsonp;
+
+        window.onerror = function(e) {
+            error = e;
+        };
+
+        jsonp = new Y.JSONPRequest('echo/jsonp?wait=2&callback={callback}', {
+            timeout: 1,
+            on: {
+                success: function (data) {
+                    //success logic
+                },
+                timeout: function () {
+                    //timeout logic
+                },
+                failure: function() {
+                    //failure logic
+                }
+            }
+        });
+
+        jsonp.send();
+
+        this.wait(function() {
+           window.onerror = windowOnError;
+           if(error) {
+               Y.Assert.fail(error);
+           } else {
+               Y.Assert.isTrue(true);
+           }
+        }, 3000);
+    }
+}));
+
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@' ,{requires:['jsonp', 'test'] });
