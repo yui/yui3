@@ -16,7 +16,7 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
         //Event handler called when the transaction begins:
         var handleStart = function(id, a) {
             Y.log("io:start firing.", "info", "example");
-            output.setHTML("<li>Loading news stories via Yahoo! Pipes feed...</li>");
+            output.set("innerHTML", "<li>Loading news stories via Yahoo! Pipes feed...</li>");
         }
 
         //Event handler for the success event -- use this handler to write the fetched
@@ -41,7 +41,7 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
                 }
 
                 //Output the string to the page:
-                output.setHTML(s);
+                output.set("innerHTML", s);
                 output.addClass("yui-null");
 
             } else {
@@ -54,11 +54,6 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
         //HTTP 2xx, a failure is reported and this function is called:
         var handleFailure = function(id, o, a) {
             Y.log("ERROR " + id + " " + a, "info", "example");
-            if (o.status === 0) {
-                output.setHTML('<li>The service might be down - ' + 
-                'would you like to <a href="xdr.html?mock=true">try this '+
-                'example with mock data</a>?</li>');
-            }
         }
 
         //With all the apparatus in place, we can now configure our
@@ -81,6 +76,10 @@ YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
         //time the button is clicked:
         var handleClick = function(o) {
             Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
+	    // Remove the default "X-Requested-With" header as this will
+	    // prevent the request from succeeding; the Pipes
+	    // resource will not accept user-defined HTTP headers.
+	    Y.io.header('X-Requested-With');
             var obj = Y.io(
                 //this is a specific Pipes feed, populated with cycling news:
                 "http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",

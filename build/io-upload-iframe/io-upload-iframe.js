@@ -25,7 +25,7 @@ var w = Y.config.win,
  * @param {Object} io
  */
 function _cFrame(o, c, io) {
-    var i = Y.Node.create('<iframe id="io_iframe' + o.id + '" name="io_iframe' + o.id + '" />');
+    var i = Y.Node.create('<iframe src="#" id="io_iframe' + o.id + '" name="io_iframe' + o.id + '" />');
         i._node.style.position = 'absolute';
         i._node.style.top = '-1000px';
         i._node.style.left = '-1000px';
@@ -290,10 +290,7 @@ Y.mix(Y.IO.prototype, {
                 // Restore HTML form attributes to their original values.
                 form = (typeof form.id === 'string') ? d.getElementById(form.id) : form.id;
 
-                // Check whether the form still exists before resetting it.
-                if (form) {
-                    io._resetAttrs(form, this._originalFormAttrs);
-                }
+                io._resetAttrs(form, this._originalFormAttrs);
             }
         }
 

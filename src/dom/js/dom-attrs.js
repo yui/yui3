@@ -130,7 +130,7 @@ Y.mix(Y_DOM, {
 
         if (node && node[TAG_NAME]) {
             setter = Y_DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
-            val = (val === null) ? '' : val;
+
             if (setter) {
                 setter(node, val);
             } else {

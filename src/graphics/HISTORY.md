@@ -1,32 +1,6 @@
 Graphics Change History
 =======================
 
-3.17.2
-------
-
-* No changes.
-
-3.17.1
-------
-
-* No changes.
-
-3.17.0
-------
-
-* No changes.
-
-3.16.0
-------
-
-* No changes.
-
-3.15.0
-------
-
-* #1543 Parse rgba value into color string and opacity value for vml fill and stroke. 
-* #1566 Addressed issue with path chaining in canvas implementation of graphics.  
-
 3.14.1
 ------
 

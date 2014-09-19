@@ -16,7 +16,7 @@
                 }
             },
             "graphics-canvas": {
-                "requires": ["graphics", "color-base"],
+                "requires": ["graphics"],
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-canvas.js"
@@ -29,7 +29,7 @@
                 }
             },
             "graphics-vml": {
-                "requires": ["graphics", "color-base"],
+                "requires": ["graphics"],
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-vml.js"

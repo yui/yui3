@@ -86,7 +86,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
     * @method successHandler
     * @param id {String} Transaction ID.
     * @param response {String} Response.
-    * @param e {EventFacade} Event facade.
+    * @param e {Event.Facade} Event facade.
     * @private
     */
     successHandler: function (id, response, e) {
@@ -110,7 +110,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
     * @method failureHandler
     * @param id {String} Transaction ID.
     * @param response {String} Response.
-    * @param e {EventFacade} Event facade.
+    * @param e {Event.Facade} Event facade.
     * @private
     */
     failureHandler: function (id, response, e) {
@@ -153,7 +153,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
      * response is received asynchronously.
      *
      * @method _defRequestFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>

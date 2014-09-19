@@ -211,7 +211,7 @@ CanvasDrawing.prototype = {
     /**
      * Draws a line segment from the current drawing position to the relative x and y coordinates.
      *
-     * @method relativeLineTo
+     * @method lineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      * @chainable
@@ -344,7 +344,7 @@ CanvasDrawing.prototype = {
     /**
      * Draws a bezier curve relative to the current coordinates.
      *
-     * @method relativeCurveTo
+     * @method curveTo
      * @param {Number} cp1x x-coordinate for the first control point.
      * @param {Number} cp1y y-coordinate for the first control point.
      * @param {Number} cp2x x-coordinate for the second control point.

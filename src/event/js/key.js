@@ -14,7 +14,6 @@ var ALT      = "+alt",
     eventDef = {
         KEY_MAP: {
             enter    : 13,
-            space    : 32,
             esc      : 27,
             backspace: 8,
             tab      : 9,
@@ -144,7 +143,7 @@ eventDef.detachDelegate = eventDef.detach;
  *   <dt>modifier</dt>
  *   <dd><code>"shift", "ctrl", "alt", or "meta"</code></dd>
  *   <dt>keyName</dt>
- *   <dd><code>"enter", "space", "backspace", "esc", "tab", "pageup", or "pagedown"</code></dd>
+ *   <dd><code>"enter", "backspace", "esc", "tab", "pageup", or "pagedown"</code></dd>
  * </dl>
  *
  * <p>Examples:</p>

@@ -67,12 +67,6 @@
         var testJSON = new Y.Test.Case({
             name: "JSON Tests",
 
-            _should: {
-              ignore: {
-                testJSONResults2: Y.UA.android < 3
-              }
-            },
-
             testJSONMeta: function() {
                 var schema = {
                         metaFields: {top:"top", nested:"second.nested"}
@@ -116,61 +110,6 @@
                 ASSERT.areSame(0, data_out.results[0].number, "Expected first number to be parsed.");
                 ASSERT.areSame(2, data_out.results[2].number, "Expected last number to be parsed.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-            },
-            
-            testJSONResults2: function() {
-                var data_in = Y.DataType.XML.parse('<Response><Session>542235629</Session><Tracks  start="1" count="10" total="98" errorCount="0"  defaultSort="popularity+"  description="Top 100 Tracks"  name="Top 100 Tracks"  ><Track id="59672468" rating="-1" title="I Kissed A Girl"><Artist id="30326214" rating="-1">Katy Perry</Artist><ItemInfo><ChartPosition last="26" this="1"/></ItemInfo></Track><Track id="47973564" rating="-1" title="Shake It"><Artist id="45575683" rating="-1">Metro Station</Artist><ItemInfo><ChartPosition last="27" this="2"/></ItemInfo></Track><Track id="52207363" rating="-1" title="Bleeding Love"><Artist id="37956508" rating="-1">Leona Lewis</Artist><ItemInfo><ChartPosition last="28" this="3"/></ItemInfo></Track></Tracks></Response>'),
-
-                    schema = {
-                        metaFields: {
-                            session: "//Session",
-                            total: "//Tracks/@total"
-                        },
-                        resultListLocator: "//Track",
-                        resultFields: [{
-                            key: "song",
-                            locator: "@title"
-                        }, {
-                            key: "artist",
-                            locator: "Artist"
-                        }, {
-                            key: "rank",
-                            locator: "ItemInfo/ChartPosition/@this"
-                        }]
-                    },
-
-                    data_out = Y.DataSchema.XML.apply(schema, data_in),
-
-                    results = [{
-                        "rank": "1",
-                        "artist": "Katy Perry",
-                        "song": "I Kissed A Girl"
-                    }, {
-                        "rank": "2",
-                        "artist": "Metro Station",
-                        "song": "Shake It"
-                    }, {
-                        "rank": "3",
-                        "artist": "Leona Lewis",
-                        "song": "Bleeding Love"
-                    }];
-
-                    ASSERT.areSame(results.length, data_out.results.length, "The length of the results should equate.");
-
-                    ARRAYASSERT.itemsAreEquivalent(results, data_out.results, function (a, b) {
-                        
-                        // NOTE: `ownsKeys` throws an error upon failure.
-                        // If this assertion fails, then the two objects aren't equal.
-                        OBJECTASSERT.ownsKeys(a, b);
-                        
-                        // If this return statement is ever reached, then the two objects are equal.
-                        return true;
-                    }, "The objects in the `results` arrays should equate.");
-
-                    OBJECTASSERT.ownsKeys({
-                        "session": "542235629",
-                        "total": "98"
-                    }, data_out.meta, "The `meta` objects should equate.");
             },
 
             testJSONNested: function() {

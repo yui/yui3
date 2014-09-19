@@ -273,17 +273,20 @@ add('load', '20', {
     */
     return (!Y.UA.nodejs && !Y.UA.winjs);
 },
-    "trigger": "yql"
+    "trigger": "yql",
+    "when": "after"
 });
 // yql-nodejs
 add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
-    "ua": "nodejs"
+    "ua": "nodejs",
+    "when": "after"
 });
 // yql-winjs
 add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
-    "ua": "winjs"
+    "ua": "winjs",
+    "when": "after"
 });

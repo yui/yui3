@@ -486,7 +486,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     /**
      * Dispatches the <code>slideEnd</code> event.
      *
-     * @method _afterDragEnd
+     * @method _onDragEnd
      * @param e {Event} the <code>drag:end</code> event from the thumb
      * @protected
      */

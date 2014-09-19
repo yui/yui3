@@ -155,7 +155,7 @@ YUI.add('pluginhost-base', function (Y, NAME) {
          * instance through the "plugins" configuration property.
          *
          * @method _initPlugins
-         * @param {Object} config The configuration object with property name/value pairs.
+         * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
 

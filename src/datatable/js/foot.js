@@ -16,7 +16,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
     HTML templates used to create the `<tfoot>` containing the table footers.
 
     @property TFOOT_TEMPLATE
-    @type {String}
+    @type {HTML}
     @default '<tfoot class="{className}"/>'
     @since 3.11.0
     **/

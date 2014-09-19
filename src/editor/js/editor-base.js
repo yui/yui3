@@ -146,7 +146,7 @@
                 normal = false,
                 root = this._getRoot();
 
-            if (Y.UA.ie && Y.UA.ie < 11) {
+            if (Y.UA.ie) {
                 try {
                     sel = inst.config.doc.selection.createRange();
                     if (sel.getBookmark) {
@@ -382,7 +382,7 @@
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
-            if (Y.UA.ie && Y.UA.ie < 11) {
+            if (Y.UA.ie) {
                 this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
                 this.frame.on('dom:beforedeactivate', Y.bind(this._beforeFrameDeactivate, this));
             }
@@ -923,7 +923,7 @@
     /**
     * @event nodeChange
     * @description Fired from several mouse/key/paste event points.
-    * @param {EventFacade} event An Event Facade object with the following specific properties added:
+    * @param {Event.Facade} event An Event Facade object with the following specific properties added:
     * <dl>
     *   <dt>changedEvent</dt><dd>The event that caused the nodeChange</dd>
     *   <dt>changedNode</dt><dd>The node that was interacted with</dd>
@@ -936,12 +936,14 @@
     *   <dt>fontFamily</dt><dd>The cascaded fontFamily of the changedNode</dd>
     *   <dt>fontSize</dt><dd>The cascaded fontSize of the changedNode</dd>
     * </dl>
+    * @type {Event.Custom}
     */
 
     /**
     * @event ready
     * @description Fired after the frame is ready.
-    * @param {EventFacade} event An Event Facade object.
+    * @param {Event.Facade} event An Event Facade object.
+    * @type {Event.Custom}
     */
 
 

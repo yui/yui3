@@ -44,13 +44,6 @@
             "tags"       : ["dd", "groups", "grouping"]
         },
         {
-            "name"       : "panel-drag",
-            "displayName": "Drag - Handles on an Panel",
-            "description": "Using drag handles on a Panel, this example demonstrates how to use drag handles to allow dragging of a Panel with content by the Panel title area.",
-            "modules"    : ["dd"],
-            "tags"       : ["dd", "plugin", "node", "groups", "grouping", "overlay", "panel"]
-        },
-        {
             "name"       : "shim-drag",
             "displayName": "Using the Drag Shim",
             "description": "The use of the drag shim when dragging nodes over other troublesome nodes.",
@@ -119,7 +112,7 @@
             "displayName": "Photo Browser",
             "newWindow"  : "true",
             "description": "Example Photo Browser application.",
-            "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
+	        "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
             "tags"       : ["dd", "delegation", "animation", "target", "application", "photos", "yql"]
         },
         {
@@ -128,7 +121,7 @@
             "newWindow"  : "true",
             "displayName": "Portal Style Example",
             "description": "Portal style example using Drag & Drop Event Bubbling and Animation.",
-            "modules"    : ["dd", "animation", "event", "node", "yql", "json"],
+	        "modules"    : ["dd", "animation", "event", "node", "yql", "json"],
             "tags"       : ["dd", "bubbling", "animation", "target", "application", "portal", "yql"]
         }
     ],

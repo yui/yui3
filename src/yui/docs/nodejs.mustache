@@ -15,13 +15,6 @@
 However, there is <strong>no DOM support</strong> included in our releases. This means that you can not do DOM manipulation on the server with this core system. With the introduction of `Y.Handlebars`, we are working very hard to allow Widget rendering on the server via strings instead of raw DOM manipulation. If you need DOM support, please look into our <a href="nodejs-dom.html">YUI, Node.js and DOM</a> example.
 </p>
 
-<p>
-Note that some modules that might not seem like they require a DOM actually have dependencies on modules that do. The `io` module, for instance, loads in `io-form`, which does require `node-base`, which requires the DOM. If you want to use `Y.io` in Node, then it's recommended to just load in `io-base`, which has no DOM dependency.
-</p>
-
-<p>
-To see which modules have native Node.js support, please look into <a href="/yui/environments/#node.js">our native module support list</a>.
-</p>
 
 <h2>Install via npm</h2>
 

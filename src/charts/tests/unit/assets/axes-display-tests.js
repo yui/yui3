@@ -1529,4 +1529,4 @@ YUI.add('axes-display-tests', function(Y) {
     suite.add(RightAndTopAxisCustomTickAndLinesNoneTicks);
     
     Y.Test.Runner.add(suite);
-}, '@VERSION@' ,{requires:['charts', 'color-base', 'test']});
+}, '@VERSION@' ,{requires:['charts', 'test']});

@@ -29,8 +29,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style",
-            "color-base"
+            "node-style"
         ]
     },
     "anim-color": {
@@ -423,8 +422,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "base-observable": {
         "requires": [
-            "attribute-observable",
-            "base-core"
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -1255,7 +1253,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -1290,8 +1289,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style",
-            "color-base"
+            "dom-style"
         ]
     },
     "dump": {
@@ -1606,8 +1604,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics",
-            "color-base"
+            "graphics"
         ]
     },
     "graphics-canvas-default": {
@@ -1670,8 +1667,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics",
-            "color-base"
+            "graphics"
         ]
     },
     "graphics-vml-default": {
@@ -1722,6 +1718,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "use": [
             "history-base",
             "history-hash",
+            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -2931,10 +2928,10 @@ Y.mix(YUI.Env[Y.version].modules, {
     */
     return (!Y.UA.nodejs && !Y.UA.winjs);
 },
-            "trigger": "yql"
+            "trigger": "yql",
+            "when": "after"
         },
         "requires": [
-            "yql",
             "jsonp",
             "jsonp-url"
         ]
@@ -2943,21 +2940,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "yql-nodejs",
             "trigger": "yql",
-            "ua": "nodejs"
-        },
-        "requires": [
-            "yql"
-        ]
+            "ua": "nodejs",
+            "when": "after"
+        }
     },
     "yql-winjs": {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs"
-        },
-        "requires": [
-            "yql"
-        ]
+            "ua": "winjs",
+            "when": "after"
+        }
     },
     "yui": {},
     "yui-base": {},
@@ -2977,4 +2970,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '45357bb11eddf7fd0a89c0b756599df2';
+YUI.Env[Y.version].md5 = '7becfe88413f127e331d461de8ec774c';

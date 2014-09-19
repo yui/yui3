@@ -212,7 +212,7 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
      * Adds entry to cache.
      *
      * @method _defAddFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
      * </dl>
@@ -240,7 +240,7 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
      * Flushes cache.
      *
      * @method _defFlushFn
-     * @param e {EventFacade} Event Facade object.
+     * @param e {Event.Facade} Event Facade object.
      * @protected
      */
     _defFlushFn: function(e) {

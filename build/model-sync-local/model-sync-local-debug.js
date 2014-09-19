@@ -75,18 +75,18 @@ Object of key/value pairs to fall back on when localStorage is not available.
 @type Object
 @private
 **/
-
-LocalSync._data = LocalSync._data || {};
+LocalSync._data = {};
 
 /**
 Cache to quickly access a specific object with a given ID.
+This maps a model's ID to its reference inside of `LocalSync._data`.
 
-@property _store
-@type Array
+@property _idMap
+@type Object
 @private
 **/
 
-LocalSync._store = LocalSync._store || {};
+LocalSync._idMap = {};
 
 LocalSync.prototype = {
 
@@ -139,14 +139,24 @@ LocalSync.prototype = {
         // Pull in existing data from localStorage, if possible.
         // Otherwise, see if there's existing data on the local cache.
         if (store) {
-            LocalSync._store[this.root] = store.split('|') || [];
-
-            Y.Array.each(LocalSync._store[this.root], function (id) {
-                LocalSync._data[id] = Y.JSON.parse(this.storage.getItem(id));
-            }, this);
+            try {
+                LocalSync._data[this.root] = Y.JSON.parse(store);
+            } catch (e) {
+                LocalSync._data[this.root] = [];
+            }
         } else {
-            LocalSync._store[this.root] || (LocalSync._store[this.root] = []);
+            LocalSync._data[this.root] || (LocalSync._data[this.root] = []);
         }
+
+        // Map each model's ID to its reference inside of data, if there
+        // are already existing models inside of `localStorage`.
+        LocalSync._idMap[this.root] || (LocalSync._idMap[this.root] = {});
+        Y.Array.each(LocalSync._data[this.root], function (item) {
+            var id = item.id;
+            if (id) {
+                LocalSync._idMap[this.root][id] = item;
+            }
+        }, this);
     },
     
     // -- Public Methods -----------------------------------------------------------
@@ -166,7 +176,7 @@ LocalSync.prototype = {
       * **delete**: Delete an existing model.
 
     @param {Object} [options] Sync options
-    @param {Function} [callback] Called when the sync operation finishes.
+    @param {callback} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsey.
@@ -233,12 +243,7 @@ LocalSync.prototype = {
     @since 3.13.0
     **/
     _index: function () {
-        var store = LocalSync._store[this.root],
-            data  = Y.Array.map(store, function (id) {
-                return LocalSync._data[id];
-            });
-
-        return data;
+        return LocalSync._data[this.root];
     },
 
     /**
@@ -250,7 +255,7 @@ LocalSync.prototype = {
     @since 3.13.0
     **/
     _show: function () {
-        return LocalSync._data[this.get('id')] || null;
+        return LocalSync._idMap[this.root][this.get('id')] || null;
     },
     
     /**
@@ -262,16 +267,13 @@ LocalSync.prototype = {
     @since 3.13.0
     **/
     _create: function () {
-        var hash  = this.toJSON();
-
+        var hash  = this.toJSON(),
+            data  = LocalSync._data[this.root],
+            idMap = LocalSync._idMap[this.root];
+        
         hash.id = this.generateID(this.root);
-
-        LocalSync._data[hash.id] = hash;
-        if (this.storage) {
-            this.storage.setItem(hash.id, Y.JSON.stringify(hash));
-        }
-
-        LocalSync._store[this.root].push(hash.id);
+        data.push(hash);
+        idMap[hash.id] = hash;
 
         this._save();
         return hash;
@@ -286,21 +288,10 @@ LocalSync.prototype = {
     @since 3.13.0
     **/
     _update: function () {
-        var hash = this.toJSON(),
-            id = this.get('id');
-
-        LocalSync._data[id] = hash;
+        var hash = Y.merge(this.toJSON());
+        LocalSync._idMap[this.get('id')] = hash;
         
-        if (this.storage) {
-            this.storage.setItem(id, hash);
-        }
-
-        if (Y.Array.indexOf(LocalSync._store[this.root], id) === -1) {
-            LocalSync._store[this.root].push(id);
-        }
-
         this._save();
-
         return hash;
     },
 
@@ -309,27 +300,12 @@ LocalSync.prototype = {
     from the in-memory object, and saves into localStorage if available.
     
     @method _destroy
+    @return {Object} The deleted object.
     @protected
     @since 3.13.0
     **/
     _destroy: function () {
-        var id = this.get('id'),
-            storage = this.storage;
-
-        if (!LocalSync._data[id]) {
-            return;
-        }
-
-        delete LocalSync._data[id];
-
-        if (storage) {
-            storage.removeItem(id);
-        }
-
-        LocalSync._store[this.root] = Y.Array.filter(LocalSync._store[this.root], function (item) {
-            return item.id != id;
-        });
-
+        delete LocalSync._idMap[this.get('id')];
         this._save();
         return this.toJSON();
     },
@@ -343,10 +319,10 @@ LocalSync.prototype = {
     @since 3.13.0
     **/
     _save: function () {
-        if (LocalSync._hasLocalStorage && this.storage) {
-            this.storage.setItem(
+        if (LocalSync._hasLocalStorage) {
+            this.storage && this.storage.setItem(
                 this.root,
-                LocalSync._store[this.root].join('|')
+                Y.JSON.stringify(LocalSync._data[this.root])
             );
         }
     }

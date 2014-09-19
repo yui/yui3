@@ -68,7 +68,7 @@ RightAxisLayout.prototype = {
      * @method drawTick
      * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt Point on the axis in which the tick will intersect.
-     * @param {Object} tickStyle Hash of properties to apply to the tick.
+     * @param {Object) tickStyle Hash of properties to apply to the tick.
      * @protected
      */
     drawTick: function(path, pt, tickStyles)

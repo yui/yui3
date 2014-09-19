@@ -110,7 +110,6 @@ AppContent.prototype = {
 
       @param {View} callback.view A reference to the new `activeView`.
 
-    @chainable
     @since 3.7.0
     @see App.showView()
     **/

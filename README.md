@@ -1,7 +1,7 @@
 YUI 3: The Yahoo User Interface Library
 =======================================
 
-[![Build Status](https://travis-ci.org/yui/yui3.svg?branch=master)](https://travis-ci.org/yui/yui3)
+[![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
 
 YUI is a free, open source JavaScript and CSS framework for building richly
 interactive web applications. YUI is provided under a BSD license and is
@@ -87,7 +87,7 @@ The YUI source tree includes the following directories:
 
 ## Initial Setup
 
-   1. Fork the project on GitHub (https://github.com/yui/yui3).
+   1. Fork the project on GitHub (http://www.github.com/yui/yui3).
    1. Clone the fork to your local environment for development.
 
 ## Do Good Stuff

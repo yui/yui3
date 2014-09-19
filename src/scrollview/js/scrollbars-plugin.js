@@ -184,7 +184,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * Handler for the scrollEnd event fired by the host. Default implementation flashes the scrollbar
      *
      * @method _hostScrollEnd
-     * @param {EventFacade} e The event facade.
+     * @param {Event.Facade} e The event facade.
      * @protected
      */
     _hostScrollEnd : function() {

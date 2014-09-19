@@ -20,21 +20,17 @@ YUI({useSync: true }).use('test', function(Y) {
 
     Y.applyConfig({
         modules: {
-            'tests-promise-utils': {
-                fullpath: path.join(__dirname, '../unit/assets/tests-promise-utils.js'),
-                requires: ['promise', 'test']
-            },
             'batch-tests':  {
                 fullpath: path.join(__dirname, '../unit/assets/batch-tests.js'),
-                requires: ['tests-promise-utils']
+                requires: [ 'promise', 'test' ]
             },
             'when-tests': {
                 fullpath: path.join(__dirname, '../unit/assets/when-tests.js'),
-                requires: ['tests-promise-utils']
+                requires: ['promise', 'test']
             },
             'promise-tests':  {
                 fullpath: path.join(__dirname, '../unit/assets/promise-tests.js'),
-                requires: ['tests-promise-utils']
+                requires: ['promise', 'test']
             },
             'aplus-tests': {
                 fullpath: path.join(__dirname, './assets/aplus.js'),

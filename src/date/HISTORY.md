@@ -1,31 +1,6 @@
 Date Change History
 ===================
 
-3.17.2
-------
-
-* No changes.
-
-3.17.1
-------
-
-* No changes.
-
-3.17.0
-------
-
-* No changes.
-
-3.16.0
-------
-
-* No changes.
-
-3.15.0
-------
-
-* Roll back to 3.13.0
-
 3.14.1
 ------
 
@@ -34,7 +9,7 @@ Date Change History
 3.14.0
 ------
 
-* Method parse is now able to reverse most of the output format can produce.
+* No changes.
 
 3.13.0
 ------

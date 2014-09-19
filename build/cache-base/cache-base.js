@@ -142,7 +142,7 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event add
         * @description Fired when an entry is added.
-        * @param e {EventFacade} Event Facade with the following properties:
+        * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
          * </dl>
@@ -153,7 +153,7 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event flush
         * @description Fired when the cache is flushed.
-        * @param e {EventFacade} Event Facade object.
+        * @param e {Event.Facade} Event Facade object.
         * @preventable _defFlushFn
         */
         this.publish("flush", {defaultFn: this._defFlushFn});
@@ -161,7 +161,7 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event request
         * @description Fired when an entry is requested from the cache.
-        * @param e {EventFacade} Event Facade with the following properties:
+        * @param e {Event.Facade} Event Facade with the following properties:
         * <dl>
         * <dt>request (Object)</dt> <dd>The request object.</dd>
         * </dl>
@@ -170,7 +170,7 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event retrieve
         * @description Fired when an entry is retrieved from the cache.
-        * @param e {EventFacade} Event Facade with the following properties:
+        * @param e {Event.Facade} Event Facade with the following properties:
         * <dl>
         * <dt>entry (Object)</dt> <dd>The retrieved entry.</dd>
         * </dl>
@@ -243,7 +243,7 @@ Y.extend(Cache, Y.Base, {
      * Adds entry to cache.
      *
      * @method _defAddFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
      * </dl>
@@ -277,7 +277,7 @@ Y.extend(Cache, Y.Base, {
      * Flushes cache.
      *
      * @method _defFlushFn
-     * @param e {EventFacade} Event Facade object.
+     * @param e {Event.Facade} Event Facade object.
      * @protected
      */
     _defFlushFn: function(e) {

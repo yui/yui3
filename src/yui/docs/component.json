@@ -145,9 +145,6 @@
         },
         "lang": {
             "displayName": "Y.Lang"
-        },
-        "es6-modules": {
-            "displayName": "Using ES6 modules with YUI"
         }
     }
 }

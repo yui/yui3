@@ -1,41 +1,6 @@
 Event Infrastructure Change History
 ===================================
 
-3.17.2
-------
-
-* No changes.
-
-3.17.1
-------
-
-* No changes.
-
-3.17.0
-------
-
-* No changes.
-
-3.16.0
-------
-
-* Added the spacebar key mapping to ensure correct ARIA and WCAG compliance. ([#1642][]: @andrewnicols)
-
-[#1642]: https://github.com/yui/yui3/issues/1642
-
-3.15.0
-------
-
-* Reduced categories of certain noisy log events in the `event` module and added
-  categories for those that were missing some. ([#1605][]: @andrewnicols)
-
-* Fixed the `event.returnValue is deprecated` warning in chrome. ([#1460][]: @zhiyelee)
-
-[#1605]: https://github.com/yui/yui3/issues/1605
-[#1460]: https://github.com/yui/yui3/issues/1460
-
-* Added support for W3C Pointer events in the `tap` event. This fixes an issue in IE11 where the `type` of pointer event objects was changed from 'MSPointerDown' to 'pointerdown' to comply with their proposed W3C standard.
-
 3.14.1
 ------
 
