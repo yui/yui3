@@ -314,11 +314,7 @@ suite.add(new Y.Test.Case({
     name : "Should not have TypeError when both `timeout` and `failure` handlers are set.",
 
     "Having timeout and failure handles should not cause a TypeError": function () {
-        var test = this,
-            callbacks = [],
-            error = false,
-            timeoutCalled,
-            successCalled,
+        var error = false,
             windowOnError = window.onerror,
             jsonp;
 
