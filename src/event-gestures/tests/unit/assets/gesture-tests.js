@@ -11,7 +11,19 @@ YUI.add('gesture-tests', function(Y) {
             fire: noop
         },
         node = Y.one('#tester'),
-        hasMsTouchActionSupport = (node.getDOMNode().style && ("msTouchAction" in node.getDOMNode().style)),
+        getTouchAction = function(win) {
+            var touchAction;
+            if(win) {
+                if("PointerEvent" in win) {
+                    touchAction = "touchAction";
+                } else if("msPointerEnabled" in win.navigator) {
+                    touchAction = "msTouchAction";
+                }
+            }
+            return touchAction;
+        },
+        TOUCH_ACTION = getTouchAction(Y.config.win),
+        hasMsTouchActionSupport = (node.getDOMNode().style && (TOUCH_ACTION in node.getDOMNode().style)),
         event = {
             target: node,
             currentTarget: node,
@@ -217,25 +229,25 @@ YUI.add('gesture-tests', function(Y) {
             var _node = elem.getDOMNode();
 
             //by default the touchaction property should be ""
-            Assert.areEqual(_node.style.msTouchAction, '');
+            Assert.areEqual(_node.style[TOUCH_ACTION], '');
 
             this.handles.push(elem.on('gesturemovestart', noop));
             //After subscribing to gesturemovestart, the touchaction should be modified to 'none'
-            Assert.areEqual(_node.style.msTouchAction, 'none');
+            Assert.areEqual(_node.style[TOUCH_ACTION], 'none');
 
             this.handles.push(elem.on('gesturemove', noop));
             //Subscribing to other gesture events should keep the touchaction to none
-            Assert.areEqual(_node.style.msTouchAction, 'none');
+            Assert.areEqual(_node.style[TOUCH_ACTION], 'none');
 
             this.handles.push(elem.on('gesturemoveend', noop));
-            Assert.areEqual(_node.style.msTouchAction, 'none');
+            Assert.areEqual(_node.style[TOUCH_ACTION], 'none');
 
             //Now we are going to detach all listeners
             Y.Array.each(this.handles, function(h) {
                 h.detach();
             });
             //Upon detaching listeners, the touchAction should be back to ""
-            Assert.areEqual(_node.style.msTouchAction, '');
+            Assert.areEqual(_node.style[TOUCH_ACTION], '');
         },
 
         'test: touchActions modify': function () {
@@ -244,7 +256,7 @@ YUI.add('gesture-tests', function(Y) {
                 _node = elem.getDOMNode(),
                 flag = false;
 
-            Assert.areSame(_node.style.msTouchAction, '');
+            Assert.areSame(_node.style[TOUCH_ACTION], '');
 
             this.handles.push(node.on('gesturemovestart', noop));
             this.handles.push(node.on('gesturemove', noop));
@@ -259,9 +271,9 @@ YUI.add('gesture-tests', function(Y) {
                 }
             }, {
                 fire: function(e) {
-                    Assert.areSame(_node.style.msTouchAction, 'none');
+                    Assert.areSame(_node.style[TOUCH_ACTION], 'none');
                     flag = true;
-                    _node.style.msTouchAction = 'pan-x';
+                    _node.style[TOUCH_ACTION] = 'pan-x';
                 }
             });
 
@@ -273,7 +285,7 @@ YUI.add('gesture-tests', function(Y) {
             }, {
                 fire: function(e) {
                     Assert.isTrue(flag);
-                    Assert.areSame(_node.style.msTouchAction, 'pan-x');
+                    Assert.areSame(_node.style[TOUCH_ACTION], 'pan-x');
                 }
             });
 
@@ -283,24 +295,24 @@ YUI.add('gesture-tests', function(Y) {
             var elem = Y.one('#myNode'),
                 _node = elem.getDOMNode();
 
-            Assert.areSame(_node.style.msTouchAction, '');
+            Assert.areSame(_node.style[TOUCH_ACTION], '');
             Y.Event._DEFAULT_TOUCH_ACTION = 'pan-x';
             this.handles.push(elem.on('gesturemovestart', noop));
             this.handles.push(elem.on('gesturemove', noop));
             this.handles.push(elem.on('gesturemoveend', noop));
 
-            Assert.areSame('pan-x', _node.style.msTouchAction);
+            Assert.areSame('pan-x', _node.style[TOUCH_ACTION]);
 
             var h = this.handles.pop();
             h.detach();
 
-            Assert.areSame('pan-x', _node.style.msTouchAction);
+            Assert.areSame('pan-x', _node.style[TOUCH_ACTION]);
 
             Y.Array.each(this.handles, function(h) {
                 h.detach();
             });
 
-            Assert.areSame('', _node.style.msTouchAction);
+            Assert.areSame('', _node.style[TOUCH_ACTION]);
 
         },
 
@@ -316,46 +328,46 @@ YUI.add('gesture-tests', function(Y) {
 
 
 
-            Assert.areSame(_node1.style.msTouchAction, '');
-            Assert.areSame(_node2.style.msTouchAction, '');
+            Assert.areSame(_node1.style[TOUCH_ACTION], '');
+            Assert.areSame(_node2.style[TOUCH_ACTION], '');
 
             this.handles.push(elem1.on('gesturemovestart', noop));
             this.handles.push(elem1.on('gesturemove', noop));
             this.handles.push(elem1.on('gesturemoveend', noop));
 
-            Assert.areSame(_node1.style.msTouchAction, 'none');
-            Assert.areSame(_node2.style.msTouchAction, '');
+            Assert.areSame(_node1.style[TOUCH_ACTION], 'none');
+            Assert.areSame(_node2.style[TOUCH_ACTION], '');
 
             var h = this.handles.pop();
             h.detach();
 
-            Assert.areSame(_node1.style.msTouchAction, 'none');
-            Assert.areSame(_node2.style.msTouchAction, '');
+            Assert.areSame(_node1.style[TOUCH_ACTION], 'none');
+            Assert.areSame(_node2.style[TOUCH_ACTION], '');
 
             Y.Array.each(this.handles, function(h) {
                 h.detach();
             });
 
-            Assert.areSame(_node1.style.msTouchAction, '');
-            Assert.areSame(_node2.style.msTouchAction, '');
+            Assert.areSame(_node1.style[TOUCH_ACTION], '');
+            Assert.areSame(_node2.style[TOUCH_ACTION], '');
 
             this.handles.push(elem2.on('gesturemovestart', noop));
 
-            Assert.areSame(_node1.style.msTouchAction, '');
-            Assert.areSame(_node2.style.msTouchAction, 'none');
+            Assert.areSame(_node1.style[TOUCH_ACTION], '');
+            Assert.areSame(_node2.style[TOUCH_ACTION], 'none');
 
             this.handles.push(elem2.on('gesturemove', noop));
             this.handles.push(elem2.on('gesturemoveend', noop));
 
-            Assert.areSame(_node1.style.msTouchAction, '');
-            Assert.areSame(_node2.style.msTouchAction, 'none');
+            Assert.areSame(_node1.style[TOUCH_ACTION], '');
+            Assert.areSame(_node2.style[TOUCH_ACTION], 'none');
 
             Y.Array.each(this.handles, function(h) {
                 h.detach();
             });
 
-            Assert.areSame(_node1.style.msTouchAction, '');
-            Assert.areSame(_node2.style.msTouchAction, '');
+            Assert.areSame(_node1.style[TOUCH_ACTION], '');
+            Assert.areSame(_node2.style[TOUCH_ACTION], '');
 
             Y.one('#myNode2').remove();
 
@@ -364,26 +376,26 @@ YUI.add('gesture-tests', function(Y) {
         'test: touchActions document': function () {
             var doc = Y.one('doc'),
                 docElem = doc.getDOMNode().documentElement;
-            Assert.areSame(docElem.style.msTouchAction, '');
+            Assert.areSame(docElem.style[TOUCH_ACTION], '');
 
             this.handles.push(doc.on('gesturemovestart', noop));
-            Assert.areNotSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style[TOUCH_ACTION], 'none');
 
             this.handles.push(doc.on('gesturemove', noop));
-            Assert.areNotSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style[TOUCH_ACTION], 'none');
 
             this.handles.push(doc.on('gesturemoveend', noop));
-            Assert.areNotSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style[TOUCH_ACTION], 'none');
 
             var h = this.handles.pop();
             h.detach();
 
-            Assert.areNotSame(docElem.style.msTouchAction, 'none');
+            Assert.areNotSame(docElem.style[TOUCH_ACTION], 'none');
 
             Y.Array.each(this.handles, function(h) {
                 h.detach();
             });
-            Assert.areSame(docElem.style.msTouchAction, '');
+            Assert.areSame(docElem.style[TOUCH_ACTION], '');
 
 
         }

@@ -60,7 +60,19 @@
     TARGET = "target",
 
     NODE_TYPE = "nodeType",
-    SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
+    _getTouchAction = function(win) {
+        var touchAction;
+        if(win) {
+            if("PointerEvent" in win) {
+                touchAction = "touchAction";
+            } else if("msPointerEnabled" in win.navigator) {
+                touchAction = "msTouchAction";
+            }
+        }
+        return touchAction;
+    },
+    TOUCH_ACTION = _getTouchAction(Y.config.win),
+    SUPPORTS_POINTER = (TOUCH_ACTION === "msTouchAction" || TOUCH_ACTION === "touchAction"),
     MS_TOUCH_ACTION_COUNT = 'msTouchActionCount',
     MS_INIT_TOUCH_ACTION = 'msInitTouchAction',
 
@@ -116,9 +128,9 @@
         if (SUPPORTS_POINTER) {
             if (!num) {
                 num = 0;
-                node.setData(MS_INIT_TOUCH_ACTION, elem.style.msTouchAction);
+                node.setData(MS_INIT_TOUCH_ACTION, elem.style[TOUCH_ACTION]);
             }
-            elem.style.msTouchAction = Y.Event._DEFAULT_TOUCH_ACTION;
+            elem.style[TOUCH_ACTION] = Y.Event._DEFAULT_TOUCH_ACTION;
             num++;
             node.setData(MS_TOUCH_ACTION_COUNT, num);
         }
@@ -135,8 +147,8 @@
         if (SUPPORTS_POINTER) {
             num--;
             node.setData(MS_TOUCH_ACTION_COUNT, num);
-            if (num === 0 && elem.style.msTouchAction !== initTouchAction) {
-                elem.style.msTouchAction = initTouchAction;
+            if (num === 0 && elem.style[TOUCH_ACTION] !== initTouchAction) {
+                elem.style[TOUCH_ACTION] = initTouchAction;
             }
         }
     },
