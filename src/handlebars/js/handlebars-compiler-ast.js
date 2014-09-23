@@ -2,7 +2,7 @@
 Handlebars.AST = {};
 (function (exports, Exception) {
 "use strict";
-function LocationInfo(locInfo){
+function LocationInfo(locInfo) {
   locInfo = locInfo || {};
   this.firstLine   = locInfo.first_line;
   this.firstColumn = locInfo.first_column;
@@ -11,38 +11,11 @@ function LocationInfo(locInfo){
 }
 
 var AST = {
-  ProgramNode: function(statements, inverseStrip, inverse, locInfo) {
-    var inverseLocationInfo, firstInverseNode;
-    if (arguments.length === 3) {
-      locInfo = inverse;
-      inverse = null;
-    } else if (arguments.length === 2) {
-      locInfo = inverseStrip;
-      inverseStrip = null;
-    }
-
+  ProgramNode: function(statements, strip, locInfo) {
     LocationInfo.call(this, locInfo);
     this.type = "program";
     this.statements = statements;
-    this.strip = {};
-
-    if(inverse) {
-      firstInverseNode = inverse[0];
-      if (firstInverseNode) {
-        inverseLocationInfo = {
-          first_line: firstInverseNode.firstLine,
-          last_line: firstInverseNode.lastLine,
-          last_column: firstInverseNode.lastColumn,
-          first_column: firstInverseNode.firstColumn
-        };
-        this.inverse = new AST.ProgramNode(inverse, inverseStrip, inverseLocationInfo);
-      } else {
-        this.inverse = new AST.ProgramNode(inverse, inverseStrip);
-      }
-      this.strip.right = inverseStrip.left;
-    } else if (inverseStrip) {
-      this.strip.left = inverseStrip.right;
-    }
+    this.strip = strip;
   },
 
   MustacheNode: function(rawParams, hash, open, strip, locInfo) {
@@ -66,8 +39,6 @@ var AST = {
       this.sexpr = new AST.SexprNode(rawParams, hash);
     }
 
-    this.sexpr.isRoot = true;
-
     // Support old AST API that stored this info in MustacheNode
     this.id = this.sexpr.id;
     this.params = this.sexpr.params;
@@ -85,57 +56,63 @@ var AST = {
     var id = this.id = rawParams[0];
     var params = this.params = rawParams.slice(1);
 
-    // a mustache is an eligible helper if:
-    // * its id is simple (a single part, not `this` or `..`)
-    var eligibleHelper = this.eligibleHelper = id.isSimple;
-
     // a mustache is definitely a helper if:
     // * it is an eligible helper, and
     // * it has at least one parameter or hash segment
-    this.isHelper = eligibleHelper && (params.length || hash);
+    this.isHelper = !!(params.length || hash);
+
+    // a mustache is an eligible helper if:
+    // * its id is simple (a single part, not `this` or `..`)
+    this.eligibleHelper = this.isHelper || id.isSimple;
 
     // if a mustache is an eligible helper but not a definite
     // helper, it is ambiguous, and will be resolved in a later
     // pass or at runtime.
   },
 
-  PartialNode: function(partialName, context, strip, locInfo) {
+  PartialNode: function(partialName, context, hash, strip, locInfo) {
     LocationInfo.call(this, locInfo);
     this.type         = "partial";
     this.partialName  = partialName;
     this.context      = context;
+    this.hash = hash;
     this.strip = strip;
+
+    this.strip.inlineStandalone = true;
   },
 
-  BlockNode: function(mustache, program, inverse, close, locInfo) {
+  BlockNode: function(mustache, program, inverse, strip, locInfo) {
     LocationInfo.call(this, locInfo);
-
-    if(mustache.sexpr.id.original !== close.path.original) {
-      throw new Exception(mustache.sexpr.id.original + " doesn't match " + close.path.original, this);
-    }
 
     this.type = 'block';
     this.mustache = mustache;
     this.program  = program;
     this.inverse  = inverse;
-
-    this.strip = {
-      left: mustache.strip.left,
-      right: close.strip.right
-    };
-
-    (program || inverse).strip.left = mustache.strip.right;
-    (inverse || program).strip.right = close.strip.left;
+    this.strip = strip;
 
     if (inverse && !program) {
       this.isInverse = true;
     }
   },
 
+  RawBlockNode: function(mustache, content, close, locInfo) {
+    LocationInfo.call(this, locInfo);
+
+    if (mustache.sexpr.id.original !== close) {
+      throw new Exception(mustache.sexpr.id.original + " doesn't match " + close, this);
+    }
+
+    content = new AST.ContentNode(content, locInfo);
+
+    this.type = 'block';
+    this.mustache = mustache;
+    this.program = new AST.ProgramNode([content], {}, locInfo);
+  },
+
   ContentNode: function(string, locInfo) {
     LocationInfo.call(this, locInfo);
     this.type = "content";
-    this.string = string;
+    this.original = this.string = string;
   },
 
   HashNode: function(pairs, locInfo) {
@@ -150,7 +127,8 @@ var AST = {
 
     var original = "",
         dig = [],
-        depth = 0;
+        depth = 0,
+        depthString = '';
 
     for(var i=0,l=parts.length; i<l; i++) {
       var part = parts[i].part;
@@ -161,6 +139,7 @@ var AST = {
           throw new Exception("Invalid path: " + original, this);
         } else if (part === "..") {
           depth++;
+          depthString += '../';
         } else {
           this.isScoped = true;
         }
@@ -173,6 +152,7 @@ var AST = {
     this.parts    = dig;
     this.string   = dig.join('.');
     this.depth    = depth;
+    this.idName   = depthString + this.string;
 
     // an ID is simple if it only has one part, and that part is not
     // `..` or `this`.
@@ -191,6 +171,8 @@ var AST = {
     LocationInfo.call(this, locInfo);
     this.type = "DATA";
     this.id = id;
+    this.stringModeValue = id.stringModeValue;
+    this.idName = '@' + id.stringModeValue;
   },
 
   StringNode: function(string, locInfo) {
@@ -201,12 +183,12 @@ var AST = {
       this.stringModeValue = string;
   },
 
-  IntegerNode: function(integer, locInfo) {
+  NumberNode: function(number, locInfo) {
     LocationInfo.call(this, locInfo);
-    this.type = "INTEGER";
+    this.type = "NUMBER";
     this.original =
-      this.integer = integer;
-    this.stringModeValue = Number(integer);
+      this.number = number;
+    this.stringModeValue = Number(number);
   },
 
   BooleanNode: function(bool, locInfo) {
@@ -220,8 +202,13 @@ var AST = {
     LocationInfo.call(this, locInfo);
     this.type = "comment";
     this.comment = comment;
+
+    this.strip = {
+      inlineStandalone: true
+    };
   }
 };
+
 
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.

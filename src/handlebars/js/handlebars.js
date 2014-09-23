@@ -26,6 +26,8 @@ var create = function() {
 Handlebars = create();
 Handlebars.create = create;
 
+Handlebars['default'] = Handlebars;
+
 exports["default"] = Handlebars;
 }(Handlebars, Handlebars.Runtime, Handlebars.AST, Handlebars.Parser, Handlebars.parse, Handlebars.Compiler, Handlebars.compile, Handlebars.precompile, Handlebars.JavaScriptCompiler));
 Y.Handlebars = Handlebars['default'];

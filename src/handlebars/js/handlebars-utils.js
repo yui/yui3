@@ -16,15 +16,19 @@ var badChars = /[&<>"'`]/g;
 var possible = /[&<>"'`]/;
 
 function escapeChar(chr) {
-  return escape[chr] || "&amp;";
+  return escape[chr];
 }
 
-function extend(obj, value) {
-  for(var key in value) {
-    if(Object.prototype.hasOwnProperty.call(value, key)) {
-      obj[key] = value[key];
+function extend(obj /* , ...source */) {
+  for (var i = 1; i < arguments.length; i++) {
+    for (var key in arguments[i]) {
+      if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
+        obj[key] = arguments[i][key];
+      }
     }
   }
+
+  return obj;
 }
 
 exports.extend = extend;var toString = Object.prototype.toString;
@@ -35,6 +39,7 @@ var isFunction = function(value) {
   return typeof value === 'function';
 };
 // fallback for older versions of Chrome and Safari
+/* istanbul ignore next */
 if (isFunction(/x/)) {
   isFunction = function(value) {
     return typeof value === 'function' && toString.call(value) === '[object Function]';
@@ -42,6 +47,7 @@ if (isFunction(/x/)) {
 }
 var isFunction;
 exports.isFunction = isFunction;
+/* istanbul ignore next */
 var isArray = Array.isArray || function(value) {
   return (value && typeof value === 'object') ? toString.call(value) === '[object Array]' : false;
 };
@@ -51,8 +57,10 @@ function escapeExpression(string) {
   // don't escape SafeStrings, since they're already safe
   if (string instanceof SafeString) {
     return string.toString();
-  } else if (!string && string !== 0) {
+  } else if (string == null) {
     return "";
+  } else if (!string) {
+    return string + '';
   }
 
   // Force a string conversion as this will be done by the append regardless and
@@ -74,5 +82,9 @@ exports.escapeExpression = escapeExpression;function isEmpty(value) {
   }
 }
 
-exports.isEmpty = isEmpty;
+exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
+  return (contextPath ? contextPath + '.' : '') + id;
+}
+
+exports.appendContextPath = appendContextPath;
 }(Handlebars.Utils, Handlebars.SafeString));
