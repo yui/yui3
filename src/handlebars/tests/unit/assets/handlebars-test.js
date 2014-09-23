@@ -54,8 +54,8 @@ suite.add(new Y.Test.Case({
         );
     },
 
-    '`false` should be considered empty': function () {
-        Assert.areSame('', H.render('{{value}}', {value: false}));
+    '`false` should render as the string `false`': function () {
+        Assert.areSame('false', H.render('{{value}}', {value: false}));
     },
 
     '`null` should be considered empty': function () {
