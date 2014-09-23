@@ -86,10 +86,18 @@ module.exports = function (grunt) {
         },
 
         COMPILER_FILES = {
+            'handlebars/compiler/helpers.js': {
+                before: 'Handlebars.Helpers = {};',
+                arguments: {
+                    exports: 'Handlebars.Helpers',
+                    Exception: 'Handlebars.Exception'
+                }
+            },
             'handlebars/compiler/parser.js': {
                 before: 'Handlebars.Parser = {};',
                 arguments: {
-                    exports: 'Handlebars.Parser'
+                    exports: 'Handlebars.Parser',
+                    yy: 'Handlebars.Helpers'
                 },
                 after: 'Handlebars.Parser = Handlebars.Parser[\'default\'];'
             },
@@ -97,7 +105,9 @@ module.exports = function (grunt) {
                 arguments: {
                     exports: 'Handlebars',
                     parser: 'Handlebars.Parser',
-                    AST: 'Handlebars.AST'
+                    AST: 'Handlebars.AST',
+                    extend: 'Handlebars.Utils.extend',
+                    Helpers: 'Handlebars.Helpers'
                 }
             },
             'handlebars/compiler/ast.js': {
@@ -111,6 +121,7 @@ module.exports = function (grunt) {
             'handlebars/compiler/compiler.js': {
                 arguments: {
                     exports: 'Handlebars',
+                    isArray: 'Handlebars.Utils.isArray',
                     Exception: 'Handlebars.Exception'
                 }
             },

@@ -24,11 +24,12 @@
             "jsfiles": [
                 "yui-handlebars-copyright.js",
                 "yui-handlebars-compiler-before.js",
+                "handlebars-compiler-helpers.js",
                 "handlebars-compiler-parser.js",
                 "handlebars-compiler-ast.js",
-                "handlebars-compiler-base.js",
                 "handlebars-compiler-compiler.js",
                 "handlebars-compiler-javascript-compiler.js",
+                "handlebars-compiler-base.js",
                 "yui-handlebars-compiler-after.js",
                 "handlebars.runtime.js",
                 "handlebars.js"
