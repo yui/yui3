@@ -64,6 +64,7 @@ module.exports = function (grunt) {
                     exports: 'Handlebars.VM',
                     Utils: 'Handlebars.Utils',
                     Exception: 'Handlebars.Exception',
+                    createFrame: 'Handlebars.createFrame',
                     COMPILER_REVISION: 'Handlebars.COMPILER_REVISION',
                     REVISION_CHANGES: 'Handlebars.REVISION_CHANGES'
                 },
@@ -96,8 +97,7 @@ module.exports = function (grunt) {
             'handlebars/compiler/parser.js': {
                 before: 'Handlebars.Parser = {};',
                 arguments: {
-                    exports: 'Handlebars.Parser',
-                    yy: 'Handlebars.Helpers'
+                    exports: 'Handlebars.Parser'
                 },
                 after: 'Handlebars.Parser = Handlebars.Parser[\'default\'];'
             },
