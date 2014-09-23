@@ -276,6 +276,21 @@ YUI.add('nodelist-test', function(Y) {
             nodelist.refresh();
             ArrayAssert.itemsAreEqual(node.all('li').size(), nodelist.size(), 'refresh should affect size');
             ArrayAssert.itemsAreEqual(node.all('li')._nodes, nodelist._nodes, 'refreshed nodelist should be in sync');
+        },
+
+        'should accept alternative names in importMethod': function() {
+            var exampleSource = {
+                sourceMethod: function() {
+                    noop();
+                }
+            },
+            NodeList = Y.NodeList;
+
+            Assert.isUndefined(NodeList.prototype.sourceMethod);
+            Assert.isUndefined(NodeList.prototype.targetMethod);
+            NodeList.importMethod(exampleSource, 'sourceMethod', 'targetMethod');
+            Assert.isUndefined(NodeList.prototype.sourceMethod);
+            Assert.isFunction(NodeList.prototype.targetMethod);
         }
     }));
 }, '@VERSION@' ,{requires:['node-base']});
