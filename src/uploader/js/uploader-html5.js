@@ -588,12 +588,14 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @method upload
     * @param file {File} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
+    * @param method {String} The upload method.
     * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
-    upload : function (file, url, postvars) {
+    upload : function (file, url, method, postvars) {
 
         var uploadURL = url || this.get("uploadURL"),
+            uploadMethod = method || this.get("uploadMethod"),
             postVars = postvars || this.get("postVarsPerFile"),
             fileId = file.get("id");
 
@@ -607,7 +609,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
             file.on("uploaderror", this._uploadEventHandler, this);
             file.on("uploadcancel", this._uploadEventHandler, this);
 
-            file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
+            file.startUpload(uploadURL, uploadMethod, postVars, this.get("fileFieldName"));
         }
     },
 
@@ -616,11 +618,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     *
     * @method uploadAll
     * @param url {String} The URL to upload the files to.
+    * @param method {String} The upload method.
     * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
-    uploadAll : function (url, postvars) {
-        this.uploadThese(this.get("fileList"), url, postvars);
+    uploadAll : function (url, method, postvars) {
+        this.uploadThese(this.get("fileList"), url, method, postvars);
     },
 
     /**
@@ -629,12 +632,14 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @method uploadThese
     * @param files {Array} The list of files to upload.
     * @param url {String} The URL to upload the files to.
+    * @param method {String} The upload method.
     * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
-    uploadThese : function (files, url, postvars) {
+    uploadThese : function (files, url, method, postvars) {
         if (!this.queue) {
             var uploadURL = url || this.get("uploadURL"),
+                uploadMethod = method || this.get("uploadMethod"),
                 postVars = postvars || this.get("postVarsPerFile");
 
             this.queue = new UploaderQueue({
@@ -643,6 +648,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                 fileFieldName: this.get("fileFieldName"),
                 fileList: files,
                 uploadURL: uploadURL,
+                uploadMethod: uploadMethod,
                 perFileParameters: postVars,
                 retryCount: this.get("retryCount"),
                 uploadHeaders: this.get("uploadHeaders"),
@@ -947,7 +953,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         },
 
         /**
-        * The URL to which file upload requested are POSTed. Only used if a different url is not passed to the upload method call.
+        * The URL to which file upload requested are uploaded. Only used if a different url is not passed to the upload method call.
         *
         * @attribute uploadURL
         * @type {String}
@@ -955,6 +961,17 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         */
         uploadURL: {
             value: ""
+        },
+
+        /**
+        * A String that specifies the upload method.
+        *
+        * @attribute method
+        * @type {String}
+        * @default POST
+        */
+        uploadMethod: {
+            value: "POST"
         },
 
         /**
