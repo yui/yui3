@@ -429,6 +429,79 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[0].indexOf('node-base-debug.js') > 0), 'node-base-debug was not found');
             Assert.isTrue((out.js[0].indexOf('node-core-debug.js') === -1), 'node-core-debug was found');
         },
+        'test defaultBase with groups': function() {
+            testY.applyConfig({
+                defaultBase: 'http://mycdn.com/path/to/',
+                comboBase: 'http://mycdn.com/path/to/combo?',
+                root: 'yui-3.1.5.0/',
+            });
+            var loader = new testY.Loader({
+                groups: {
+                    test1: {
+                        root: 'zip/',
+                        modules: {
+                            foo: {
+                                filter: 'min'
+                            },
+                            bar: {
+                                filter: 'min'
+                            }
+                        }
+                    },
+                    test2: {
+                        root: 'zap/',
+                        modules: {
+                            baz: {
+                                filter: 'min'
+                            }
+                        }
+
+                    }
+                },
+                require: ['foo', 'bar', 'baz']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(3, out.js.length, "Loader should not have combined URLs." + JSON.stringify(out.js));
+            Assert.areSame("http://mycdn.com/path/to/zip/foo/foo-min.js", out.js[0], "The url should be ");
+            Assert.areSame("http://mycdn.com/path/to/zip/bar/bar-min.js", out.js[1], "The url should be ");
+            Assert.areSame("http://mycdn.com/path/to/zap/baz/baz-min.js", out.js[2], "The url should be ");
+        },
+        'test base should take precedence over defaultBase': function() {
+            var loader = new testY.Loader({
+                groups: {
+                    test1: {
+                        defaultBase: 'http://mycdn.com/path/to/',
+                        base: 'http://basecdn.com/path/to/base/',
+                        root: 'zip/',
+                        modules: {
+                            foo: {
+                                filter: 'min'
+                            },
+                            bar: {
+                                filter: 'min'
+                            }
+                        }
+                    },
+                    test2: {
+                        defaultBase: 'http://mycdn.com/path/to/',
+                        base: 'http://basecdn.com/path/to/base/',
+                        root: 'zap/',
+                        modules: {
+                            baz: {
+                                filter: 'min'
+                            }
+                        }
+
+                    }
+                },
+                require: ['foo', 'bar', 'baz']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(3, out.js.length, "Loader should not have combined URLs." + JSON.stringify(out.js));
+            Assert.areSame("http://basecdn.com/path/to/base/foo/foo-min.js", out.js[0], "The url should be ");
+            Assert.areSame("http://basecdn.com/path/to/base/bar/bar-min.js", out.js[1], "The url should be ");
+            Assert.areSame("http://basecdn.com/path/to/base/baz/baz-min.js", out.js[2], "The url should be ");
+        },
         test_group_filters: function() {
             var test = this;
 
