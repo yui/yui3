@@ -4,6 +4,18 @@ YUI Loader Change History
 @VERSION@
 ------
 
+* Setup Y.config.global to allow for YUI to work on CSP regulated sites and environments like Chrome extensions by providing the global in the user configuration.  
+
+[#1963]: https://github.com/yui/yui3/pull/1963
+
+* Add new configuration option called `defaultBase` to minimize the amount of settings to define per group.
+
+[#1954] https://github.com/yui/yui3/pull/1954
+
+* Update loader and yui to optionally use pathogen encoding
+
+[#1950] https://github.com/yui/yui3/pull/1950
+
 * [#1938][]: Fixed Gallery build tag (@okuryu)
 
 [#1938]: https://github.com/yui/yui3/pull/1938
