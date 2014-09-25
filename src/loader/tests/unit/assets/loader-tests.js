@@ -309,8 +309,8 @@ YUI.add('loader-tests', function(Y) {
             });
             var out = loader.resolve(true);
             Assert.areSame(2, out.js.length, 'Loader did not generate one URL per comboBase');
-            Assert.isTrue(out.js.indexOf('http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
-            Assert.isTrue(out.js.indexOf('http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
+            Assert.isTrue(Y.Array.indexOf(out.js, 'http://secondhost.com/combo?3.5.0/foogg/foogg-min.js') >= 0, 'Group combo URL should be included in the result');
+            Assert.isTrue(Y.Array.indexOf(out.js, 'http://yui.yahooapis.com/combo?3.5.0/cookie/cookie-min.js') >= 0, 'Default YUI combo URL should be included in the result');
         },
         'test inherited comboBase with groups': function () {
             var loader = new testY.Loader({
