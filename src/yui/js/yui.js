@@ -432,7 +432,10 @@ proto = {
 
                             // use CDN default
                             return path;
-                        }
+                        },
+                getGlobal: (function () {
+                            return this;
+                          }())
 
             };
 
@@ -477,7 +480,7 @@ proto = {
             useBrowserConsole: true,
             useNativeES5: true,
             win: win,
-            global: Function('return this')()
+            global: Y.Env.getGlobal
         };
 
         //Register the CSS stamp element
