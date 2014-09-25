@@ -330,7 +330,7 @@ YUI.add('pathogen-encoder-tests', function (Y) {
                 'eu/ai/yui.js'
             ];
 
-            paths.forEach(function (path) {
+            Y.Array.forEach(paths, function (path) {
                 modules[path] = {
                     group: 'eu',
                     path: path
