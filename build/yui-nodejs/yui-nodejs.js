@@ -349,7 +349,7 @@ proto = {
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
-                cdn: BASE + VERSION + '/build/',
+                cdn: BASE + VERSION + '/',
                 // bootstrapped: false,
                 _idx: 0,
                 _used: {},
@@ -496,7 +496,9 @@ proto = {
 
         Y.config.lang = Y.config.lang || 'en-US';
 
-        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        Y.config.base = YUI.config.base ||
+                (YUI.config.defaultBase && YUI.config.root && YUI.config.defaultBase + YUI.config.root) ||
+                Y.Env.getBase(Y.Env._BASE_RE);
 
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';
@@ -6090,11 +6092,17 @@ Y.Loader.prototype = {
      */
     addGroup: function(o, name) {
         var mods = o.modules,
-            self = this, i, v;
+            self = this,
+            defaultBase = o.defaultBase || Y.config.defaultBase,
+            i, v;
 
         name = name || o.name;
         o.name = name;
         self.groups[name] = o;
+
+        if (!o.base && defaultBase && o.root) {
+            o.base = defaultBase + o.root;
+        }
 
         if (o.patterns) {
             for (i in o.patterns) {
