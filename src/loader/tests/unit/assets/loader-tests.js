@@ -433,7 +433,7 @@ YUI.add('loader-tests', function(Y) {
             testY.applyConfig({
                 defaultBase: 'http://mycdn.com/path/to/',
                 comboBase: 'http://mycdn.com/path/to/combo?',
-                root: 'yui-3.1.5.0/',
+                root: 'yui-3.1.5.0/'
             });
             var loader = new testY.Loader({
                 groups: {
@@ -461,7 +461,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['foo', 'bar', 'baz']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, "Loader should not have combined URLs." + JSON.stringify(out.js));
+            Assert.areSame(3, out.js.length, "Loader should not have combined URLs.");
             Assert.areSame("http://mycdn.com/path/to/zip/foo/foo-min.js", out.js[0], "The url should be ");
             Assert.areSame("http://mycdn.com/path/to/zip/bar/bar-min.js", out.js[1], "The url should be ");
             Assert.areSame("http://mycdn.com/path/to/zap/baz/baz-min.js", out.js[2], "The url should be ");
@@ -497,7 +497,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['foo', 'bar', 'baz']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, "Loader should not have combined URLs." + JSON.stringify(out.js));
+            Assert.areSame(3, out.js.length, "Loader should not have combined URLs.");
             Assert.areSame("http://basecdn.com/path/to/base/foo/foo-min.js", out.js[0], "The url should be ");
             Assert.areSame("http://basecdn.com/path/to/base/bar/bar-min.js", out.js[1], "The url should be ");
             Assert.areSame("http://basecdn.com/path/to/base/baz/baz-min.js", out.js[2], "The url should be ");
