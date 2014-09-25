@@ -132,6 +132,7 @@ available.
 
             // bind the specified additional modules for this instance
             if (!l) {
+                Y._afterConfig();
                 Y._setup();
             }
         }
@@ -145,6 +146,7 @@ available.
                 Y.applyConfig(args[i]);
             }
 
+            Y._afterConfig();
             Y._setup();
         }
 
@@ -476,8 +478,7 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win,
-            global: Function('return this')()
+            win: win
         };
 
         //Register the CSS stamp element
@@ -506,6 +507,25 @@ proto = {
         filter = (filter) ? '-' + filter : filter;
         Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
+    },
+
+    /**
+    This method is called after all other configuration has been applied to
+    the YUI instance.
+
+    @method _afterConfig
+    @private
+    **/
+    _afterConfig: function () {
+        var Y = this;
+
+        // We need to set up Y.config.global after the rest of the configuration
+        // so that setting it in user configuration prevents the library from
+        // using eval(). This is critical for Content Security Policy enabled
+        // sites and other environments like Chrome extensions
+        if (!Y.config.hasOwnProperty('global')) {
+            Y.config.global = Function('return this')();
+        }
     },
 
     /**

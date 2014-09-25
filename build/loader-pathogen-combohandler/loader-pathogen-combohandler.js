@@ -169,10 +169,10 @@ Y.mix(Y.Loader.prototype, {
                 key = meta.root;
 
                 // Trim '/' from both ends.
-                if (key[0] === '/') {
+                if (key.charAt(0) === '/') {
                     key = key.slice(1);
                 }
-                if (key[key.length - 1] === '/') {
+                if (key.charAt(key.length - 1) === '/') {
                     key = key.slice(0, -1);
                 }
 
@@ -189,7 +189,7 @@ Y.mix(Y.Loader.prototype, {
                     name = meta.root + name;
                 }
 
-                if (name[0] === '/') {
+                if (name.charAt(0) === '/') {
                     name = name.slice(1);
                 }
 
