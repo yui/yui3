@@ -7370,7 +7370,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         test: void 0,
                         temp: true
                     }), mname);
-                    if (found.configFn) {
+                    if (m && found.configFn) {
                         m.configFn = found.configFn;
                     }
                 }
