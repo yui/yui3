@@ -1,6 +1,6 @@
 {
     "name": "yui",
-    "version": "3.18.0-pre",
+    "version": "3.18.0-rc-1",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "url" : "https://github.com/yui/yui3/issues" },
