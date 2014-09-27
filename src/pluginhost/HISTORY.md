@@ -1,7 +1,7 @@
 Plugin Host Change History
 ==========================
 
-@VERSION@
+3.18.0
 ------
 
 * [#1944][]: Fix an issue calls to `Y.log` in PluginHost are missing filter information. (@tribis)

@@ -1,7 +1,7 @@
 Widget Modality Change History
 ==============================
 
-@VERSION@
+3.18.0
 ------
 
 * [#1897][]: Fixed an invalid `Y.Log()` syntax (@jonmak08)

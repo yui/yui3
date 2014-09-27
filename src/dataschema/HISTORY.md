@@ -1,7 +1,7 @@
 DataSchema Change History
 =========================
 
-@VERSION@
+3.18.0
 ------
 
 * No changes.

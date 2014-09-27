@@ -1,7 +1,7 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.18.0
 ------
 
 * Setup Y.config.global to allow for YUI to work on CSP regulated sites and environments like Chrome extensions by providing the global in the user configuration.  

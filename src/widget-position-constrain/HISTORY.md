@@ -1,7 +1,7 @@
 Widget Position Constrain Change History
 ========================================
 
-@VERSION@
+3.18.0
 ------
 
 * No changes.

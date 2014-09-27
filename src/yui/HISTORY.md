@@ -1,7 +1,7 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.18.0
 ------
 
 * [#1935][]: Mark all Android devices as "mobile". (@nolanlawson)

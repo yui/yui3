@@ -1,7 +1,7 @@
 Gestures Change History
 =======================
 
-@VERSION@
+3.18.0
 ------
 
 * [#1862][]: https://github.com/yui/yui3/issues/1862

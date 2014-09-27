@@ -1,7 +1,7 @@
 Pjax Change History
 ===================
 
-@VERSION@
+3.18.0
 ------
 
 * [#1874][]: Add `allowFallThrough` attribute to `navigate()` falls through
