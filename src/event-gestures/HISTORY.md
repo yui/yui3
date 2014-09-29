@@ -9,7 +9,7 @@ Gestures Change History
 3.18.0
 ------
 
-* [#1862][]: https://github.com/yui/yui3/issues/1862
+* [#1955][]: Don't prevent-default in 'on' for document node
 
 [#1955]: https://github.com/yui/yui3/pull/1955
 

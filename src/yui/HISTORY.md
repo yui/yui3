@@ -9,8 +9,10 @@ YUI Core Change History
 3.18.0
 ------
 
+* [#1963][]: Setup `Y.config.global` only if no user global was provided
 * [#1935][]: Mark all Android devices as "mobile". (@nolanlawson)
 
+[#1963]: https://github.com/yui/yui3/pull/1963
 [#1935]: https://github.com/yui/yui3/pull/1935
 
 3.17.2
