@@ -351,7 +351,7 @@ proto = {
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
-                cdn: BASE + VERSION + '/build/',
+                cdn: BASE + VERSION + '/',
                 // bootstrapped: false,
                 _idx: 0,
                 _used: {},
@@ -497,7 +497,9 @@ proto = {
 
         Y.config.lang = Y.config.lang || 'en-US';
 
-        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        Y.config.base = YUI.config.base ||
+                (YUI.config.defaultBase && YUI.config.root && YUI.config.defaultBase + YUI.config.root) ||
+                Y.Env.getBase(Y.Env._BASE_RE);
 
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';

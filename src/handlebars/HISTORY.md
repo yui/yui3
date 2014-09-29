@@ -4,6 +4,11 @@ Handlebars Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.18.0
+------
+
 * [#1961][]: Upgraded Handlebars.js to v2.0.0. See [Handlebars' release notes][v2.0.0].
 
 [#1961]: https://github.com/yui/yui3/pull/1961

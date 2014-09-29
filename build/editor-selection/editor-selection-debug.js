@@ -957,7 +957,7 @@ YUI.add('editor-selection', function (Y, NAME) {
         */
         removeCursor: function(keep) {
             var cur = this.getCursor();
-            if (cur) {
+            if (cur && cur.remove) {
                 if (keep) {
                     cur.set('innerHTML', '<br class="yui-cursor">');
                 } else {

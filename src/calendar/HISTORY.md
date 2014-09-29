@@ -4,6 +4,11 @@ Calendar Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.18.0
+------
+
 * [#1881][]: `very_short_weekdays` fallback to `datatype-date-format` langage data (@okuryu)
 
 [#1881]: https://github.com/yui/yui3/pull/1881

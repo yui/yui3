@@ -4,6 +4,11 @@ AutoComplete Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.18.0
+------
+
 * Fixed: Unable to use the keyboard to access the suggestion list when using the
   node-tokeninput plugin. ([#1913][]: @marclundgren)
 

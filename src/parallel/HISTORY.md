@@ -6,6 +6,11 @@ Parallel Change History
 
 * No changes.
 
+3.18.0
+------
+
+* No changes.
+
 3.17.2
 ------
 
