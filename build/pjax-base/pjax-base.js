@@ -430,7 +430,7 @@ PjaxBase.ATTRS = {
     @attribute allowFallThrough
     @type Boolean
     @default true
-    @since @SINCE@
+    @since 3.18.0
     **/
     allowFallThrough: {
         value: true
