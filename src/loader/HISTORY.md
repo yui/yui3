@@ -4,8 +4,10 @@ YUI Loader Change History
 @VERSION@
 ------
 
+* [#1959][]: Fixed an issue with `m` is null when `found.configfn` return `false`
 * [#1938][]: Fixed Gallery build tag (@okuryu)
 
+[#1959]: https://github.com/yui/yui3/pull/1959
 [#1938]: https://github.com/yui/yui3/pull/1938
 
 3.17.2
