@@ -5,9 +5,11 @@ YUI Loader Change History
 ------
 
 * [#1959][]: Fixed an issue with `m` is null when `found.configfn` return `false`
+* [#1950][]: Incorporate pathogen encoding logic in a separate module under loader
 * [#1938][]: Fixed Gallery build tag (@okuryu)
 
 [#1959]: https://github.com/yui/yui3/pull/1959
+[#1950]: https://github.com/yui/yui3/pull/1950
 [#1938]: https://github.com/yui/yui3/pull/1938
 
 3.17.2
