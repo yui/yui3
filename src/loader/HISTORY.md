@@ -17,7 +17,7 @@ YUI Loader Change History
 
 [#1963]: https://github.com/yui/yui3/pull/1963
 [#1959]: https://github.com/yui/yui3/pull/1959
-[#1954] https://github.com/yui/yui3/pull/1954
+[#1954]: https://github.com/yui/yui3/pull/1954
 [#1950]: https://github.com/yui/yui3/pull/1950
 [#1938]: https://github.com/yui/yui3/pull/1938
 
