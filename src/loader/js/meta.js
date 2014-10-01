@@ -50,7 +50,10 @@
                                        //////////////////////
                                        // BEGIN WF2 CHANGE //
                                        //////////////////////
-                                       defaultSkin: Y.UA.touchEnabled ? 'nxt' : 'nx',
+                                       // Temporary fix for PN-7736 - skin detection issue
+                                       // between JSP and JS
+                                       defaultSkin: (document.body.className.indexOf('wf2-skin-nxt') !== -1) ? 'nxt' : (document.body.className.indexOf('wf2-skin-nx') !== -1) ? 'nx' : Y.UA.touchEnabled ? 'nxt' : 'nx',
+                                       // defaultSkin: Y.UA.touchEnabled ? 'nxt' : 'nx',
                                        //////////////////////
                                        //  END WF2 CHANGE  //
                                        //////////////////////
