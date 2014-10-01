@@ -52,7 +52,16 @@
                                        //////////////////////
                                        // Temporary fix for PN-7736 - skin detection issue
                                        // between JSP and JS
-                                       defaultSkin: (document.body.className.indexOf('wf2-skin-nxt') !== -1) ? 'nxt' : (document.body.className.indexOf('wf2-skin-nx') !== -1) ? 'nx' : Y.UA.touchEnabled ? 'nxt' : 'nx',
+                                       defaultSkin: (function () {
+                                          var bodyClass = document.body.className;
+                                          if (/wf2\-skin\-nx\b/.test(bodyClass)) {
+                                            return 'nx';
+                                          } else if (/wf2\-skin\-nxt\b/.test(bodyClass)) {
+                                            return 'nxt';
+                                          } else {
+                                            return Y.UA.touchEnabled ? 'nxt' : 'nx';
+                                          }
+                                       })(),
                                        // defaultSkin: Y.UA.touchEnabled ? 'nxt' : 'nx',
                                        //////////////////////
                                        //  END WF2 CHANGE  //
