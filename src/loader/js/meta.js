@@ -53,7 +53,8 @@
                                        // Temporary fix for PN-7736 - skin detection issue
                                        // between JSP and JS
                                        defaultSkin: (function () {
-                                          var bodyClass = document.body.className;
+                                          var body = document.body,
+                                          bodyClass = body ? body.className : '';
                                           if (/wf2\-skin\-nx\b/.test(bodyClass)) {
                                             return 'nx';
                                           } else if (/wf2\-skin\-nxt\b/.test(bodyClass)) {
