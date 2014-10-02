@@ -56,7 +56,7 @@
                                           var body = document.body,
                                           bodyClass = body ? body.className : '',
                                           hasNx = false,
-                                          hasNxt =false;
+                                          hasNxt = false;
 
                                           if (/wf2\-skin\-nx\b/.test(bodyClass)) {
                                             hasNx = true;
