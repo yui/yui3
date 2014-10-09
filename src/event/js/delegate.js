@@ -246,6 +246,13 @@ delegate._applyFilter = function (filter, args, ce) {
         match     = [],
         isContainer = false;
 
+    // safari's svg element instance needs special handling
+    if (typeof SVGElementInstance !== 'undefined') {
+        if (!target.nodeType && target.correspondingElement) {
+            target = target.correspondingUseElement || target.correspondingElement;
+        }
+    }
+
     // Resolve text nodes to their containing element
     if (target.nodeType === 3) {
         target = target.parentNode;

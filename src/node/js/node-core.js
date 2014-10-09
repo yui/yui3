@@ -164,6 +164,8 @@ Y_Node.scrubVal = function(val, node) {
          if (typeof val == 'object' || typeof val == 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y_DOM.isWindow(val)) {// node || window
                 val = Y.one(val);
+            } else if (typeof SVGElementInstance !== 'undefined' && val.correspondingElement) { // svg node
+                val = Y.one(val.correspondingUseElement || val.correspondingElement);
             } else if ((val.item && !val._nodes) || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
@@ -284,6 +286,13 @@ Y_Node.one = function(node) {
             }
         } else if (node.getDOMNode) {
             return node; // NOTE: return
+        }
+
+        // safari's svg element instance needs special handling
+        if (typeof SVGElementInstance !== 'undefined') {
+            if (!node.nodeType && node.correspondingElement) {
+                node = node.correspondingUseElement || node.correspondingElement;
+            }
         }
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)

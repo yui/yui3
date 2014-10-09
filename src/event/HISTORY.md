@@ -4,7 +4,7 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed broken event delegation when the event target is an SVGElementInstance.
 
 3.18.0
 ------
