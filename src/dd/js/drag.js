@@ -614,12 +614,12 @@
         */
         _invalids: null,
         /**
-        * A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true, '[contenteditable]': true}
+        * A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true}
         * @private
         * @property _invalidsDefault
         * @type {Object}
         */
-        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true, '[contenteditable]': true },
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },
         /**
         * Private flag to see if the drag threshhold was met
         * @private
