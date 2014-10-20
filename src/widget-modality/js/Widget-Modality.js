@@ -318,7 +318,7 @@ var WIDGET       = 'widget',
          * @param {boolean} Whether the widget is visible or not
          */
         _uiSetHostVisibleModal : function (visible) {
-            var stack    = WidgetModal.STACK,
+            var stack    = YUI.Env.WidgetModal.STACK,
                 maskNode = this.get('maskNode'),
                 isModal  = this.get('modal'),
                 topModal, index;
@@ -402,7 +402,7 @@ var WIDGET       = 'widget',
          */
         _attachUIHandlesModal : function () {
 
-            if (this._uiHandlesModal || WidgetModal.STACK[0] !== this) {
+            if (this._uiHandlesModal || YUI.Env.WidgetModal.STACK[0] !== this) {
                 // Quit early if we have ui handles, or if we not at the top
                 // of the global stack.
                 return;
@@ -497,7 +497,7 @@ var WIDGET       = 'widget',
          * @public
          */
         isNested: function() {
-            var length = WidgetModal.STACK.length,
+            var length = YUI.Env.WidgetModal.STACK.length,
             retval = (length > 1) ? true : false;
             return retval;
         },
