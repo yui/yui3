@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Double Modal Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+    <h1>Lorem Ipsum</h1>
+    <p>Closing one modal while displaying another should not lose the modal overlay until all modal widgets are closed.</p>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({filter: 'raw'}).use('panel', function (Y) {
+
+    var panel1 = new Y.Panel({
+        headerContent: 'Dialog 1',
+        bodyContent  : 'Hello',
+        modal        : true,
+        centered     : true,
+        visible      : false,
+
+        hideOn: [
+            { eventName: 'click' }
+        ],
+
+        buttons: [
+            {
+                value  : 'Close',
+                section: Y.WidgetStdMod.FOOTER,
+                action : function(e) {
+                    console.log('stack', YUI.Env.WidgetModal.STACK);
+                    console.log('Dialog 1, is nested?', this.isNested());
+                    this.hide();
+                }
+            }
+        ]
+    });
+
+    panel1.render().show();
+
+});
+
+
+YUI().use('panel', function (Y) {
+
+    var panel2 = new Y.Panel({
+        headerContent: 'Session Timeout',
+        bodyContent  : 'Your session timeout message.',
+        modal        : true,
+        centered     : false,
+        visible      : false,
+
+        hideOn: [
+            { eventName: 'click' }
+        ],
+
+        buttons: [
+            {
+                value  : 'Ok',
+                section: Y.WidgetStdMod.FOOTER,
+                action : function(e) {
+                    console.log('stack', YUI.Env.WidgetModal.STACK);
+                    console.log('Dialog2, is nested?', this.isNested());
+                    this.hide();
+                }
+            }
+        ]
+    });
+
+    panel2.render().show();
+
+});
+</script>
+
+</body>
+</html>

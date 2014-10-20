@@ -172,10 +172,17 @@ var WIDGET       = 'widget',
     };
 
     /**
-     * A stack of Y.Widget objects representing the current hierarchy of modal widgets presently displayed on the screen
+     * A (global) stack of Y.Widget objects representing the current hierarchy of modal widgets presently displayed on the screen
+     * PN-6992 Commented out the original STACK instantiation line, and switched out WidgetModal.STACK for YUI.Env.WidgetModal.STACK
+     * to make the WidgetModal bean counting cross-sandbox aware. The fact that modality only ever uses one overlay suggests this 
+     * class should have implemented the bean counting mechanism to be cross-sandbox aware. aalbino 2014-10-17 12:25pm
      * @property STACK
      */
-    WidgetModal.STACK = [];
+    // WidgetModal.STACK = []; 
+    if (!YUI.Env.WidgetModal) {
+        YUI.namespace('Env.WidgetModal');
+        YUI.Env.WidgetModal.STACK = [];
+    }
 
 
     WidgetModal.prototype = {
