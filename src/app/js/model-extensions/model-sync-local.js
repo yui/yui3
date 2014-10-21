@@ -290,7 +290,7 @@ LocalSync.prototype = {
         LocalSync._data[id] = hash;
 
         if (this.storage) {
-            this.storage.setItem(id, hash);
+            this.storage.setItem(id, Y.JSON.stringify(hash));
         }
 
         if (Y.Array.indexOf(LocalSync._store[this.root], id) === -1) {
