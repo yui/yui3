@@ -1800,6 +1800,7 @@
             "features"
         ]
     },
+    "loader-pathogen-combohandler": {},
     "loader-pathogen-encoder": {
         "use": [
             "loader-base",
