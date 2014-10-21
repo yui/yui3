@@ -325,7 +325,7 @@ LocalSync.prototype = {
         }
 
         LocalSync._store[this.root] = Y.Array.filter(LocalSync._store[this.root], function (item) {
-            return item.id != id;
+            return item != id;
         });
 
         this._save();
