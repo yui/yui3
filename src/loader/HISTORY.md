@@ -1,7 +1,7 @@
 YUI Loader Change History
 =========================
 
-@VERSION@
+3.18.1
 ------
 
 * [#1974][]: Fix metadata for loader

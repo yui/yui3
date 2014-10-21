@@ -1,7 +1,7 @@
 QueryString Utility Change History
 ==================================
 
-@VERSION@
+3.18.1
 ------
 
 * No changes.

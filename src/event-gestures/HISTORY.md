@@ -1,7 +1,7 @@
 Gestures Change History
 =======================
 
-@VERSION@
+3.18.1
 ------
 
 * [#1955][]: Don't prevent-default in 'on' for document node

@@ -1,7 +1,7 @@
 Drag and Drop Change History
 ============================
 
-@VERSION@
+3.18.1
 ------
 
 * [#1972][] Fix MSIE 6 and 7 regression in `dd`.
