@@ -4,7 +4,9 @@ ScrollView Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1740][]: Scrollview scrolltoindex breaks after a click-drag down (@mairatma)
+
+[#1740]: https://github.com/yui/yui3/issues/1740
 
 3.18.1
 ------

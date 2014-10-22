@@ -450,6 +450,15 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             Y.Assert.isNull(response.newArgs[0]);
         },
 
+        '_beforeHostScrollTo through scrollToIndex should keep original values': function() {
+            var scrollview = this.scrollview = renderNewScrollview('x', 'x');
+
+            scrollview._gesture = { axis: 'y' };
+            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+            scrollview.pages.scrollToIndex(1);
+            Y.Assert.areEqual(300, scrollview.get('scrollX'));
+        },
+
         "Gestures against the grain should select the index page's node to transition" : function () {
             var scrollview = this.scrollview = renderNewScrollview('y', 'y'),
                 paginator = this.scrollview.pages,
