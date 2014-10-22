@@ -4,7 +4,7 @@ YUI Test Change History
 @VERSION@
 ------
 
-* No changes.
+* Added isNotEmpty assert for YUITest
 
 3.18.1
 ------
