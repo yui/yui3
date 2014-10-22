@@ -4,7 +4,7 @@ Node Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed broken Y.one/Y.all wrappers when the node is an SVGElementInstance.
 
 3.18.1
 ------

@@ -23,6 +23,8 @@ var NodeList = function(nodes) {
             nodes = Y.Selector.query(nodes);
         } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
             nodes = [nodes];
+        } else if (typeof SVGElementInstance !== 'undefined' && nodes.correspondingElement) { // svg node
+            nodes = [nodes.correspondingUseElement || nodes.correspondingElement];
         } else if (nodes._node) { // Y.Node
             nodes = [nodes._node];
         } else if (nodes[0] && nodes[0]._node) { // allow array of Y.Nodes
