@@ -4,6 +4,11 @@ Gestures Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.18.1
+------
+
 * [#1955][]: Don't prevent-default in 'on' for document node
 
 [#1955]: https://github.com/yui/yui3/pull/1955

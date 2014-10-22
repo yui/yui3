@@ -4,6 +4,11 @@ Drag and Drop Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.18.1
+------
+
 * [#1972][] Fix MSIE 6 and 7 regression in `dd`.
 
 [#1972]: https://github.com/yui/yui3/pull/1972   

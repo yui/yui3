@@ -6,6 +6,11 @@ Focus Manager Change History
 
 * No changes.
 
+3.18.1
+------
+
+* No changes.
+
 3.18.0
 ------
 

@@ -4,6 +4,11 @@ YUI Loader Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.18.1
+------
+
 * [#1974][]: Fix metadata for loader
 
 [#1974]: https://github.com/yui/yui3/pull/1974 
