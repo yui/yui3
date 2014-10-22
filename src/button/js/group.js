@@ -24,6 +24,15 @@ function ButtonGroup() {
 /* ButtonGroup extends Widget */
 Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 
+	/**
+     * Content box template
+     *
+     * @property CONTENT_TEMPLATE
+     * @type {String}
+     * @default null
+     */
+    CONTENT_TEMPLATE: null,
+
     /**
      * @method renderUI
      * @description Creates a visual representation of the widget based on existing parameters.
