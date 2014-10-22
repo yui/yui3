@@ -1,6 +1,11 @@
 OOP Change History
 ==================
 
+@VERSION@
+------
+
+* No changes.
+
 3.18.1
 ------
 
