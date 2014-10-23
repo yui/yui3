@@ -80,6 +80,22 @@ suite.add(new Y.Test.Case({
         widget.align(null);
     },
 
+    'Value returned from _getAlignedXY() before alignment should be the same of get(\'xy\') after alignment': function () {
+        var widget = new this.TestWidget( { render: true } ),
+            align  = {
+                node  : 'body',
+                points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
+            };
+
+        var beforeAlignment = widget._getAlignedXY(align.node, align.points);
+
+        widget.align(align.node, align.points);
+
+        var afterAlignment = widget.get('xy');
+
+        Y.Test.ArrayAssert.itemsAreEqual(beforeAlignment, afterAlignment);
+    },
+
     'align() should be chainable': function () {
         var widget = new this.TestWidget();
         Assert.areSame(widget, widget.align());

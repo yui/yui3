@@ -234,6 +234,16 @@ PositionAlign.prototype = {
 
     // -- Lifecycle Methods ----------------------------------------------------
 
+    initializer: function() {
+        if ( ! this._posNode) {
+            Y.error('WidgetPosition needs to be added to the Widget, ' +
+                'before WidgetPositionAlign is added');
+        }
+
+        Y.after(this._bindUIPosAlign, this, 'bindUI');
+        Y.after(this._syncUIPosAlign, this, 'syncUI');
+    },
+
     destructor: function () {
         this._detachPosAlignUIHandles();
     },
@@ -328,52 +338,113 @@ PositionAlign.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Default setter for `center` Attribute changes. Sets up the appropriate
-    value, and passes it through the to the align attribute.
+    Returns coordinates realative to the passed `Node` alignment.
 
-    @method _setAlignCenter
-    @param {Boolean|Node} val The Attribute value being set.
-    @return {Boolean|Node} the value passed in.
-    @protected
+    @method _getAlignToXY
+    @param {Node} 'Node' The node to align to.
+    @param {Array} [point] The node alignment points.
+    @param {Number} 'Node' x coordinate.
+    @param {Number} 'Node' y coordinate.
+    @return {Array} the coordinates.
+    @private
     **/
-    _setAlignCenter: function (val) {
-        if (val) {
-            this.set(ALIGN, {
-                node  : val === true ? null : val,
-                points: [PositionAlign.CC, PositionAlign.CC]
-            });
+    _getAlignToXY: function (node, point, x, y) {
+        var xy;
+
+        switch (point) {
+        case PositionAlign.TL:
+            xy = [x, y];
+            break;
+
+        case PositionAlign.TR:
+            xy = [
+                x - node.get(OFFSET_WIDTH),
+                y
+            ];
+            break;
+
+        case PositionAlign.BL:
+            xy = [
+                x,
+                y - node.get(OFFSET_HEIGHT)
+            ];
+            break;
+
+        case PositionAlign.BR:
+            xy = [
+                x - node.get(OFFSET_WIDTH),
+                y - node.get(OFFSET_HEIGHT)
+            ];
+            break;
+
+        case PositionAlign.TC:
+            xy = [
+                x - (node.get(OFFSET_WIDTH) / 2),
+                y
+            ];
+            break;
+
+        case PositionAlign.BC:
+            xy = [
+                x - (node.get(OFFSET_WIDTH) / 2),
+                y - node.get(OFFSET_HEIGHT)
+            ];
+            break;
+
+        case PositionAlign.LC:
+            xy = [
+                x,
+                y - (node.get(OFFSET_HEIGHT) / 2)
+            ];
+            break;
+
+        case PositionAlign.RC:
+            xy = [
+                x - node.get(OFFSET_WIDTH),
+                y - (node.get(OFFSET_HEIGHT) / 2)
+            ];
+            break;
+
+        case PositionAlign.CC:
+            xy = [
+                x - (node.get(OFFSET_WIDTH) / 2),
+                y - (node.get(OFFSET_HEIGHT) / 2)
+            ];
+            break;
+
+        default:
+            Y.log('align: Invalid Points Argument', 'info',
+                'widget-position-align');
+            break;
+
         }
 
-        return val;
+        return xy;
     },
 
     /**
-    Updates the UI to reflect the `align` value passed in.
+    Returns `Widget` alignment coordinates realative to the given `Node`.
 
-    **Note:** See the `align` Attribute documentation, for the Object structure
-    expected.
-
-    @method _uiSetAlign
+    @method _getAlignedXY
     @param {Node|String|null} [node] The node to align to, or null to indicate
       the viewport.
     @param {Array} points The alignment points.
+    @return {Array} the coordinates.
     @protected
     **/
-    _uiSetAlign: function (node, points) {
+    _getAlignedXY: function (node, points) {
         if ( ! Lang.isArray(points) || points.length !== 2) {
             Y.error('align: Invalid Points Arguments');
             return;
         }
 
-        var nodeRegion = this._getRegion(node),
-            widgetPoint, nodePoint, xy;
+        var nodeRegion = this._getRegion(node), nodePoint, xy;
 
         if ( ! nodeRegion) {
             // No-op, nothing to align to.
             return;
         }
 
-        widgetPoint = points[0];
         nodePoint   = points[1];
 
         // TODO: Optimize KWeight - Would lookup table help?
@@ -430,14 +501,52 @@ PositionAlign.prototype = {
             break;
 
         default:
-            Y.log('align: Invalid Points Arguments', 'info',
+            Y.log('align: Invalid Points Argument', 'info',
                 'widget-position-align');
             break;
 
         }
 
+        return this._getAlignToXY(this._posNode, points[0], xy[0], xy[1]);
+    },
+
+    /**
+    Default setter for `center` Attribute changes. Sets up the appropriate
+    value, and passes it through the to the align attribute.
+
+    @method _setAlignCenter
+    @param {Boolean|Node} val The Attribute value being set.
+    @return {Boolean|Node} the value passed in.
+    @protected
+    **/
+    _setAlignCenter: function (val) {
+        if (val) {
+            this.set(ALIGN, {
+                node  : val === true ? null : val,
+                points: [PositionAlign.CC, PositionAlign.CC]
+            });
+        }
+
+        return val;
+    },
+
+    /**
+    Updates the UI to reflect the `align` value passed in.
+
+    **Note:** See the `align` Attribute documentation, for the Object structure
+    expected.
+
+    @method _uiSetAlign
+    @param {Node|String|null} [node] The node to align to, or null to indicate
+      the viewport.
+    @param {Array} points The alignment points.
+    @protected
+    **/
+    _uiSetAlign: function (node, points) {
+        var xy = this._getAlignedXY(node, points);
+
         if (xy) {
-            this._doAlign(widgetPoint, xy[0], xy[1]);
+            this._doAlign(xy);
         }
     },
 
@@ -507,84 +616,10 @@ PositionAlign.prototype = {
     coordinates provided.
 
     @method _doAlign
-    @param {String} widgetPoint Supported point constant
-      (e.g. WidgetPositionAlign.TL)
-    @param {Number} x X page coordinate to align to.
-    @param {Number} y Y page coordinate to align to.
+    @param {Array} xy XY page coordinates to align to.
     @private
     **/
-    _doAlign: function (widgetPoint, x, y) {
-        var widgetNode = this._posNode,
-            xy;
-
-        switch (widgetPoint) {
-        case PositionAlign.TL:
-            xy = [x, y];
-            break;
-
-        case PositionAlign.TR:
-            xy = [
-                x - widgetNode.get(OFFSET_WIDTH),
-                y
-            ];
-            break;
-
-        case PositionAlign.BL:
-            xy = [
-                x,
-                y - widgetNode.get(OFFSET_HEIGHT)
-            ];
-            break;
-
-        case PositionAlign.BR:
-            xy = [
-                x - widgetNode.get(OFFSET_WIDTH),
-                y - widgetNode.get(OFFSET_HEIGHT)
-            ];
-            break;
-
-        case PositionAlign.TC:
-            xy = [
-                x - (widgetNode.get(OFFSET_WIDTH) / 2),
-                y
-            ];
-            break;
-
-        case PositionAlign.BC:
-            xy = [
-                x - (widgetNode.get(OFFSET_WIDTH) / 2),
-                y - widgetNode.get(OFFSET_HEIGHT)
-            ];
-            break;
-
-        case PositionAlign.LC:
-            xy = [
-                x,
-                y - (widgetNode.get(OFFSET_HEIGHT) / 2)
-            ];
-            break;
-
-        case PositionAlign.RC:
-            xy = [
-                x - widgetNode.get(OFFSET_WIDTH),
-                y - (widgetNode.get(OFFSET_HEIGHT) / 2)
-            ];
-            break;
-
-        case PositionAlign.CC:
-            xy = [
-                x - (widgetNode.get(OFFSET_WIDTH) / 2),
-                y - (widgetNode.get(OFFSET_HEIGHT) / 2)
-            ];
-            break;
-
-        default:
-            Y.log('align: Invalid Points Argument', 'info',
-                'widget-position-align');
-            break;
-
-        }
-
+    _doAlign: function(xy) {
         if (xy) {
             this.move(xy);
         }

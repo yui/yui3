@@ -4,7 +4,7 @@ Widget Position Align Change History
 @VERSION@
 ------
 
-* No changes.
+Exposed method that calculate widget alignment coordinates (_getAlignToXY).
 
 3.18.1
 ------
