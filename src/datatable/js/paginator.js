@@ -258,26 +258,41 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         var model = this.get('model'),
             controlClass = '.' + this.classNames.control,
             container = this.get('container'),
+            firstControl = container.one(controlClass + '-first'),
+            prevControl = container.one(controlClass + '-prev'),
+            nextControl = container.one(controlClass + '-next'),
+            lastControl = container.one(controlClass + '-last'),
+            gotoPageControl = container.one('form input'),
             hasPrev = model.hasPrevPage(),
             hasNext = model.hasNextPage();
 
-        container.one(controlClass + '-first')
+        if (firstControl) {
+            firstControl
                  .toggleClass(CLASS_DISABLED, !hasPrev)
                  .set('disabled', !hasPrev);
+        }
 
-        container.one(controlClass + '-prev')
+        if (prevControl) {
+            prevControl
                  .toggleClass(CLASS_DISABLED, !hasPrev)
                  .set('disabled', !hasPrev);
+        }
 
-        container.one(controlClass + '-next')
+        if (nextControl) {
+            nextControl
                  .toggleClass(CLASS_DISABLED, !hasNext)
                  .set('disabled', !hasNext);
+        }
 
-        container.one(controlClass + '-last')
+        if (lastControl) {
+            lastControl
                  .toggleClass(CLASS_DISABLED, !hasNext)
                  .set('disabled', !hasNext);
+        }
 
-        container.one('form input').set('value', val);
+        if (gotoPageControl) {
+            gotoPageControl.set('value', val);
+        }
     },
 
     /**
@@ -288,11 +303,17 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @since 3.11.0
      */
     _updateItemsPerPageUI: function (val) {
+        var itemsPerPageControl;
+
         if (!this._rendered) {
             return;
         }
 
-        this.get('container').one('select').set('value', val);
+        itemsPerPageControl = this.get('container').one('select');
+
+        if (itemsPerPageControl) {
+            itemsPerPageControl.set('value', val);
+        }
     },
 
     /**

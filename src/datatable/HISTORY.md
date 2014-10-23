@@ -4,7 +4,9 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed a bug where the DataTable Paginator would throw an error and fail to
+  render if a custom view's contentTemplate does not contain the default
+  controls. [Pull Request #1917]
 
 3.18.1
 ------

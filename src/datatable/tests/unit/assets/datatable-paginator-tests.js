@@ -246,6 +246,40 @@ suite.add(new Y.Test.Case({
         dt.destroy();
     },
 
+    "test custom paginator view": function () {
+        var className = 'yui3-datatable-paginator',
+            dt,
+            container;
+
+        Y.CustomPaginatorView = Y.Base.create('custom-paginator-view', Y.DataTable.Paginator.View, [], {
+            contentTemplate: '{buttons}'
+        });
+
+        dt = new Y.DataTable({
+            caption: 'test custom paginator view',
+            columns: ['id', 'name'],
+            data: data,
+            rowsPerPage: 10,
+            paginatorView: 'CustomPaginatorView' // default 'DataTable.Paginator.View'
+        }).render();
+
+        container = dt.get('contentBox');
+
+        // paginator rendered
+        Y.Assert.isNotNull(container.one('.' + className), 'paginator should be rendered');
+
+        // first button rendered
+        Y.Assert.isNotNull(container.one('.' + className + '-control-first'), 'paginator first control should be rendered');
+
+        // gotoPage not rendered
+        Y.Assert.isNull(container.one('.' + className + ' label input'), 'paginator gotoPage control should not be rendered');
+
+        // rowsPerPage not rendered
+        Y.Assert.isNull(container.one('.' + className + '-per-page'), 'paginator rowsPerPage control should not be rendered');
+
+        dt.destroy();
+    },
+
     "test swapping the data with new data": function () {
         var dt = new Y.DataTable({
             caption: 'test swapping the data with new data',
