@@ -4,7 +4,9 @@ ScrollView Change History
 @VERSION@
 ------
 
-* No changes.
+* [#1816][]: ScrollViewPaginator partial transition (@mairatma)
+
+[#1816]: https://github.com/yui/yui3/issues/1816
 
 3.18.1
 ------
