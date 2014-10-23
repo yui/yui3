@@ -7,7 +7,16 @@
 
 <div id="log"></div>
 
-<div id="tester"></div>
+<div id="tester">
+    <div class="included">
+        Included
+        <div>Child included</div>
+    </div>
+    <div class="excluded">
+        Excluded
+        <div>Child excluded</div>
+    </div>
+</div>
 
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script>
@@ -17,7 +26,7 @@ YUI({
     modules: {
         'outside-tests': {
             fullpath: './assets/outside-tests.js',
-            requires: [ 'event-outside', 'node-event-simulate', 'test-console', 'test' ]
+            requires: [ 'event-outside', 'node-event-simulate', 'event-tap', 'test-console', 'test' ]
         }
     }
 }).use('outside-tests', function(Y) {
