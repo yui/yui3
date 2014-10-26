@@ -195,6 +195,16 @@ var WIDGET       = 'widget',
 
         _uiHandlesModal: null,
 
+        /**
+        A reference to the scheduling of a focus operation. Used to cancel
+        the focusing action on visibility changes.
+
+        @property _wmFocusing
+        @type Object
+        @private
+        **/
+        _wmFocusing: null,
+
 
         /**
          * Adds modal class to the bounding box of the widget
@@ -328,7 +338,9 @@ var WIDGET       = 'widget',
                 if (isModal) {
                     maskNode.show();
                     Y.later(1, this, '_attachUIHandlesModal');
-                    this._focus();
+                    // Focus after a timeout to allow other components to modify
+                    // the position and other CSS styles of the widget
+                    this._wmFocusing = Y.later(1, this, '_focus');
                 }
 
 
@@ -338,6 +350,10 @@ var WIDGET       = 'widget',
                 if (index >= 0) {
                     // Remove modal widget from global stack.
                     stack.splice(index, 1);
+                }
+
+                if (this._wmFocusing) {
+                    this._wmFocusing.cancel();
                 }
 
                 this._detachUIHandlesModal();

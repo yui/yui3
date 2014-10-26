@@ -4,7 +4,8 @@ Widget Modality Change History
 @VERSION@
 ------
 
-* No changes.
+* Focus after a timeout to avoid the browser being scrolled after visibility
+changes.
 
 3.18.1
 ------
