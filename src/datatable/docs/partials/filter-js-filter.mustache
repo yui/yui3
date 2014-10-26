@@ -1,0 +1,54 @@
+        Y.one('button.filter').on('click', function (e) {
+            dt.clearFilters();
+
+            filtersUl.all('li').each(function (li) {
+                var key = li.one('.key').get('value'),
+                    comp = li.one('.comp').get('value'),
+                    val = li.one('.val').get('value'),
+                    fn;
+
+                if (val === '') {
+                    return;
+                }
+
+                if (val == +val) {
+                    val = +val;
+                }
+
+                switch (comp) {
+                    case 'cont':
+                        dt.addFilter(key, new RegExp(val));
+                        break;
+                    case 'lt':
+                        dt.addFilter(function (row) {
+                            return row.get(key) < val;
+                        });
+                        break;
+                    case 'lte':
+                        dt.addFilter(function (row) {
+                            return row.get(key) <= val;
+                        });
+                        break;
+                    case 'eq':
+                        dt.addFilter(function (row) {
+                            return row.get(key) == val;
+                        });
+                        break;
+                    case 'gt':
+                        dt.addFilter(function (row) {
+                            return row.get(key) > val;
+                        });
+                        break;
+                    case 'gte':
+                        dt.addFilter(function (row) {
+                            return row.get(key) >= val;
+                        });
+                        break;
+
+                }
+
+            });
+
+            dt.applyFilters();
+
+        });

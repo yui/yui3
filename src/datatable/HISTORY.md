@@ -4,7 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* Add datatable-filter module providing the ability to filter a DataTable
+  without modifying the original data [Pull Request #1451]
 
 3.18.1
 ------

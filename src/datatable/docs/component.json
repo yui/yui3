@@ -131,6 +131,16 @@
             "useModules": ["datatable", "datatable-paginator"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-filter",
+            "displayName": "DataTable with Filters",
+            "modules": ["datatable", "filter"],
+            "description": "DataTable Filter provides methods for you to easily filter your data results. All you need now is to build an awesome UI.",
+            "useModules": ["datatable", "datatable-filter"],
+
+            "hideTableOfContents": true
         }
 
     ]
