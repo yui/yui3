@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<title>YUI: GetXY</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./assets/dom-move-xy-test.js"></script>
+<style type="text/css" media="screen">
+    .yui3-console {
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 1;
+    }
+
+	.container {
+	    position: relative;
+	    width: 100%;
+	    height: 120px;
+	}
+
+	.node {
+		opacity: 0.5;
+	    position: absolute;
+	    width: 200px;
+	    height: 50px;
+	    background-color: #74ADE8;
+	}
+
+	.node-left {
+		background-color: #f00;
+	    left: 200px;
+	}
+
+	.mr {
+		margin-right: 120px;
+	}
+
+	.ml {
+		margin-left: 120px;
+	}
+
+	.node-right {
+		background-color: #00f;
+	    right: 200px;
+	}
+</style>
+</head>
+<body class="yui3-skin-sam">
+
+<div class="container" dir="ltr">
+    <div id="ltr-left-ml" class="node node-left ml">LTR node left ml</div>
+    <div id="ltr-left-mr" class="node node-left mr">LTR node left mr</div>
+    <div id="ltr-left-ml-mr" class="node node-left mr ml">LTR node left ml mr</div>
+</div>
+
+<div class="container" dir="ltr">
+    <div id="ltr-right-ml" class="node node-right ml">LTR node right ml</div>
+    <div id="ltr-right-mr" class="node node-right mr">LTR node right mr</div>
+    <div id="ltr-right-ml-mr" class="node node-right ml mr">LTR node right ml mr</div>
+</div>
+
+<div class="container" dir="rtl">
+    <div id="rtl-left-ml" class="node node-left ml">RTL node left ml</div>
+    <div id="rtl-left-mr" class="node node-left mr">RTL node left mr</div>
+    <div id="rtl-left-ml-mr" class="node node-left ml mr">RTL node left ml mr</div>
+</div>
+
+<div class="container" dir="rtl">
+    <div id="rtl-right-ml" class="node node-right ml">RTL node right ml</div>
+    <div id="rtl-right-mr" class="node node-right mr">RTL node right mr</div>
+    <div id="rtl-right-ml-mr" class="node node-right ml mr">RTL node right ml mr</div>
+</div>
+
+<script type="text/javascript">
+YUI({
+    coverage: ['dom-screen'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test-console', 'dom-move-xy-test', function (Y) {
+        Y.DOM._testXY();
+        new Y.Test.Console().render();
+        Y.Test.Runner.setName('Dom: XY');
+        Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

@@ -316,20 +316,41 @@ Y.mix(Y_DOM, {
             pos,
             delta,
             newXY,
-            currentXY;
+            currentXY,
+            offsetDir,
+            dir,
+            x;
 
         if (node && xy) {
             pos = Y_DOM.getStyle(node, POSITION);
 
-            delta = Y_DOM._getOffset(node);
+            offsetDir = Y_DOM.OFFSET_XY;
+
+            if (!offsetDir) {
+                dir = Y_DOM.getComputedStyle(node, 'direction');
+
+                offsetDir = (dir === 'rtl' ? 'right' : LEFT);
+            }
+
+            delta = Y_DOM._getOffset(node, offsetDir);
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
             }
-            currentXY = Y_DOM.getXY(node);
+            currentXY = Y_DOM._getDirXY(node, offsetDir);
 
-            if (xy[0] !== null) {
-                setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
+            x = xy[0];
+
+            if (offsetDir === 'right') {
+                x = Y_DOM.winWidth() - (xy[0] + parseInt(Y_DOM.getComputedStyle(node, 'width'), 10));
+
+                if (!delta[0]) {
+                    noRetry = false;
+                }
+            }
+
+            if (x !== null) {
+                setStyle(node, offsetDir, x - currentXY[0] + delta[0] + 'px');
             }
 
             if (xy[1] !== null) {
@@ -425,6 +446,16 @@ Y.mix(Y_DOM, {
         }
 
         return { height: root.scrollHeight, width: root.scrollWidth };
+    },
+
+    _getDirXY: function(node, dir) {
+        var xy = Y_DOM.getXY(node);
+
+        if (dir === 'right') {
+            xy[0] = (Y_DOM.winWidth() - (xy[0] + parseInt(Y_DOM.getComputedStyle(node, 'width'), 10)));
+        }
+
+        return xy;
     }
 });
 
