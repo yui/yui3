@@ -594,6 +594,24 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    "tick should default to 0": function () {
+        var slider = new Y.Slider();
+        Y.Assert.areSame(0, slider.get('tick'));
+        slider.destroy();
+    },
+
+    "tick should reject a non-number value": function () {
+        var slider = new Y.Slider({ tick: '12' });
+        Y.Assert.areSame(0, slider.get('tick'));
+        slider.destroy();
+    },
+
+    "tick should reject a value that doesn't evenly divide length": function () {
+        var slider = new Y.Slider({ length: '100px', tick: 7 });
+        Y.Assert.areSame(0, slider.get('tick'));
+        slider.destroy();
+    },
+
     "test value": function () {
         var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
 
@@ -639,6 +657,18 @@ suite.add( new Y.Test.Case({
         slider.set('value', 110);
 
         Y.Assert.areSame(100, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting the value outside of the tick 'whitelist' should constrain it": function () {
+        var slider = new Y.Slider({ tick: 7, length: '70px' });
+
+        slider.setValue(15);
+        Y.Assert.areSame(14, slider.getValue(), 'Expected 15 to be constrained to 14');
+
+        slider.setValue(20);
+        Y.Assert.areSame(21, slider.getValue(), 'Expected 20 to be constrained to 21');
 
         slider.destroy();
     },
@@ -744,6 +774,143 @@ suite.add( new Y.Test.Case({
 
         Y.Assert.isTrue(fired, "Failed to fire: railMouseDown");
         Y.Assert.isTrue( (thumbPosition() > 0), "Failed to find thumPosition > 0" );
+    }
+}));
+
+suite.add( new Y.Test.Case({
+
+    name: "Mouse - with tick",
+
+    tick: 10,
+
+    /**
+     * Simulate a click on the rail.
+     * @param distance { Number } Distance relative to the start of the rail
+     */
+    clickOnRail: function (distance) {
+        var region = this.slider.rail.get('region');
+        this.slider._onRailMouseDown({
+            clientX: region.left + distance,
+            clientY: region.top + Math.floor(region.height / 2),
+            pageX: region.left + distance,
+            pageY: region.top + Math.floor(region.height / 2),
+            halt: function () {}
+        });
+    },
+
+    setUp: function () {
+        Y.one('body').append('<div id="mouse_tick"></div>');
+        this.slider = new Y.Slider({ tick: this.tick, length: '100px' });
+        this.slider.render('#mouse_tick');
+    },
+
+    tearDown: function () {
+        this.slider.destroy();
+        Y.one('#mouse_tick').remove();
+    },
+
+    "clicking on the rail should set the value to a multiple of tick": function () {
+
+        // we should still be close to the start of the rail
+
+        this.clickOnRail(7);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(14);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(21);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(28);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(35);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        // we should be half-way
+
+        this.clickOnRail(42);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(49);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(56);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        // we should get closer to the end of the rail
+
+        this.clickOnRail(63);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(70);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+
+        this.clickOnRail(77);
+        Y.Assert.areSame(0, this.slider.getValue() % this.tick);
+    },
+
+    _should: {
+        ignore: {
+            "clicking on the rail should set the value to a multiple of tick": Y.UA.phantomjs || Y.UA.touchEnabled
+        }
+    }
+}));
+
+suite.add( new Y.Test.Case({
+
+    name: "Keyboard - with tick",
+
+    tick: 10,
+
+    value: 50,
+
+    init: function () {
+        Y.one('body').append('<div id="slider_tick"></div>');
+    },
+
+    destroy: function () {
+        Y.one('#slider_tick').remove();
+    },
+
+    setUp: function () {
+        this.slider = new Y.Slider({ tick: this.tick, length: '100px', value: this.value });
+        this.slider.render('#slider_tick');
+    },
+
+    tearDown: function () {
+        this.slider.destroy(true);
+    },
+
+    "page up increments by tick": function () {
+        this.slider.thumb.key(33);
+        Y.Assert.areSame(this.value + this.tick, this.slider.getValue());
+    },
+
+    "arrow up increments by tick": function () {
+        this.slider.thumb.key(38);
+        Y.Assert.areSame(this.value + this.tick, this.slider.getValue());
+    },
+
+    "arrow right increments by tick": function () {
+        this.slider.thumb.key(39);
+        Y.Assert.areSame(this.value + this.tick, this.slider.getValue());
+    },
+
+    "page down decrements by tick": function () {
+        this.slider.thumb.key(34);
+        Y.Assert.areSame(this.value - this.tick, this.slider.getValue());
+    },
+
+    "arrow down decrements by tick": function () {
+        this.slider.thumb.key(40);
+        Y.Assert.areSame(this.value - this.tick, this.slider.getValue());
+    },
+
+    "arrow left decrements by tick": function () {
+        this.slider.thumb.key(37);
+        Y.Assert.areSame(this.value - this.tick, this.slider.getValue());
     }
 }));
 

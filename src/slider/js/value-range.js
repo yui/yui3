@@ -10,6 +10,7 @@
 // Constants for compression or performance
 var MIN       = 'min',
     MAX       = 'max',
+    TICK      = 'tick',
     VALUE     = 'value',
 //     MINORSTEP = 'minorStep',
 //     MAJORSTEP = 'majorStep',
@@ -292,6 +293,46 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
+         * Validates new values assigned to `tick` attribute.
+         *
+         * A valid value must be a number and must evenly divide the length of
+         * the slider.
+         *
+         * @method _validateNewTick
+         * @param value { any } Value assigned to `tick` attribute.
+         * @return { Boolean } True for a valid tick value. False otherwise.
+         * @protected
+         */
+        _validateNewTick: function ( value ) {
+            var length = parseInt(this.get( 'length' ), 10);
+            return Y.Lang.isNumber( value ) && length % value === 0;
+        },
+
+        /**
+         * Getter for the `minorStep` attribute.
+         *
+         * @method _getMinorStep
+         * @param value { Number } The value of the attribute before it is massaged/normalized.
+         * @return { Number } The value of the `tick` attribute if it is defined, otherwise returns the `minorStep` value.
+         * @protected
+         */
+        _getMinorStep: function ( value ) {
+            return this.get( TICK ) || value;
+        },
+
+        /**
+         * Getter for the `majorStep` attribute.
+         *
+         * @method _getMajorStep
+         * @param value { Number } The value of the attribute before it is massaged/normalized.
+         * @return { Number } The value of the `tick` attribute if it is defined, otherwise returns the `majorStep` value.
+         * @protected
+         */
+        _getMajorStep: function ( value ) {
+            return this.get( TICK ) || value;
+        },
+
+        /**
          * Restricts new values assigned to <code>value</code> attribute to be
          * between the configured <code>min</code> and <code>max</code>.
          * Rounds to nearest integer value.
@@ -311,8 +352,12 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         /**
          * Returns the nearest valid value to the value input.  If the provided
          * value is outside the min - max range, accounting for min > max
-         * scenarios, the nearest of either min or max is returned.  Otherwise,
-         * the provided value is returned.
+         * scenarios, the nearest of either min or max is returned.
+         *
+         * If `tick` is defined and value is not a multiple of tick, the nearest
+         * multiple value is returned.
+         *
+         * Otherwise the provided value is returned.
          *
          * @method _nearestValue
          * @param value { mixed } Value to test against current min - max range
@@ -320,8 +365,9 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _nearestValue: function ( value ) {
-            var min = this.get( MIN ),
-                max = this.get( MAX ),
+            var min  = this.get( MIN ),
+                max  = this.get( MAX ),
+                tick = this.get( TICK ),
                 tmp;
 
             // Account for reverse value range (min > max)
@@ -329,11 +375,21 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             min = ( max > min ) ? min : max;
             max = tmp;
 
-            return ( value < min ) ?
-                    min :
-                    ( value > max ) ?
-                        max :
-                        value;
+            value = ( value < min )
+                ? min
+                : ( value > max )
+                    ? max
+                    : value;
+
+            // if tick is defined and value is not a multiple of tick
+            // we find the nearest multiple value.
+            if ( tick && ( value % tick ) ) {
+                // e.g. tick is 7 and value is 15; wrong!
+                // round(15/7) = 2; 2*7=14; best candidate!
+                value = tick * round( value / tick );
+            }
+
+            return value;
         }
 
     },
@@ -376,6 +432,20 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
+         * If defined (i.e. greater than zero) it constrains the value of the slider
+         * to always be a multiple of _tick_. This effectively defines a whitelisted
+         * set of values.
+         *
+         * @attribute tick
+         * @type { Number }
+         * @default 0
+         */
+        tick: {
+            value    : 0,
+            validator: '_validateNewTick'
+        },
+
+        /**
          * amount to increment/decrement the Slider value
          * when the arrow up/down/left/right keys are pressed
          *
@@ -384,7 +454,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 1
          */
         minorStep : {
-            value: 1
+            value : 1,
+            getter: '_getMinorStep'
         },
 
         /**
@@ -396,7 +467,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 10
          */
         majorStep : {
-            value: 10
+            value : 10,
+            getter: '_getMajorStep'
         },
 
         /**

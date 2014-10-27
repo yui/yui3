@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../../build/yui/yui.js"></script>
+        <script>
+            YUI().use('console', 'slider', function (Y) {
+
+                Y.one(window).on('load', function () {
+
+                    var slider = new Y.Slider({ tick: 10, value: 50, length: '300px' });
+                    var log    = new Y.Console({ style: 'block' });
+
+                    slider.after('valueChange', function () {
+                        Y.log('value is now '+slider.getValue());
+                    });
+
+                    slider.render('#slider');
+
+                    log.render('#log');
+                });
+            });
+        </script>
+    </head>
+    <body class="yui3-skin-sam">
+        <h3>Slider + tick</h3>
+        <p>Regardless of whether you used the keyboard or the mouse, the value of the slider should always be a multiple of <em>tick</em> at any time!</p>
+        <div id="slider"></div>
+        <div id="log"></div>
+    </body>
+</html>
