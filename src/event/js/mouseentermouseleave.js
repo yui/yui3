@@ -1,7 +1,8 @@
 /**
  * <p>Adds subscription and delegation support for mouseenter and mouseleave
- * events.  Unlike mouseover and mouseout, these events aren't fired from child
- * elements of a subscribed node.</p>
+ * events, as well as MSPointerEnter and MSPointerLeave in IE10.  Unlike mouseover and mouseout 
+ * or MSPointerOver and MSPointerOut, these events aren't fired from child elements of a subscribed 
+ * node.</p>
  *
  * <p>This avoids receiving three mouseover notifications from a setup like</p>
  *
@@ -122,3 +123,15 @@ Y.Event.define("mouseleave", Y.merge(config, {
     proxyType: "mouseout",
     relProperty: "toElement"
 }), true);
+
+// Add pointerenter/pointerleave for IE10 only  
+if (typeof navigator === 'object' && navigator.msPointerEnabled && !navigator.pointerEnabled) {
+    Y.Event.define("pointerenter", Y.merge(config, {
+        proxyType: "MSPointerOver"
+    }), true);
+    Y.Event.define("pointerleave", Y.merge(config, {
+        proxyType: "MSPointerOut",
+        relProperty: "toElement"
+    }), true);
+}
+
