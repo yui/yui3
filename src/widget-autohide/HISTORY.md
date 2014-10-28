@@ -4,7 +4,7 @@ Widget Autohide Change History
 @VERSION@
 ------
 
-* No changes.
+* Updated to allow nodes to be specified via selectors.
 
 3.18.1
 ------
