@@ -780,7 +780,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             {
                 if(!this._graphic)
                 {
-                    this._graphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._graphic = new Y.Graphic({
+                        render:this.get("contentBox"),
+                        resizeDown: true
+                    });
                     this._graphic.get("node").style.zIndex = 2;
                     this._graphic.set("autoDraw", false);
                 }
