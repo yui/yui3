@@ -99,7 +99,7 @@ if (!YUI.YUITest) {
                 break;
 
             case this.TEST_FAIL_EVENT:
-                message = event.testName + ": failed.\n" + event.error.getMessage();
+                message = event.testName + ": failed.\n" + event.error.stack;
                 messageType = "fail";
                 break;
 
