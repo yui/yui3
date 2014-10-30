@@ -4,7 +4,7 @@ Node Change History
 @VERSION@
 ------
 
-* No changes.
+* NodeList.some(): a css selector can be used in lieu of a function (@customcommander)
 
 3.18.1
 ------

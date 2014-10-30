@@ -190,15 +190,41 @@ Y.mix(NodeList.prototype, {
 
     /**
      * Executes the function once for each node until a true value is returned.
+     *
+     * @example
+     *     // <ol>
+     *     //     <li class="bar">xxx</li>
+     *     //     <li class="bar">yyy</li>
+     *     // </ol>
+     *
+     *     Y.all('li').some(function (node) {
+     *         return node.get('text') === 'xxx';
+     *     });
+     *     //=> true
+     *
+     *     Y.all('li').some('.bar');
+     *     //=> true
+     *
      * @method some
-     * @param {Function} fn The function to apply. It receives 3 arguments:
-     * the current node instance, the node's index, and the NodeList instance
-     * @param {Object} context optional An optional context to execute the function from.
-     * Default context is the current Node instance
+     * @param fn {Function|String}
+     *  The function to apply. It receives 3 arguments:
+     *  the current node instance, the node's index, and the NodeList instance.
+     *
+     *  If fn is a string `some` assumes it is a css selector and will return
+     *  true if there is any node in the list matching that selector.
+     * @param [context] {Object}
+     *  An optional context to execute the function from.
+     *  Default context is the current Node instance
      * @return {Boolean} Whether or not the function returned true for any node.
      */
     some: function(fn, context) {
         var instance = this;
+        var selector = fn;
+        if (typeof fn === 'string') {
+            fn = function (node) {
+                return node.test(selector);
+            };
+        }
         return Y.Array.some(this._nodes, function(node, index) {
             node = Y.one(node);
             context = context || node;

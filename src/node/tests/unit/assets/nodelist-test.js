@@ -145,6 +145,14 @@ YUI.add('nodelist-test', function(Y) {
 
         },
 
+        'should return true when some(selector) finds a matching node': function () {
+            Assert.isTrue( Y.all('#test-nodes li').some('.bar') );
+        },
+
+        'should return false when some(selector) cannot find a matching node': function () {
+            Assert.isFalse( Y.all('#test-nodes li').some('.unknown') );
+        },
+
         'should return false when no function returns true': function() {
             var nodes = Y.all('#test-nodes *');
 
