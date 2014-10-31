@@ -1773,6 +1773,8 @@ When running in Node.js, this property is `undefined`, since there is no
 /**
 A list of modules that defines the YUI core (overrides the default list).
 
+<em>Note: All modules specified must have already been included and added as the loader will not process these.</em>
+
 @property {Array} core
 @type Array
 @default ['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']
