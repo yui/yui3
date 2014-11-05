@@ -50,7 +50,31 @@
                                        //////////////////////
                                        // BEGIN WF2 CHANGE //
                                        //////////////////////
-                                       defaultSkin: Y.UA.touchEnabled ? 'nxt' : 'nx',
+                                       // Temporary fix for PN-7736 - skin detection issue
+                                       // between JSP and JS.
+                                       defaultSkin: (function () {
+                                          var body = document.body,
+                                          bodyClass = body ? body.className : '',
+                                          hasNx = false,
+                                          hasNxt = false;
+
+                                          if (/wf2\-skin\-nx\b/.test(bodyClass)) {
+                                            hasNx = true;
+                                          }
+                                          if (/wf2\-skin\-nxt\b/.test(bodyClass)) {
+                                            hasNxt = true;
+                                          }
+                                          if ((hasNx && !hasNxt) || (!hasNx && hasNxt)) {
+                                            // Only one wf2-skin-xxx class, it comes from JSP.
+                                            return hasNx? 'nx':'nxt';
+                                          }
+                                          if ((hasNx && hasNxt) || (!hasNx && !hasNxt)) {
+                                            // Either 2 classes are there or none. JSP didn't do
+                                            // anything here, we can safely detect the right one.
+                                            return Y.UA.touchEnabled ? 'nxt' : 'nx';
+                                          }
+                                       })(),
+                                       // defaultSkin: Y.UA.touchEnabled ? 'nxt' : 'nx',
                                        //////////////////////
                                        //  END WF2 CHANGE  //
                                        //////////////////////
