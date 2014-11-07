@@ -1,0 +1,17 @@
+<script>
+YUI.GlobalConfig = {
+    modules: {
+        'ac-geocode-mock': {
+            fullpath: '../assets/autocomplete/ac-geocode-mock.js',
+            requires: [],
+            condition: {
+                trigger: 'yql',
+                when: 'after',
+                test: function () {
+                    return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
+                }
+            }
+        }
+    }
+};
+</script>

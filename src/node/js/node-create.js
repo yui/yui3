@@ -142,14 +142,14 @@ Y.mix(Y_Node.prototype, {
         Y.one(node).append(this);
         return this;
     },
-    
+
     // This method is deprecated, and is intentionally left undocumented.
     // Use `setHTML` instead.
     setContent: function(content) {
         this._insert(content, 'replace');
         return this;
     },
-    
+
     // This method is deprecated, and is intentionally left undocumented.
     // Use `getHTML` instead.
     getContent: function() {

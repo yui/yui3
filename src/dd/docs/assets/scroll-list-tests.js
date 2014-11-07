@@ -1,5 +1,5 @@
 YUI.add('scroll-list-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('scroll-list');
 
@@ -12,13 +12,13 @@ YUI.add('scroll-list-tests', function(Y) {
             var el = Y.one('#list1');
             Assert.isNotNull(el, '#list1 is null');
             Assert.isTrue(el.hasClass('yui3-dd-drop'), 'Drop not init on #list1');
-            
+
         },
         '#list2 is rendered': function() {
             var el = Y.one('#list2');
             Assert.isNotNull(el, '#list2 is null');
             Assert.isTrue(el.hasClass('yui3-dd-drop'), 'Drop not init on #list2');
-            
+
         },
         'items in list 1 are rendered': function() {
             var lis = Y.all('#list1 li');

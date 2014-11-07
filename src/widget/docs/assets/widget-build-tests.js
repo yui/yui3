@@ -1,7 +1,7 @@
 YUI.add('widget-build-tests', function(Y) {
 
     // NOTE: This test suite has some funky floor/round, < 1 checks to work around the FF, subpixel getXY/setXY behavior.
-    // In general, this level of testing should be captured at the unit test level anyway. The idea here is to make sure 
+    // In general, this level of testing should be captured at the unit test level anyway. The idea here is to make sure
     // the examples have a certain degree of visual fidelity.
 
     var suite = new Y.Test.Suite('widget-build example test suite'),
@@ -299,7 +299,7 @@ YUI.add('widget-build-tests', function(Y) {
                             Y.Assert.areEqual("#widget3-example", out.item(0).get("text"));
                             Y.Assert.areEqual("[center, center]", out.item(1).get("text"));
 
-                           test.isCentered(alignRegion, widget3, "#widget3-example, [center, center] failed"); 
+                           test.isCentered(alignRegion, widget3, "#widget3-example, [center, center] failed");
                         });
                     }
                 ],

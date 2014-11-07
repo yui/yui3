@@ -23,7 +23,7 @@
 ```
 
 <h3>Setting up the YUI Instance</h3>
-<p>Now we need to create our YUI instance and tell it to load the `dd-constrain`, 
+<p>Now we need to create our YUI instance and tell it to load the `dd-constrain`,
 `dd-proxy`, `dd-drop` and `dd-scroll`, modules.</p>
 
 ```
@@ -60,7 +60,7 @@ lis.each(function(v, k) {
 ```
 
 <h3>Making the List Drop Targets too</h3>
-<p>We need to make each UL node a Drop Target so we can catch drops on the empty space of the list. 
+<p>We need to make each UL node a Drop Target so we can catch drops on the empty space of the list.
 Using this selector syntax we will be able to add new list markup to the `#play` div and not have to change our code.</p>
 
 ```
@@ -131,7 +131,7 @@ Y.DD.DDM.on('drag:drag', function(e) {
     lastY = y;
 
     //Added to support scrolling
-    Y.DD.DDM.syncActiveShims(true);    
+    Y.DD.DDM.syncActiveShims(true);
 });
 ```
 
@@ -144,7 +144,7 @@ Y.DD.DDM.on('drop:over', function(e) {
     //Get a reference to out drag and drop nodes
     var drag = e.drag.get('node'),
         drop = e.drop.get('node');
-    
+
     //Are we dropping on a li node?
     if (drop.get('tagName').toLowerCase() === 'li') {
         //Are we not going up?
@@ -154,7 +154,7 @@ Y.DD.DDM.on('drop:over', function(e) {
         //Add the node to this list
         e.drop.get('node').get('parentNode').insertBefore(drag, drop);
         //Set the new parentScroll on the nodescroll plugin
-        e.drag.nodescroll.set('parentScroll', e.drop.get('node').get('parentNode'));        
+        e.drag.nodescroll.set('parentScroll', e.drop.get('node').get('parentNode'));
         //Resize this node's shim, so we can drop on it later.
         e.drop.sizeShim();
     }
@@ -174,7 +174,7 @@ Y.DD.DDM.on('drag:drophit', function(e) {
         if (!drop.contains(drag)) {
             drop.appendChild(drag);
             //Set the new parentScroll on the nodescroll plugin
-            e.drag.nodescroll.set('parentScroll', e.drop.get('node'));            
+            e.drag.nodescroll.set('parentScroll', e.drop.get('node'));
         }
     }
 });

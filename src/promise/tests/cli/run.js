@@ -40,8 +40,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('batch-tests', 'when-tests', 'promise-tests', 'aplus-tests');
-    
+
     Y.Test.Runner.setName('yql cli tests');
-    
+
 });
 

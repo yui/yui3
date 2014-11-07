@@ -63,7 +63,7 @@ YUI.add('anim-core-test', function(Y) {
                 duration: 0.1
             });
             anim.run();
-            Y.Anim.stop(); 
+            Y.Anim.stop();
             Y.Assert.isFalse(anim.get('running'));
         },
 
@@ -121,7 +121,7 @@ YUI.add('anim-core-test', function(Y) {
                 duration: 0.1
             });
             anim.run();
-            anim.stop(); 
+            anim.stop();
             Y.Assert.isFalse(anim.get('running'));
         },
 
@@ -147,7 +147,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     end: onend
                 }
-            }).run(); 
+            }).run();
 
             test.wait(1000);
 
@@ -173,7 +173,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     end: onend
                 }
-            }).run(); 
+            }).run();
 
             test.wait(1000);
 
@@ -199,7 +199,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     end: onend
                 }
-            }).run(); 
+            }).run();
 
             test.wait(1000);
 
@@ -236,7 +236,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     end: onend
                 }
-            }).run(); 
+            }).run();
 
             test.wait(1000);
 
@@ -262,7 +262,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     end: onend
                 }
-            }).run(); 
+            }).run();
 
             test.wait(1000);
 
@@ -332,7 +332,7 @@ YUI.add('anim-core-test', function(Y) {
                 duration: 0.5,
                 on: {
                     tween: function() {
-                        this.detach('tween'); 
+                        this.detach('tween');
                         test.resume(function() {
                             Y.Assert.isTrue(true);
                         });
@@ -387,7 +387,7 @@ YUI.add('anim-core-test', function(Y) {
                 }
             });
             anim.run();
-            anim.pause(); 
+            anim.pause();
         },
         'should fire the end event when stop is called': function() {
             var node = Y.one('.demo'),
@@ -408,7 +408,7 @@ YUI.add('anim-core-test', function(Y) {
                 }
             });
             anim.run();
-            anim.stop(); 
+            anim.stop();
         },
 
         'should run in reverse': function() {
@@ -416,7 +416,7 @@ YUI.add('anim-core-test', function(Y) {
                 test = this;
 
             var anim = new Y.Anim({
-                reverse: true, 
+                reverse: true,
                 node: node,
                 to: {
                     height: 0
@@ -456,7 +456,7 @@ YUI.add('anim-core-test', function(Y) {
             });
             anim.run();
 
-            anim.stop(true); 
+            anim.stop(true);
         },
 
         'should fire the resume event when run called while paused': function() {
@@ -474,7 +474,7 @@ YUI.add('anim-core-test', function(Y) {
             });
             anim.run();
             anim.pause();
-            anim.run(); 
+            anim.run();
         },
 
         'should run the onstart prior to setting target values': function() {
@@ -499,7 +499,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     start: onstart
                 }
-            }).run(); 
+            }).run();
 
         },
 
@@ -520,7 +520,7 @@ YUI.add('anim-core-test', function(Y) {
             });
             anim.run();
             anim.pause();
-            anim.run(); 
+            anim.run();
         }
     }));
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen', 'test']});

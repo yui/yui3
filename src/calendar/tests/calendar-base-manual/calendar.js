@@ -3,25 +3,19 @@ YUI({
     filter: 'RAW',
     debug: true
 }).use('calendar-base',  function(Y) {
-   
 
-Y.CalendarBase.CONTENT_TEMPLATE = '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +	
+
+Y.CalendarBase.CONTENT_TEMPLATE = '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +
 			                        '{header_template}' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
  			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
- 			                      '</div>' + 			
-			                      '<div class="yui3-u-1-3">' +
- 			                        '{calendar_grid_template}' +
- 			                      '</div>' + 		
-			                      '<div class="yui3-u-1-3">' +
- 			                        '{calendar_grid_template}' +
  			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
- 			                      '</div>' + 			
+ 			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
  			                      '</div>' +
@@ -30,19 +24,25 @@ Y.CalendarBase.CONTENT_TEMPLATE = '<div class="yui3-g {calendar_pane_class}" id=
  			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
- 			                      '</div>' + 			
-			                      '<div class="yui3-u-1-3">' +
- 			                        '{calendar_grid_template}' +
- 			                      '</div>' + 		
+ 			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
  			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
- 			                      '</div>' + 			
+ 			                      '</div>' +
 			                      '<div class="yui3-u-1-3">' +
  			                        '{calendar_grid_template}' +
- 			                      '</div>' +  		                      			                                   
+ 			                      '</div>' +
+			                      '<div class="yui3-u-1-3">' +
+ 			                        '{calendar_grid_template}' +
+ 			                      '</div>' +
+			                      '<div class="yui3-u-1-3">' +
+ 			                        '{calendar_grid_template}' +
+ 			                      '</div>' +
+			                      '<div class="yui3-u-1-3">' +
+ 			                        '{calendar_grid_template}' +
+ 			                      '</div>' +
 			           '</div>';
 
 
@@ -65,19 +65,19 @@ Y.CalendarBase.CONTENT_TEMPLATE = '<div class="yui3-g {calendar_pane_class}" id=
 	     	console.log("Output: " + output);
 	     	return output;
 	     });
-			
+
 		Y.one("#setRandomDate").on('click', function () {
-	      curDate = new Date(1950 + Math.round(Math.random()*100), 
+	      curDate = new Date(1950 + Math.round(Math.random()*100),
 		                                Math.round(Math.random()*12.49), 1);
-		  calendar.set('date', curDate);	
+		  calendar.set('date', curDate);
 		  Y.one("#tehdate").setContent(calendar.get("date").toString());
 		});
 
 		Y.one("#togglePrevMonth").on('click', function () {
-		  calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));			
+		  calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));
 		});
 		Y.one("#toggleNextMonth").on('click', function () {
-		  calendar.set('showNextMonth', !(calendar.get("showNextMonth")));			
+		  calendar.set('showNextMonth', !(calendar.get("showNextMonth")));
 		});
 
 		Y.one("#toggleSelection").on('click', function () {

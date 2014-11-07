@@ -29,7 +29,7 @@ Y.extend(ShapeTestTemplate, Y.Test.Case, {
             {color: "#eee"}
         ]
     },
-    
+
     setUp: function () {
         var startCfg = {
             stroke: {
@@ -102,8 +102,8 @@ var solidTest = function()
         }
     },
 
-    fillTest = function(shape, fill, stroke, props) 
-    {  
+    fillTest = function(shape, fill, stroke, props)
+    {
         return new FillAndStrokeTest({
             type: shape,
             fill: fill,
@@ -191,14 +191,14 @@ var solidTest = function()
         "#ff0",
         "#f00",
         "#eee"
-    ], 
-    
+    ],
+
     threeOpacities = [
         0.3,
         0.8,
         0.2
-    ], 
-    
+    ],
+
     threeOffsets = [
         0.2,
         0.6,
@@ -250,7 +250,7 @@ var solidTest = function()
         cx: 0.2,
         cy: 0.5
     },
-    
+
     radialPointEights = {
         r: 0.8,
         fx: 0.8,
@@ -258,7 +258,7 @@ var solidTest = function()
         cx: 0.8,
         cy: 0.8
     };
-    
+
     suite.add(solidFill("rect", 0));
     suite.add(solidFill("rect", 0.1));
     suite.add(solidFill("rect", 0.2));
@@ -292,7 +292,7 @@ var solidTest = function()
     suite.add(solidFill("circle", 0.8));
     suite.add(solidFill("circle", 0.9));
     suite.add(solidFill("circle", 1));
-    
+
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets));
     suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets));
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null));
@@ -366,7 +366,7 @@ var solidTest = function()
     suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 360}));
     suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 360}));
     suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 360}));
-    
+
     suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets));
     suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets));
     suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null));
@@ -403,7 +403,7 @@ var solidTest = function()
     suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 360}));
     suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 360}));
     suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 360}));
-    
+
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets));
     suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets));
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null));
@@ -420,7 +420,7 @@ var solidTest = function()
     suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, radialPointEights));
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, radialPointEights));
     suite.add(gradientFill("rect", "radial", threeColors, null, null, radialPointEights));
-    
+
     suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, threeOffsets));
     suite.add(gradientFill("ellipse", "radial", threeColors, null, threeOffsets));
     suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, null));
@@ -454,7 +454,7 @@ var solidTest = function()
     suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, radialPointEights));
     suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, radialPointEights));
     suite.add(gradientFill("circle", "radial", threeColors, null, null, radialPointEights));
-    
+
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, null, fourStops));
     suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, null, fourStops));
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, null, fourStops));
@@ -565,7 +565,7 @@ var solidTest = function()
     suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 360}, fourStops));
     suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 360}, fourStops));
     suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 360}, fourStops));
-    
+
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets, null, fourRadialStops));
     suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, null, fourRadialStops));
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, null, fourRadialStops));
@@ -616,7 +616,7 @@ var solidTest = function()
     suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, radialPointEights, fourRadialStops));
     suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, radialPointEights, fourRadialStops));
     suite.add(gradientFill("circle", "radial", threeColors, null, null, radialPointEights, fourRadialStops));
-    
+
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, null, noFill));
     suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, null, noFill));
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, null, noFill));
@@ -727,7 +727,7 @@ var solidTest = function()
     suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 360}, noFill));
     suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 360}, noFill));
     suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 360}, noFill));
-    
+
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets, null, noFill));
     suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, null, noFill));
     suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, null, noFill));

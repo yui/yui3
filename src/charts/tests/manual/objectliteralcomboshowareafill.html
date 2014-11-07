@@ -10,22 +10,22 @@
 }
 </style>
 <link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
-</head>		
+</head>
 <body class="yui3-skin-sam">
 <h3>Combo Chart with area fill and object literal dataProvider</h3>
 <div id="mychart"></div>
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-<script type="text/javascript">            
+<script type="text/javascript">
     YUI({
         defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
 		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use('charts', function (Y) {
 
-    var myDataValues = [ 
-        {category:"5/1/2010", "Cumulative Score":2000}, 
-        {category:"5/2/2010", "Cumulative Score":50}, 
-        {category:"5/3/2010", "Cumulative Score":400}, 
-        {category:"5/4/2010", "Cumulative Score":200}, 
+    var myDataValues = [
+        {category:"5/1/2010", "Cumulative Score":2000},
+        {category:"5/2/2010", "Cumulative Score":50},
+        {category:"5/3/2010", "Cumulative Score":400},
+        {category:"5/4/2010", "Cumulative Score":200},
         {category:"5/5/2010", "Cumulative Score":5000}
     ],
     mychart = new Y.Chart({

@@ -1,18 +1,18 @@
 <div id="mychart"></div>
 <script type="text/javascript">
 (function() {
-    YUI().use('charts', function (Y) 
-    { 
-        var myDataValues = [ 
-            {category:"5/1/2010", Miscellaneous:2000, Expenses:3700, Revenue:2200}, 
-            {category:"5/2/2010", Miscellaneous:50, Expenses:9100, Revenue:100}, 
-            {category:"5/3/2010", Miscellaneous:400, Expenses:1100, Revenue:1500}, 
-            {category:"5/4/2010", Miscellaneous:200, Expenses:1900, Revenue:2800}, 
+    YUI().use('charts', function (Y)
+    {
+        var myDataValues = [
+            {category:"5/1/2010", Miscellaneous:2000, Expenses:3700, Revenue:2200},
+            {category:"5/2/2010", Miscellaneous:50, Expenses:9100, Revenue:100},
+            {category:"5/3/2010", Miscellaneous:400, Expenses:1100, Revenue:1500},
+            {category:"5/4/2010", Miscellaneous:200, Expenses:1900, Revenue:2800},
             {category:"5/5/2010", Miscellaneous:5000, Expenses:5000, Revenue:2650}
         ];
-        
+
         var myTooltip = {
-            styles: { 
+            styles: {
                 backgroundColor: "#333",
                 color: "#eee",
                 borderColor: "#eee",
@@ -27,20 +27,20 @@
                 underlinedTextBlock.style.textDecoration = "underline";
                 boldTextBlock.style.marginTop = "5px";
                 boldTextBlock.style.fontWeight = "bold";
-                underlinedTextBlock.appendChild(document.createTextNode(valueItem.displayName + " for " + 
+                underlinedTextBlock.appendChild(document.createTextNode(valueItem.displayName + " for " +
                                                 categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")])));
-                boldTextBlock.appendChild(document.createTextNode(valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}])));   
+                boldTextBlock.appendChild(document.createTextNode(valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}])));
                 msg.appendChild(underlinedTextBlock);
                 msg.appendChild(document.createElement("br"));
-                msg.appendChild(boldTextBlock); 
-                return msg; 
+                msg.appendChild(boldTextBlock);
+                return msg;
             }
         };
 
         var mychart = new Y.Chart({
-                            dataProvider:myDataValues, 
+                            dataProvider:myDataValues,
                             type:"bar",
-                            render:"#mychart", 
+                            render:"#mychart",
                             tooltip: myTooltip
                         });
     });

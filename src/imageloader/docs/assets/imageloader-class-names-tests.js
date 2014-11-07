@@ -1,4 +1,4 @@
-YUI.add('imageloader-class-names-tests', function(Y){ 
+YUI.add('imageloader-class-names-tests', function(Y){
 
     var suite = new Y.Test.Suite('imageloader-class-names example test suite'),
         TIMEOUT = 10000;
@@ -35,17 +35,17 @@ YUI.add('imageloader-class-names-tests', function(Y){
                 topFailure = function() {
                     Y.Assert.fail('#topmain does not load.');
                 },
-                
+
                 duoCondition = function() {
                     return duo1.getComputedStyle('backgroundImage') !== 'none' &&
                         duo2.getComputedStyle('backgroundImage') !== 'none';
                 },
-                
+
                 duoSuccess = function() {
                     Y.Assert.areNotSame('none', duo1.getComputedStyle('backgroundImage'));
                     Y.Assert.areNotSame('none', duo2.getComputedStyle('backgroundImage'));
                 },
-                
+
                 duoFailure = function() {
                     Y.Assert.fail('#duo1 or #duo2 did not load.');
                 };
@@ -62,7 +62,7 @@ YUI.add('imageloader-class-names-tests', function(Y){
             // reset counter
             imagesLoaded = 0;
 
-            // scroll image 
+            // scroll image
             window.scrollTo(0,0);
             window.scrollTo(1,1);
 

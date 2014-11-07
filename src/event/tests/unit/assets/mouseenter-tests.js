@@ -8,7 +8,7 @@ YUI.add('mouseenter-tests', function(Y) {
         enter: Y.Node.DOM_EVENTS.mouseenter.eventDef,
         leave: Y.Node.DOM_EVENTS.mouseleave.eventDef
     };
-    
+
 
     suite.add(new Y.Test.Case({
         name: 'mouseenter',

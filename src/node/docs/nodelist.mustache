@@ -25,12 +25,12 @@ var boxes = Y.all('.box-row li');
 ```
 
 <h2>Accessing NodeList Properties</h2>
-<p>As with Node, simple type of properties (strings, numbers, booleans) 
-pass directly to/from the underlying HTMLElement, however properties 
+<p>As with Node, simple type of properties (strings, numbers, booleans)
+pass directly to/from the underlying HTMLElement, however properties
 representing HTMLElements return Node instances.</p>
 <p>In this example, we will listen for a `click` event to trigger the property change.</p>
-<p>Note that the context of the handler is set to the NodeList, so `this` 
-refers to our NodeList instance.  The `currentTarget` property of 
+<p>Note that the context of the handler is set to the NodeList, so `this`
+refers to our NodeList instance.  The `currentTarget` property of
 the event object is set to the current Node instance.</p>
 ```
 var handleBoxClick = function(e) {
@@ -39,17 +39,17 @@ var handleBoxClick = function(e) {
     this.setStyle('backgroundColor', '#F4E6B8');
 
     // e.currentTarget === .box-row li, just the one that was clicked
-    e.currentTarget.setHTML('ouch!');        
+    e.currentTarget.setHTML('ouch!');
     e.currentTarget.setStyle('backgroundColor', '#C4DAED');
-};    
+};
 boxes.on('click', handleBoxClick);
 
 ```
 
 <h2>Prefer `node.delegate()` over `nodelist.on()`</h2>
 
-<p>Sometimes you need to create individual subscriptions for each Node in a 
-NodeList (as is done in this example), but usually it's preferable to use 
+<p>Sometimes you need to create individual subscriptions for each Node in a
+NodeList (as is done in this example), but usually it's preferable to use
 <a href="node-evt-delegation.html">event delegation</a>.</p>
 
 <h2>Complete Simple Box Example Source</h2>

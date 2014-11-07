@@ -60,7 +60,19 @@
     TARGET = "target",
 
     NODE_TYPE = "nodeType",
-    SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
+    _getTouchAction = function(win) {
+        var touchAction;
+        if(win) {
+            if("PointerEvent" in win) {
+                touchAction = "touchAction";
+            } else if("msPointerEnabled" in win.navigator) {
+                touchAction = "msTouchAction";
+            }
+        }
+        return touchAction;
+    },
+    TOUCH_ACTION = _getTouchAction(Y.config.win),
+    SUPPORTS_POINTER = (TOUCH_ACTION === "msTouchAction" || TOUCH_ACTION === "touchAction"),
     MS_TOUCH_ACTION_COUNT = 'msTouchActionCount',
     MS_INIT_TOUCH_ACTION = 'msInitTouchAction',
 
@@ -109,16 +121,16 @@
     The user can over-ride this by setting a more lenient -ms-touch-action property on a node (such as pan-x, pan-y, etc.) via CSS when subscribing to the 'gesturemovestart' event.
     */
     _setTouchActions = function (node) {
-        var elem = _checkDocumentElem(node) || node.getDOMNode(),
+        var elem = node.getDOMNode(),
             num = node.getData(MS_TOUCH_ACTION_COUNT);
 
         //Checks to see if msTouchAction is supported.
         if (SUPPORTS_POINTER) {
             if (!num) {
                 num = 0;
-                node.setData(MS_INIT_TOUCH_ACTION, elem.style.msTouchAction);
+                node.setData(MS_INIT_TOUCH_ACTION, elem.style[TOUCH_ACTION]);
             }
-            elem.style.msTouchAction = Y.Event._DEFAULT_TOUCH_ACTION;
+            elem.style[TOUCH_ACTION] = Y.Event._DEFAULT_TOUCH_ACTION;
             num++;
             node.setData(MS_TOUCH_ACTION_COUNT, num);
         }
@@ -128,15 +140,15 @@
     Resets the element's -ms-touch-action property back to the original value, This is called on detach() and detachDelegate().
     */
     _unsetTouchActions = function (node) {
-        var elem = _checkDocumentElem(node) || node.getDOMNode(),
+        var elem = node.getDOMNode(),
             num = node.getData(MS_TOUCH_ACTION_COUNT),
             initTouchAction = node.getData(MS_INIT_TOUCH_ACTION);
 
         if (SUPPORTS_POINTER) {
             num--;
             node.setData(MS_TOUCH_ACTION_COUNT, num);
-            if (num === 0 && elem.style.msTouchAction !== initTouchAction) {
-                elem.style.msTouchAction = initTouchAction;
+            if (num === 0 && elem.style[TOUCH_ACTION] !== initTouchAction) {
+                elem.style[TOUCH_ACTION] = initTouchAction;
             }
         }
     },
@@ -189,8 +201,10 @@ define(GESTURE_MOVE_START, {
     on: function (node, subscriber, ce) {
 
         //Set -ms-touch-action on IE10 and set preventDefault to true
-        _setTouchActions(node);
-
+        if (!_checkDocumentElem(node)) {
+            _setTouchActions(node);
+        }
+        
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START],
             this._onStart,
             this,
@@ -218,7 +232,9 @@ define(GESTURE_MOVE_START, {
             subscriber[_DEL_MOVE_START_HANDLE] = null;
         }
 
-        _unsetTouchActions(node);
+        if (!_checkDocumentElem(node)) {
+            _unsetTouchActions(node);
+        }
     },
 
     detach: function (node, subscriber, ce) {
@@ -229,7 +245,9 @@ define(GESTURE_MOVE_START, {
             subscriber[_MOVE_START_HANDLE] = null;
         }
 
-        _unsetTouchActions(node);
+        if (!_checkDocumentElem(node)) {
+            _unsetTouchActions(node);
+        }
     },
 
     processArgs : function(args, delegate) {
@@ -383,16 +401,23 @@ define(GESTURE_MOVE_START, {
 define(GESTURE_MOVE, {
 
     on : function (node, subscriber, ce) {
+        var moveHandle,
+            root;
 
-        _setTouchActions(node);
-        var root = _getRoot(node, subscriber, EVENT[MOVE]),
+        // if the passed node is NOT the document itself, modify the ms-pointer
+        // behavior to prevent scrolling, highlighting, etc.
+        if (!_checkDocumentElem(node)) {
+            _setTouchActions(node);         
+        }
 
-            moveHandle = root.on(EVENT[MOVE],
-                this._onMove,
-                this,
-                node,
-                subscriber,
-                ce);
+        root = _getRoot(node, subscriber, EVENT[MOVE]);
+
+        moveHandle = root.on(EVENT[MOVE],
+            this._onMove,
+            this,
+            node,
+            subscriber,
+            ce);
 
         subscriber[_MOVE_HANDLE] = moveHandle;
 
@@ -417,7 +442,9 @@ define(GESTURE_MOVE, {
             subscriber[_MOVE_HANDLE] = null;
         }
 
-        _unsetTouchActions(node);
+        if (!_checkDocumentElem(node)) {
+            _unsetTouchActions(node);
+        }
     },
 
     detachDelegate : function(node, subscriber, ce, filter) {
@@ -428,7 +455,9 @@ define(GESTURE_MOVE, {
             subscriber[_DEL_MOVE_HANDLE] = null;
         }
 
-        _unsetTouchActions(node);
+        if (!_checkDocumentElem(node)) {
+            _unsetTouchActions(node);
+        }
 
     },
 
@@ -509,15 +538,20 @@ define(GESTURE_MOVE, {
 define(GESTURE_MOVE_END, {
 
     on : function (node, subscriber, ce) {
-        _setTouchActions(node);
-        var root = _getRoot(node, subscriber),
+        var endHandle,
+            root;
 
-            endHandle = root.on(EVENT[END],
-                this._onEnd,
-                this,
-                node,
-                subscriber,
-                ce);
+        if (!_checkDocumentElem(node)) {
+            _setTouchActions(node);
+        }
+        
+        root = _getRoot(node, subscriber);
+        endHandle = root.on(EVENT[END],
+            this._onEnd,
+            this,
+            node,
+            subscriber,
+            ce);
 
         subscriber[_MOVE_END_HANDLE] = endHandle;
     },
@@ -541,7 +575,9 @@ define(GESTURE_MOVE_END, {
             subscriber[_DEL_MOVE_END_HANDLE] = null;
         }
 
-        _unsetTouchActions(node);
+        if (!_checkDocumentElem(node)) {
+            _unsetTouchActions(node);
+        }
 
     },
 
@@ -553,7 +589,9 @@ define(GESTURE_MOVE_END, {
             subscriber[_MOVE_END_HANDLE] = null;
         }
 
-        _unsetTouchActions(node);
+        if (!_checkDocumentElem(node)) {
+            _unsetTouchActions(node);
+        }
     },
 
     processArgs : function(args, delegate) {

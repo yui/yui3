@@ -28,8 +28,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('plugin-tests');
-    
+
     Y.Test.Runner.setName('plugin cli tests');
-    
+
 });
 

@@ -18,6 +18,7 @@ Committers
 * [@ezequiel](https://github.com/ezequiel)
 * [@jconniff](https://github.com/jconniff)
 * [@jenny](https://github.com/jenny)
+* [@jlecomte](https://github.com/jlecomte)
 * [@juandopazo](https://github.com/juandopazo)
 * [@msweeney](https://github.com/msweeney)
 * [@okuryu](https://github.com/okuryu)

@@ -1,5 +1,5 @@
 YUI.add('json-convert-values-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('json-convert-values'),
         data = {"USD":1,"EUR":0.6661,"GBP":0.5207,"AUD":1.1225,"BRL":1.609,"NZD":1.4198,"CAD":1.0667,"CHF":1.0792,"CNY":6.8587 ,"DKK":4.9702,"HKD":7.8064,"INR":42.0168,"JPY":109.8901,"KRW":1000,"LKR":107.5269,"MXN":10.1317,"MYR" :3.3167,"NOK":5.3277,"SEK":6.2617,"SGD":1.4073,"THB":33.7838,"TWD":31.1526,"VEF":2.1445,"ZAR":7.6923 ,"BGN":1.3028,"CZK":16.0514,"EEK":10.4275,"HUF":158.7302,"LTL":2.2999,"LVL":0.4692,"PLN":2.1758,"RON" :2.3804,"SKK":20.2429,"ISK":4.8008,"HRK":81.3008,"RUB":24.3309,"TRY":1.1811,"PHP":44.2478,"COP":2000 ,"ARS":3.1289};
@@ -12,7 +12,7 @@ YUI.add('json-convert-values-tests', function(Y) {
     var getRows = function() {
         return Y.all('#demo table tbody tr');
     };
-    
+
     suite.add(new Y.Test.Case({
         name: 'json-convert-values',
         'is rendered': function() {

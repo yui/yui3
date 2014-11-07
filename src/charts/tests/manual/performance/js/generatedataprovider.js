@@ -4,7 +4,7 @@ YUI.add('generate-dataprovider', function (Y) {
             var dataProvider = (Y.UA.ie && Y.UA.ie < 9) ? GeneratePerfTestDataProvider._notAsBigDataProvider : GeneratePerfTestDataProvider._bigDataProvider;
             return dataProvider;
         },
-        
+
         //2222 values;
         _bigDataProvider: [
             {date: "01/01/2009", revenue: 90.27, expenses: 170.27},

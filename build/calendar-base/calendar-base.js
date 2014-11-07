@@ -1057,9 +1057,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _initCalendarPane : function (baseDate, pane_id) {
-        // Get a list of short weekdays from the internationalization package, or else use default English ones.
-        var shortWeekDays = this.get('strings.very_short_weekdays') || ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-            weekDays = Y.Intl.get('datatype-date-format').A,
+        var dateFormat = Y.Intl.get('datatype-date-format'),
+            weekDays = dateFormat.A,
             // Get the first day of the week from the internationalization package, or else use Sunday as default.
             firstday = this.get('strings.first_weekday') || 0,
             // Compute the cutoff column of the masked calendar table, based on the start date and the first day of week.
@@ -1071,6 +1070,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             // Initialize the partial templates object
             partials = {},
 
+            shortWeekDays,
             day,
             row,
             column,
@@ -1080,8 +1080,14 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             column_visibility,
             output;
 
-            // Initialize the partial template for the weekday row cells.
-            partials.weekday_row = '';
+        if (Y.Intl.getLang('calendar-base')) {
+            shortWeekDays = this.get('strings.very_short_weekdays');
+        } else {
+            shortWeekDays = dateFormat.a;
+        }
+
+        // Initialize the partial template for the weekday row cells.
+        partials.weekday_row = '';
 
         // Populate the partial template for the weekday row cells with weekday names
         for (day = firstday; day <= firstday + 6; day++) {

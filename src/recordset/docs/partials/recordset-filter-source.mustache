@@ -18,7 +18,7 @@
 </div>
 <script>
 YUI().use("recordset-base", "recordset-filter","node", function (Y) {
-	
+
 	var state_census_data = [
         {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
 
@@ -54,12 +54,12 @@ YUI().use("recordset-base", "recordset-filter","node", function (Y) {
         {ANSI: "56000", STATE: "WYOMING", TOTAL_POP: 544270, LAND_AREA: 97100.4, POP_PER_SQ_MILE: 5.1	}
     ],
 	TEMPLATE_TR = '<tr id="row_{ANSI}"><td>{STATE}</td><td>{TOTAL_POP}</td><td>{LAND_AREA}</td></tr>';
-	
+
   	// Create a Recordset instance.
   	var recordset = new Y.Recordset({records:state_census_data});
 	recordset.plug(Y.Plugin.RecordsetFilter);
-	
-	
+
+
 	renderRows(recordset);
 	setUpButtons(recordset);
 
@@ -69,17 +69,17 @@ YUI().use("recordset-base", "recordset-filter","node", function (Y) {
 		{
 		  return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
-		
+
 		Y.one('#keyValButton').on('click', function(e) {
 			//prevent default behavior (stop link)
 			e.preventDefault();
 			var sub_recordset = rs.filter.filter('STATE',"CALIFORNIA");
 			renderRows(sub_recordset);
 		});
-		
+
 		Y.one('#functionButton').on('click', function(e) {
 			e.preventDefault();
-			
+
 			var customFunc = function(item) {
 				var letter = item.getValue('STATE').charAt(0);
 				if (letter === 'M' || letter === 'N' || letter === 'O' || letter === 'P') {
@@ -89,28 +89,28 @@ YUI().use("recordset-base", "recordset-filter","node", function (Y) {
 					return false;
 				}
 			},
-			
+
 			sub_recordset = rs.filter.filter(customFunc);
 			renderRows(sub_recordset);
 		});
-		
+
 		Y.one('#resetButton').on('click', function(e) {
 			e.preventDefault();
 			renderRows(recordset);
 		});
 
 	}
-	
+
 	function renderRows(rs) {
 		var tbody = Y.one('#demo tbody'),
 		i=0,
 		len = rs.getLength(),
 		html = '';
-		
+
 		if (tbody.hasChildNodes()) {
 			tbody.get('children').remove();
 		}
-		
+
 		for (; i < len; i++) {
 			html += Y.Lang.sub(TEMPLATE_TR, rs.getRecord(i).getValue());
 		}

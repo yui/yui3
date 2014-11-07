@@ -61,8 +61,8 @@ As with the <a href="overlay-xy.html">"Basic XY Positioning"</a> example, to cre
 
 ```javascript
 YUI({...}).use("overlay", function (Y) {
-    // We'll write example code here, where we have a Y.Overlay class 
-    // available, which is bundled with XY positioning, align and 
+    // We'll write example code here, where we have a Y.Overlay class
+    // available, which is bundled with XY positioning, align and
     // constrain support.
 });
 ```
@@ -111,7 +111,7 @@ We align the overlay to the center of the `#constrain-box` node, which we're als
 <h3>Demonstrating Constrained Support</h3>
 
 <p>
-For this example, we set up a couple of Slider instances which can be used to set the Overlay's `x` and `y` attribute values. 
+For this example, we set up a couple of Slider instances which can be used to set the Overlay's `x` and `y` attribute values.
 </p>
 
 ```javascript
@@ -135,7 +135,7 @@ sy = new Y.Slider({
     id    : "y",
     axis  : 'y',
     length: "400px",
-    min   : constrainRegion.top - 50, 
+    min   : constrainRegion.top - 50,
     max   : constrainRegion.bottom + 50,
     value : overlay.get("y"),
     render: "#overlay-example"

@@ -533,12 +533,10 @@ Parent.prototype = {
     /**
     * @method _add
     * @protected
-    * @param child {Widget|Object} The Widget instance, or configuration
-    * object for the Widget to be added as a child.
-    * @param child {Array} Array of Widget instances, or configuration
-    * objects for the Widgets to be added as a children.
-    * @param index {Number} (Optional.)  Number representing the position at
-    * which the child should be inserted.
+    * @param child {Widget|Object|Array} The Widget instance, or configuration
+    * object for the Widget, or Array of Widget instances to be added as a child.
+    * @param index {Number} Number representing the position at which the child
+    * should be inserted.
     * @description Adds a Widget as a child.  If the specified Widget already
     * has a parent it will be removed from its current parent before
     * being added as a child.
@@ -595,18 +593,16 @@ Parent.prototype = {
 
     /**
     * @method add
-    * @param child {Widget|Object} The Widget instance, or configuration
-    * object for the Widget to be added as a child. The configuration object
-    * for the child can include a <code>childType</code> property, which is either
-    * a constructor function or a string which names a constructor function on the
-    * Y instance (e.g. "Tab" would refer to Y.Tab) (<code>childType</code> used to be
-    * named <code>type</code>, support for which has been deprecated, but is still
-    * maintained for backward compatibility. <code>childType</code> takes precedence
-    * over <code>type</code> if both are defined.
-    * @param child {Array} Array of Widget instances, or configuration
-    * objects for the Widgets to be added as a children.
-    * @param index {Number} (Optional.)  Number representing the position at
-    * which the child should be inserted.
+    * @param child {Widget|Object|Array} The Widget instance, or configuration
+    * object for the Widget, or Array of Widget instances to be added as a child.
+    * The configuration object for the child can include a <code>childType</code>
+    * property, which is either a constructor function or a string which names
+    * a constructor function on the Y instance (e.g. "Tab" would refer to Y.Tab).
+    * <code>childType</code> used to be named <code>type</code>, support for
+    * which has been deprecated, but is still maintained for backward compatibility.
+    * <code>childType</code> takes precedence over <code>type</code> if both are defined.
+    * @param index {Number} Number representing the position at which the child
+    * should be inserted.
     * @description Adds a Widget as a child.  If the specified Widget already
     * has a parent it will be removed from its current parent before
     * being added as a child.

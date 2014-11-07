@@ -94,10 +94,10 @@ function Spinner(config) {
     Spinner.superclass.constructor.apply(this, arguments);
 }
 
-/* 
- * Required NAME static field, to identify the Widget class and 
- * used as an event prefix, to generate class names etc. (set to the 
- * class name in camel case). 
+/*
+ * Required NAME static field, to identify the Widget class and
+ * used as an event prefix, to generate class names etc. (set to the
+ * class name in camel case).
  */
 Spinner.NAME = "spinner";
 
@@ -125,7 +125,7 @@ Spinner.ATTRS = {
         }
     },
 
-    // Amount to increment/decrement the spinner when the buttons, 
+    // Amount to increment/decrement the spinner when the buttons,
     // or arrow up/down keys are pressed.
     minorStep : {
         value:1
@@ -136,12 +136,12 @@ Spinner.ATTRS = {
         value:10
     },
 
-    // The localizable strings for the spinner. This attribute is 
+    // The localizable strings for the spinner. This attribute is
     // defined by the base Widget class but has an empty value. The
     // spinner is simply providing a default value for the attribute.
     strings: {
         value: {
-            tooltip: "Press the arrow up/down keys for minor increments, \ 
+            tooltip: "Press the arrow up/down keys for minor increments, \
                       page up/down for major increments.",
             increment: "Increment",
             decrement: "Decrement"
@@ -155,12 +155,12 @@ Y.extend(Spinner, Widget, {
 });
 ```
 
-<p>Note that these steps are the same for any class which is derived from <a href="../base/index.html">`Base`</a>, nothing Widget-specific is involved yet. 
+<p>Note that these steps are the same for any class which is derived from <a href="../base/index.html">`Base`</a>, nothing Widget-specific is involved yet.
 Widget adds the concept of a rendered UI to the existing Base lifecycle (viz. init, destroy and attribute state configuration), which we'll see show up in Widget-specific areas below.</p>
 
 <h4>A Note On Externalizing Strings and Internationalization</h4>
 
-<p>For the scope of this example we won't get into packaging your custom widget code as a YUI module, but when you do, you can leverage the <a href="../intl/index.html">Internationalization</a> infrastructure 
+<p>For the scope of this example we won't get into packaging your custom widget code as a YUI module, but when you do, you can leverage the <a href="../intl/index.html">Internationalization</a> infrastructure
 to bundle the strings for your widget separately from the code, and avoid hard-coding them into the widget's code base as we're doing above.</p>
 
 <p>When packaged separately from the code, the `strings` attribute can be changed to be:</p>
@@ -170,9 +170,9 @@ Spinner.ATTRS = {
     ...
     strings : {
         valueFn : function() {
-            return Y.Intl.get("myspinner"); // Assuming "myspinner" is the name of your widget's module. 
-        }        
-    } 
+            return Y.Intl.get("myspinner"); // Assuming "myspinner" is the name of your widget's module.
+        }
+    }
     ...
 }
 ```
@@ -186,17 +186,17 @@ Spinner.ATTRS = {
 <p>
 The first Widget-specific property `Spinner` implements is the static <a href="{{apiDocs}}/Widget.html#property_Widget.HTML_PARSER">`HTML_PARSER`</a> property. It is used to set the initial widget configuration based on markup, providing basic progressive enhancement support.
 </p>
-<p> 
-The value of the `HTML_PARSER` property is an object literal, where each property is a widget attribute name, and the value is either a selector string (if the attribute is a node reference) or a function which is executed to provide 
-a value for the attribute from the markup on the page. Markup is essentially thought of as an additional data source for the user to set initial attribute values, outside of the configuration object passed to the constructor 
+<p>
+The value of the `HTML_PARSER` property is an object literal, where each property is a widget attribute name, and the value is either a selector string (if the attribute is a node reference) or a function which is executed to provide
+a value for the attribute from the markup on the page. Markup is essentially thought of as an additional data source for the user to set initial attribute values, outside of the configuration object passed to the constructor
 <em>(values passed to the constructor will take precedence over values picked up from markup)</em>.
 </p>
 
 <p>For `Spinner`, `HTML_PARSER` defines a function for the `value` attribute, which sets the initial value of the spinner based on an input field if present in the markup.</p>
 
 ```
-/* 
- * The HTML_PARSER static constant is used by the Widget base class to populate 
+/*
+ * The HTML_PARSER static constant is used by the Widget base class to populate
  * the configuration for the spinner instance from markup already on the page.
  *
  * The Spinner class attempts to set the value of the spinner widget if it
@@ -220,10 +220,10 @@ Spinner.HTML_PARSER = {
 
 ```
 /*
- * initializer is part of the lifecycle introduced by 
+ * initializer is part of the lifecycle introduced by
  * the Widget class. It is invoked during construction,
  * and can be used to set up instance specific state.
- *  
+ *
  * The Spinner class does not need to perform anything
  * specific in this method, but it is left in as an example.
  */
@@ -232,14 +232,14 @@ initializer: function(config) {
 },
 
 /*
- * destructor is part of the lifecycle introduced by 
+ * destructor is part of the lifecycle introduced by
  * the Widget class. It is invoked during destruction,
  * and can be used to clean up instance specific state.
- * 
+ *
  * The spinner cleans up any node references it's holding
- * onto. The Widget classes destructor will purge the 
- * widget's bounding box of event listeners, so spinner 
- * only needs to clean up listeners it attaches outside of 
+ * onto. The Widget classes destructor will purge the
+ * widget's bounding box of event listeners, so spinner
+ * only needs to clean up listeners it attaches outside of
  * the bounding box.
  */
 destructor : function() {
@@ -267,7 +267,7 @@ destructor : function() {
 
 ```
 /*
- * For spinner the method adds the input (if it's not already 
+ * For spinner the method adds the input (if it's not already
  * present in the markup), and creates the increment/decrement buttons
  */
 renderUI : function() {
@@ -289,7 +289,7 @@ bindUI : function() {
 
     var boundingBox = this.get("boundingBox");
 
-    // Looking for a key event which will fire continuously across browsers 
+    // Looking for a key event which will fire continuously across browsers
     // while the key is held down. 38, 40 = arrow up/down, 33, 34 = page up/down
     var keyEventSpec = (!Y.UA.opera) ? "down:" : "press:";
     keyEventSpec += "38, 40, 33, 34";
@@ -298,7 +298,7 @@ bindUI : function() {
     Y.on("change", Y.bind(this._onInputChange, this), this.inputNode);
     Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
     Y.on("mousedown", Y.bind(this._onMouseDown, this), boundingBox);
-    this._documentMouseUpHandle = Y.on("mouseup", Y.bind(this._onDocMouseUp, this), 
+    this._documentMouseUpHandle = Y.on("mouseup", Y.bind(this._onDocMouseUp, this),
                 boundingBox.get("ownerDocument"));
 },
 
@@ -315,7 +315,7 @@ syncUI : function() {
 
 <p>The `Spinner` uses Event's `"key"` support, to set up a listener for arrow up/down and page up/down keys on the spinner's bounding box (line 31).</p>
 
-<p>Event's `"key"` support allows `Spinner` to define a single listener, which is only invoked for the key specification provided. The key specification in the above use case is `"down:38, 40, 33, 34"` for most browsers, indicating that 
+<p>Event's `"key"` support allows `Spinner` to define a single listener, which is only invoked for the key specification provided. The key specification in the above use case is `"down:38, 40, 33, 34"` for most browsers, indicating that
 the `_onDirectionKey` method should only be called if the bounding box receives a keydown event with a character code which is either 38, 40, 33 or 34. `"key"` specifications can also contain more <a href="{{apiDocs}}/YUI.html#event_key">advanced filter criteria</a>, involving modifiers such as CTRL and SHIFT.</p>
 
 <p>For the Spinner widget, we're looking for a key event which fires repeatedly while the key is held down. This differs for Opera, so we need to fork for the key event we're interested in. Future versions of `"key"` support will aim to provide this type of higher level cross-browser abstraction also.</p>
@@ -335,8 +335,8 @@ the `_onDirectionKey` method should only be called if the bounding box receives 
 
 ```
 /*
- * value attribute change listener. Updates the 
- * value in the rendered input box, whenever the 
+ * value attribute change listener. Updates the
+ * value in the rendered input box, whenever the
  * attribute value changes.
  */
 _afterValueChange : function(e) {
@@ -344,7 +344,7 @@ _afterValueChange : function(e) {
 },
 
 /*
- * Updates the value of the input box to reflect 
+ * Updates the value of the input box to reflect
  * the value passed in
  */
 _uiSetValue : function(val) {
@@ -421,7 +421,7 @@ _createButton : function(text, className) {
 
 <p>The DOM event listeners attached during `bindUI` are straightforward event listeners, which receive the event facade for the DOM event, and update the spinner state accordingly.</p>
 
-<p>A couple of interesting points worth noting: In the `"key"` listener we set up, we can call `e.preventDefault()` without having to check the character code, since the `"key"` event specifier will only invoke the listener 
+<p>A couple of interesting points worth noting: In the `"key"` listener we set up, we can call `e.preventDefault()` without having to check the character code, since the `"key"` event specifier will only invoke the listener
 if one of the specified keys is pressed (arrow/page up/down)</p>
 
 <p>Also, to allow the spinner to update its value while the mouse button is held down, we set up a timer, which gets cleared out when we receive a mouseup event on the document.</p>
@@ -461,7 +461,7 @@ _onDirectionKey : function(e) {
  * Bounding box mouse down handler. Will determine if the mouse down
  * is on one of the spinner buttons, and increment/decrement the value
  * accordingly.
- * 
+ *
  * The method also sets up a timer, to support the user holding the mouse
  * down on the spinner buttons. The timer is cleared when a mouse up event
  * is detected.
@@ -567,8 +567,8 @@ When you need to generate standard class names in static code (where you don't h
 <p>We provide the constructor for the Spinner with the `srcNode` which contains the input field with our initial value. The `HTML_PARSER` code we saw earlier will extract the value from the input field, and use it as the initial value for the Spinner instance:</p>
 
 ```
-// Create a new Spinner instance, drawing its 
-// starting value from an input field already on the 
+// Create a new Spinner instance, drawing its
+// starting value from an input field already on the
 // page (the #numberField text input box)
 var spinner = new Spinner({
     srcNode: "#numberField",

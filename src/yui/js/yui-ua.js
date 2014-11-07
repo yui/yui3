@@ -224,7 +224,10 @@ YUI.Env.parseUA = function(subUA) {
         secure: false,
 
         /**
-         * The operating system.  Currently only detecting windows or macintosh
+         * The operating system.
+         *
+         * Possible values are `windows`, `macintosh`, `android`, `symbos`, `linux`, `rhino` and `ios`.
+         *
          * @property os
          * @type string
          * @default null
@@ -344,9 +347,7 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
                 if (/ Android/.test(ua)) {
-                    if (/Mobile/.test(ua)) {
-                        o.mobile = 'Android';
-                    }
+                    o.mobile = 'Android';
                     m = ua.match(/Android ([^\s]*);/);
                     if (m && m[1]) {
                         o.android = numberify(m[1]);

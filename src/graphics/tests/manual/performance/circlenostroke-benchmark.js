@@ -9,15 +9,15 @@ YUI.add('circlenostroke-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("CircleNoStroke", function() { 
+
+    suite.add("CircleNoStroke", function() {
         var circle = graphic.addShape({
                 type: "circle",
                 radius: 8,
                 fill: {
                     color: "#9aa"
                 },
-                stroke: null 
+                stroke: null
             });
     }, {
         onStart: function() {
@@ -30,5 +30,5 @@ YUI.add('circlenostroke-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

@@ -71,7 +71,7 @@ Y.io('http://mikeal.iriscouch.com/testjs/' + rand, {
     request: {
         multipart: [
             {
-                'content-type': 'application/json', 
+                'content-type': 'application/json',
                 body: JSON.stringify({
                     foo: 'bar',
                     _attachments: {
@@ -82,11 +82,11 @@ Y.io('http://mikeal.iriscouch.com/testjs/' + rand, {
                         }
                     }
                 })
-            }, 
+            },
             {
                 body: 'I am an attachment'
             }
-        ] 
+        ]
     },
     on: {
         success: function(id, e) {
@@ -100,7 +100,7 @@ Y.io('http://mikeal.iriscouch.com/testjs/' + rand, {
 
 ```
 info: document saved as: http://mikeal.iriscouch.com/testjs/9595449
-info: 
+info:
 {
     ok: true,
     id: '9595449',

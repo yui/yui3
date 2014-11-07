@@ -9,8 +9,8 @@ YUI.add('rectnofill-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("RectNoFill", function() { 
+
+    suite.add("RectNoFill", function() {
         var rect = graphic.addShape({
                 type: "rect",
                 width: 16,
@@ -31,5 +31,5 @@ YUI.add('rectnofill-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

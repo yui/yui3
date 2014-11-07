@@ -9,8 +9,8 @@ YUI.add('rect-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("Rect", function() { 
+
+    suite.add("Rect", function() {
         var rect = graphic.addShape({
                 type: "rect",
                 width: 16,
@@ -34,5 +34,5 @@ YUI.add('rect-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

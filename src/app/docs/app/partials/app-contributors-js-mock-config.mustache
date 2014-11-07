@@ -1,0 +1,17 @@
+<script>
+YUI.GlobalConfig = {
+    modules: {
+        'app-contributors-mock': {
+            fullpath: '../assets/app/app-contributors-mock.js',
+            requires: [],
+            condition: {
+                trigger: 'jsonp',
+                when: 'instead',
+                test: function () {
+                    return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
+                }
+            }
+        }
+    }
+};
+</script>

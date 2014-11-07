@@ -4,7 +4,7 @@ YUI.add('renderer-tests', function(Y) {
 
     RendererTests = new Y.Test.Case({
         name: "Renderer Tests",
-       
+
         setUp: function() {
             var BaseRenderer = Y.Base.create("baseRenderer", Y.Base, [Y.Renderer]);
             this.renderer = new BaseRenderer();
@@ -74,7 +74,7 @@ YUI.add('renderer-tests', function(Y) {
             Y.Assert.areEqual(defaultPadding, padding.bottom, "The bottom padding should be " + defaultPadding + ".");
             Y.Assert.areEqual(defaultPadding, padding.left, "The left padding should be " + defaultPadding + ".");
         }
-        
+
     });
 
     suite.add(RendererTests);

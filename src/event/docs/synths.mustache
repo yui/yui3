@@ -1,9 +1,9 @@
 <div class="intro">
     <p>Synthetic events are usually named abstractions that bind to existing
-    DOM events to monitor user actions for specific patterns.  However, at 
+    DOM events to monitor user actions for specific patterns.  However, at
     heart they are no more than a set of callbacks executed in response to
     various triggering methods in the DOM event system.</p>
-    
+
     <p>You can do all sorts of things with synthetic events, including:</p>
 
     <ul>
@@ -125,7 +125,7 @@ Y.Event.define('multiclick', {
             timer = Y.later(200, null, function () {
                 e.clicks = count;
                 count = 0;
-                
+
                 // subscribers will get e with e.type == 'multiclick'
                 // and extra property e.clicks
                 notifier.fire(e);
@@ -215,7 +215,7 @@ allow for future changes.</p>
 // for an event that takes one extra param
 processArgs: function (args, isDelegate) {
     var extra = args[3];
-    
+
     // remove the extra arguments from the array
     args.splice(3,1);
 

@@ -482,17 +482,17 @@ YUI.add('general-tests', function(Y) {
 
             json = Y.Test.Format.JSON(simpleReport);
             reporter.report(simpleReport, false);
-            
+
             Assert.isNotNull(reporter._form);
             Assert.areEqual(url, reporter.url);
-            
+
             form = Y.one(reporter._form);
             foo = form.one('input[name=foo]');
             results = form.one('input[name=results]');
-            
+
             Assert.areEqual("bar", foo.get('value'));
             Assert.areEqual(json, results.get('value'));
-            
+
             reporter.clearFields();
 
             reporter.destroy();

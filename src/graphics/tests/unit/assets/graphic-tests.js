@@ -53,7 +53,7 @@ Y.extend(RoundedRect, Y.Shape, {
             value: 4
         }
     }, Y.Shape.ATTRS)
-}); 
+});
 Y.RoundedRect = RoundedRect;
 var GraphicTestTemplate = function(cfg, globalCfg) {
     var i;
@@ -188,15 +188,15 @@ Y.extend(AddAndRemoveShapesTemplate, GraphicTestTemplate, {
             mygraphic.removeShape(this.circle);
             counter = Y.Object.size(mygraphic.get("shapes"));
             Y.Assert.areEqual(2, counter, "There should be 2 shapes.");
-            mygraphic.removeShape(this.ellipse); 
+            mygraphic.removeShape(this.ellipse);
             counter = Y.Object.size(mygraphic.get("shapes"));
             Y.Assert.areEqual(1, counter, "There should be 1 shapes.");
-            mygraphic.removeShape(this.roundrect); 
+            mygraphic.removeShape(this.roundrect);
             counter = Y.Object.size(mygraphic.get("shapes"));
             Y.Assert.areEqual(0, counter, "There should be 0 shapes.");
         }
     });
-    Y.AddAndRemoveShapesTemplate = AddAndRemoveShapesTemplate; 
+    Y.AddAndRemoveShapesTemplate = AddAndRemoveShapesTemplate;
 
 var AddAndRemoveShapesByIdTemplate = function()
 {
@@ -215,10 +215,10 @@ Y.extend(AddAndRemoveShapesByIdTemplate, AddAndRemoveShapesTemplate, {
         mygraphic.removeShape(this.circle.get("id"));
         counter = Y.Object.size(mygraphic.get("shapes"));
         Y.Assert.areEqual(2, counter, "There should be 2 shapes.");
-        mygraphic.removeShape(this.ellipse.get("id")); 
+        mygraphic.removeShape(this.ellipse.get("id"));
         counter = Y.Object.size(mygraphic.get("shapes"));
         Y.Assert.areEqual(1, counter, "There should be 1 shapes.");
-        mygraphic.removeShape(this.roundrect.get("id")); 
+        mygraphic.removeShape(this.roundrect.get("id"));
         counter = Y.Object.size(mygraphic.get("shapes"));
         Y.Assert.areEqual(0, counter, "There should be 0 shapes.");
     }
@@ -289,7 +289,7 @@ addAndRemoveShapesById = function(name, attrs)
 {
     attrs = attrs || {};
     return new Y.AddAndRemoveShapesByIdTemplate(attrs, {
-        name: name 
+        name: name
     });
 },
 
@@ -326,7 +326,7 @@ toggleVisibleTest = function(name, attrs)
                     Y.Assert.areEqual("visible", shape.get("node").style.visibility, "The visibility style of the shape's node should be visible.");
                 }
             }
-            
+
             this.removeShapes();
         }
     });

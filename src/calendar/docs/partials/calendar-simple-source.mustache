@@ -24,19 +24,19 @@
 
 <script type="text/javascript">
 YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
-    
-    // Create a new instance of calendar, placing it in 
+
+    // Create a new instance of calendar, placing it in
     // #mycalendar container, setting its width to 340px,
-    // the flags for showing previous and next month's 
-    // dates in available empty cells to true, and setting 
-    // the date to today's date.          
+    // the flags for showing previous and next month's
+    // dates in available empty cells to true, and setting
+    // the date to today's date.
     var calendar = new Y.Calendar({
       contentBox: "#mycalendar",
       width:'340px',
       showPrevMonth: true,
       showNextMonth: true,
       date: new Date()}).render();
-    
+
     // Get a reference to Y.DataType.Date
     var dtdate = Y.DataType.Date;
 
@@ -60,7 +60,7 @@ YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
     // previous month's dates
     Y.one("#togglePrevMonth").on('click', function (ev) {
       ev.preventDefault();
-      calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));      
+      calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));
     });
 
     // When the 'Show Next Month' link is clicked,
@@ -68,7 +68,7 @@ YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
     // next month's dates
     Y.one("#toggleNextMonth").on('click', function (ev) {
       ev.preventDefault();
-      calendar.set('showNextMonth', !(calendar.get("showNextMonth")));      
+      calendar.set('showNextMonth', !(calendar.get("showNextMonth")));
     });
 });
 </script>

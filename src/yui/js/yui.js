@@ -132,6 +132,7 @@ available.
 
             // bind the specified additional modules for this instance
             if (!l) {
+                Y._afterConfig();
                 Y._setup();
             }
         }
@@ -145,6 +146,7 @@ available.
                 Y.applyConfig(args[i]);
             }
 
+            Y._afterConfig();
             Y._setup();
         }
 
@@ -199,7 +201,7 @@ available.
             YUI.Env.DOMReady = true;
             if (hasWin) {
                 remove(doc, 'DOMContentLoaded', handleReady);
-            }        
+            }
         },
         handleLoad = function() {
             YUI.Env.windowLoaded = true;
@@ -349,7 +351,7 @@ proto = {
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
-                cdn: BASE + VERSION + '/build/',
+                cdn: BASE + VERSION + '/',
                 // bootstrapped: false,
                 _idx: 0,
                 _used: {},
@@ -388,7 +390,7 @@ proto = {
                 // \/\2              then comes a / followed by the yui-* string in \2
                 // (?:-(min|debug))? optionally followed by "-min" or "-debug"
                 // .js               and ending in ".js"
-                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(wf2|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
                 parseBasePath: function(src, pattern) {
                     var match = src.match(pattern),
                         path, filter;
@@ -432,19 +434,7 @@ proto = {
 
                             // use CDN default
                             return path;
-                        },
-                ////////////////////////////////////////////////////////////////
-                //                      BEGIN WF2 CHANGE                      //
-                // Justification: To support CSP directive of `unsafe-eval`   //
-                // see line 487                                               //
-                ////////////////////////////////////////////////////////////////
-                getGlobal: (function () {
-                                return this;
-                            }())
-
-                ////////////////////////////////////////////////////////////////
-                //                      END WF2 CHANGE                        //
-                ////////////////////////////////////////////////////////////////
+                        }
 
             };
 
@@ -488,17 +478,7 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win,
-            ////////////////////////////////////////////////////////////////
-            //                      BEGIN WF2 CHANGE                      //
-            // Justification: Below code violates CSP `unsafe-eval`       //
-            // directive, which would block execution of YUI              //
-            ////////////////////////////////////////////////////////////////
-            // global: Function('return this')()
-            global: Y.Env.getGlobal
-            ////////////////////////////////////////////////////////////////
-            //                      END WF2 CHANGE                        //
-            ////////////////////////////////////////////////////////////////
+            win: win
         };
 
         //Register the CSS stamp element
@@ -517,7 +497,9 @@ proto = {
 
         Y.config.lang = Y.config.lang || 'en-US';
 
-        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        Y.config.base = YUI.config.base ||
+                (YUI.config.defaultBase && YUI.config.root && YUI.config.defaultBase + YUI.config.root) ||
+                Y.Env.getBase(Y.Env._BASE_RE);
 
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';
@@ -525,6 +507,25 @@ proto = {
         filter = (filter) ? '-' + filter : filter;
         Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
+    },
+
+    /**
+    This method is called after all other configuration has been applied to
+    the YUI instance.
+
+    @method _afterConfig
+    @private
+    **/
+    _afterConfig: function () {
+        var Y = this;
+
+        // We need to set up Y.config.global after the rest of the configuration
+        // so that setting it in user configuration prevents the library from
+        // using eval(). This is critical for Content Security Policy enabled
+        // sites and other environments like Chrome extensions
+        if (!Y.config.hasOwnProperty('global')) {
+            Y.config.global = Function('return this')();
+        }
     },
 
     /**
@@ -538,8 +539,9 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
-
+            extendedCore = Y.config.extendedCore || [],
+            extras = Y.config.core || [].concat(YUI.Env.core).concat(extendedCore); //Clone it..
+   
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
                 core.push(extras[i]);
@@ -622,15 +624,15 @@ with any configuration info required for the module.
 @param {String} version Module version number. This is currently used only for
     informational purposes, and is not used internally by YUI.
 
-@param {Object} [config] Module config.
-    @param {Array} [config.requires] Array of other module names that must be
+@param {Object} [details] Module config.
+    @param {Array} [details.requires] Array of other module names that must be
         attached before this module can be attached.
-    @param {Array} [config.optional] Array of optional module names that should
+    @param {Array} [details.optional] Array of optional module names that should
         be attached before this module is attached if they've already been
         loaded. If the `loadOptional` YUI option is `true`, optional modules
         that have not yet been loaded will be loaded just as if they were hard
         requirements.
-    @param {Array} [config.use] Array of module names that are included within
+    @param {Array} [details.use] Array of module names that are included within
         or otherwise provided by this module, and which should be attached
         automatically when this module is attached. This makes it possible to
         create "virtual rollup" modules that simply attach a collection of other
@@ -649,7 +651,7 @@ with any configuration info required for the module.
             },
             //Instance hash so we don't apply it to the same instance twice
             applied = {},
-            loader, inst,
+            loader, inst, modInfo,
             i, versions = env.versions;
 
         env.mods[name] = mod;
@@ -663,7 +665,8 @@ with any configuration info required for the module.
                     applied[inst.id] = true;
                     loader = inst.Env._loader;
                     if (loader) {
-                        if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
+                        modInfo = loader.getModuleInfo(name);
+                        if (!modInfo || modInfo.temp) {
                             loader.addModule(details, name);
                         }
                     }
@@ -695,7 +698,8 @@ with any configuration info required for the module.
             exported = Y.Env._exported,
             len = r.length, loader, def, go,
             c = [],
-            modArgs, esCompat, reqlen,
+            modArgs, esCompat, reqlen, modInfo,
+            condition,
             __exports__, __imports__;
 
         //Check for conditional modules (in a second+ instance) and add their requirements
@@ -729,8 +733,9 @@ with any configuration info required for the module.
                     continue;
                 }
                 if (!mod) {
-                    if (loader && loader.moduleInfo[name]) {
-                        mod = loader.moduleInfo[name];
+                    modInfo = loader && loader.getModuleInfo(name);
+                    if (modInfo) {
+                        mod = modInfo;
                         moot = true;
                     }
 
@@ -755,6 +760,18 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+
+                    // Optional dependencies normally work by modifying the
+                    // dependency list of a module. If the dependency's test
+                    // passes it is added to the list. If not, it's not loaded.
+                    // This following check ensures that optional dependencies
+                    // are not attached when they were already loaded into the
+                    // page (when bundling for example)
+                    if (loader && !loader._canBeAttached(name)) {
+                        Y.log('Failed to attach module ' + name, 'warn', 'yui');
+                        return true;
+                    }
+
                     /*
                         If it's a temp module, we need to redo it's requirements if it's already loaded
                         since it may have been loaded by another instance and it's dependencies might
@@ -763,8 +780,9 @@ with any configuration info required for the module.
                     if (loader && cache && cache[name] && cache[name].temp) {
                         loader.getRequires(cache[name]);
                         req = [];
-                        for (j in loader.moduleInfo[name].expanded_map) {
-                            if (loader.moduleInfo[name].expanded_map.hasOwnProperty(j)) {
+                        modInfo = loader.getModuleInfo(name);
+                        for (j in modInfo.expanded_map) {
+                            if (modInfo.expanded_map.hasOwnProperty(j)) {
                                 req.push(j);
                             }
                         }
@@ -820,10 +838,10 @@ with any configuration info required for the module.
                             }
                         }
                         if (Y.config.throwFail) {
-                            __exports__ = mod.fn.apply(mod, modArgs);
+                            __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                         } else {
                             try {
-                                __exports__ = mod.fn.apply(mod, modArgs);
+                                __exports__ = mod.fn.apply(esCompat ? undefined : mod, modArgs);
                             } catch (e) {
                                 Y.error('Attach error: ' + name, e, name);
                                 return false;
@@ -832,6 +850,16 @@ with any configuration info required for the module.
                         if (esCompat) {
                             // store the `exports` in case others `es` modules requires it
                             exported[name] = __exports__;
+
+                            // If an ES module is conditionally loaded and set
+                            // to be used "instead" another module, replace the
+                            // trigger module's content with the conditionally
+                            // loaded one so the values returned by require()
+                            // still makes sense
+                            condition = mod.details.condition;
+                            if (condition && condition.when === 'instead') {
+                                exported[condition.trigger] = __exports__;
+                            }
                         }
                     }
 
@@ -1004,6 +1032,65 @@ with any configuration info required for the module.
         }
 
         return Y;
+    },
+
+    /**
+    Sugar for loading both legacy and ES6-based YUI modules.
+
+    @method require
+    @param {String} [modules*] List of module names to import or a single
+        module name.
+    @param {Function} callback Callback that gets called once all the modules
+        were loaded. Each parameter of the callback is the export value of the
+        corresponding module in the list. If the module is a legacy YUI module,
+        the YUI instance is used instead of the module exports.
+    @example
+    ```
+    YUI().require(['es6-set'], function (Y, imports) {
+        var Set = imports.Set,
+            set = new Set();
+    });
+    ```
+    **/
+    require: function () {
+        var args = SLICE.call(arguments),
+            callback;
+
+        if (typeof args[args.length - 1] === 'function') {
+            callback = args.pop();
+
+            // only add the callback if one was provided
+            // YUI().require('foo'); is valid
+            args.push(function (Y) {
+                var i, length = args.length,
+                    exported = Y.Env._exported,
+                    __imports__ = {};
+
+                // Get only the imports requested as arguments
+                for (i = 0; i < length; i++) {
+                    if (exported.hasOwnProperty(args[i])) {
+                        __imports__[args[i]] = exported[args[i]];
+                    }
+                }
+
+                // Using `undefined` because:
+                // - Using `Y.config.global` would force the value of `this` to be
+                //   the global object even in strict mode
+                // - Using `Y` goes against the goal of moving away from a shared
+                //   object and start thinking in terms of imported and exported
+                //   objects
+                callback.call(undefined, Y, __imports__);
+            });
+        }
+        // Do not return the Y object. This makes it hard to follow this
+        // traditional pattern:
+        //   var Y = YUI().use(...);
+        // This is a good idea in the light of ES6 modules, to avoid working
+        // in the global scope.
+        // This also leaves the door open for returning a promise, once the
+        // YUI loader is based on the ES6 loader which uses
+        // loader.import(...).then(...)
+        this.use.apply(this, args);
     },
 
     /**
@@ -1813,6 +1900,25 @@ Skin configuration and customizations.
 Hash of per-component filter specifications. If specified for a given component,
 this overrides the global `filter` config.
 
+@example
+    YUI({
+        modules: {
+            'foo': './foo.js',
+            'bar': './bar.js',
+            'baz': './baz.js'
+        },
+        filters: {
+            'foo': {
+                searchExp: '.js',
+                replaceStr: '-coverage.js'
+            }
+        }
+    }).use('foo', 'bar', 'baz', function (Y) {
+        // foo-coverage.js is loaded
+        // bar.js is loaded
+        // baz.js is loaded
+    });
+
 @property {Object} filters
 **/
 
@@ -1868,16 +1974,6 @@ Timeout in milliseconds before a dynamic JS or CSS request will be considered a
 failure. If not set, no timeout will be enforced.
 
 @property {Number} timeout
-**/
-
-/**
-Callback for the 'CSSComplete' event. When dynamically loading YUI components
-with CSS, this property fires when the CSS is finished loading.
-
-This provides an opportunity to enhance the presentation of a loading page a
-little bit before the entire loading process is done.
-
-@property {Function} onCSS
 **/
 
 /**

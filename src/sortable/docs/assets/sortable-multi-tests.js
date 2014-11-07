@@ -42,7 +42,7 @@ YUI.add('sortable-multi-tests', function(Y) {
                 pageY: 100
             });
             Assert.isTrue(el.hasClass('yui3-dd-draggable'));
-            
+
             el.simulate('mouseup');
             Assert.isFalse(el.hasClass('yui3-dd-draggable'));
         },
@@ -55,7 +55,7 @@ YUI.add('sortable-multi-tests', function(Y) {
                 pageY: 100
             });
             Assert.isTrue(el.hasClass('yui3-dd-draggable'));
-            
+
             el.simulate('mouseup');
             Assert.isFalse(el.hasClass('yui3-dd-draggable'));
         }

@@ -10,7 +10,7 @@ var myuploader;
 
 
 if (Y.UploaderFlash.TYPE != "none") {
-            myuploader = new Y.UploaderFlash({ multipleFiles: true, 
+            myuploader = new Y.UploaderFlash({ multipleFiles: true,
                                           uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
@@ -48,15 +48,15 @@ if (Y.UploaderFlash.TYPE != "none") {
             myuploader.on("uploadcomplete", function (ev) {
             	 	out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
             });
-            	 
-            	 
+
+
             myuploader.on("totaluploadprogress", function (ev) {
             	 	Y.one("#totalpercent").setContent("Total upload progress: " + ev.percentLoaded);
             });
 
             myuploader.on("alluploadscomplete", function (ev) {
             	 	Y.one("#totalpercent").setContent("<p>Upload complete!</p>");
-            });	                                    	                                       
+            });
 
             Y.one("#uploadButton").on("click", function () {
             	 myuploader.uploadAll();

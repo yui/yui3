@@ -5,7 +5,7 @@ YUI.add('series-tests', function(Y) {
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert;
     DOC.body.appendChild(parentDiv);
-            
+
     //-------------------------------------------------------------------------
     // Chart Event Test Case
     //-------------------------------------------------------------------------
@@ -22,43 +22,43 @@ YUI.add('series-tests', function(Y) {
         //---------------------------------------------------------------------
         // Setup and teardown of test harnesses
         //---------------------------------------------------------------------
-        
+
         /*
          * Sets up several event handlers used to test UserAction mouse events.
          */
-        setUp : function() 
+        setUp : function()
         {
-            //create the chart 
+            //create the chart
             this.chart = new Y.Chart(this.attrCfg);
 
             this.contentBox = this.chart.get("contentBox");
-        
+
             //reset the result
             this.result = null;
-            
-            //assign event handler                
+
+            //assign event handler
             this.handler = Y.delegate(this.eventType, Y.bind(this.handleEvent, this), this.contentBox, this.eventNode);
         },
-        
+
         /*
          * Removes event handlers that were used during the test.
          */
-        tearDown : function() 
+        tearDown : function()
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         //---------------------------------------------------------------------
         // Event handler
         //---------------------------------------------------------------------
-        
+
         /*
          * Uses to trap and assign the event object for interrogation.
          * @param {Event} event The event object created from the event.
          */
-        handleEvent : function(event) 
+        handleEvent : function(event)
         {
             this.result = event;
         }
@@ -85,18 +85,18 @@ YUI.add('series-tests', function(Y) {
                 pageY = e.pageY,
                 x = pageX - cb.getX(),
                 y = pageY - cb.getY();
-            return { 
-                type: "markerEvent:" + type, 
+            return {
+                type: "markerEvent:" + type,
                 originEvent: e,
-                pageX:pageX, 
-                pageY:pageY, 
-                categoryItem:items.category, 
-                valueItem:items.value, 
-                node:markerNode, 
-                x:x, 
-                y:y, 
-                series:series, 
-                index:index, 
+                pageX:pageX,
+                pageY:pageY,
+                categoryItem:items.category,
+                valueItem:items.value,
+                node:markerNode,
+                x:x,
+                y:y,
+                series:series,
+                index:index,
                 seriesIndex:seriesIndex
             };
         },
@@ -136,7 +136,7 @@ YUI.add('series-tests', function(Y) {
             {
                 keys[this.seriesKeys[i]] = i;
             }
-            
+
             for(key in keys)
             {
                 if(keys.hasOwnProperty(key))
@@ -166,9 +166,9 @@ YUI.add('series-tests', function(Y) {
                                     Y.Event.simulate(marker.get("node"), "mouseover", {
                                         clientX: markerXY[0] + markerWidth/2,
                                         clientY: markerXY[1] + markerHeight/2
-                                    }); 
+                                    });
                                     nodeReferences.push(marker.node._yuid || marker.node.uniqueID);
-                                    markerData = this.getMarkerData(this.result);                
+                                    markerData = this.getMarkerData(this.result);
                                     categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
                                     if(this.chart.get("categoryType") == "time")
                                     {
@@ -202,7 +202,7 @@ YUI.add('series-tests', function(Y) {
         }
     });
     Y.ChartMarkerEventTestCase = ChartMarkerEventTestCase;
-    
+
     var DataProviderWithZeros = [
                 {category:"1/1/2010", miscellaneous:1000, expenses:0, revenue:2200},
                 {category:"2/1/2010", miscellaneous:0, expenses:0, revenue:100},
@@ -415,16 +415,16 @@ YUI.add('series-tests', function(Y) {
         {category: 4, miscellaneous: 4233},
         {category: 5, miscellaneous: 3800},
         {category: 6, miscellaneous: 4899},
-        {category: 7, miscellaneous: 3333}, 
+        {category: 7, miscellaneous: 3333},
         {category: 8, miscellaneous: 5210},
         {category: 9, miscellaneous: 2011},
         {category: 10, miscellaneous: 3100}
     ],
     regularDataProvider = [
-        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
         {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
     DataProvider,
@@ -582,7 +582,7 @@ YUI.add('series-tests', function(Y) {
         ],
         render: "#testdiv"
     }, "mouseover");
-    
+
     suite.add(zeroValueColumnMouseOverTests);
     suite.add(zeroValueBarMouseOverTests);
     suite.add(zeroValueStackedColumnMouseOverTests);
@@ -593,7 +593,7 @@ YUI.add('series-tests', function(Y) {
     suite.add(nullValueStackedBarMouseOverTests);
     suite.add(zeroValueComboMouseOverTests);
     suite.add(nullValueComboMouseOverTests);
-    suite.add(missingSeriesAndSeriesStartingWithZero); 
+    suite.add(missingSeriesAndSeriesStartingWithZero);
     suite.add(missingValueComboMouseOverTests);
     suite.add(missingValueColumnMouseOverTests);
     suite.add(missingValueBarMouseOverTests);

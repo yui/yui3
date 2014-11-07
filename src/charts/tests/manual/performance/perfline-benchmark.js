@@ -11,14 +11,14 @@ YUI.add('perfline-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-    
+
     suite.add("PerfLineChart", function() {
         chart = new Y.Chart({
             dataProvider: dataProvider,
             type: "line",
             categoryType: "time",
             categoryKey: "date",
-            render: container 
+            render: container
         });
         chart.destroy(true);
     });

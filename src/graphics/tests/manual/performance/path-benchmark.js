@@ -11,11 +11,11 @@ YUI.add('path-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("Path", function() { 
+
+    suite.add("Path", function() {
         var x = 0,
             y,
-            i, 
+            i,
             len = 200,
             path = graphic.addShape({
                 type: "path",
@@ -48,5 +48,5 @@ YUI.add('path-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

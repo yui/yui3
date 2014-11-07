@@ -5,12 +5,12 @@ YUI.add('xml-tests', function(Y) {
 
         var testParse = new Y.Test.Case({
             name: "XML Parse Tests",
-        
+
             testUndefined: function() {
                 var xmldoc = Y.XML.parse();
                 ASSERT.isNull(xmldoc, "Expected null.");
             },
-            
+
             testNull: function() {
                 var xmldoc = Y.XML.parse(null);
                 ASSERT.isNull(xmldoc, "Expected null.");
@@ -22,7 +22,7 @@ YUI.add('xml-tests', function(Y) {
                 ASSERT.areSame(3, xmldoc.getElementsByTagName("item").length, "Incorrect length.");
             }
         });
-            
+
         var testFormat = new Y.Test.Case({
             name: "XML Format Tests",
 

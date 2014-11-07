@@ -1,6 +1,47 @@
 DOM Change History
 ==================
 
+3.18.1
+------
+
+* No changes.
+
+3.18.0
+------
+
+* No changes.
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [#1709][]: Move out of color-base module (@okuryu)
+
+[#1709]: https://github.com/yui/yui3/pull/1709
+
+3.16.0
+------
+
+* Optimize dom-style.js. Remove unnecessary anonymous function, unused variables. Use "Number()" instead of "new Number()". [Ryuichi Okumura]
+
+3.15.0
+------
+
+* [#1603][]: Set a node value to an empty string setting to null. [Ryuichi Okumura]
+* [#1469][]: Fix a bug with setStyle() cannot set an opacity to 1. [Ryuichi Okumura]
+
+[#1603]: https://github.com/yui/yui3/issues/1603
+[#1469]: https://github.com/yui/yui3/issues/1469
+
 3.14.1
 ------
 

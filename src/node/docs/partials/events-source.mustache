@@ -65,15 +65,15 @@ YUI().use('node', function(Y) {
         var type = e.type,
             currentTarget = e.currentTarget, // #container
             target = e.target; // #container or a descendant
-            
+
         Y.one('#event-result').setHTML('<dl>' +
-            '<dt>Event Type: </dt>' + 
+            '<dt>Event Type: </dt>' +
                 '<dd>' + e.type + '</dd>' +
-            '<dt>Target Tag Name: </dt>' + 
+            '<dt>Target Tag Name: </dt>' +
                 '<dd>' + target.get('tagName') + '</dd>' +
-            '<dt>Color of Target\'s Font: </dt>' + 
+            '<dt>Color of Target\'s Font: </dt>' +
                 '<div class="dd-color" style="background-color:' + target.getComputedStyle('color') + ';">' + '</div>' +
-            '<dt>CurrentTarget Tag Name & Id: </dt>' + 
+            '<dt>CurrentTarget Tag Name & Id: </dt>' +
                 '<dd>' + currentTarget.get('tagName') + '#' + currentTarget.get('id') + '</dd>' +
             '</dl>');
     };

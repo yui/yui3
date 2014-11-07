@@ -71,12 +71,12 @@ ul.toc, ol.toc {
   list-style: none;
 }
 
-@media aural {  
+@media aural {
   h1, h2, h3 { stress: 20; richness: 90 }
   .hide { speak: none }
   p.copyright { volume: x-soft; speech-rate: x-fast }
   dt { pause-before: 20% }
-  pre { speak-punctuation: code } 
+  pre { speak-punctuation: code }
 }
 
 
@@ -146,13 +146,13 @@ ul.toc {
     list-style-type: none;
 }
 
-a.normref { 
+a.normref {
     color : red;
-}	
+}
 
 a.informref {
     color : green;
-}	
+}
 
 DIV.subtoc {padding: 1em; border: solid thin; margin: 1em 0;
     background: #ddd}

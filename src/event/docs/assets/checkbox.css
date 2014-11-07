@@ -8,8 +8,8 @@
 	background-color: #fff;	/*	Need to set a background color or IE won't get mouse events	*
 
 	/*
-		Necessary for IE 6 (Quirks and Standards Mode) and IE 7 (Quirks Mode), since 
-		they don't support use of negative margins without relative positioning.  
+		Necessary for IE 6 (Quirks and Standards Mode) and IE 7 (Quirks Mode), since
+		they don't support use of negative margins without relative positioning.
 	*/
 
 	_position: relative;
@@ -24,14 +24,14 @@
 
 	/* Position the checkmark for Gecko, Opera and Webkit and IE 7 (Strict Mode). */
 	margin: -5px 0 0 1px;
-	
+
 
 	/* Position the checkmark for IE 6 (Strict and Quirks Mode) and IE 7 (Quirks Mode).*/
 	_margin: 0;
 	_position: absolute;
 	_top: -5px;
 	_left: 1px;
-	
+
 }
 
 /* For Gecko < 1.9: Positions the checkbox on the same line as its corresponding label. */
@@ -44,8 +44,8 @@
 }
 
 /*
-	Hide the actual checkbox offscreen so that it is out of view, but still accessible via 
-	the keyboard. 
+	Hide the actual checkbox offscreen so that it is out of view, but still accessible via
+	the keyboard.
 */
 .yui3-checkbox input {
 

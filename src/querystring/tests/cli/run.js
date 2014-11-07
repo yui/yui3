@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('querystring-tests');
-    
+
     Y.Test.Runner.setName('querystring cli tests');
-    
+
 });
 

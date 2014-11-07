@@ -12,8 +12,8 @@ The following modules are available:
   * `node-base`: Provides the basic support for querying, creating, and using
     DOM nodes.
   * `node-event-delegate`: Adds support for delegating Node events.
-  * `node-pluginhost`: Enables Node for plugins. 
+  * `node-pluginhost`: Enables Node for plugins.
   * `node-screen`: Provides methods for positioning elements, measuring the
-    document and viewport, and working with regions. 
+    document and viewport, and working with regions.
   * `node-style`: Adds setStyle()/getStyle() and getComputedStyle() methods
     for working with style properties.

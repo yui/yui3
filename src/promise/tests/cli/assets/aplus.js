@@ -1,5 +1,5 @@
 YUI.add('aplus-tests', function(Y) {
- 
+
     var Assert = Y.Assert;
 
     var adapter = {
@@ -15,12 +15,12 @@ YUI.add('aplus-tests', function(Y) {
         },
         pending: function () {
             var fulfill, reject, promise;
-         
+
             promise = new Y.Promise(function (f, r) {
                 fulfill = f;
                 reject = r;
             });
-         
+
             return {
                 promise: promise,
                 fulfill: fulfill,
@@ -30,7 +30,7 @@ YUI.add('aplus-tests', function(Y) {
     };
 
     var promisesAplusTests = require("promises-aplus-tests");
-    
+
     var suite = new Y.Test.Suite('Promise Aplus');
 
     suite.add(new Y.Test.Case({

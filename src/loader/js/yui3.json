@@ -1131,7 +1131,8 @@
     },
     "dd-drag": {
         "requires": [
-            "dd-ddm-base"
+            "dd-ddm-base",
+            "selector-css2"
         ]
     },
     "dd-drop": {
@@ -1794,6 +1795,15 @@
         "requires": [
             "get",
             "features"
+        ]
+    },
+    "loader-pathogen-combohandler": {},
+    "loader-pathogen-encoder": {
+        "use": [
+            "loader-base",
+            "loader-rollup",
+            "loader-yui3",
+            "loader-pathogen-combohandler"
         ]
     },
     "loader-rollup": {

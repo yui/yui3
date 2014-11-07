@@ -1,0 +1,17 @@
+<script>
+YUI.GlobalConfig = {
+    modules: {
+        'jsonp-gallery-mock': {
+            fullpath: '../assets/jsonp/jsonp-gallery-mock.js',
+            requires: [],
+            condition: {
+                trigger: 'jsonp',
+                when: 'after',
+                test: function () {
+                    return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
+                }
+            }
+        }
+    }
+};
+</script>

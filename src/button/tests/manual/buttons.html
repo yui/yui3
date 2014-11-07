@@ -8,7 +8,7 @@
                 color:white;
             }
         </style>
-      
+
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
@@ -17,52 +17,52 @@
                 combo: false,
                 filter: 'raw'
             }).use('button-group', 'console', function(Y){
-                
+
                 new Y.Console().render();
-                
+
                 var groupA = new Y.ButtonGroup({
                     srcNode: '#groupA',
                     type: 'radio'
                 }).render();
-                
+
                 var groupB = new Y.ButtonGroup({
                     srcNode: '#groupB',
                     type: 'radio'
                 }).render();
-                
+
                 var groupC = new Y.ButtonGroup({
                     srcNode: '#groupC',
                     type: 'checkbox'
                 }).render();
-                
+
                 groupA.on('selectionChange', function(e){
                     var button = e.target.getSelectedButtons()[0];
                     button.set('label', button.get('label') + "+");
                     Y.log('groupA - Currently selected: ' + this.getSelectedValues());
                     //console.log(groupB.getBar());
                 });
-                
+
                 groupB.on('selectionChange', function(){
                     Y.log('groupB - Currently selected: ' + groupB.getSelectedValues());
                     //console.log(groupB.getBar());
                 });
-                
+
                 groupC.on('selectionChange', function(){
                     Y.log('groupC - Currently selected: ' + groupC.getSelectedValues());
                 });
-                
+
             });
         </script>
     </head>
-    
+
     <body class='yui3-skin-sam'>
-        
+
         <div id='yconsole'></div>
-        
+
         <h1>Button Example: Groups</h1>
-        
+
         <hr />
-        
+
         <h2>Radio A</h2>
         <div id='groupA'>
             <button>**<span class='yui3-button-label'>1</span>**</button>
@@ -72,7 +72,7 @@
             <input type='button' value='5'>
             <input type='button' value='6'>
         </div>
-        
+
         <h2>Radio B</h2>
         <div id='groupB'>
             <input type='button' value='1'>
@@ -82,7 +82,7 @@
             <input type='button' value='5'>
             <input type='button' value='6'>
         </div>
-        
+
         <h2>Checkbox</h2>
         <div id='groupC'>
             <input type='button' value='a'>
@@ -92,6 +92,6 @@
             <input type='button' value='e'>
             <input type='button' value='f'>
         </div>
-        
+
     </body>
 </html>

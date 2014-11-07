@@ -63,11 +63,11 @@ Y.mix(Y.namespace("Number"), {
      * @param data {String | Number | Boolean} Data to convert. The following
      * values return as null: null, undefined, NaN, "".
      * @param [config] {Object} Optional configuration values, same as for [Y.Date.format](#method_format).
-     * @param [config.prefix] {HTML} String to be removed from the start, like a currency designator "$"
+     * @param [config.prefix] {String} String to be removed from the start, like a currency designator "$"
      * @param [config.decimalPlaces] {Number} Ignored, it is accepted only for compatibility with [Y.Date.format](#method_format).
-     * @param [config.decimalSeparator] {HTML} Decimal separator.
-     * @param [config.thousandsSeparator] {HTML} Thousands separator.
-     * @param [config.suffix] {HTML} String to be removed from the end of the number, like " items".
+     * @param [config.decimalSeparator] {String} Decimal separator.
+     * @param [config.thousandsSeparator] {String} Thousands separator.
+     * @param [config.suffix] {String} String to be removed from the end of the number, like " items".
      * @return {Number} A number, or null.
      */
 
@@ -80,20 +80,12 @@ Y.mix(Y.namespace("Number"), {
             data = parser(data);
         }
 
-        if (typeof data === 'string') {
-            if (Y.Lang.trim(data) === '') {
-                data = null;
-            } else {
-                data = +data;
-            }
+        if (typeof data === 'string' && Y.Lang.trim(data) !== '') {
+            data = +data;
         }
-        
-        if (typeof data === 'number') {
-            // catch NaN and ±Infinity
-            if (!isFinite(data)) {
-                data = null;
-            }
-        } else {
+
+        // catch NaN and ±Infinity
+        if (typeof data !== 'number' || !isFinite(data)) {
             data = null;
         }
 

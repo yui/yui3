@@ -123,7 +123,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
                 h = h2.get('offsetHeight'),
                 hUL = ul.get('offsetHeight'),
                 inner = div.one('div.inner');
-                
+
                 //Create an anim instance on this node.
                 anim = new Y.Anim({
                     node: inner
@@ -213,18 +213,18 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
             e.halt();
         }
     };
-    
+
     //This creates the module, either from a drag event or from the cookie load
     var setupModDD = function(mod, data, dd) {
         var node = mod;
         //Listen for the click so we can react to the buttons
         node.one('h2').on('click', _nodeClick);
-        
+
         //Remove the event's on the original drag instance
         dd.detachAll('drag:start');
         dd.detachAll('drag:end');
         dd.detachAll('drag:drophit');
-        
+
         //It's a target
         dd.set('target', true);
         //Setup the handles
@@ -235,14 +235,14 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
         dd.set('node', mod);
         //Reset the mouse handlers
         dd._prep();
-        
+
 
         Y.YQL('select * from feed where url="http:/'+'/' + data.url + '"', (function(mod) {
             return function(r) {
                 if (r && r.query && r.query.results) {
                     var inner = mod.one('div.inner'),
                     html = '';
-                    
+
                     //Walk the list and create the news list
                     Y.each(r.query.results, function(items) {
                         Y.each(items, function(v, k) {
@@ -266,29 +266,29 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
                         //If we are still dragging, update the proxy element too..
                         var proxy_inner = Y.DD.DDM.activeDrag.get('dragNode').one('div.inner');
                         proxy_inner.set('innerHTML', '<ul>' + html + '</ul>');
-                        
+
                     }
                 }
             }
         })(mod));
 
     };
-    
+
 
     //Helper method to create the markup for the module..
     var createMod = function(feed) {
         var str = '<li class="item">' +
-                    '<div class="mod">' + 
+                    '<div class="mod">' +
                         '<h2><strong>' + feed.title + '</strong> <a title="minimize module" class="min" href="#">-</a>' +
                         '<a title="close module" class="close" href="#">X</a></h2>' +
                         '<div class="inner">' +
-                        '    <div class="loading">Feed loading, please wait..</div>' + 
+                        '    <div class="loading">Feed loading, please wait..</div>' +
                         '</div>' +
                     '</div>' +
                 '</li>';
         return Y.Node.create(str);
     };
-    
+
     //Handle the start Drag event on the left side
     var _handleStart = function(e) {
         //Stop the event
@@ -297,7 +297,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
         var drag = this,
             list3 = Y.one('#list1'),
             mod = createMod(drag.get('data'));
-        
+
         //Add it to the first list
         list3.appendChild(mod);
         //Set the item on the left column disabled.
@@ -323,7 +323,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
         //Remove the listener
         this.detach('drag:start', _handleStart);
     };
-    
+
     //Walk through the feeds list and create the list on the left
     var feedList = Y.one('#feeds ul');
     Y.each(feeds, function(v, k) {
@@ -347,7 +347,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
                 dir = false,
                 dir1 = false,
                 dir2 = false;
-                
+
                 //We could do something a little more fancy here, but we won't ;)
                 if ((xy[1] < (region.top + padding))) {
                     dir1 = 'top';
@@ -380,7 +380,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
                     case 'left':
                         break;
                 }
-            
+
 
             if ((dropNode !== null) && dir) {
                 if (dropNode && dropNode.get('parentNode')) {
@@ -401,7 +401,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
     /*
     Handle the drop:enter event
     Now when we get a drop enter event, we check to see if the target is an LI, then we know it's out module.
-    Here is where we move the module around in the DOM.    
+    Here is where we move the module around in the DOM.
     */
     Y.Portal.on('drop:enter', function(e) {
         if (!e.drag || !e.drop || (e.drop !== e.target)) {
@@ -468,7 +468,7 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
         drag.get('dragNode').set('innerHTML', '');
         _setCookies();
     });
-    
+
 
     //Handle going over a UL, for empty lists
     Y.Portal.on('drop:over', function(e) {
@@ -494,8 +494,8 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
             bubbles: Y.Portal
         });
     });
-    
-    
+
+
     //Get the cookie data
     var cookie = Y.Cookie.getSub('yui', 'portal');
     if (cookie) {

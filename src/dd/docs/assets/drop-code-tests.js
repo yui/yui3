@@ -1,5 +1,5 @@
 YUI.add('drop-code-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('drop-code');
 

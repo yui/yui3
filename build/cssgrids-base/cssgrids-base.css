@@ -75,5 +75,6 @@ this the same font stack that Normalize.css sets for the `body`.
 .yui3-g [class *= "yui3-u"] {
     font-family: sans-serif;
 }
+
 /* YUI CSS Detection Stamp */
 #yui3-css-stamp.cssgrids-base { display: none; }

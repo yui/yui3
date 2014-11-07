@@ -804,4 +804,5 @@ YUI.add('content-editable', function (Y, NAME) {
 
     Y.Plugin.ContentEditable = ContentEditable;
 
+
 }, '@VERSION@', {"requires": ["node-base", "editor-selection", "stylesheet", "plugin"]});

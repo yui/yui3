@@ -51,7 +51,7 @@ single step.
 @return {String} Rendered template string.
 */
 Handlebars.render = function (string, context, options) {
-    return Handlebars.compile(string)(context, options);
+    return this.compile(string)(context, options);
 };
 
 // The rest of this file is just API docs for methods defined in Handlebars

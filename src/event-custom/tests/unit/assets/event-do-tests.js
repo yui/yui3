@@ -27,7 +27,7 @@ suite.add(new Y.Test.Case({
         };
 
         Y.Do.before(function() {
-            invoked.push("before"); 
+            invoked.push("before");
         }, o, "method");
 
         o.method();
@@ -47,14 +47,14 @@ suite.add(new Y.Test.Case({
         };
 
         Y.Do.after(function() {
-            invoked.push("after"); 
+            invoked.push("after");
         }, o, "method");
 
         o.method();
 
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
-    
+
     "test multiple subscribers" : function() {
         var invoked = [],
             expected = ["before1", "before2", "original", "after1", "after2"];
@@ -66,26 +66,26 @@ suite.add(new Y.Test.Case({
         };
 
         Y.Do.before(function() {
-            invoked.push("before1"); 
+            invoked.push("before1");
         }, o, "method");
-        
+
         Y.Do.before(function() {
-            invoked.push("before2"); 
+            invoked.push("before2");
         }, o, "method");
 
         Y.Do.after(function() {
-            invoked.push("after1"); 
+            invoked.push("after1");
         }, o, "method");
-        
+
         Y.Do.after(function() {
-            invoked.push("after2"); 
+            invoked.push("after2");
         }, o, "method");
-        
+
         o.method();
 
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
-    
+
     "test multiple methods" : function() {
         var invoked = [],
             expected = ["beforeA", "originalA", "afterA", "beforeB", "originalB", "afterB"];
@@ -94,28 +94,28 @@ suite.add(new Y.Test.Case({
             methodA : function() {
                 invoked.push("originalA");
             },
-            
+
             methodB : function() {
                 invoked.push("originalB");
             }
         };
 
         Y.Do.before(function() {
-            invoked.push("beforeA"); 
+            invoked.push("beforeA");
         }, o, "methodA");
-        
+
         Y.Do.before(function() {
-            invoked.push("beforeB"); 
+            invoked.push("beforeB");
         }, o, "methodB");
 
         Y.Do.after(function() {
-            invoked.push("afterA"); 
+            invoked.push("afterA");
         }, o, "methodA");
-        
+
         Y.Do.after(function() {
-            invoked.push("afterB"); 
+            invoked.push("afterB");
         }, o, "methodB");
-        
+
         o.methodA();
         o.methodB();
 
@@ -133,19 +133,19 @@ suite.add(new Y.Test.Case({
         };
 
         var h1 = Y.Do.before(function() {
-            invoked.push("before1"); 
+            invoked.push("before1");
         }, o, "method");
 
         var h2 = Y.Do.before(function() {
-            invoked.push("before2"); 
+            invoked.push("before2");
         }, o, "method");
 
         var h3 = Y.Do.after(function() {
-            invoked.push("after1"); 
+            invoked.push("after1");
         }, o, "method");
 
         var h4 = Y.Do.after(function() {
-            invoked.push("after2"); 
+            invoked.push("after2");
         }, o, "method");
 
         o.method();
@@ -166,42 +166,42 @@ suite.add(new Y.Test.Case({
     "test detach multiple methods" : function() {
 
         var invoked = [],
-            expected = ["beforeA", "originalA", "afterA", "beforeB", "originalB", "afterB", 
-                        "originalA", "afterA", "originalB", "afterB", 
+            expected = ["beforeA", "originalA", "afterA", "beforeB", "originalB", "afterB",
+                        "originalA", "afterA", "originalB", "afterB",
                         "originalA", "originalB"];
 
         var o = {
             methodA : function() {
                 invoked.push("originalA");
             },
-            
+
             methodB : function() {
                 invoked.push("originalB");
             }
         };
 
         var h1 = Y.Do.before(function() {
-            invoked.push("beforeA"); 
+            invoked.push("beforeA");
         }, o, "methodA");
 
         var h2 = Y.Do.before(function() {
-            invoked.push("beforeB"); 
+            invoked.push("beforeB");
         }, o, "methodB");
 
         var h3 = Y.Do.after(function() {
-            invoked.push("afterA"); 
+            invoked.push("afterA");
         }, o, "methodA");
 
         var h4 = Y.Do.after(function() {
-            invoked.push("afterB"); 
+            invoked.push("afterB");
         }, o, "methodB");
 
         o.methodA();
         o.methodB();
-        
+
         Y.Do.detach(h1);
         Y.Do.detach(h2);
-        
+
         o.methodA();
         o.methodB();
 
@@ -229,19 +229,19 @@ suite.add(new Y.Test.Case({
 
         Y.Do.before(function() {
             invoked.push("before");
-            Y.Assert.areSame(that, this); 
+            Y.Assert.areSame(that, this);
         }, o, "method", that);
 
         Y.Do.after(function() {
             invoked.push("after");
-            Y.Assert.areSame(that, this); 
+            Y.Assert.areSame(that, this);
         }, o, "method", that);
 
         o.method();
 
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
-    
+
     "test additional args" : function() {
 
         var invoked = [],
@@ -301,14 +301,14 @@ suite.add(new Y.Test.Case({
 
         Y.Do.after(function() {
             invoked.push("after");
-            Y.ArrayAssert.itemsAreEqual([1, 2, 3], Y.Array(arguments));            
+            Y.ArrayAssert.itemsAreEqual([1, 2, 3], Y.Array(arguments));
         }, o, "method");
 
         o.method("a", "b", "c");
 
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
-    
+
     "test chained altered args" : function() {
 
         var invoked = [],
@@ -323,15 +323,15 @@ suite.add(new Y.Test.Case({
 
         Y.Do.before(function() {
             invoked.push("before1");
-            
+
             var args = Y.Array(arguments);
             Y.ArrayAssert.itemsAreEqual([1, 2], args);
             return new Y.Do.AlterArgs("new args", args.concat([3, 4]));
         }, o, "method");
-        
+
         Y.Do.before(function() {
             invoked.push("before2");
-            
+
             var args = Y.Array(arguments);
             Y.ArrayAssert.itemsAreEqual([1, 2, 3, 4], args);
             return new Y.Do.AlterArgs("new args", args.concat([5, 6]));
@@ -339,7 +339,7 @@ suite.add(new Y.Test.Case({
 
         Y.Do.after(function() {
             invoked.push("after");
-            Y.ArrayAssert.itemsAreEqual([1, 2, 3, 4, 5, 6], Y.Array(arguments));            
+            Y.ArrayAssert.itemsAreEqual([1, 2, 3, 4, 5, 6], Y.Array(arguments));
         }, o, "method");
 
         o.method(1, 2);
@@ -372,7 +372,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual("altered", ret);
         Y.Assert.areEqual("altered", Y.Do.currentRetVal);
         Y.Assert.areEqual("original", Y.Do.originalRetVal);
-        
+
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
 
@@ -395,7 +395,7 @@ suite.add(new Y.Test.Case({
 
             return new Y.Do.AlterReturn("altering return", "altered1");
         }, o, "method");
-        
+
         Y.Do.after(function() {
 
             invoked.push("after2");
@@ -411,7 +411,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual("altered2", ret);
         Y.Assert.areEqual("altered2", Y.Do.currentRetVal);
         Y.Assert.areEqual("original", Y.Do.originalRetVal);
-        
+
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
 
@@ -458,7 +458,7 @@ suite.add(new Y.Test.Case({
             invoked.push("before2");
             return new Y.Do.Halt("halting", "halted");
         }, o, "method");
-        
+
         Y.Do.before(function() {
             invoked.push("before3");
         }, o, "method");
@@ -472,7 +472,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual("halted", ret);
         Y.ArrayAssert.itemsAreEqual(expected, invoked);
     },
-    
+
     "test halt after" : function() {
         var invoked = [],
             expected = ["before", "original", "after1"];
@@ -483,7 +483,7 @@ suite.add(new Y.Test.Case({
                 return "original";
             }
         };
-        
+
         Y.Do.before(function() {
             invoked.push("before");
         }, o, "method");
@@ -521,7 +521,7 @@ suite.add(new Y.Test.Case({
 
         Y.Do.after(function() {
             invoked.push("after");
-            return new Y.Do.AlterReturn("altering return", "altered"); 
+            return new Y.Do.AlterReturn("altering return", "altered");
         }, o, "method");
 
         var ret = o.method();
@@ -587,7 +587,7 @@ suite.add(new Y.Test.Case({
         }
 
         target.method = method;
-            
+
         // awkward that you have to pass the target, and even more so
         // because this means every EventTarget is effectively an alias
         // for Y.Do
@@ -625,7 +625,7 @@ suite.add(new Y.Test.Case({
         }
 
         target.method = method;
-            
+
         // awkward that you have to pass the target, and even more so
         // because this means every EventTarget is effectively an alias
         // for Y.Do
@@ -667,4 +667,4 @@ suite.add(new Y.Test.Case({
 
 Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-custom-base', 'test']}); 
+}, '@VERSION@' ,{requires:['event-custom-base', 'test']});

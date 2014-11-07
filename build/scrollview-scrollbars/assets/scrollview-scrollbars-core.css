@@ -5,7 +5,7 @@
     height: 10px;
 }
 
-.yui3-scrollview-scrollbar { 
+.yui3-scrollview-scrollbar {
     top: 0;
     right: 1px;
 }
@@ -18,7 +18,7 @@
     left: 0;
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-child { 
+.yui3-scrollview-scrollbar .yui3-scrollview-child {
     position: absolute;
     right: 0px;
     display: block;
@@ -26,16 +26,16 @@
     height: 4px;
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-first { 
+.yui3-scrollview-scrollbar .yui3-scrollview-first {
     top: 0;
 }
 
-.yui3-scrollview-scrollbar .yui3-scrollview-last { 
+.yui3-scrollview-scrollbar .yui3-scrollview-last {
     top: 0;
 }
 
 .yui3-scrollview-scrollbar .yui3-scrollview-middle {
-    position: absolute; 
+    position: absolute;
     top: 4px;
     height: 1px;
 }
@@ -45,7 +45,7 @@
     display:inline-block;
     zoom:1;
     *display:inline;
- 
+
     top: 0;
     left: 0;
     bottom: auto;
@@ -53,12 +53,12 @@
 }
 
 .yui3-scrollview-scrollbar-horiz .yui3-scrollview-first,
-.yui3-scrollview-scrollbar-horiz .yui3-scrollview-last { 
+.yui3-scrollview-scrollbar-horiz .yui3-scrollview-last {
     width: 4px;
     height: 6px;
 }
 
-.yui3-scrollview-scrollbar-horiz .yui3-scrollview-middle { 
+.yui3-scrollview-scrollbar-horiz .yui3-scrollview-middle {
     top: 0;
     left: 4px;
     width: 1px;

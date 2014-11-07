@@ -24,31 +24,31 @@ YUI.add('charts-legend-tests', function(Y) {
         setUp: function() {
             this.chart = new Y.Chart(this.attrCfg);
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
         }
     });
 
-    var basicDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    var basicDataValues = [
+            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
-    
-    bigDataValues = [ 
-        {date:"5/1/2010", values:400, expenses:1100, revenue:1500, dog:8230, cat:7005, bird:6500, fish:5200, horse:4500, man:3400, shoe:2010, boat:1400}, 
-        {date:"5/2/2010", values:2000, expenses:3700, revenue:2200, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400}, 
+
+    bigDataValues = [
+        {date:"5/1/2010", values:400, expenses:1100, revenue:1500, dog:8230, cat:7005, bird:6500, fish:5200, horse:4500, man:3400, shoe:2010, boat:1400},
+        {date:"5/2/2010", values:2000, expenses:3700, revenue:2200, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400},
         {date:"5/3/2010", values:50, expenses:9100, revenue:100, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400},
         {date:"5/4/2010", values:5000, expenses:5000, revenue:2650, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400},
-        {date:"5/5/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:2005, bird:3500, fish:4200}, 
-        {date:"5/6/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:4005}, 
-        {date:"5/7/2010", values:200, expenses:1900, revenue:2800} 
+        {date:"5/5/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:2005, bird:3500, fish:4200},
+        {date:"5/6/2010", values:200, expenses:1900, revenue:2800, dog:1230, cat:4005},
+        {date:"5/7/2010", values:200, expenses:1900, revenue:2800}
     ],
-    
+
     topLegend = function()
     {
         return {
@@ -218,14 +218,14 @@ YUI.add('charts-legend-tests', function(Y) {
             assert.areEqual(chartSC[i].get("displayName"), legendItems.text);
         }
     },
-    
+
     NoLegendTest = function(type, dataProvider)
     {
         var cfg = {
             type: type,
             render: "#testdiv",
             dataProvider: basicDataValues
-        }, 
+        },
         nameSuffix = " with basic dataProvider";
         if(dataProvider)
         {
@@ -244,7 +244,7 @@ YUI.add('charts-legend-tests', function(Y) {
             }
         });
     },
-    
+
     LegendTest = function(type, position, legend, align, dataProvider)
     {
         var cfg = {
@@ -269,7 +269,7 @@ YUI.add('charts-legend-tests', function(Y) {
             render: "#testdiv",
             dataProvider: basicDataValues,
             legend: leftLegend()
-        }, 
+        },
         nameSuffix = " with basic dataProvider";
         if(dataProvider)
         {
@@ -297,7 +297,7 @@ YUI.add('charts-legend-tests', function(Y) {
             }
         });
     };
-    
+
     suite.add(NoLegendTest("combo"));
     suite.add(LegendTest("combo", "top", topLegend(), "center"));
     suite.add(LegendTest("combo", "right", rightLegend(), "middle"));
@@ -312,6 +312,6 @@ YUI.add('charts-legend-tests', function(Y) {
     suite.add(LegendTest("combo", "bottom", bottomLegendRight(), "right"));
     suite.add(LegendTest("combo", "left",  leftLegendBottom(), "bottom"));
     suite.add(LegendPositionTest("combo"));
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts-legend', 'test']});

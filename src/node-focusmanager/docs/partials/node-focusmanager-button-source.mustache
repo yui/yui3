@@ -14,11 +14,11 @@
 
 <script>
 YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
-    
+
 	var menuButton = Y.one("#button-1"),
         out        = Y.one("#out"),
 		menu;
-		
+
 	var initMenu = function () {
 
 		menu = new Y.Overlay({
@@ -54,8 +54,8 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 		boundingBox.all("input").set("role", "menuitem");
 
 
-		//	For NVDA: Add the role of "presentation" to each LI 
-		//	element to prevent NVDA from announcing the 
+		//	For NVDA: Add the role of "presentation" to each LI
+		//	element to prevent NVDA from announcing the
 		//	"listitem" role.
 
 		boundingBox.all("div,ul,li").set("role", "presentation");
@@ -64,7 +64,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 		//	Use the FocusManager Node Plugin to manage the focusability
 		//	of each menuitem in the menu.
 
-		contentBox.plug(Y.Plugin.NodeFocusManager, { 
+		contentBox.plug(Y.Plugin.NodeFocusManager, {
 
 				descendants: "input",
 				keys: { next: "down:40", // Down arrow
@@ -81,16 +81,16 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 
 		//	Subscribe to the change event for the "focused" attribute
-		//	to listen for when the menu initially gains focus, and 
+		//	to listen for when the menu initially gains focus, and
 		//	when the menu has lost focus completely.
 
 		contentBox.focusManager.after("focusedChange", function (event) {
 
 			if (!event.newVal) {	// The menu has lost focus
 
-				//	Set the "activeDescendant" attribute to 0 when the 
-				//	menu is hidden so that the user can tab from the 
-				//	button to the first item in the menu the next time 
+				//	Set the "activeDescendant" attribute to 0 when the
+				//	menu is hidden so that the user can tab from the
+				//	button to the first item in the menu the next time
 				//	the menu is made visible.
 
 				this.set("activeDescendant", 0);
@@ -106,17 +106,17 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 		Y.on("key", function () {
 
 			menu.hide();
-			menuButton.focus();				
+			menuButton.focus();
 
 		}, [menuButton, boundingBox] ,"down:27");
 
 
 		if (Y.UA.ie === 6) {
 
-			//	Set the width and height of the menu's bounding box -  
-			//	this is necessary for IE 6 so that the CSS for the 
-			//	shadow element can simply set the shadow's width and 
-			//	height to 100% to ensure that dimensions of the shadow 
+			//	Set the width and height of the menu's bounding box -
+			//	this is necessary for IE 6 so that the CSS for the
+			//	shadow element can simply set the shadow's width and
+			//	height to 100% to ensure that dimensions of the shadow
 			//	are always sync'd to the that of its parent menu.
 
 			menu.on("visibleChange", function (event) {
@@ -125,8 +125,8 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 					boundingBox.setStyles({ height: "", width: "" });
 
-					boundingBox.setStyles({ 
-						height: (boundingBox.get("offsetHeight") + "px"), 
+					boundingBox.setStyles({
+						height: (boundingBox.get("offsetHeight") + "px"),
 						width: (boundingBox.get("offsetWidth") + "px") });
 
 				}
@@ -152,7 +152,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 			boundingBox.set("aria-hidden", (!bVisible));
 
-		});				
+		});
 
 
 		//	Hide the menu when one of menu items is clicked.
@@ -167,7 +167,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 		}, "li");
 
 
-		//	Focus each menuitem as the user moves the mouse over 
+		//	Focus each menuitem as the user moves the mouse over
 		//	the menu.
 
 		boundingBox.delegate("mouseenter", function (event) {
@@ -181,16 +181,16 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 		}, "li");
 
 
-		//	Hide the menu if the user clicks outside of it or if the 
+		//	Hide the menu if the user clicks outside of it or if the
 		//	user doesn't click on the button
 
 		boundingBox.get("ownerDocument").on("mousedown", function (event) {
 
 			var oTarget = event.target;
 
-			if (!oTarget.compareTo(menuButton) && 
-				!menuButton.contains(oTarget) && 
-				!oTarget.compareTo(boundingBox) && 
+			if (!oTarget.compareTo(menuButton) &&
+				!menuButton.contains(oTarget) &&
+				!oTarget.compareTo(boundingBox) &&
 				!boundingBox.contains(oTarget)) {
 
 				menu.hide();
@@ -211,7 +211,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 
 	//	Remove the "yui3-menubutton-loading" class from the parent container
-	//	now that the necessary YUI dependencies are loaded and the 
+	//	now that the necessary YUI dependencies are loaded and the
 	//	menu button has been skinned.
 
 	menuButton.ancestor(".yui3-menubutton-loading").removeClass("yui3-menubutton-loading");
@@ -225,7 +225,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 	});
 
 
-	//	Remove the "href" attribute from the anchor element to  
+	//	Remove the "href" attribute from the anchor element to
 	//	prevent JAWS and NVDA from reading the value of the "href"
 	//	attribute when the anchor is focused.
 
@@ -233,10 +233,10 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 		menuButton.removeAttribute("href");
 
-		//	Since the anchor's "href" attribute has been removed, the 
-		//	element will not fire the click event in Firefox when the 
-		//	user presses the enter key.  To fix this, dispatch the 
-		//	"click" event to the anchor when the user presses the 
+		//	Since the anchor's "href" attribute has been removed, the
+		//	element will not fire the click event in Firefox when the
+		//	user presses the enter key.  To fix this, dispatch the
+		//	"click" event to the anchor when the user presses the
 		//	enter key.
 
 		Y.on("key", function (event) {
@@ -248,18 +248,18 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 	}
 
 
-	//	Set the "tabIndex" attribute of the anchor element to 0 to 
-	//	place it in the browser's default tab flow.  This is 
-	//	necessary since 1) anchor elements are not in the default 
-	//	tab flow in Opera and 2) removing the "href" attribute  
-	//	prevents the anchor from firing its "click" event 
+	//	Set the "tabIndex" attribute of the anchor element to 0 to
+	//	place it in the browser's default tab flow.  This is
+	//	necessary since 1) anchor elements are not in the default
+	//	tab flow in Opera and 2) removing the "href" attribute
+	//	prevents the anchor from firing its "click" event
 	//	in Firefox.
 
 	menuButton.set("tabIndex", 0);
 
-    //  Since there is some intermediary markup (<span>s) between the anchor element with the role 
-    //  of "button" applied and the text label for the anchor - we need to use the 
-    //  "aria-labelledby" attribute to ensure that screen readers announce the text label for the 
+    //  Since there is some intermediary markup (<span>s) between the anchor element with the role
+    //  of "button" applied and the text label for the anchor - we need to use the
+    //  "aria-labelledby" attribute to ensure that screen readers announce the text label for the
     //  button.
 
     var menuLabel = menuButton.one("span span"),
@@ -270,7 +270,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 	var showMenu = function (event) {
 
-		//	For performance: Defer the creation of the menu until 
+		//	For performance: Defer the creation of the menu until
 		//	the first time the button is clicked.
 
 		if (!menu) {
@@ -289,15 +289,15 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 		}
 
-		//	Prevent the anchor element from being focused 
+		//	Prevent the anchor element from being focused
 		//	when the users mouses down on it.
 		event.preventDefault();
 
-	}; 
+	};
 
 
-	//	Bind both a "mousedown" and "click" event listener to 
-	//	ensure the button's menu can be invoked using both the 
+	//	Bind both a "mousedown" and "click" event listener to
+	//	ensure the button's menu can be invoked using both the
 	//	mouse and the keyboard.
 
 	menuButton.on(["mousedown", "click"], showMenu);

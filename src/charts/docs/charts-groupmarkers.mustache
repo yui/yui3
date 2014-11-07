@@ -38,10 +38,10 @@ your chart. In this example, we'll take a large data set and display it on a `Co
 //set canvas as the defaultGraphicEngine
 YUI({
     defaultGraphicEngine: "canvas"
-}).use('charts', function (Y) 
+}).use('charts', function (Y)
 {
-    var myDataValues = getData(); 
-   
+    var myDataValues = getData();
+
     //style the series
     var myseries = [
         {
@@ -63,14 +63,14 @@ YUI({
 
     //instantiate chart with interactionType of planar and groupMarkers set to true
     var mychart = new Y.Chart({
-            interactionType:"planar", 
-            groupMarkers:true, 
-            dataProvider:myDataValues, 
-            categoryType:"time", 
-            categoryKey:"date", 
-            render:"#mychart", 
+            interactionType:"planar",
+            groupMarkers:true,
+            dataProvider:myDataValues,
+            categoryType:"time",
+            categoryKey:"date",
+            render:"#mychart",
             seriesCollection: myseries,
         });
-        
+
 });
 ```

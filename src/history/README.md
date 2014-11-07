@@ -9,7 +9,7 @@ application that doesn't perform full-page refreshes.
 
 The following modules are available:
 
-  * `history`: Rollup of `history-base`, `history-hash`, `history-hash-ie`, and 
+  * `history`: Rollup of `history-base`, `history-hash`, `history-hash-ie`, and
     `history-html5`.
   * `history-base`: Generic history management API (but no storage layer).
   * `history-hash`: History management using `window.location.hash`.

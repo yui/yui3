@@ -6,7 +6,7 @@ YUI.add('graphics-simple-manual-tests', function(Y) {
 
         "Test ellipse loaded" : function()
         {
-            Y.Assert.isTrue((false), "Ensure there is an ellipse on the page."); 
+            Y.Assert.isTrue((false), "Ensure there is an ellipse on the page.");
         }
     }));
 

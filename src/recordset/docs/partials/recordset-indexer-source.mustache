@@ -24,7 +24,7 @@
 </div>
 <script>
 YUI().use("recordset-base", "recordset-indexer", "node", "dump", function (Y) {
-	
+
 	var state_census_data = [
         {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
         {ANSI: "02000", STATE: "ALASKA", TOTAL_POP: 698473, LAND_AREA: 571951.26, POP_PER_SQ_MILE: 1.1},
@@ -83,24 +83,24 @@ YUI().use("recordset-base", "recordset-indexer", "node", "dump", function (Y) {
 		THEAD: "<thead><tr><th>Key</th><th>Dump of Enclosed Record's value ATTR</th></tr></thead>",
 		TBODY: '<tbody></tbody>',
 		TR_TD: '<tr><td>{key}</td><td>{dump}</td></tr>'};
-	
+
   	// Create a Recordset instance.
   	var recordset = new Y.Recordset({records:state_census_data.slice(0,5)});
 
 	//Plug it in with the RecordsetIndexer plugin
-	recordset.plug(Y.Plugin.RecordsetIndexer);	
-	
+	recordset.plug(Y.Plugin.RecordsetIndexer);
+
 	displayRecordsetData(recordset);
 	setUpButtons(recordset);
 	//setUpEvents(recordset);
 
 	function setUpButtons(rs) {
-		
+
 		function getRandomInt(min, max)
 		{
 		  return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
-		
+
 
 		Y.one('#createTableState').on('click', function(e) {
 			//prevent default behavior (stop link)
@@ -108,11 +108,11 @@ YUI().use("recordset-base", "recordset-indexer", "node", "dump", function (Y) {
 			rs.indexer.createTable('STATE');
 			Y.one('#viewTable').set('disabled', false);
 		});
-		
+
 		Y.one('#viewTable').on('click', function(e) {
 			e.preventDefault();
 			var hashTables = rs.indexer.get('hashTables');
-			
+
 			//display a table for each hash table that has been created
 			Y.each(hashTables, function(val, key, obj) {
 				displayHashTable(key, val);
@@ -122,31 +122,31 @@ YUI().use("recordset-base", "recordset-indexer", "node", "dump", function (Y) {
 		Y.one('#addButton').on('click', function(e) {
 			//prevent default behavior (stop link)
 			e.preventDefault();
-			
+
 			//add a random state's data
 			rs.add(state_census_data[getRandomInt(0,49)]);
 		});
-		
+
 		Y.one('#removeButton').on('click', function(e) {
 			e.preventDefault();
 			rs.remove(0);
 		});
-		
+
 		Y.one('#emptyButton').on('click', function(e) {
 			e.preventDefault();
 			rs.empty();
 		});
-		
+
 		Y.one('#updateButton').on('click', function(e) {
 			var index = rs.getLength() - 2,
 			newData = state_census_data[getRandomInt(0,49)];
-			
+
 			e.preventDefault;
-			rs.update(newData, index);			
+			rs.update(newData, index);
 		});
 		*/
 	}
-	
+
 
 	/*
 	function setUpEvents(rs) {
@@ -161,34 +161,34 @@ YUI().use("recordset-base", "recordset-indexer", "node", "dump", function (Y) {
 		rs.after('empty', function(e) {
 			displayHashTable('STATE', rs.indexer.getTable('STATE'));
 		});
-		
+
 		rs.after('update', function(e) {
 			displayHashTable('STATE', rs.indexer.getTable('STATE'));
 		});
 	}
 	*/
-	
+
 	function displayRecordsetData(rs) {
 		var tbody = Y.one('#demo tbody'),
 		i=0,
 		len = rs.getLength(),
 		html = '';
-		
+
 		if (tbody.hasChildNodes()) {
 			tbody.get('children').remove();
 		}
-		
+
 		for (; i < len; i++) {
 			html += Y.Lang.sub(TEMPLATE_TR, rs.getRecord(i).getValue());
 		}
 		tbody.append(html);
 	}
-	
+
 	function displayHashTable(k, ht) {
 		var htContainer = Y.one("#htContainer");
 		/*if (htContainer.hasChildNodes()) {
 			htContainer.remove;
-			htContainer = Y.one('body').append('<div id="htContainer"></div>');			
+			htContainer = Y.one('body').append('<div id="htContainer"></div>');
 		}*/
 		var tbl = Y.Node.create(Y.Lang.sub(TEMPLATE_HASHTABLE.TBL, {key: k})),
 		tbody = Y.Node.create(TEMPLATE_HASHTABLE.TBODY),
@@ -200,7 +200,7 @@ YUI().use("recordset-base", "recordset-indexer", "node", "dump", function (Y) {
 		}, this);
 
 		tbody.append(str);
-		tbl.append(TEMPLATE_HASHTABLE.THEAD).append(tbody);	
+		tbl.append(TEMPLATE_HASHTABLE.THEAD).append(tbody);
 		htContainer.append(tbl);
 	}
 });
