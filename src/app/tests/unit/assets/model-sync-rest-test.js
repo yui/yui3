@@ -576,7 +576,7 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
-    'sync() should accept `csrfToken`, `headers`, and `timeout` options': function () {
+    'sync() should accept `csrfToken`, `headers`, `xdr`, and `timeout` options': function () {
         Y.TestModel.prototype.root = '/root/';
 
         var model = new Y.TestModel({name: 'Eric'});
@@ -586,6 +586,8 @@ modelSyncRESTSuite.add(new Y.Test.Case({
             Assert.areSame('application/xml', config.headers['Content-Type']);
             Assert.areSame('blabla', config.headers['X-CSRF-Token']);
             Assert.areSame(10000, config.timeout);
+            Assert.isObject(config.xdr);
+            Assert.areSame('native', config.xdr.use);
 
             this._onSyncIOSuccess(0, {
                 responseText: '{"id":1, "name":"Eric"}'
@@ -599,7 +601,8 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         model.save({
             csrfToken: 'blabla',
             headers  : {'Content-Type': 'application/xml'},
-            timeout  : 10000
+            timeout  : 10000,
+            xdr      : {use: 'native'}
         });
 
         Assert.isFalse(model.isNew());

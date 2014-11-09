@@ -437,7 +437,9 @@ RESTSync.prototype = {
       @param {Number} [options.timeout] The number of milliseconds before the
         request will timeout and be aborted. This overrides the default provided
         by the static `HTTP_TIMEOUT` property.
-    @param {Function} [callback] Called when the sync operation finishes.
+      @param {Object} [options.xdr] XDR config object to pass through to Y.io().
+        Note that all configs other than { use: 'native' } are deprecated.
+      @param {Function} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
@@ -451,6 +453,7 @@ RESTSync.prototype = {
             headers   = Y.merge(RESTSync.HTTP_HEADERS, options.headers),
             timeout   = options.timeout || RESTSync.HTTP_TIMEOUT,
             csrfToken = options.csrfToken || RESTSync.CSRF_TOKEN,
+            xdr       = options.xdr,
             entity;
 
         // Prepare the content if we are sending data to the server.
@@ -487,7 +490,8 @@ RESTSync.prototype = {
             headers : headers,
             method  : method,
             timeout : timeout,
-            url     : url
+            url     : url,
+            xdr     : xdr
         });
     },
 
@@ -589,6 +593,7 @@ RESTSync.prototype = {
             headers: config.headers,
             method : config.method,
             timeout: config.timeout,
+            xdr: config.xdr,
 
             on: {
                 start  : this._onSyncIOStart,
