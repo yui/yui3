@@ -25,6 +25,21 @@ suite.add(new Y.Test.Case({
 
     },
 
+    'test hasNextPage': function () {
+        var pg = new Y.Paginator({itemsPerPage: 10, totalItems: 100});
+
+        Y.Assert.isTrue(pg.hasNextPage(), 'hasNextPage() fail on page 1 of 10.');
+
+        pg.set('page', 9);
+        Y.Assert.isTrue(pg.hasNextPage(), 'hasNextPage() fail on page 9 of 10.');
+
+        pg.set('page', 10);
+        Y.Assert.isFalse(pg.hasNextPage(), 'hasNextPage() fail on page 10 of 10.');
+
+        pg.set('totalItems', 0);
+        Y.Assert.isFalse(pg.hasNextPage(), 'hasNextPage() fail when totalItems is 0.');
+    },
+
     'test event name': function () {
         var test = this,
             pg = new Y.Paginator({

@@ -4,7 +4,7 @@ Paginator Change History
 @VERSION@
 ------
 
-* No changes.
+* hasNextPage() now correctly reports false when there are no items to be paged over.
 
 3.18.1
 ------

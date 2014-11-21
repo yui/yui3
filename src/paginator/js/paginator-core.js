@@ -117,7 +117,7 @@ Y.mix(PaginatorCore.prototype, {
      @return {Boolean} `true` if there is a next page, `false` otherwise.
      */
     hasNextPage: function () {
-        return (!this.get('totalItems') || this.get('page') < this.get('totalPages'));
+        return !!this.get('totalItems') && this.get('page') < this.get('totalPages');
     },
 
 
