@@ -2,7 +2,7 @@ YUI.add('series-combo-tests', function(Y) {
     var DOC = Y.config.doc,
         MockComboSeries = Y.Base.create("mockComboSeries", Y.Base, [], {
             _linesDrawn: false,
-            
+
             _fillDrawn: false,
 
             _markersDrawn: false,
@@ -47,21 +47,21 @@ YUI.add('series-combo-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: drawSeries()" : function() {
             var series = this.series,
                 mockComboSeries = new MockComboSeries();
             series.drawSeries.apply(mockComboSeries);
-            Y.Assert.isFalse(mockComboSeries._linesDrawn, "The drawLines method should not have been called.");     
-            Y.Assert.isFalse(mockComboSeries._fillDrawn, "The drawFill method should not have been called.");     
-            Y.Assert.isFalse(mockComboSeries._markersDrawn, "The drawMarkers method should not have been called.");     
+            Y.Assert.isFalse(mockComboSeries._linesDrawn, "The drawLines method should not have been called.");
+            Y.Assert.isFalse(mockComboSeries._fillDrawn, "The drawFill method should not have been called.");
+            Y.Assert.isFalse(mockComboSeries._markersDrawn, "The drawMarkers method should not have been called.");
             mockComboSeries._showLines = true;
             mockComboSeries._showAreaFill = true;
             mockComboSeries._showMarkers = true;
             series.drawSeries.apply(mockComboSeries);
-            Y.Assert.isTrue(mockComboSeries._linesDrawn, "The drawLines method should have been called.");     
-            Y.Assert.isTrue(mockComboSeries._fillDrawn, "The drawFill method should have been called.");     
-            Y.Assert.isTrue(mockComboSeries._markersDrawn, "The drawMarkers method should have been called.");     
+            Y.Assert.isTrue(mockComboSeries._linesDrawn, "The drawLines method should have been called.");
+            Y.Assert.isTrue(mockComboSeries._fillDrawn, "The drawFill method should have been called.");
+            Y.Assert.isTrue(mockComboSeries._markersDrawn, "The drawMarkers method should have been called.");
         },
 
         "test: _toggleVisible()" : function() {
@@ -96,27 +96,27 @@ YUI.add('series-combo-tests', function(Y) {
             Y.Assert.isFalse(mockComboSeries._path.get("visible"), "The path's visible attribute should be false.");
             Y.Assert.isFalse(mockComboSeries._lineGraphic.get("visible"), "The lineGraphic's visible attribute should be false.");
             Y.Assert.isUndefined(mockComboSeries.get("markers"), "The should not be any markers.");
-            
+
             mockComboSeries._showAreaFill = true;
             mockComboSeries._showLines = true;
             mockComboSeries._showMarkers = true;
             series._toggleVisible.apply(mockComboSeries, [true]);
             Y.Assert.isTrue(mockComboSeries._path.get("visible"), "The path's visible attribute should be true.");
             Y.Assert.isTrue(mockComboSeries._lineGraphic.get("visible"), "The lineGraphic's visible attribute should be true.");
-            
-            //get the case where there is a marker array but no marker    
+
+            //get the case where there is a marker array but no marker
             mockComboSeries._markers = [null];
             series._toggleVisible.apply(mockComboSeries, [true]);
-            Y.Assert.isNull(mockComboSeries.get("markers")[0], "The item should be null.");  
-            
-            
+            Y.Assert.isNull(mockComboSeries.get("markers")[0], "The item should be null.");
+
+
             mockComboSeries._markers = markers;
             series._toggleVisible.apply(mockComboSeries, [true]);
-            setMarkers = mockComboSeries.get("markers"); 
+            setMarkers = mockComboSeries.get("markers");
             len = setMarkers.length;
             for(i = 0; i < len; i = i + 1) {
                 marker = setMarkers[i];
-                Y.Assert.isTrue(marker.get("visible"), "The marker should be visible.");   
+                Y.Assert.isTrue(marker.get("visible"), "The marker should be visible.");
             }
         },
 
@@ -126,7 +126,7 @@ YUI.add('series-combo-tests', function(Y) {
                 newMarker = {
                     border: {
                         weight: 3,
-                        color: "#0f0"   
+                        color: "#0f0"
                     },
                     fill: {
                         color: "#9aa",
@@ -136,15 +136,15 @@ YUI.add('series-combo-tests', function(Y) {
                     height: 11
                 },
                 marker;
-            Y.Assert.areEqual(testMarker, series.get("marker"), "The marker attribute should be equivalent to the styles.marker attribute."); 
+            Y.Assert.areEqual(testMarker, series.get("marker"), "The marker attribute should be equivalent to the styles.marker attribute.");
             series.set("marker", newMarker);
             marker = series.get("marker");
-            Y.Assert.areEqual(newMarker.width, marker.width, "The marker width should be " + newMarker.width + "."); 
-            Y.Assert.areEqual(newMarker.height, marker.height, "The marker width should be " + newMarker.width + "."); 
-            Y.Assert.areEqual(newMarker.fill.color, marker.fill.color, "The marker fill.color should be " + newMarker.fill.color + "."); 
-            Y.Assert.areEqual(newMarker.fill.alpha, marker.fill.alpha, "The marker fill.alpha should be " + newMarker.fill.alpha + "."); 
-            Y.Assert.areEqual(newMarker.border.color, marker.border.color, "The marker border.color should be " + newMarker.border.color + "."); 
-            Y.Assert.areEqual(newMarker.border.weight, marker.border.weight, "The marker border.weight should be " + newMarker.border.weight + "."); 
+            Y.Assert.areEqual(newMarker.width, marker.width, "The marker width should be " + newMarker.width + ".");
+            Y.Assert.areEqual(newMarker.height, marker.height, "The marker width should be " + newMarker.width + ".");
+            Y.Assert.areEqual(newMarker.fill.color, marker.fill.color, "The marker fill.color should be " + newMarker.fill.color + ".");
+            Y.Assert.areEqual(newMarker.fill.alpha, marker.fill.alpha, "The marker fill.alpha should be " + newMarker.fill.alpha + ".");
+            Y.Assert.areEqual(newMarker.border.color, marker.border.color, "The marker border.color should be " + newMarker.border.color + ".");
+            Y.Assert.areEqual(newMarker.border.weight, marker.border.weight, "The marker border.weight should be " + newMarker.border.weight + ".");
         },
 
         "test: get('line')" : function() {
@@ -152,14 +152,14 @@ YUI.add('series-combo-tests', function(Y) {
                 testLine = series.get("styles").line,
                 newLine = {
                     weight: 3,
-                    color: "#0f0"   
+                    color: "#0f0"
                 },
                 line;
-            Y.Assert.areEqual(testLine, series.get("line"), "The line attribute should be equivalent to the styles.line attribute."); 
+            Y.Assert.areEqual(testLine, series.get("line"), "The line attribute should be equivalent to the styles.line attribute.");
             series.set("line", newLine);
             line = series.get("line");
-            Y.Assert.areEqual(newLine.color, line.color, "The  line.color should be " + newLine.color + "."); 
-            Y.Assert.areEqual(newLine.weight, line.weight, "The line.weight should be " + newLine.weight + "."); 
+            Y.Assert.areEqual(newLine.color, line.color, "The  line.color should be " + newLine.color + ".");
+            Y.Assert.areEqual(newLine.weight, line.weight, "The line.weight should be " + newLine.weight + ".");
         },
 
         "test: get('area')" : function() {
@@ -167,16 +167,16 @@ YUI.add('series-combo-tests', function(Y) {
                 testArea = series.get("styles").area,
                 newArea = {
                     alpha: 0.8,
-                    color: "#0f0"   
+                    color: "#0f0"
                 },
                 area;
             series.set("area", newArea);
             area = series.get("area");
-            Y.Assert.areEqual(newArea.color, area.color, "The  area.color should be " + newArea.color + "."); 
-            Y.Assert.areEqual(newArea.alpha, area.alpha, "The area.alpha should be " + newArea.alpha + "."); 
+            Y.Assert.areEqual(newArea.color, area.color, "The  area.color should be " + newArea.color + ".");
+            Y.Assert.areEqual(newArea.alpha, area.alpha, "The area.alpha should be " + newArea.alpha + ".");
         }
     });
-    
+
     suite.add(new Y.ComboSeriesTest({
         name: "ComboSeries Tests"
     }));

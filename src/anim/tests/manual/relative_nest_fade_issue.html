@@ -38,10 +38,10 @@
             <p>Clicking the fade link should fade the whole container and it's contents.
             In IE 6, The container, #demo, fades out, but it's contents that are
             position: relative, or position: absolute do not fade out
-            unless the container, #demo, is also set to position: relative. 
+            unless the container, #demo, is also set to position: relative.
             </p>
         </div>
-    </div> 
+    </div>
 </body>
 </html>
 <script type="text/javascript">
@@ -52,7 +52,7 @@ YUI().use('anim', function(Y) {
     });
 
     var onClick = function(e) {
-        e.preventDefault(); 
+        e.preventDefault();
         anim.run();
     };
 

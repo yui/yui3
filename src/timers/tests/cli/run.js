@@ -26,8 +26,8 @@ YUI({useSync: true }).use('test', function(Y) {
     });
 
     Y.use('module-tests');
-    
+
     Y.Test.Runner.setName('timers cli tests');
-    
+
 });
 

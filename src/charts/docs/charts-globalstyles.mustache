@@ -25,7 +25,7 @@ as follows.</p>
     <li>series: a key based object container references to the customizable properties of each series in the `Chart`.
 </ul>
 
-<p>In this example, we'll style the axis labels and the series colors. For both axes, we will change the colors and rotation. For two of the series, we will change their line and marker colors. 
+<p>In this example, we'll style the axis labels and the series colors. For both axes, we will change the colors and rotation. For two of the series, we will change their line and marker colors.
 For all of the series, we will change over properties of the markers to create a mouseover effect.</p>
 
 <h4>CSS</h4>
@@ -45,8 +45,8 @@ For all of the series, we will change over properties of the markers to create a
 
 <h4>JavaScript</h4>
 ```
-YUI().use('charts', function (Y) 
-{ 
+YUI().use('charts', function (Y)
+{
     var styleDef = {
         axes:{
             values:{
@@ -124,12 +124,12 @@ YUI().use('charts', function (Y)
         }
     };
     var mychart = new Y.Chart({
-                                dataProvider:myDataValues, 
-                                interactionType:"planar", 
-                                categoryKey:"date", 
-                                styles:styleDef, 
-                                horizontalGridlines:true, 
-                                verticalGridlines:true, 
+                                dataProvider:myDataValues,
+                                interactionType:"planar",
+                                categoryKey:"date",
+                                styles:styleDef,
+                                horizontalGridlines:true,
+                                verticalGridlines:true,
                                 render:"#mychart"
                             });
 });

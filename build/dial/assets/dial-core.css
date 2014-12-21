@@ -11,7 +11,7 @@ v\:fill {
 	display:inline-block;
 	zoom:1;
 	*display:inline;
-	/*text-align:center;   This causes problems with the angle calc with longer labels*/ 
+	/*text-align:center;   This causes problems with the angle calc with longer labels*/
 }
 .yui3-dial-content,
 .yui3-dial-ring{
@@ -38,5 +38,5 @@ v\:fill {
 .yui3-dial-content .yui3-dial-ring .yui3-dial-hidden {
 	/* [#2530206] using opacity instead of display:none;. display:none was mis-positioning the marker when we set the dial value on ring mousedown. */
 	opacity:0;
-	filter:alpha(opacity=0);	
+	filter:alpha(opacity=0);
 }

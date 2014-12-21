@@ -31,7 +31,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style"
+            "node-style",
+            "color-base"
         ]
     },
     "anim-color": {
@@ -424,7 +425,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "base-observable": {
         "requires": [
-            "attribute-observable"
+            "attribute-observable",
+            "base-core"
         ]
     },
     "base-pluginhost": {
@@ -1165,7 +1167,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dd-drag": {
         "requires": [
-            "dd-ddm-base"
+            "dd-ddm-base",
+            "selector-css2"
         ]
     },
     "dd-drop": {
@@ -1255,8 +1258,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base",
-            "color-base"
+            "dom-base"
         ]
     },
     "dom-style-ie": {
@@ -1291,7 +1293,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style"
+            "dom-style",
+            "color-base"
         ]
     },
     "dump": {
@@ -1606,7 +1609,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-canvas-default": {
@@ -1635,7 +1639,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
+
     return svg && (useSVG || !canvas);
 },
             "trigger": "graphics"
@@ -1652,7 +1656,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
+
     return svg && (useSVG || !canvas);
 },
             "trigger": "graphics"
@@ -1669,7 +1673,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         },
         "requires": [
-            "graphics"
+            "graphics",
+            "color-base"
         ]
     },
     "graphics-vml-default": {
@@ -1720,7 +1725,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "use": [
             "history-base",
             "history-hash",
-            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -1854,7 +1858,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     function workingNative( k, v ) {
         return k === "ok" ? true : v;
     }
-    
+
     // Double check basic functionality.  This is mainly to catch early broken
     // implementations of the JSON API in Firefox 3.1 beta1 and beta2
     if ( nativeSupport ) {
@@ -1933,6 +1937,15 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "get",
             "features"
+        ]
+    },
+    "loader-pathogen-combohandler": {},
+    "loader-pathogen-encoder": {
+        "use": [
+            "loader-base",
+            "loader-rollup",
+            "loader-yui3",
+            "loader-pathogen-combohandler"
         ]
     },
     "loader-rollup": {
@@ -2930,10 +2943,10 @@ Y.mix(YUI.Env[Y.version].modules, {
     */
     return (!Y.UA.nodejs && !Y.UA.winjs);
 },
-            "trigger": "yql",
-            "when": "after"
+            "trigger": "yql"
         },
         "requires": [
+            "yql",
             "jsonp",
             "jsonp-url"
         ]
@@ -2942,17 +2955,21 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "yql-nodejs",
             "trigger": "yql",
-            "ua": "nodejs",
-            "when": "after"
-        }
+            "ua": "nodejs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yql-winjs": {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs",
-            "when": "after"
-        }
+            "ua": "winjs"
+        },
+        "requires": [
+            "yql"
+        ]
     },
     "yui": {},
     "yui-base": {},
@@ -2972,7 +2989,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '7becfe88413f127e331d461de8ec774c';
+YUI.Env[Y.version].md5 = '2fd2be6b12ee9f999b4367499ae61aae';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

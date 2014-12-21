@@ -11,15 +11,14 @@ YUI.add('dom-xy-test', function(Y) {
         window.scrollTo(100, 100);
         play2.scrollTop = 50;
 
-        function testXY(expected, actual) {
-            var x = actual[0],
-                pass = false;
+        function testXY(actual, expected) {
+            var pass = false;
 
             // Expected is in pixels from offsetTop/Left, actual may be subpixels.
             // Browsers don't agree on which way to round, so its
             // considered a match if rounding up or down yields a match.
-            if ((Math.floor(actual[0]) === expected[0] || Math.ceil(actual[0]) === expected[0]) &&
-                (Math.floor(actual[1]) === expected[1] || Math.ceil(actual[1]) === expected[1])) {
+            if ((Math.floor(actual[0]) === Math.floor(expected[0]) || Math.ceil(actual[0]) === Math.ceil(expected[0])) &&
+                (Math.floor(actual[1]) === Math.floor(expected[1]) || Math.ceil(actual[1]) === Math.ceil(expected[1]))) {
                 pass = true;
             }
 
@@ -29,7 +28,6 @@ YUI.add('dom-xy-test', function(Y) {
         Y.each(nodes, function(n) {
             var el = document.createElement('div'),
                 xy = Y.DOM.getXY(n),
-                box,
                 actual,
                 id = n.id;
 
@@ -39,9 +37,7 @@ YUI.add('dom-xy-test', function(Y) {
             document.body.appendChild(el);
 
             Y.DOM.setXY(el, xy, true);
-            box = el.getBoundingClientRect();
 
-            //actual = [box.left + Y.DOM.docScrollX(), box.top + Y.DOM.docScrollY()];
             actual = [el.offsetLeft, el.offsetTop];
 
             tests['should set ' + id + ' in page coords'] = function() {

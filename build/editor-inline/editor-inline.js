@@ -28,4 +28,5 @@ Y.extend(InlineEditor, Y.EditorBase, {
 
 Y.InlineEditor = InlineEditor;
 
+
 }, '@VERSION@', {"requires": ["editor-base", "content-editable"]});

@@ -98,10 +98,20 @@ NodeList.addMethod = function(name, fn, context) {
     }
 };
 
+/**
+ * Import the named method, or methods from the host onto NodeList.
+ *
+ * @method importMethod
+ * @static
+ * @param {Object} host The object containing the methods to copy. Typically a prototype.
+ * @param {String|String[]} name The name, or an Array of names of the methods to import onto NodeList.
+ * @param {String} [altName] An alternative name to use for the method added to NodeList, which may differ from the name
+ * of the original host object. Has no effect if <em>name</em> is an array of method names.
+ */
 NodeList.importMethod = function(host, name, altName) {
     if (typeof name === 'string') {
         altName = altName || name;
-        NodeList.addMethod(name, host[name]);
+        NodeList.addMethod(altName, host[name]);
     } else {
         Y.Array.each(name, function(n) {
             NodeList.importMethod(host, n);

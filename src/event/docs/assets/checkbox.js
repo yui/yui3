@@ -10,8 +10,8 @@ YUI().use("*", function(Y) {
 		forAttr = (UA.ie && UA.ie < 8) ? "htmlFor" : "for",
 		bBlockDocumentMouseUp = false,
 		bBlockClearActive = false,
-		bBlockBlur = false,		
-		oActiveCheckbox;			
+		bBlockBlur = false,
+		oActiveCheckbox;
 
 
 	var initKeyListeners = function () {
@@ -109,7 +109,7 @@ YUI().use("*", function(Y) {
 
 		this.removeClass(sCheckboxActiveClass);
 
-	};				
+	};
 
 
 	var onDocumentMouseUp = function (event) {
@@ -141,7 +141,7 @@ YUI().use("*", function(Y) {
 			oCheckbox.removeClass(sCheckboxFocusClass);
 		}
 
-		//	Defer adding key-related and click event listeners until 
+		//	Defer adding key-related and click event listeners until
 		//	one of the checkboxes is initially focused.
 
 		if (!bKeyListenersInitialized) {
@@ -177,7 +177,7 @@ YUI().use("*", function(Y) {
 
 	var onCheckboxMouseDown = function (event) {
 
-		//	Defer adding mouse-related and click event listeners until 
+		//	Defer adding mouse-related and click event listeners until
 		//	the user mouses down on one of the checkboxes.
 
 		if (!bMouseListenersInitialized) {
@@ -191,19 +191,19 @@ YUI().use("*", function(Y) {
 		if (this.get("nodeName").toLowerCase() === "label") {
 
 			//	If the target of the event was the checkbox's label element, the
-			//	label will dispatch a click event to the checkbox, meaning the 
+			//	label will dispatch a click event to the checkbox, meaning the
 			//	"onCheckboxClick" handler will be called twice.  For that reason
 			//	it is necessary to block the "onDocumentMouseUp" handler from
-			//	clearing the active state, so that a reference to the active  
+			//	clearing the active state, so that a reference to the active
 			//	checkbox still exists the second time the "onCheckboxClick"
 			//	handler is called.
 
 			bBlockDocumentMouseUp = true;
 
-			//	When the user clicks the label instead of the checkbox itself, 
-			//	the checkbox will be blurred if it has focus.  Since the 
-			//	"onCheckboxBlur" handler clears the active state it is 
-			//	necessary to block the clearing of the active state when the 
+			//	When the user clicks the label instead of the checkbox itself,
+			//	the checkbox will be blurred if it has focus.  Since the
+			//	"onCheckboxBlur" handler clears the active state it is
+			//	necessary to block the clearing of the active state when the
 			//	label is clicked instead of the checkbox itself.
 
 			bBlockClearActive = true;
@@ -218,20 +218,20 @@ YUI().use("*", function(Y) {
 		}
 
 		//	Need to focus the input manually for two reasons:
-		//	1) 	Mousing down on a label in Webkit doesn't focus its  
+		//	1) 	Mousing down on a label in Webkit doesn't focus its
 		//		associated checkbox
-		//	2)	By default checkboxes are focused when the user mouses 
-		//		down on them.  However, since the actually checkbox is 
-		//		obscurred by the two span elements that are used to 
-		//		style it, the checkbox wont' receive focus as it was 
+		//	2)	By default checkboxes are focused when the user mouses
+		//		down on them.  However, since the actually checkbox is
+		//		obscurred by the two span elements that are used to
+		//		style it, the checkbox wont' receive focus as it was
 		//		never the actual target of the mousedown event.
 
 		oInput = oCheckbox.one("input");
 
 
-		//	Calling Event.preventDefault won't block the blurring of the 
+		//	Calling Event.preventDefault won't block the blurring of the
 		//	currently focused element in IE, so we'll use the "bBlockBlur"
-		//	variable to stop the code in the blur event handler  
+		//	variable to stop the code in the blur event handler
 		//	from executing.
 
 		bBlockBlur = (UA.ie && oInput.get("checked"));
@@ -242,8 +242,8 @@ YUI().use("*", function(Y) {
 		setActiveCheckbox(oCheckbox);
 
 		//	Need to call preventDefault because by default mousing down on
-		//	an element will blur the element in the document that currently 
-		//	has focus--in this case, the input element that was 
+		//	an element will blur the element in the document that currently
+		//	has focus--in this case, the input element that was
 		//	just focused.
 
 		event.preventDefault();
@@ -262,8 +262,8 @@ YUI().use("*", function(Y) {
 			if (!event.target.compareTo(oInput)) {
 
 				//	If the click event was fired via the mouse the checked
-				//	state will have to be manually updated since the input 
-				//	is hidden offscreen and therefore couldn't be the 
+				//	state will have to be manually updated since the input
+				//	is hidden offscreen and therefore couldn't be the
 				//	target of the click.
 
 				oInput.set("checked", (!oInput.get("checked")));
@@ -280,7 +280,7 @@ YUI().use("*", function(Y) {
 
 	var onCheckboxKeyDown = function (event) {
 
-		//	Style the checkbox as being active when the user presses the 
+		//	Style the checkbox as being active when the user presses the
 		//	space bar
 
 		if (event.keyCode === 32) {
@@ -291,15 +291,15 @@ YUI().use("*", function(Y) {
 
 	Y.all("#checkboxes>div>span").addClass("yui3-checkbox");
 
-	//	Remove the "yui3-checkboxes-loading" class used to hide the 
+	//	Remove the "yui3-checkboxes-loading" class used to hide the
 	//	checkboxes now that the checkboxes have been skinned.
 
 	Y.one("#checkboxes").removeClass("yui3-checkboxes-loading");
 
-	//	Add the minimum number of event listeners needed to start, bind the 
+	//	Add the minimum number of event listeners needed to start, bind the
 	//	rest when needed
 
 	Y.delegate("mousedown", onCheckboxMouseDown, "#checkboxes", ".yui3-checkbox,label");
 	Y.delegate("focus", onCheckboxFocus, "#checkboxes", "input[type=checkbox]");
-		
+
 });

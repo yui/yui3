@@ -2,11 +2,11 @@ YUI.add("lang/translator", function(Y) {
 
     Y.Intl.add(
 
-        "translator",           // Associated Module 
+        "translator",           // Associated Module
         "",                     // Root
 
-        {                       // Translated String Key/Value Pairs 
-            hello:"Hello",   
+        {                       // Translated String Key/Value Pairs
+            hello:"Hello",
             goodbye: "Goodbye"
         }
 

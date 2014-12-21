@@ -25,16 +25,16 @@
 
 <h4>The JavaScript</h4>
 
-<p>`Dial` extends the `Widget` class, following the same pattern 
-as any widget constructor, accepting a configuration object to 
+<p>`Dial` extends the `Widget` class, following the same pattern
+as any widget constructor, accepting a configuration object to
 set the initial configuration for the widget.</p>
 
-<p>After creating and configuring the new `Dial`, 
+<p>After creating and configuring the new `Dial`,
 call the `render` method on your `Dial` object passing it
-the selector of a container element. 
+the selector of a container element.
 This renders it in the container and makes it usable.</p>
 
-<p>Some commonly used configuration attributes are shown below. 
+<p>Some commonly used configuration attributes are shown below.
 </p>
 
 <!-- intentionally using dial-basic-script here -->
@@ -45,7 +45,7 @@ This renders it in the container and makes it usable.</p>
 
 <h3>Linking the Dial to the Text Input</h3>
 
-<p>To keep the Dial's value and a text input value in sync, we need to subscribe to events on both the text input and the Dial.</p> 
+<p>To keep the Dial's value and a text input value in sync, we need to subscribe to events on both the text input and the Dial.</p>
 <p>For sending Dial values to the input, the relevant Dial event is `valueChange`.</p>
 ```
 // Function to update the text input value from the Dial value

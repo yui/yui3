@@ -32,6 +32,7 @@ YUI.Env.aliases = {
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
+    "loader-pathogen-encoder": ["loader-base","loader-rollup","loader-yui3","loader-pathogen-combohandler"],
     "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
     "pluginhost": ["pluginhost-base","pluginhost-config"],
     "querystring": ["querystring-parse","querystring-stringify"],

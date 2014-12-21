@@ -26,7 +26,7 @@ function updateSlider( e ) {
 function updateInput( e ) {
     this.set( "value", e.newVal );
 }
-    
+
 
 
 // Create a horizontal Slider using all defaults
@@ -39,11 +39,11 @@ xInput.setData( { slider: xSlider } );
 // Pass the input as the 'this' object inside updateInput
 xSlider.after( "valueChange", updateInput, xInput );
 xInput.on( "keyup", updateSlider );
-    
+
 // Render the Slider next to the input
 xSlider.render('.horiz_slider')
 
-    
+
 // Create the vertical Slider.
 yInput = Y.one( "#vert_value" );
 yInput.setData( "slider", new Y.Slider({

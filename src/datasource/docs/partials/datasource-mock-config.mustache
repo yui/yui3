@@ -1,0 +1,16 @@
+<script>
+YUI.GlobalConfig = {
+    modules: {
+        'datasource-api-mock': {
+            fullpath: '../assets/datasource/datasource-api-mock.js',
+            condition: {
+                trigger: ['datasource-get', 'datasource-io'],
+                when: 'after',
+                test: function () {
+                    return (window.location.search.match(/[?&]mock=([^&]+)/) || [])[1] === 'true';
+                }
+            }
+        }
+    }
+};
+</script>

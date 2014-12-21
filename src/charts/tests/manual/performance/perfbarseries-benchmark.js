@@ -17,7 +17,7 @@ YUI.add('perfbarseries-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
+
     suite.add("PerfBarSeries", function() {
         var i,
             key,
@@ -39,7 +39,7 @@ YUI.add('perfbarseries-benchmark', function (Y) {
             });
             seriesTypeCollection.push(series);
             series.render();
-            seriesObject[key] = series; 
+            seriesObject[key] = series;
         }
         graphic._redraw();
         for(key in seriesObject)
@@ -63,7 +63,7 @@ YUI.add('perfbarseries-benchmark', function (Y) {
             });
             mockGraph = {
                 seriesTypes: {
-                    bar: []   
+                    bar: []
                 }
             };
             graphic = new Y.Graphic({
@@ -94,5 +94,5 @@ YUI.add('perfbarseries-benchmark', function (Y) {
             };
         }
     });
-    
+
 }, '@VERSION@', {requires: ['charts']});

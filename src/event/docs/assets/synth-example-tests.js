@@ -128,7 +128,7 @@ Y.Node.prototype.key = function (code, mods, type) {
                     test.resume(function() {
                         Y.Assert.isTrue(test.closeEnough(bOrigXY[1] - 20, toasterA.getY()), ' - Failed to move toasterA up');
                         //Y.Assert.isTrue((bOrigXY[1] - 20 === toasterA.getY()), ' - Failed to move toasterA up');
-                        
+
                     });
                 }, 1000);
             }

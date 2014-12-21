@@ -26,9 +26,9 @@
 <div class="intro">
     <p>This example provides an introduction to the Attribute utility, showing how you can use it to add attribute support to your own custom classes.</p>
     <p>
-    It is geared towards users who want to create their own classes from scratch and add Attribute support. In most cases you should consider extending the <a href="../base/index.html">`Base`</a> class when you need managed attribute support, 
+    It is geared towards users who want to create their own classes from scratch and add Attribute support. In most cases you should consider extending the <a href="../base/index.html">`Base`</a> class when you need managed attribute support,
     instead of augmenting Attribute directly, especially if you expect your class to be extended. <a href="../base/index.html">`Base`</a> does the work described in this example for you, in addition to making it easier for users to extend you class.
-    </p>    
+    </p>
 </div>
 
 <div class="example">
@@ -86,7 +86,7 @@ Y.augment(MyClass, Y.Attribute);
 
 <h3>Adding Attributes</h3>
 
-<p>We can now set up any attributes we need for `MyClass` using the `addAttrs` method. For the basic example we add 3 attributes - `foo`,`bar`, and `foobar`, and provide an initial `value` for each. 
+<p>We can now set up any attributes we need for `MyClass` using the `addAttrs` method. For the basic example we add 3 attributes - `foo`,`bar`, and `foobar`, and provide an initial `value` for each.
 
 The same object literal we use to provide the initial value for the attribute will also be used in the other examples to configure attribute properties such as `readOnly` or `writeOnce`, and define `getter`, `setter` and `validator` methods for the attribute.</p>
 
@@ -98,14 +98,14 @@ The complete definition for `MyClass` is shown below:</p>
 // Setup custom class which we want to add managed attribute support to
 function MyClass(cfg) {
 
-    // When constructed, setup the initial attributes for the 
+    // When constructed, setup the initial attributes for the
     // instance, by calling the addAttrs method.
     var attrs = {
         // Add 3 attributes, foo, bar and foobar
         "foo" : {
             value:5
         },
- 
+
         "bar" : {
             value:"Hello World!"
         },
@@ -118,14 +118,14 @@ function MyClass(cfg) {
     this.addAttrs(attrs, cfg);
 }
 
-// Augment custom class with Attribute 
+// Augment custom class with Attribute
 Y.augment(MyClass, Y.Attribute);
 ```
 
 <p>The `addAttrs` method, in addition to the default attribute configuration, also accepts an object literal (associative array) of name/value pairs which can be used to over-ride the default initial values of the attributes. This is useful for classes which wish to allow the user to set the value of attributes as part of object construction, as shown by the use of the `cfg` argument above.</p>
 
 <p>
-As mentioned previously, if you expect your class to be extended, <a href="../base/index.html">Base</a> provides a more convenient way for you to define the same attribute configuration statically for your class, so that it can be easily modified by extended classes. Base will take care of isolating the static configuration, so that it isn't modified across instances. 
+As mentioned previously, if you expect your class to be extended, <a href="../base/index.html">Base</a> provides a more convenient way for you to define the same attribute configuration statically for your class, so that it can be easily modified by extended classes. Base will take care of isolating the static configuration, so that it isn't modified across instances.
 </p>
 
 <h3>Using Attributes</h3>
@@ -139,7 +139,7 @@ As mentioned previously, if you expect your class to be extended, <a href="../ba
 var o1 = new MyClass();
 
 // Display current values
-displayValues(o1, "o1 with default values, set during construction", 
+displayValues(o1, "o1 with default values, set during construction",
                 "#createo1 .example-out");
 
 ...
@@ -149,7 +149,7 @@ o1.set("foo", 10);
 o1.set("bar", "Hello New World!");
 o1.set("foobar", false);
 
-displayValues(o1, "o1 values updated using set, after construction", 
+displayValues(o1, "o1 values updated using set, after construction",
                 "#updateo1 .example-out");
 ```
 
@@ -167,19 +167,19 @@ var o2 = new MyClass({
 
 ```
 function displayValues(o, title, node) {
-    var str = 
-        '<div class="myclass"><div class="myclass-title">' 
-        + title + 
-        ':</div><ul class="myclass-attrs"><li>foo:' 
-        + o.get("foo") 
+    var str =
+        '<div class="myclass"><div class="myclass-title">'
+        + title +
+        ':</div><ul class="myclass-attrs"><li>foo:'
+        + o.get("foo")
         + '</li><li>bar:'
         + o.get("bar")
         + '</li><li>foobar:'
         + o.get("foobar")
         + '</li></ul></div>';
 
-    // Use the Y.one() method to get the first element which 
-    // matches the selector passed in, to output the string to...       
+    // Use the Y.one() method to get the first element which
+    // matches the selector passed in, to output the string to...
     Y.one(node).set("innerHTML", str);
 }
 ```

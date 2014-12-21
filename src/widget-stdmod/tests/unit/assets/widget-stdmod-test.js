@@ -123,7 +123,7 @@ suite.add(new Y.Test.Case({
 
     'fillHeight() should fill up the widget correctly with multiple nodes': function () {
         var bb, header, body;
-        
+
         this.widget = new TestWidget({
             headerContent: 'foo',
             bodyContent  : 'bar',
@@ -168,7 +168,7 @@ suite.add(new Y.Test.Case({
 
     'HTML_PARSER rules should return the proper inner HTML contents from markup': function () {
         var src, headerMarkup, footerMarkup, bodyMarkup;
-        
+
         headerMarkup = Y.Node.create('<div class="yui3-widget-hd">foo</div>');
         bodyMarkup   = Y.Node.create('<div class="yui3-widget-bd">bar</div>');
         footerMarkup = Y.Node.create('<div class="yui3-widget-ft">baz</div>');
@@ -177,11 +177,11 @@ suite.add(new Y.Test.Case({
         src.append(headerMarkup);
         src.append(bodyMarkup);
         src.append(footerMarkup);
-        
+
         this.widget = new TestWidget({
-            srcNode: '#test'  
+            srcNode: '#test'
         });
-    
+
         Assert.areEqual('foo', this.widget.get('headerContent'), 'header not picked up from markup');
         Assert.areEqual('bar', this.widget.get('bodyContent'), 'body not picked up from markup');
         Assert.areEqual('baz', this.widget.get('footerContent'), 'footer not picked up from markup');

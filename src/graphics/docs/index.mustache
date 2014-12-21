@@ -1,7 +1,7 @@
 <div class="intro" style="min-height: 184px;">
 	<p>
 		<img src="{{componentAssets}}/img/ship.png" alt="Screencapture of ship drawn with Graphics" style="border: 1px solid #bfbfbf; float:right; height:150px; margin: 0 0 8px 8px; width:275px;">
-		The Graphics module provides a JavaScript API for creating shapes in a variety of formats across a <a href="http://developer.yahoo.com/yui/articles/gbs">browser test baseline</a>. Based on device and browser capabilities, Graphics leverages SVG, HTML Canvas and VML to render its graphical elements. 
+		The Graphics module provides a JavaScript API for creating shapes in a variety of formats across a <a href="http://developer.yahoo.com/yui/articles/gbs">browser test baseline</a>. Based on device and browser capabilities, Graphics leverages SVG, HTML Canvas and VML to render its graphical elements.
 	</p>
 	<p>
 	The Graphics module features a `Graphic` class that allows you to easily create and manage shapes. Currently, a `Graphic` instance can be used to create predifined shapes and free-form polygons with fill and stroke properties.
@@ -158,7 +158,7 @@ have to interact directly with the underlying technologies or their correspondin
     <tr>
         <td>`preserveAspectRatio`</td>
         <td>`String`</td>
-        <td> Determines how content is sized when `autoSize` is set to `sizeContentToGraphic`. See the <a href="{{apiDocs}}/classes/Graphic.html#attr_preserveAspectRatio">API Docs</a> for possible values.</td> 
+        <td> Determines how content is sized when `autoSize` is set to `sizeContentToGraphic`. See the <a href="{{apiDocs}}/classes/Graphic.html#attr_preserveAspectRatio">API Docs</a> for possible values.</td>
     </tr>
 	<tr>
 	    <td>`resizeDown`</td>
@@ -250,7 +250,7 @@ have to interact directly with the underlying technologies or their correspondin
         <tr>
             <td>`data`</td>
             <td>`String`</td>
-            <td>Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need to ensure that no malicious code is included in that content. 
+            <td>Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need to ensure that no malicious code is included in that content.
         </tr>
         <tr>
             <td>`x`</td>
@@ -281,7 +281,7 @@ have to interact directly with the underlying technologies or their correspondin
             <td>`fill`</td>
             <td>`Object`</td>
             <td>
-                Contains information about the fill of the shape. 
+                Contains information about the fill of the shape.
             </td>
         </tr>
         <tr>
@@ -310,9 +310,9 @@ have to interact directly with the underlying technologies or their correspondin
                     <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
                     <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
                 </dl>
-                Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform 
+                Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform
                 that will apply the transform to the current matrix. The below code illustrates how you might use the `transform` attribute to instantiate a recangle with a rotation of 45 degrees.
-                ``` 
+                ```
                     var myRect = new Y.Rect({
                         type:"rect",
                         width: 50,
@@ -472,12 +472,12 @@ a `Path` instance, its drawing methods need to be leveraged. These drawing metho
                <dl>
                    <dt>color</dt><dd>The color of the stop.</dd>
                    <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
-                   <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+                   <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd>
                </dl>
            </dd>
            <p>Linear gradients also have the following property:</p>
            <dt>rotation</dt><dd>Linear gradients flow left to right by default. The rotation property allows you to change the flow by rotation. (e.g. A rotation of 180 would make the gradient pain from right to left.)</dd>
-           
+
            <p>Radial gradients have the following additional properties:</p>
            <dt>r</dt><dd>Radius of the gradient circle.</dd>
            <dt>fx</dt><dd>Focal point x-coordinate of the gradient.</dd>
@@ -491,11 +491,11 @@ a `Path` instance, its drawing methods need to be leveraged. These drawing metho
         </dl>
 <h3>Radial Gradient Tool</h3>
 {{>graphics-radial-tool-promotion}}
- 
+
 <h2 id="issues">Known Issues</h2>
 <ul class="spaced">
     <li>
-        <p>Gradients need more need more normalization across technologies. Certain gradient types have limitations on different browsers. 
+        <p>Gradients need more need more normalization across technologies. Certain gradient types have limitations on different browsers.
         </p>
         <ul>
             <li>Radial gradients contain the properties `cx` and `cy`. These properties currently have no impact on Android or IE 6 - 8.</li>

@@ -1,6 +1,6 @@
 var moduleName = 'node-menunav-6';
 YUI.add(moduleName+'-manual-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite(moduleName+' test suite');
 
     suite.add(new Y.Test.Case({

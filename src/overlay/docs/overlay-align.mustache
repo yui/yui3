@@ -162,7 +162,7 @@ overlay.render("#overlay-align");
       </p>
       <p>
       e.g. `[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TL]` aligns the Top-Right corner of the Overlay with the
-      Top-Left corner of the node/viewport, and `[Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TC]` aligns the Center of the 
+      Top-Left corner of the node/viewport, and `[Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TC]` aligns the Center of the
       Overlay with the Top-Center edge of the node/viewport.
       </p>
     </dd>
@@ -179,14 +179,14 @@ var a = Y.WidgetPositionAlign;
 ...
 
 /* Align top-left corner of overlay, with top-right corner of #align1 */
-overlay.set("align", {node:"#align1", 
+overlay.set("align", {node:"#align1",
                       points:[a.TL, a.TR]});
 
 /* Center overlay in #align2 */
 overlay.set("centered", "#align2");
 
 /* Align top-center edge of overlay with bottom-center edge of #align3 */
-overlay.set("align", {node:"#align3", 
+overlay.set("align", {node:"#align3",
                       points:[a.TC, a.BC]});
 
 /* Align right-center edge of overlay with right-center edge of viewport */
@@ -196,7 +196,7 @@ overlay.set("align", {points:[a.RC, a.RC]});
 overlay.set("centered", true);
 
 /* Center in #overlay-align (example box) */
-overlay.set("align", {node:"#overlay-align", 
+overlay.set("align", {node:"#overlay-align",
                       points:[a.CC, a.CC]});
 ```
 

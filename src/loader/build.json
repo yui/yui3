@@ -7,7 +7,7 @@
     "builds": {
         "loader-base": {
             "replace": {
-                "@GALLERY@": "gallery-2013.12.12-21-06",
+                "@GALLERY@": "gallery-2014.07.31-18-26",
                 "@TNT@": "4",
                 "@YUI2@": "2.9.0"
             },
@@ -29,6 +29,11 @@
             "jsfiles": [
                 "rollup.js"
             ]
+        },
+        "loader-pathogen-combohandler": {
+            "jsfiles": [
+                "loader-pathogen-combohandler.js"
+            ]
         }
     },
     "rollups": {
@@ -37,6 +42,14 @@
                 "loader-base",
                 "loader-rollup",
                 "loader-yui3"
+            ]
+        },
+        "loader-pathogen-encoder": {
+            "files": [
+                "loader-base",
+                "loader-rollup",
+                "loader-yui3",
+                "loader-pathogen-combohandler"
             ]
         }
     }

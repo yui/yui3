@@ -29,17 +29,17 @@
 </form>
 <script type="text/javascript">
 (function() {
-    YUI().use('escape', 'charts', function (Y) 
-    { 
-        var myDataValues = [ 
-            {category:"Q1", expenses:137000, revenue:532200}, 
-            {category:"Q2", expenses:211000, revenue:689100}, 
-            {category:"Q3", expenses:151000, revenue:521500}, 
+    YUI().use('escape', 'charts', function (Y)
+    {
+        var myDataValues = [
+            {category:"Q1", expenses:137000, revenue:532200},
+            {category:"Q2", expenses:211000, revenue:689100},
+            {category:"Q3", expenses:151000, revenue:521500},
             {category:"Q4", expenses:163000, revenue:892650}
         ];
-        
+
         var mychart = new Y.Chart({type:"bar", dataProvider:myDataValues, render:"#mychart"});
-        
+
         //Click handler
         Y.on("click", function(e) {
             var seriesName = Y.one("#seriesSelector").get("value"),

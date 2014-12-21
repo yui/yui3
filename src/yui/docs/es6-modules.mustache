@@ -1,0 +1,196 @@
+<div class="intro">
+    <p>
+    The new version of JavaScript, known as <b>EcmaScript 6</b> or simply
+    <b>ES6</b>, introduces the notion of modules and new syntax specific for
+    them. This guide explores a combination of tools and conventions that help
+    you author your code using these new primitives on top of the YUI
+    infrastructure.
+    </p>
+</div>
+
+<h2>ES6 module syntax</h2>
+
+<p>
+Modules in EcmaScript 6 are based on two main keywords: `import` and `export`.
+This contrasts to YUI modules because in ES6 the export side is composed of a
+series of exports instead of additions made to a common object, the `Y` object.
+Modules also introduce the concept of "default" exports as the main entry point
+to a module.
+</p>
+
+<h3>Export declarations</h3>
+
+<p>
+`export` is followed by one of:
+</p>
+
+<ul>
+    <li>A variable declaration, ie: `export var foo = bar`.</li>
+    <li>A function declaration, ie: `export function foo() {}`.</li>
+    <li>A list of named exports wrapped in curly brackets. Each export may be
+    bound with a new name using `as`. For example: `export { foo as bar, baz }`.
+    </li>
+</ul>
+
+<p>
+A module without imports would look like this:
+</p>
+
+```
+var initialCount = 2;
+var counter = initialCount;
+
+function count() {
+    return counter++;
+}
+
+export var isCounting = true;
+export { initialCount as startValue };
+export default count;
+```
+
+<h3>Import declarations</h3>
+
+<p>
+Importing works in a similar fashion. `import` must be followed by one of:
+</p>
+
+<ul>
+    <li>A name for the default export of the imported module, ie:
+    `import foo from 'my-module'`.</li>
+    <li>A list of named imports wrapped in curly brackets. Each import may be
+    bound with a new name using `as`. For example:
+    `import { foo as bar, baz } from 'my-module'`.</li>
+</ul>
+
+<p>Both types of import declaration can be combined to import the default export
+of a module alongside other named exports by separating them with a comma:</p>
+
+```
+import count from 'counter';
+import { startValue as initValue, isCounting } from 'counter';
+
+export function countPixels() {
+    if (!isCounting) {
+        throw new Error('Counter is not working');
+    }
+    return count() + 'px';
+};
+```
+
+<h2>Pros and cons of using ES6 modules</h2>
+
+<p>
+Authoring code using the ES6 module syntax brings several new advantages and
+disadvantages:
+</p>
+
+<ul>
+    <li>It requires a build step for your project. If you are already using
+    tools to build your project's files, then using ES6 syntax should easily tie
+    into the process you already have to get your application running.</li>
+    <li>It allows you to write your code in one format and transpile it to
+    different module formats including
+    <a href="http://nodejs.org/api/modules.html">CommonJS</a>,
+    <a href="http://know.cujojs.com/tutorials/modules/authoring-amd-modules">
+    AMD</a> and YUI modules.</li>
+    <li>
+    <a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">
+    Sourcemaps</a> allow you to debug using the new syntax, so the difference
+    between all the different underlying module systems is hidden by the
+    developer tools.</li>
+    <li>ES6 modules use special syntax for exporting members of the module and
+    other modules have mirror syntax for importing those exports. The collection
+    of exports is then not a mutable object. This allows tools to more easily
+    analyze which exports of a module are actually being used in order to do
+    analytics on the code or to remove unused parts of the application.</li>
+</ul>
+
+<h2>Using transpiled modules in a YUI application</h2>
+
+<p>
+Since YUI 3.15.0 supports loading ES6 modules transpiled to YUI modules that
+look slightly different from traditional YUI modules. Instead of adding
+properties to the <code>Y</code> object, the return value of the module factory
+function is stored as the module exports.
+</p>
+
+<p>
+Here is the result of transpiling one of the previous examples:
+</p>
+
+```
+YUI.add("pixel-counter", function(Y, NAME, __imports__, __exports__) {
+    "use strict";
+    /*jslint esnext: true*/
+    var count = __imports__["counter"]["default"];
+
+    var initValue = __imports__["counter"].startValue;
+    var isCounting = __imports__["counter"].isCounting;
+
+
+    function countPixels() {
+        if (!isCounting) {
+            throw new Error('Counter is not working');
+        }
+        return count() + 'px';
+    };
+    __exports__.countPixels = countPixels;
+    return __exports__;
+}, "@VERSION@", {"es":true,"requires":["counter"]});
+```
+
+<p>
+Imports are received inside an object as a parameter of the factory function.
+As a convenience, an object for storing the exports is also created, but the
+actual exports of the module are the ones in the value returned by the factory
+function.
+</p>
+
+<h3>Using the ES6 module transpiler</h3>
+
+<p>
+The `es6-module-transpiler` is
+<a href="https://www.npmjs.org/package/es6-module-transpiler">a Node
+application</a> that parses modules written using the ES6 module syntax and
+compiles them to other JavaScript source files using Node's module system, AMD
+modules or YUI modules.
+</p>
+
+<p>
+You can install it with <strong>npm</strong> globally and use it as a command line tool called
+<code>compile-modules</code>
+</p>
+
+```
+$ npm install -g es6-module-transpiler
+$ compile-modules ./src-dir --to ./build-dir --type=yui
+```
+
+<p>
+Since the ES6 syntax does not have a way to specify the name of the module,
+the transpiler must either receive the name beforehand or infer it from the
+file name. Both options are available from the command line:
+</p>
+
+```
+$ compile-modules ./es6-mod.js --to ./build-dir --type=yui --module-name=foo
+$ compile-modules ./src-dir --to ./build-dir --type=yui --infer-name
+```
+
+<h3>Starting up your application with Y.require()</h3>
+
+<p>
+Since these transpiled modules are not traditional YUI modules,
+<code>YUI().use()</code> would not work for loading them into a page. Instead,
+use <a href="{{apiDocs}}/classes/YUI.html#method_require"><code>YUI().require()
+</code></a> which has a similar signature but also passes a
+second argument to the callback that contains all the ES6 required modules.
+</p>
+
+```js
+YUI().require('pixel-counter', function (Y, __imports__) {
+    var countPixels = __imports__['pixel-counter'].countPixels;
+    // Use countPixels...
+});
+```

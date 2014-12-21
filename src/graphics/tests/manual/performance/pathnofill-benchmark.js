@@ -11,11 +11,11 @@ YUI.add('pathnofill-benchmark', function (Y) {
     container.style.height = "300px";
     container.id = "container";
     document.body.appendChild(container);
-  
-    suite.add("PathNoFill", function() { 
+
+    suite.add("PathNoFill", function() {
         var x = 0,
             y,
-            i, 
+            i,
             len = 200,
             path = graphic.addShape({
                 type: "path",
@@ -45,5 +45,5 @@ YUI.add('pathnofill-benchmark', function (Y) {
             graphic.destroy();
         }
     });
-    
+
 }, '@VERSION@', {requires: ['graphics']});

@@ -38,7 +38,7 @@
                 color-stop(0.01, #b0bccc),
                 color-stop(0.49, #889bb3),
                 color-stop(0.50, #8094ae),
-                to(#6d83a1)     
+                to(#6d83a1)
             );
         }
 
@@ -54,7 +54,7 @@
         }
 
         .horiz-content ul {
-            font:13px/1.231 arial,helvetica,clean,sans-serif;            
+            font:13px/1.231 arial,helvetica,clean,sans-serif;
             margin:0;
             padding:0;
             list-style:none;
@@ -102,24 +102,24 @@
                 function allowPageScroll(sv) {
 
                     sv._prevent.move = false;
-            
+
                     var bb = sv.get("boundingBox");
 
                     bb.on("gesturemovestart", function(e) {
-            
+
                         var origXY = [e.pageX, e.pageY];
-            
+
                         // Figure out direction on first move event, and then detach
                         bb.once("gesturemove", function(e) {
                             var currXY = [e.pageX, e.pageY],
                                 xMove = Math.abs(currXY[0] - origXY[0]),
                                 yMove = Math.abs(currXY[1] - origXY[1]),
                                 angleMove = (180/Math.PI)*(Math.atan2(yMove,xMove));
-            
+
                             if (angleMove < 60) {
                                 e.preventDefault();
                             }
-            
+
                         });
                     });
                 }
@@ -131,11 +131,11 @@
 
                 function bindPageUI(page, sv) {
                     page.setContent(sv.pages.get("index") + 1);
-    
+
                     sv.pages.after("indexChange", function(e) {
-                        page.setContent(e.newVal + 1);                                                    
+                        page.setContent(e.newVal + 1);
                     });
-                } 
+                }
 
                 var svHorizPaged = new Y.ScrollView({
                     id:"svHorizPaged",
@@ -146,11 +146,11 @@
                         axis:"x"
                     },
                     plugins: {
-                        fn:Y.Plugin.ScrollViewPaginator, 
+                        fn:Y.Plugin.ScrollViewPaginator,
                         cfg:{
                             selector:">ul>li"
                         }
-                    },  
+                    },
                     render:true
                 });
 
@@ -158,7 +158,7 @@
                 bindPageUI(Y.one("#page"), svHorizPaged);
 
                 Y.one("window").on("resize", Y.bind(handleResize, svHorizPaged));
-                
+
             });
         </script>
     </body>

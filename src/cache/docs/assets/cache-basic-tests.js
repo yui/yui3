@@ -46,7 +46,7 @@ YUI.add('cache-basic-tests', function (Y) {
             addValue.set('value', 'bar');
             addButton.simulate('click');
 
-            Assert.areEqual('Value cached. Cache size is now 1.', out.getHTML(), 'Example should set the cache key/value properly.'); 
+            Assert.areEqual('Value cached. Cache size is now 1.', out.getHTML(), 'Example should set the cache key/value properly.');
 
             addKey.set('value', 'baz');
             addValue.set('value', 'qux');
@@ -79,7 +79,7 @@ YUI.add('cache-basic-tests', function (Y) {
                 out            = Y.one('#out');
 
             flushButton.simulate('click');
-            
+
             Assert.areEqual('Cache flushed.', out.getHTML(), 'Cache should be flushed');
 
             retrieveKey.set('value', 'baz');

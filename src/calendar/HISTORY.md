@@ -1,6 +1,55 @@
 Calendar Change History
 =======================
 
+3.18.1
+------
+
+* No changes.
+
+3.18.0
+------
+
+* [#1881][]: `very_short_weekdays` fallback to `datatype-date-format` langage data (@okuryu)
+
+[#1881]: https://github.com/yui/yui3/pull/1881
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [#1752][]: Y.Calendar.selectDates fails when passed the maximumDate with minutes/seconds (@mairatma)
+
+[#1752]: https://github.com/yui/yui3/pull/1752
+
+3.16.0
+------
+
+* [#1685][]: Can't change month in RTL mode / arrow wrongly displayed in RTL mode ([#1719][] [#1724][]: Andrew Nicols)
+* [#1361][]: Change to use CSS instead of the image to showing of the arrow (Marc Lundgren)
+
+[#1724]: https://github.com/yui/yui3/pull/1724
+[#1719]: https://github.com/yui/yui3/pull/1719
+[#1685]: https://github.com/yui/yui3/issues/1685
+[#1361]: https://github.com/yui/yui3/pull/1361
+
+3.15.0
+------
+
+* Fix calendar to use `visibility:inherit` instead of `visibility:visible`, for compatibility with overlays. ([#1627][]: @jafl)
+* Fix an issue when Feb 1st is Saturday Mar 2nd appears to be selectable. ([#1559][]: @shunner)
+
+[#1627]: https://github.com/yui/yui3/issues/1627
+[#1559]: https://github.com/yui/yui3/issues/1559
+
 3.14.1
 ------
 

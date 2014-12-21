@@ -38,8 +38,8 @@
     background-color:#3b3c3d;
 
 	background: -moz-linear-gradient(
-		0% 100% 90deg, 
-		#242526 0%, 
+		0% 100% 90deg,
+		#242526 0%,
 		#3b3c3d 96%,
 		#2C2D2F 100%
 	);
@@ -49,7 +49,7 @@
         left top,
         from(#242526),
         color-stop(0.96, #3b3c3d),
-        to(#2C2D2F)     
+        to(#2C2D2F)
     );
     color: #eee;
     font-weight: normal;

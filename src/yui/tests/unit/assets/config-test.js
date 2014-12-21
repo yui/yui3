@@ -1,6 +1,6 @@
 YUI.add('config-test', function(Y) {
 
-    
+
         var testCore = new Y.Test.Case({
 
             name: "Config tests",
@@ -25,7 +25,7 @@ YUI.add('config-test', function(Y) {
             'test: local config': function() {
                 Y.Assert.isObject(Y.config.logExclude);
             },
-        
+
             test_config: function() {
                 YUI().use('oop', function(Y2) {
                     Y.Assert.isUndefined(Y2.config.logExclude);
@@ -48,5 +48,5 @@ YUI.add('config-test', function(Y) {
         });
 
         Y.SeedTests.add(testCore);
-    
+
 });

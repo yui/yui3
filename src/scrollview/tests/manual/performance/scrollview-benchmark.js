@@ -3,7 +3,7 @@ YUI.add('scrollview-benchmark', function (Y, NAME) {
     var suite = Y.BenchmarkSuite = new Benchmark.Suite,
         container,
         scrollview;
-    
+
     container = document.createElement('div')
     container.id = "container";
     document.body.appendChild(container);
@@ -13,7 +13,7 @@ YUI.add('scrollview-benchmark', function (Y, NAME) {
             render: container
         });
     });
-    
+
     suite.add('ScrollView: Create & Destroy', function () {
         scrollview = new Y.ScrollView({
             render: container

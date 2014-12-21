@@ -16,7 +16,7 @@
 ```
 // Create some button widgets
 YUI().use('button', function(Y){
-    
+
     // A push button widget
     var button = new Y.Button({
         srcNode: '#myButton'
@@ -26,7 +26,7 @@ YUI().use('button', function(Y){
     var toggleButton = new Y.ToggleButton({
         srcNode: '#myToggleButton'
     });
-    
+
 });
 ```
 
@@ -34,12 +34,12 @@ YUI().use('button', function(Y){
 ```
 // If you want something a little more light-weight than a widget...
 YUI().use('button-plugin', function(Y){
-    
+
     var button = new Y.Plugin.Button.createNode("#testButton", {
         label: "I'm a disabled button",
         disabled: true
     });
-    
+
 });
 ```
 <h3>Button Groups</h3>
@@ -57,11 +57,11 @@ YUI().use('button-plugin', function(Y){
 ```
 // And if you want to manage a group of buttons
 YUI().use('button-group', function(Y){
-    
+
     var buttonGroup = new Y.ButtonGroup({
         srcNode: '#container' // Should contain <button> children
     });
-    
+
 });
 ```
 
@@ -104,7 +104,7 @@ YUI().use('button-group', function(Y){
     </ul>
 
     <p>These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear as basic buttons, and in new browsers you'll get buttons using modern styles.  cssbutton is intended to provide a base and be overridable with custom styles.  Such as `background-color`.</p>
-    
+
     <h5>Background Color</h5>
     <p>A feature of cssbutton is that it uses transparent gradients to create a colored effect.  So if you would like a button that has a light to dark red gradient, you do not need to specify all the styles for proper cross-browser gradients, you only need to specify a single `background-color` style to your buttons.</p>
 </div>
@@ -124,15 +124,15 @@ YUI().use('button-group', function(Y){
 
 <div id="button">
     <h3>use('button')</h3>
-    
+
     <h4>Y.Button</h4>
     <p>`Y.Button` combines `Y.ButtonCore` with `Y.Widget`, to give you basic button functionality, but with the benefits of having a <a href='/yui/docs/widget/'>Widget</a> instance.  This can be used as a building block for different types of advanced buttons.</p>
-    
+
     <h4>Y.ToggleButton</h4>
     <p>`Y.ToggleButton` does everything that `Y.Button` does (by extending it), and adds the concept of a selected state, which is referred to as either 'pressed' or 'checked', depending on the `type` attribute of the instance. This distinction is made for proper ARIA support.</p>
-    
+
     <h4>Benefits</h4>
-    
+
     <p>So what do you get from `Y.Button`/`Y.ToggleButton` over just creating or plugging a `<button>` node?</p>
 
     <ul>
@@ -144,7 +144,7 @@ YUI().use('button-group', function(Y){
 
 <div id="buttongroup">
     <h3>use('button-group')</h3>
-    <p>`Y.ButtonGroup` is a constructor that is used to generate widgets containing a group of buttons. To avoid widgets inside of widgets, this class is built on top of `Y.ButtonCore`, not `Y.Button`</p>
+    <p>`Y.ButtonGroup` is a constructor that is used to generate widgets containing a group of buttons.</p>
 </div>
 
 
@@ -200,7 +200,7 @@ YUI().use('button-group', function(Y){
       <td>string</td>
       <td>
             <p>Sets the type of a toggleable button.</p>
-            <p>Possible values: 
+            <p>Possible values:
                 <ul>
                     <li>'toggle' (default)</li>
                     <li>'checkbox' </li>
@@ -212,7 +212,7 @@ YUI().use('button-group', function(Y){
 </table>
 
 <h4>Y.ButtonGroup</h4>
-<p>In addition to the inherited `Y.ButtonCore` attributes...</p>
+<p>In addition to the inherited `Y.Widget` attributes...</p>
 <table>
   <thead>
     <tr>
@@ -227,7 +227,7 @@ YUI().use('button-group', function(Y){
       <td>string</td>
       <td>
           <p>Sets the type of button group</p>
-          <p>Possible values: 
+          <p>Possible values:
               <ul>
                   <li>'push' (default) - No buttons have a selectable state</li>
                   <li>'radio' - Only one button is selectable at a time</li>
@@ -298,7 +298,7 @@ YUI().use('button-group', function(Y){
 </table>
 
 <h4>Y.ButtonGroup</h4>
-<p>In addition to the inherited `Y.ButtonCore` events...</p>
+<p>In addition to the inherited `Y.Widget` events...</p>
 <table>
   <thead>
     <tr>
@@ -318,6 +318,6 @@ YUI().use('button-group', function(Y){
 
 <p>
     Note:
-    <br>`.on('eventName', fn)` will fire <strong>before</strong> the attribute &amp; UI are updated. 
+    <br>`.on('eventName', fn)` will fire <strong>before</strong> the attribute &amp; UI are updated.
     <br>`.after('eventName', fn)` will fire <strong>after</strong> the attribute &amp; UI are updated.
 </p>

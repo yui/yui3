@@ -66,7 +66,7 @@ var confirmTests = function() {
     });
     YUITest.Runner.add(s);
     YUITest.Runner.run();
-    
+
 };
 
 var runTest = function() {
@@ -103,7 +103,7 @@ var YUI_config = {
 
 YUI({
     allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },
     filter: YUI_config.gfilter
 }).use('test-console', 'test', function(Y) {
     (new Y.Test.Console()).render('#log');

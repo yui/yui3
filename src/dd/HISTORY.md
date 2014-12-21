@@ -1,6 +1,58 @@
 Drag and Drop Change History
 ============================
 
+3.18.1
+------
+
+* [#1972][] Fix MSIE 6 and 7 regression in `dd`.
+
+[#1972]: https://github.com/yui/yui3/pull/1972   
+
+3.18.0
+------
+
+* [#1831][] Add `[contenteditable]` to the list of invalid drag handles. (Andrew Nicols)
+
+3.17.2
+------
+
+* No changes.
+
+3.17.1
+------
+
+* No changes.
+
+3.17.0
+------
+
+* [#1778][] Filter mousedown events to check that they belong to a valid drop target. (Andrew Nicols)
+
+[#1778]: https://github.com/yui/yui3/pull/1778
+
+3.16.0
+------
+
+* [#1721][] Move preventDefault to gesturemovestart (Andrew Nicols)
+* [#1761][] Prevent default on gesturemovestart after movement has started. (Andrew Nicols)
+* [#1663][] DDProxy will reset radio inputs when cloneNode==true ([#1666][]: Chema Balsas)
+* Remove name attribute radio inputs inside cloned nodes by dd-proxy. [Chema Balsas]
+
+[#1721]: https://github.com/yui/yui3/pull/1721
+[#1761]: https://github.com/yui/yui3/pull/1761
+[#1666]: https://github.com/yui/yui3/pull/1666
+[#1663]: https://github.com/yui/yui3/issues/1663
+
+3.15.0
+------
+
+* Fix a bug that doesn't fire `drop:hit` event. ([#1573][]: @hacklschorsch)
+* Prevent the default page action when starting a `gesturemove` event. This
+  fixes browsers that select the text when dragging. ([#1557][]: @andrewnicols)
+
+[#1573]: https://github.com/yui/yui3/issues/1573
+[#1557]: https://github.com/yui/yui3/issues/1557
+
 3.14.1
 ------
 

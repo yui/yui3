@@ -1,8 +1,8 @@
 YUI().use('node', 'yql', function(Y) {
-    
+
     var res = Y.one('#res'), count = 0,
         url = '<a href="http://flickr.com/photos/{owner}/{id}"><img src="http://static.flickr.com/{server}/{id}_{secret}_t.jpg"></a>';
-    
+
     var q = Y.YQL('select * from flickr.photos.recent where (api_key = "1895311ec0d2e23431a6407f3e8dffcc")', {
         //Tell JSONP to not cache this request so we get new images on each request
         allowCache: false,

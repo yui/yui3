@@ -1,4 +1,4 @@
-YUI.add('state-tests', function(Y) {    
+YUI.add('state-tests', function(Y) {
 
     var basicTemplate = {
 
@@ -34,17 +34,17 @@ YUI.add('state-tests', function(Y) {
 
         testGet : function() {
             var s = new Y.State();
-            
+
             s.add("A", "keyOne", "valueAOne");
             s.add("B", "keyOne", "valueBOne");
-            
+
             Y.Assert.areEqual("valueAOne", s.get("A", "keyOne"));
             Y.Assert.areEqual("valueBOne", s.get("B", "keyOne"));
 
             Y.Assert.isUndefined(s.get("A", "keyTwo"));
             Y.Assert.isUndefined(s.get("B", "keyTwo"));
             Y.Assert.isUndefined(s.get("C", "keyOne"));
-            Y.Assert.isUndefined(s.get("C", "keyTwo"));                        
+            Y.Assert.isUndefined(s.get("C", "keyTwo"));
         },
 
         testAddAll : function() {
@@ -66,7 +66,7 @@ YUI.add('state-tests', function(Y) {
 
             s.addAll("B", {
                 keyOne: "valueBOne",
-                keyTwo: "valueBTwo" 
+                keyTwo: "valueBTwo"
             });
 
             Y.Assert.areEqual("valueBOne", s.get("B", "keyOne"));
@@ -81,7 +81,7 @@ YUI.add('state-tests', function(Y) {
                 keyTwo: "valueATwo",
                 keyThree: "valueAThree"
             });
-            
+
             var shallow = s.getAll("A");
 
             Y.Assert.areNotSame(shallow, s.data["A"]);
@@ -95,7 +95,7 @@ YUI.add('state-tests', function(Y) {
             var ref = s.getAll("A", true);
 
             Y.Assert.areSame(ref, s.data["A"]);
-            
+
             Y.ObjectAssert.areEqual({
                 keyOne: "valueAOne",
                 keyTwo: "valueATwo",
@@ -104,7 +104,7 @@ YUI.add('state-tests', function(Y) {
 
             Y.Assert.isUndefined(s.getAll("B"));
         },
-        
+
         testRemove : function() {
             var s = new Y.State();
 
@@ -117,7 +117,7 @@ YUI.add('state-tests', function(Y) {
             s.add("B", "keyOne", "valueBOne");
 
             s.remove("A", "keyOne");
-            
+
             Y.Assert.isUndefined(s.get("A", "keyOne"));
             Y.Assert.areEqual("valueATwo", s.get("A", "keyTwo"));
             Y.Assert.areEqual("valueAThree", s.get("A", "keyThree"));
@@ -140,7 +140,7 @@ YUI.add('state-tests', function(Y) {
             Y.Assert.isUndefined(s.get("A", "keyOne"));
             Y.Assert.isUndefined(s.get("A", "keyTwo"));
             Y.Assert.isUndefined(s.get("A", "keyThree"));
-            
+
             Y.Assert.isUndefined(s.getAll("A"));
 
             Y.Assert.areEqual("valueBOne", s.get("B", "keyOne"));
@@ -180,7 +180,7 @@ YUI.add('state-tests', function(Y) {
             });
 
             s.removeAll("A", {
-                "keyTwo" : true, 
+                "keyTwo" : true,
                 "keyThree" : ""
             });
 

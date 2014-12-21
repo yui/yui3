@@ -105,7 +105,7 @@ YUI.add('graphics-transforms-tests', function(Y) {
                         stopNodes = fillNode.get("children");
                         stopNodes = stopNodes ? stopNodes.filter("stop") : null;
                         if(stopNodes)
-                        {   
+                        {
                             len = stopNodes.size();
                             stops = [];
                             for(; i < len; i = i + 1)
@@ -254,7 +254,7 @@ YUI.add('graphics-transforms-tests', function(Y) {
                         {
                             color = color.value;
                         }
-                        color = toRGBA(TOHEX(color), parseFloat(opacity)); 
+                        color = toRGBA(TOHEX(color), parseFloat(opacity));
                         fill.color = color;
                     break;
                     case "linear" :

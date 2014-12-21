@@ -9,10 +9,10 @@ var suite = new Y.Test.Suite("Graphics: Base"),
     svgTests,
     canvasTests,
     vmlTests,
-    rectClassString, 
-    circleClassString, 
-    ellipseClassString, 
-    pathClassString, 
+    rectClassString,
+    circleClassString,
+    ellipseClassString,
+    pathClassString,
     parentDiv = Y.DOM.create('<div style="position:absolute;top:0px;left:0px;" id="testdiv"></div>'),
     DEFAULTENGINE = Y.config.defaultGraphicEngine;
 
@@ -20,7 +20,7 @@ DOC.body.appendChild(parentDiv);
 if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
 {
     ENGINE = "canvas";
-    rectClassString = "yui3-shape yui3-canvasShape yui3-rect yui3-canvasRect"; 
+    rectClassString = "yui3-shape yui3-canvasShape yui3-rect yui3-canvasRect";
     circleClassString = "yui3-shape yui3-canvasShape yui3-circle yui3-canvasCircle";
     ellipseClassString = "yui3-shape yui3-canvasShape yui3-ellipse yui3-canvasEllipse";
     pathClassString = "yui3-shape yui3-canvasShape yui3-path yui3-canvasPath";
@@ -28,14 +28,14 @@ if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE ==
 else if(svg)
 {
     ENGINE = "svg";
-    rectClassString = "yui3-shape yui3-svgShape yui3-rect yui3-svgRect"; 
+    rectClassString = "yui3-shape yui3-svgShape yui3-rect yui3-svgRect";
     circleClassString = "yui3-shape yui3-svgShape yui3-circle yui3-svgCircle";
     ellipseClassString = "yui3-shape yui3-svgShape yui3-ellipse yui3-svgEllipse";
     pathClassString = "yui3-shape yui3-svgShape yui3-path yui3-svgPath";
 }
 else
 {
-    rectClassString = "yui3-shape yui3-vmlShape yui3-rect yui3-vmlRect vmlrect"; 
+    rectClassString = "yui3-shape yui3-vmlShape yui3-rect yui3-vmlRect vmlrect";
     circleClassString = "yui3-shape yui3-vmlShape yui3-circle yui3-vmlCircle vmloval";
     ellipseClassString = "yui3-shape yui3-vmlShape yui3-ellipse yui3-vmlEllipse vmloval";
     pathClassString = "yui3-shape yui3-vmlShape yui3-path yui3-vmlPath vmlshape";
@@ -61,7 +61,7 @@ graphicTests = new Y.Test.Case({
     updatedFillColor: "#9aa",
 
     updatedStrokeColor: "#99a",
-    
+
     dashstyle: "3 7",
 
     skewX: 45,
@@ -91,7 +91,7 @@ graphicTests = new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.graphic.destroy(); 
+        this.graphic.destroy();
         //remove the focus event from the document as its not related to graphics.
         Y.Event.purgeElement(DOC, false);
     },
@@ -106,7 +106,7 @@ graphicTests = new Y.Test.Case({
             top = y + "px",
             left = x + "px",
             node = graphic.get("node");
-        
+
         Y.Assert.areEqual(startLeft, Y.DOM.getStyle(node, "left"), "The left style should be " + startLeft + ".");
         Y.Assert.areEqual(startTop, Y.DOM.getStyle(node, "top"), "The top style should be " + startTop + ".");
         graphic.set("x", x);
@@ -114,7 +114,7 @@ graphicTests = new Y.Test.Case({
         graphic.set("y", y);
         Y.Assert.areEqual(top, Y.DOM.getStyle(node, "top"), "The top style should be " + top + ".");
     },
-    
+
     "test addShape(circle)": function()
     {
         var graphic = this.graphic,
@@ -164,8 +164,8 @@ graphicTests = new Y.Test.Case({
         graphic.removeShape(mycircle);
         Y.Assert.isFalse(shapes.hasOwnProperty(id) && shapes[id] instanceof Y.Circle);
     },
-    
-    "test addShape(rect)": function() 
+
+    "test addShape(rect)": function()
     {
         var graphic = this.graphic,
             dashstyle = this.dashstyle.split(' '),
@@ -238,7 +238,7 @@ graphicTests = new Y.Test.Case({
                 type: "ellipse",
                 stroke: {
                     color: this.initialStrokeColor,
-                    weight: weight 
+                    weight: weight
                 },
                 fill: {
                     color: this.initialFillColor
@@ -286,7 +286,7 @@ graphicTests = new Y.Test.Case({
         graphic.removeShape(myellipse);
         Y.Assert.isFalse(shapes.hasOwnProperty(id) && shapes[id] instanceof Y.Ellipse);
     },
-    
+
     "test addEllipseWithXRadiusAndYRadius()": function()
     {
         var graphic = this.graphic,
@@ -312,7 +312,7 @@ graphicTests = new Y.Test.Case({
         Y.Assert.areEqual(height, myellipse.get("height"), "The height of the ellipse should be " + height + ".");
         myellipse.destroy();
     },
-    
+
     "test addShape(path)": function()
     {
         var graphic = this.graphic,
@@ -363,17 +363,17 @@ graphicTests = new Y.Test.Case({
         mypath.set("transform", "");
         mypath.rotate(this.rotate);
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The rotate attribute should be " + transform + ".");
-            
+
         transform = "skewX(" + this.skewX + ")";
         mypath.set("transform", "");
         mypath.skewX(this.skewX);
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The skewX attribute should be " + transform + ".");
-            
+
         transform = "skewY(" + this.skewY + ")";
         mypath.set("transform", "");
         mypath.skewY(this.skewY);
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The skewY attribute should be " + transform + ".");
-        
+
         transform = "skew(" + this.skewX + ", " + this.skewY + ")";
         mypath.set("transform", "");
         mypath.skew(this.skewX, this.skewY);
@@ -383,12 +383,12 @@ graphicTests = new Y.Test.Case({
         mypath.set("transform", "");
         mypath.scale(this.scaleX, this.scaleY);
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
-        
+
         transform = "translate(" + this.translateX + ", " + this.translateY + ")";
         mypath.set("transform", "");
         mypath.translate(this.translateX, this.translateY);
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
-            
+
         transform = "translateX(" + this.translateX + ")";
         mypath.set("transform", "");
         mypath.translateX(this.translateX);
@@ -397,9 +397,9 @@ graphicTests = new Y.Test.Case({
         transform = "translateY(" + this.translateY + ")";
         mypath.set("transform", "");
         mypath.translateY(this.translateY);
-        
+
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
-        
+
         graphic.removeShape(mypath);
         Y.Assert.isFalse(shapes.hasOwnProperty(id) && shapes[id] instanceof Y.Path);
     },
@@ -454,7 +454,7 @@ svgTests = new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.graphic.destroy(); 
+        this.graphic.destroy();
         //remove the focus event from the document as its not related to graphics.
         Y.Event.purgeElement(DOC, false);
     },
@@ -467,7 +467,7 @@ svgTests = new Y.Test.Case({
             Y.Assert.isInstanceOf(SVGElement, graphic._contentNode);
         });
     },
-    
+
     "testSVGRectNode()" : function()
     {
         var width = 300,
@@ -532,7 +532,7 @@ svgTests = new Y.Test.Case({
         Y.Assert.areEqual(miterlimit, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + miterlimit + ".");
         Y.Assert.areEqual("miter", node.getAttribute("stroke-linejoin"), "The value of the shape's stroke-linejoin attribute should be miter.");
         Y.Assert.areEqual(miterlimit, Y.DOM.getAttribute(node, "stroke-miterlimit"), "The value of the shape's stroke-miterlimit attribute should be " + miterlimit + ".");
-        
+
         Y.Assert.isTrue(myrect.test(".yui3-svgShape"), "The compareTo method should return true.");
         Y.Assert.isTrue(myrect.test(".yui3-svgRect"), "The compareTo method should return true.");
         myrect.destroy();
@@ -587,7 +587,7 @@ vmlTests = new Y.Test.Case({
 
     linejoin: "round",
 
-    linecap: "butt", 
+    linecap: "butt",
 
     setUp: function () {
         this.graphic = new Y.Graphic({render: "#testdiv"});
@@ -643,7 +643,7 @@ vmlTests = new Y.Test.Case({
         Y.Assert.areEqual(node.nodeName, "rect", "The node should be of type rect.");
         Y.Assert.areEqual(parseFloat(Y.DOM.getComputedStyle(node, "width")), width, "The node should be 300 pixels wide.");
         Y.Assert.areEqual(parseFloat(Y.DOM.getComputedStyle(node, "height")), height, "The node should be 200 pixels high.");
-        childNodes = node.childNodes; 
+        childNodes = node.childNodes;
         len = childNodes ? childNodes.length : 0;
         for(i = 0; i < len; ++i)
         {
@@ -653,7 +653,7 @@ vmlTests = new Y.Test.Case({
                 {
                     fillMatches = true;
                 }
-                
+
                 if(childNodes[i].nodeName === "stroke") {
                     //test stroke color
                     if(toHex(childNodes[i].color) === toHex(this.initialStrokeColor) || toHex(childNodes[i].color.value) === toHex(this.initialStrokeColor)) {
@@ -663,7 +663,7 @@ vmlTests = new Y.Test.Case({
                     if(parseFloat(childNodes[i].opacity) === 1) {
                         strokeOpacityMatches = true;
                     }
-                   
+
                     //test stroke dashstyle
                     if(childNodes[i].dashstyle && (childNodes[i].dashstyle + "") === this.dashstyle) {
                         strokeDashStyleMatches = true;
@@ -673,7 +673,7 @@ vmlTests = new Y.Test.Case({
                     {
                         strokeLineCapMatches = true;
                     }
-                    //test stroke linejoin 
+                    //test stroke linejoin
                     if(childNodes[i].joinstyle && childNodes[i].joinstyle == this.linejoin)
                     {
                         strokeLineJoinMatches = true;
@@ -683,12 +683,12 @@ vmlTests = new Y.Test.Case({
         }
         if(!fillMatches)
         {
-            fillMatches = toHex(node.fillcolor) === toHex(this.initialFillColor) || toHex(node.fillcolor.value) === toHex(this.initialFillColor); 
+            fillMatches = toHex(node.fillcolor) === toHex(this.initialFillColor) || toHex(node.fillcolor.value) === toHex(this.initialFillColor);
         }
         Y.Assert.isTrue(fillMatches);
         if(!strokeColorMatches)
         {
-            strokeColorMatches = toHex(node.strokecolor) == toHex(this.initialStrokeColor) || toHex(node.strokecolor.value) == toHex(this.initialStrokeColor); 
+            strokeColorMatches = toHex(node.strokecolor) == toHex(this.initialStrokeColor) || toHex(node.strokecolor.value) == toHex(this.initialStrokeColor);
         }
         Y.Assert.isTrue(strokeColorMatches);
         if(!strokeOpacityMatches)
@@ -700,16 +700,16 @@ vmlTests = new Y.Test.Case({
         Y.Assert.isTrue(strokeDashStyleMatches, "The stroke dashstyle should be " + this.dashstyle + ".");
         Y.Assert.isTrue(strokeLineCapMatches, "The stroke endcap should be flat.");
         Y.Assert.isTrue(strokeLineJoinMatches, "The stroke linejoin should be " + this.linejoin + ".");
-        
+
         Y.Assert.areEqual(Y.DOM.getComputedStyle(node, "width"),  myrect.get("width") + "px", "The width attribute value should be equal to the width of the html element.");
         Y.Assert.areEqual(Y.DOM.getComputedStyle(node, "height"), myrect.get("height") + "px", "The height attribute value should be equal to the height of the html element.");
         Y.Assert.areEqual(this.initialFillColor, fill.color, "The color value of the fill attribute should be " + this.initialFillColor + ".")
-    
+
         myrect.set("stroke", {
             linejoin: bevel
         });
         Y.Assert.areEqual(bevel, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + bevel + ".");
-            
+
         myrect.set("stroke", {
             linejoin: miterlimit
         });
@@ -719,7 +719,36 @@ vmlTests = new Y.Test.Case({
         Y.Assert.isTrue(myrect.test(".yui3-vmlRect"), "The compareTo method should return true.");
         myrect.destroy();
     },
-    
+
+    "test setRGBA()" : function()
+    {
+        var graphic = this.graphic,
+            fillrgba = 'rgba(75, 75, 75, .5)',
+            strokergba = 'rgba(217, 217, 217, .9)',
+            toHex = Y.Color.toHex,
+            rect = graphic.addShape({
+                type: "rect",
+                width: 10,
+                height: 10,
+                fill: {
+                    color: fillrgba
+                },
+                stroke: {
+                    color: strokergba
+                }
+            }),
+            fillcolor = toHex(fillrgba),
+            strokecolor = toHex(strokergba),
+            fillopacity = .5,
+            strokeopacity = .9,
+            fill = rect.get("fill"),
+            stroke = rect.get("stroke");
+        Y.Assert.areEqual(fillcolor, fill.color, "The color of the fill should be " + fill.color + ".");
+        Y.Assert.areEqual(strokecolor, stroke.color, "The color of the stroke should be " + stroke.color + ".");
+        Y.Assert.areEqual(fillopacity, fill.opacity, "The opacity of the fill should be " + fill.opacity + ".");
+        Y.Assert.areEqual(strokeopacity, stroke.opacity, "The opacity of the stroke should be " + stroke.opacity + ".");
+    },
+
     "test addVMLPieSlice()" : function()
     {
         var graphic = this.graphic,
@@ -774,11 +803,11 @@ canvasTests = new Y.Test.Case({
     height: 200,
 
     context: null,
-    
-    linecap: "butt", 
-    
+
+    linecap: "butt",
+
     TORGB: Y.Color.toRGB,
-    
+
     TOHEX: Y.Color.toHex,
 
     toRGBA: function(val, alpha) {
@@ -849,7 +878,7 @@ canvasTests = new Y.Test.Case({
             bevel = "bevel",
             miterlimit = 3,
             width = this.width + (weight * 2),
-            height = this.height + (weight * 2); 
+            height = this.height + (weight * 2);
         opacity = Y.Lang.isNumber(opacity) && opacity < 1 ? opacity : 1;
         Y.Assert.isInstanceOf(HTMLCanvasElement, node);
         Y.Assert.areEqual(width, Y.DOM.getAttribute(node, "width"), "The width should be " + width + ".");
@@ -1337,4 +1366,4 @@ suite.add(transformTests);
 
 Y.Test.Runner.add( suite );
 
-}, '@VERSION@' ,{requires:['graphics', 'test']});
+}, '@VERSION@' ,{requires:['graphics', 'color-base', 'test']});

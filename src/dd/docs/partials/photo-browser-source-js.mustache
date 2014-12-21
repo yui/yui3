@@ -147,7 +147,7 @@ YUI().use('yql', 'node', 'anim', 'dd', 'dd-plugin', 'dd-drop-plugin', 'slider', 
         var imgs = wrapper.all('img.selected'),
             //The xy position of the item we dropped on
             toXY = e.drop.get('node').getXY();
-        
+
         imgs.each(function(node) {
             //Clone the image, position it on top of the original and animate it to the drop target
             node.get('parentNode').addClass(e.drop.get('node').get('id'));

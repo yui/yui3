@@ -33,7 +33,7 @@ YUI.add('parallel-tests', function(Y) {
                     });
                 }
             }, 1000);
-            
+
 
             test.wait(8000);
         }

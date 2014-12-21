@@ -24,10 +24,10 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         renderTestBed: function()
         {
-            var mychart = new Y.Chart(this.attrCfg); 
+            var mychart = new Y.Chart(this.attrCfg);
             this.chart = mychart;
         },
-        
+
         tearDown: function() {
             this.chart.destroy(true);
             Y.Event.purgeElement(DOC, false);
@@ -42,12 +42,12 @@ YUI.add('axes-attribute-tests', function(Y) {
         myspan.appendChild(document.createTextNode(val));
         return myspan;
     },
-    
+
     innerHTMLMethod = function(val, format)
     {
         return '<span>' + val + '</span>';
     },
-   
+
     appendTextMethod = function(textField, val)
     {
         textField.innerHTML = val;
@@ -143,14 +143,14 @@ YUI.add('axes-attribute-tests', function(Y) {
         return dateRange;
     },
 
-    myDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    myDataValues = [
+            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200},
+            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100},
+            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500},
+            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800},
             {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
-    
+
     testBottomCatAxes = function()
     {
         var assert = Y.Assert,
@@ -190,7 +190,7 @@ YUI.add('axes-attribute-tests', function(Y) {
         assert.areEqual(type, axis.get("type"), "The value of type should be " + type);
         assert.areEqual(majorTickDisplay, axisStyles.majorTicks.display, "The axis style majorTickDisplay.top should be " + majorTickDisplay);
     },
-    
+
     testTopCatAxes = function()
     {
         this.chart.set("axes", {
@@ -260,7 +260,7 @@ YUI.add('axes-attribute-tests', function(Y) {
             actualHeight = axis.get("height");
         Y.Assert.areEqual(setHeight, actualHeight, "The axis height should be " + setHeight + ".");
     },
-    
+
     AxesAttributeTests = new AxisTestTemplate({
         axes: {
             financials: getRightAxis(),
@@ -269,16 +269,16 @@ YUI.add('axes-attribute-tests', function(Y) {
         dataProvider: myDataValues
     }, {
         name: "Axes Attribute Tests",
-       
+
         testBottomCatAxes: testBottomCatAxes,
-        
+
         testRightValueAxes: testRightValueAxes,
-        
+
         testTopCatAxes: testTopCatAxes,
-        
+
         testLeftValueAxes: testLeftValueAxes
     }),
-    
+
     AxesSetExplicitWidthRight = new AxisTestTemplate({
         axes: {
             financials: getRightAxis(),
@@ -300,7 +300,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitWidth
     }),
-    
+
     AxesSetExplicitHeightBottom = new AxisTestTemplate({
         axes: {
             financials: getRightAxis(),
@@ -322,7 +322,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitHeight
     }),
-    
+
     AxesSetExplicitWidthLeft = new AxisTestTemplate({
         axes: {
             financials: getLeftAxis(),
@@ -344,7 +344,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitWidth
     }),
-    
+
     AxesSetExplicitHeightTop = new AxisTestTemplate({
         axes: {
             financials: getLeftAxis(),
@@ -366,7 +366,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitHeight
     }),
-    
+
     AxesSetExplicitWidthUpFrontRight = new AxisTestTemplate({
         axes: {
             financials: getRightAxis(100),
@@ -381,7 +381,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitWidth
     }),
-    
+
     AxesSetExplicitHeightUpFrontBottom = new AxisTestTemplate({
         axes: {
             financials: getRightAxis(),
@@ -396,7 +396,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitHeight
     }),
-    
+
     AxesSetExplicitWidthUpFrontLeft = new AxisTestTemplate({
         axes: {
             financials: getLeftAxis(100),
@@ -411,7 +411,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitWidth
     }),
-    
+
     AxesSetExplicitHeightUpFrontTop = new AxisTestTemplate({
         axes: {
             financials: getLeftAxis(),
@@ -426,7 +426,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         testDefault: testExplicitHeight
     }),
-    
+
     AxisWithLabelAndTitleFunction = new AxisTestTemplate({
         categoryKey: "date",
         render: "#testdiv",
@@ -445,7 +445,7 @@ YUI.add('axes-attribute-tests', function(Y) {
                 title: "Value Axis"
             }
         },
-        dataProvider: myDataValues 
+        dataProvider: myDataValues
     }, {
         name: "Axis labelFunction and titleFunction tests.",
 
@@ -488,7 +488,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         }
     }),
-    
+
     TimeAxisWithLabelAndTitleFunction = new AxisTestTemplate({
         categoryKey: "date",
         categoryType: "time",
@@ -508,7 +508,7 @@ YUI.add('axes-attribute-tests', function(Y) {
                 title: "Value Axis"
             }
         },
-        dataProvider: myDataValues 
+        dataProvider: myDataValues
     }, {
         name: "Axis labelFunction and titleFunction tests.",
 
@@ -551,7 +551,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         }
     }),
-    
+
     AxisWithLabelAndTitleInnerHTMLFunctionFail = new AxisTestTemplate({
         categoryKey: "date",
         render: "#testdiv",
@@ -570,7 +570,7 @@ YUI.add('axes-attribute-tests', function(Y) {
                 title: "Value Axis"
             }
         },
-        dataProvider: myDataValues 
+        dataProvider: myDataValues
     }, {
         name: "Axis labelFunction and titleFunction tests.",
 
@@ -613,7 +613,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         }
     }),
-    
+
     TimeAxisWithLabelAndTitleInnerHTMLFunctionFail = new AxisTestTemplate({
         categoryKey: "date",
         categoryType: "time",
@@ -633,7 +633,7 @@ YUI.add('axes-attribute-tests', function(Y) {
                 title: "Value Axis"
             }
         },
-        dataProvider: myDataValues 
+        dataProvider: myDataValues
     }, {
         name: "Axis labelFunction and titleFunction tests.",
 
@@ -676,7 +676,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         }
     }),
-    
+
     AxisWithLabelAndTitleInnerHTMLFunctionWithAppendMethods = new AxisTestTemplate({
         categoryKey: "date",
         render: "#testdiv",
@@ -699,7 +699,7 @@ YUI.add('axes-attribute-tests', function(Y) {
                 appendTitleFunction: appendTextMethod
             }
         },
-        dataProvider: myDataValues 
+        dataProvider: myDataValues
     }, {
         name: "Axis labelFunction and titleFunction tests.",
 
@@ -742,7 +742,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         }
     }),
-    
+
     TimeAxisWithLabelAndTitleInnerHTMLFunctionWithAppendMethods = new AxisTestTemplate({
         categoryKey: "date",
         categoryType: "time",
@@ -766,7 +766,7 @@ YUI.add('axes-attribute-tests', function(Y) {
                 appendTitleFunction: appendTextMethod
             }
         },
-        dataProvider: myDataValues 
+        dataProvider: myDataValues
     }, {
         name: "Axis labelFunction and titleFunction tests.",
 
@@ -809,7 +809,7 @@ YUI.add('axes-attribute-tests', function(Y) {
 
         }
     });
-    
+
     suite.add(AxesAttributeTests);
     suite.add(AxesSetExplicitWidthRight);
     suite.add(AxesSetExplicitHeightBottom);
@@ -825,6 +825,6 @@ YUI.add('axes-attribute-tests', function(Y) {
     suite.add(TimeAxisWithLabelAndTitleInnerHTMLFunctionFail);
     suite.add(AxisWithLabelAndTitleInnerHTMLFunctionWithAppendMethods);
     suite.add(TimeAxisWithLabelAndTitleInnerHTMLFunctionWithAppendMethods);
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

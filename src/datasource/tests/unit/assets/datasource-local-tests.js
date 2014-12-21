@@ -28,7 +28,7 @@ suite.add(new Y.Test.Case({
                 }
             }
         });
-        
+
         Assert.isUndefined(request);
         ArrayAssert.itemsAreSame(data, received);
     },
@@ -36,7 +36,7 @@ suite.add(new Y.Test.Case({
     testLocalEvents: function() {
         var ds = new Y.DataSource.Local({ source: ["a","b","c","d"] }),
             requestCallback, dataCallback, responseCallback;
-        
+
         ds.on("request", function (e) {
             Assert.areSame("dataSourceLocal:request", e.type);
             Assert.isNumber(e.tId, "request: Expected transaction ID.");
@@ -53,7 +53,7 @@ suite.add(new Y.Test.Case({
             Assert.isArray(e.data, "data: Expected raw data.");
             dataCallback = true;
         });
-        
+
         ds.on("response", function (e) {
             Assert.areSame("dataSourceLocal:response", e.type);
             Assert.isNumber(e.tId, "response: Expected transaction ID.");
@@ -115,7 +115,7 @@ suite.add(new Y.Test.Case({
                 }
             }
         });
-        
+
         Assert.isUndefined(request);
         ArrayAssert.itemsAreSame(data, received);
 
@@ -184,7 +184,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.sendRequest();
-        
+
         Assert.isTrue(responseCallback);
     }
 }));

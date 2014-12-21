@@ -6,7 +6,7 @@ YUI.add('json-connect-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'json-connect',
         'is rendered': function() {
-        
+
             var el = Y.one('#demo button');
             Assert.isNotNull(el);
         },
@@ -17,7 +17,7 @@ YUI.add('json-connect-tests', function(Y) {
             Assert.areEqual('', html);
 
             button.simulate('click');
-            
+
             this.poll(function() {
                 var html = results.get('innerHTML');
                 return (html) ? true : false;
@@ -37,7 +37,7 @@ YUI.add('json-connect-tests', function(Y) {
             }, function() {
                 Y.Assert.fail('Polling failed');
             });
-            
+
         }
     }));
 

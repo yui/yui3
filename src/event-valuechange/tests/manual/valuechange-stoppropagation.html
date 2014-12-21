@@ -39,7 +39,7 @@ var Y = YUI({
     oc.delegate('valuechange', function (e) {
         l.append('<div>Propagation happened.</div>');
     }, 'input');
-    
+
     oc.delegate('valuechange', function (e) {
         l.append('<div>Propagation should stop now.</div>');
         e.stopImmediatePropagation();
@@ -50,11 +50,11 @@ var Y = YUI({
         l.appendChild('<div>Event has begun.</div>');
         e.stopPropagation();
     }, 'input');
-    
+
     c.delegate('valuechange', function (e) {
         l.appendChild('e.stopPropagation() does not prevent notifiers on the same element.');
     }, 'input');
-  
+
 
 });
 </script>

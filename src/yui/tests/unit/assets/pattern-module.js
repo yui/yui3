@@ -1,5 +1,5 @@
 YUI.add('pattern-module', function(Y) {
-    
+
     Y.PatternModule = function() {
         var myColumnDefs = [
             { key: "id", sortable: true, resizeable: true },

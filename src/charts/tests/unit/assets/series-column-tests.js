@@ -13,7 +13,7 @@ YUI.add('series-column-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-        
+
         _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset, bottomOrigin)
         {
             var config = {
@@ -31,7 +31,7 @@ YUI.add('series-column-tests', function(Y) {
             }
             return config;
         },
-       
+
         "test: _getMarkerDimensions()" : function() {
             var series = this.series,
                 testData,
@@ -47,7 +47,7 @@ YUI.add('series-column-tests', function(Y) {
                     for(key in testData) {
                         if(testData.hasOwnProperty(key)) {
                             Y.Assert.isTrue(actualData.hasOwnProperty(key), "The _getMarkerDimensions method should have a value for " + key + ".");
-                            Y.Assert.areEqual(testData[key], actualData[key], "The " + key + " property should equal " + testData[key] + ".");   
+                            Y.Assert.areEqual(testData[key], actualData[key], "The " + key + " property should equal " + testData[key] + ".");
                         }
                     }
                 };
@@ -66,7 +66,7 @@ YUI.add('series-column-tests', function(Y) {
                     indexStyles: null,
 
                     set: function(prop, val) {
-                        
+
                         if(Y.Lang.isObject(prop)) {
                             this.indexStyles = prop;
                         } else {
@@ -79,7 +79,7 @@ YUI.add('series-column-tests', function(Y) {
                         x: {
                             getter: function() {
                                 return this._x;
-                            }   
+                            }
                         }
                     }
                 }),
@@ -88,7 +88,7 @@ YUI.add('series-column-tests', function(Y) {
                         return val;
                     }
                 }, {
-                    ATTRS: {   
+                    ATTRS: {
                         xcoords: {
                             value: [20, 60, 100, 140, 180, 220, 260, 300, 340, 380]
                         },
@@ -102,13 +102,13 @@ YUI.add('series-column-tests', function(Y) {
                         order: 0,
                         graphOrder: 0,
                         ycoords: [280, 100, 60, 49, 38, 42, 120, 90, 45, 60],
-                        seriesTypeCollection: seriesTypeCollection 
+                        seriesTypeCollection: seriesTypeCollection
                     }),
                     new updateMarkerStateMockColumnSeries({
                         order: 1,
                         graphOrder: 1,
                         ycoords: [210, 150, 40, 89, 78, 142, 130, 80, 65, 90],
-                        seriesTypeCollection: seriesTypeCollection   
+                        seriesTypeCollection: seriesTypeCollection
                     })
                 ],
                 markerStyles,
@@ -194,7 +194,7 @@ YUI.add('series-column-tests', function(Y) {
                         order: 2,
                         graphOrder: 2,
                         ycoords: [null, null, null, null, null, null, null, null, null, null],
-                        seriesTypeCollection: seriesTypeCollection   
+                        seriesTypeCollection: seriesTypeCollection
                     })
             );
             for(seriesIterator = 0; seriesIterator < len; seriesIterator = seriesIterator + 1) {
@@ -265,9 +265,9 @@ YUI.add('series-column-tests', function(Y) {
                 series.updateMarkerState.apply(mockSeries, ["off", markerNum]);
             }
         }
-            
+
     });
-    
+
     suite.add(new Y.ColumnSeriesTest({
         name: "ColumnSeries Tests"
     }));

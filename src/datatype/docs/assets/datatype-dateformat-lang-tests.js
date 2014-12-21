@@ -25,7 +25,7 @@ YUI.add('datatype-dateformat-lang-tests', function(Y) {
                     }, 10);
                 });
 
-                test.wait();            
+                test.wait();
          }
     }));
 

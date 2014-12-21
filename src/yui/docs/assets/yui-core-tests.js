@@ -22,7 +22,7 @@ YUI.add('yui-core-tests', function(Y) {
                 items = Y.all('.example .fruit .speech'),
                 first = items.item(0),
                 second = items.item(1);
-            
+
             Assert.areSame(first.getHTML(), second.getHTML(), 'Start items are different');
             test.wait( function() {
                 Assert.areNotSame(first.getHTML(), second.getHTML(), 'Speech bubbles are not different');

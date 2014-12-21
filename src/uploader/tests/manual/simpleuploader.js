@@ -10,7 +10,7 @@ YUI({
 /*
 
 if (Y.Uploader.TYPE != "none") {
-            myuploader = new Y.Uploader({ multipleFiles: true, 
+            myuploader = new Y.Uploader({ multipleFiles: true,
                                           uploadURL: "http://localhost/yui3/src/uploader/tests/manual/upload.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
@@ -59,15 +59,15 @@ if (Y.Uploader.TYPE != "none") {
                     out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "Finished!");
             	 	out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
             });
-            	 
-            	 
+
+
             myuploader.on("totaluploadprogress", function (ev) {
             	 	Y.one("#totalpercent").setContent("Total upload progress: " + ev.percentLoaded);
             });
 
             myuploader.on("alluploadscomplete", function (ev) {
             	 	Y.one("#totalpercent").setContent("<p>Upload complete!</p>");
-            });	                                    	                                       
+            });
 
             Y.one("#uploadButton").on("click", function () {
             	 myuploader.uploadAll();

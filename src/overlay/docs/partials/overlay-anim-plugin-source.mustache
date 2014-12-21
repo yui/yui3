@@ -17,8 +17,8 @@ YUI().use("overlay", "anim", "plugin", function(Y) {
         AnimPlugin.superclass.constructor.apply(this, arguments);
     }
 
-    /* 
-     * The namespace for the plugin. This will be the property on the widget, which will 
+    /*
+     * The namespace for the plugin. This will be the property on the widget, which will
      * reference the plugin instance, when it's plugged in
      */
     AnimPlugin.NS = "fx";
@@ -95,8 +95,8 @@ YUI().use("overlay", "anim", "plugin", function(Y) {
     Y.extend(AnimPlugin, Y.Plugin.Base, {
 
         /*
-         * Initialization code. Called when the 
-         * plugin is instantiated (whenever it's 
+         * Initialization code. Called when the
+         * plugin is instantiated (whenever it's
          * plugged into the host)
          */
         initializer : function(config) {
@@ -182,7 +182,7 @@ YUI().use("overlay", "anim", "plugin", function(Y) {
         visible:false,
         shim:false,
         align: {
-            node: "#show", 
+            node: "#show",
             points: ["tl", "bl"]
         },
         plugins : [{fn:AnimPlugin, cfg:{duration:2}}]

@@ -215,12 +215,12 @@ Within any given YUI instance, there are three possible states for a module:
 */
 
 YUI().use('calendar', function(Y) {
-    //Now calender and all if it's dependencies are 'Loaded' and 'Attached' on this instance
+    //Now calendar and all if it's dependencies are 'Loaded' and 'Attached' on this instance
 });
 
 YUI().use('node', function(Y) {
     //Now node and all of it's dependencies are 'Loaded' and 'Attached' on this instance
-    //Calender and it's un-used dependencies are in the 'Loaded' state on this instance
+    //Calendar and it's un-used dependencies are in the 'Loaded' state on this instance
 });
 
 ```
@@ -376,7 +376,7 @@ improve performance by allowing the browser to fetch as many scripts at once as 
 </p>
 
 <p>If your custom modules are properly wrapped in a `YUI.add` callback, you will see no difference at all.
-However, if you are loading custom modules that require ordered script loading 
+However, if you are loading custom modules that require ordered script loading
 (depends on another dynamic, unwrapped module), you will need to change your module config to tell
 `Loader` to <strong>not</strong> load these modules with the `async` flag. You can do this by adding
 an `async: false` config to it's module definition and `Y.Get.script` will not load it asynchronously.

@@ -22,7 +22,7 @@ YUI.add('dump-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: "Dump tests",
-    
+
         test_dump: function() {
             Assert.areEqual("0", Y.Lang.dump(0));
             Assert.areEqual("null", Y.Lang.dump(null));

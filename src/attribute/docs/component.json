@@ -6,7 +6,7 @@
 
     "tags": ["attribute", "infrastructure"],
     "use" : ["attribute"],
-    
+
     "examples": [
         {
             "name"       : "attribute-basic",
@@ -68,5 +68,5 @@
             "hideTableOfContents": true
         }
     ]
-    
+
 }

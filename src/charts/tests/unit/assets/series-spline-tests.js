@@ -20,15 +20,15 @@ YUI.add('series-spline-tests', function(Y) {
             this.series.destroy();
             Y.Event.purgeElement(DOC, false);
         },
-       
+
         "test: drawSeries()" : function() {
             var series = this.series,
                 mockSplineSeries = new MockSplineSeries();
             series.drawSeries.apply(mockSplineSeries);
-            Y.Assert.isTrue(mockSplineSeries._splineDrawn, "The drawSpline method should have been called.");     
+            Y.Assert.isTrue(mockSplineSeries._splineDrawn, "The drawSpline method should have been called.");
         }
     });
-    
+
     suite.add(new Y.SplineSeriesTest({
         name: "SplineSeries Tests"
     }));

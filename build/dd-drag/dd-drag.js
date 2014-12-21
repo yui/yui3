@@ -1270,4 +1270,4 @@ YUI.add('dd-drag', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {"requires": ["dd-ddm-base"]});
+}, '@VERSION@', {"requires": ["dd-ddm-base", "selector-css2"]});

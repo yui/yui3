@@ -6,7 +6,7 @@ YUI.add('graphics-violin-manual-tests', function(Y) {
 
         "Test violin" : function()
         {
-            Y.Assert.isTrue((false), "Ensure there is a picture of a violin on the page."); 
+            Y.Assert.isTrue((false), "Ensure there is a picture of a violin on the page.");
         }
     }));
 

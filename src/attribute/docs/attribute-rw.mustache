@@ -22,7 +22,7 @@
         height:8em;
         padding:2px 2px 2px 5px;
     }
-    
+
     #writeInitial label, #writeAgain label, #writeInternally label {
         font-weight:900;
     }
@@ -78,7 +78,7 @@ function MyClass(cfg) {
 
     this.addAttrs(attrs, cfg);
 }
-```    
+```
 
 <h2>Attempting To Set Values</h2>
 
@@ -93,7 +93,7 @@ o1 = new MyClass({
     bar: barVal
 });
 
-displayValues(o1, "Attempt to set initial values in constructor", 
+displayValues(o1, "Attempt to set initial values in constructor",
                 "#writeInitial .example-out");
 ```
 
@@ -107,7 +107,7 @@ var barVal = Y.one("#writeAgain .barVal").get("value");
 o1.set("foo", fooVal);
 o1.set("bar", barVal);
 
-displayValues(o1, "Attempt to set values again, using set", 
+displayValues(o1, "Attempt to set values again, using set",
                 "#writeAgain .example-out");
 ```
 
@@ -121,7 +121,7 @@ MyClass.prototype.doSomething = function(val) {
     // MyClass to change the value
     // of foo ...
 
-    // Host code can reset value of 
+    // Host code can reset value of
     // readOnly attributes interally,
     // by working with the private _set
     // property
@@ -136,7 +136,7 @@ var val = Y.one("#writeInternally .fooVal").get("value");
 // Call method, which sets foo internally...
 o1.doSomething(val);
 
-displayValues(o1, "Set value of foo (readOnly) interally", 
+displayValues(o1, "Set value of foo (readOnly) interally",
                 "#writeInternally .example-out");
 ```
 

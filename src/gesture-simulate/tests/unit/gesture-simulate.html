@@ -32,19 +32,19 @@
         }
     }).use('gesture-simulate-tests', 'test-console', function (Y) {
         new Y.Test.Console({render: '#log'});
-        
+
         // The console collapse button disabled. If the button is pressed during
-        // the tests, the tests will produce invalid results. It affects the 
-        // coordination calculation. 
-        // 
-        // It appeared thete is no console property to disable the button. I 
-        // tried CSS display:none as well but it made the console widget UI 
-        // incorrect. So I ended up this way.  
+        // the tests, the tests will produce invalid results. It affects the
+        // coordination calculation.
+        //
+        // It appeared thete is no console property to disable the button. I
+        // tried CSS display:none as well but it made the console widget UI
+        // incorrect. So I ended up this way.
         var btn = Y.one(".yui3-console-collapse"),
             parent = btn.get("parentNode");
             parent.insertBefore("<div>Collapse Disabled</div>", btn);
             btn.remove();
-        
+
         Y.Test.Runner.setName('Gesture Simulate');
         Y.Test.Runner.run();
     });
