@@ -172,10 +172,17 @@ var WIDGET       = 'widget',
     };
 
     /**
-     * A stack of Y.Widget objects representing the current hierarchy of modal widgets presently displayed on the screen
+     * A (global) stack of Y.Widget objects representing the current hierarchy of modal widgets presently displayed on the screen
+     * PN-6992 Commented out the original STACK instantiation line, and switched out WidgetModal.STACK for YUI.Env.WidgetModal.STACK
+     * to make the WidgetModal bean counting cross-sandbox aware. The fact that modality only ever uses one overlay suggests this 
+     * class should have implemented the bean counting mechanism to be cross-sandbox aware. aalbino 2014-10-17 12:25pm
      * @property STACK
      */
-    WidgetModal.STACK = [];
+    // WidgetModal.STACK = []; 
+    if (!YUI.Env.WidgetModal) {
+        YUI.namespace('Env.WidgetModal');
+        YUI.Env.WidgetModal.STACK = [];
+    }
 
 
     WidgetModal.prototype = {
@@ -311,7 +318,7 @@ var WIDGET       = 'widget',
          * @param {boolean} Whether the widget is visible or not
          */
         _uiSetHostVisibleModal : function (visible) {
-            var stack    = WidgetModal.STACK,
+            var stack    = YUI.Env.WidgetModal.STACK,
                 maskNode = this.get('maskNode'),
                 isModal  = this.get('modal'),
                 topModal, index;
@@ -395,7 +402,7 @@ var WIDGET       = 'widget',
          */
         _attachUIHandlesModal : function () {
 
-            if (this._uiHandlesModal || WidgetModal.STACK[0] !== this) {
+            if (this._uiHandlesModal || YUI.Env.WidgetModal.STACK[0] !== this) {
                 // Quit early if we have ui handles, or if we not at the top
                 // of the global stack.
                 return;
@@ -490,7 +497,7 @@ var WIDGET       = 'widget',
          * @public
          */
         isNested: function() {
-            var length = WidgetModal.STACK.length,
+            var length = YUI.Env.WidgetModal.STACK.length,
             retval = (length > 1) ? true : false;
             return retval;
         },
