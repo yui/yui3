@@ -35,7 +35,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @default '<caption class="{className}"/>'
     @since 3.6.0
     **/
-    CAPTION_TEMPLATE: '<caption class="{className}"/>',
+    CAPTION_TEMPLATE: '<caption class="{className}"></caption>',
 
     /**
     The HTML template used to create the table Node.
@@ -45,7 +45,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @default '<table cellspacing="0" class="{className}"/>'
     @since 3.6.0
     **/
-    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
+    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"></table>',
 
     /**
     The object or instance of the class assigned to `bodyView` that is

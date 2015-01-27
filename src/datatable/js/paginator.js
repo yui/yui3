@@ -44,7 +44,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @default '<div class="yui3-datatable-paginator"/>'
      @since 3.11.0
      */
-    containerTemplate: '<div class="{paginator}"/>',
+    containerTemplate: '<div class="{paginator}"></div>',
 
     /**
      Template for content. Helps maintain order of controls.
@@ -393,7 +393,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
         var str = this.get('strings');
 
-        return [10, 50, 100, { label: str.showAll, value: -1 }]
+        return [10, 50, 100, { label: str.showAll, value: -1 }];
     }
 
 }, {
@@ -963,7 +963,7 @@ Y.mix(Controller.prototype, {
 
         var str = this.get('paginatorStrings');
 
-        return [10, 50, 100, { label: str.showAll, value: -1 }]
+        return [10, 50, 100, { label: str.showAll, value: -1 }];
     }
 }, true);
 

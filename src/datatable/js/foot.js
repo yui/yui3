@@ -20,7 +20,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
     @default '<tfoot class="{className}"/>'
     @since 3.11.0
     **/
-    TFOOT_TEMPLATE: '<tfoot class="{className}"/>',
+    TFOOT_TEMPLATE: '<tfoot class="{className}"></tfoot>',
 
     // -- Public methods ------------------------------------------------------
 
