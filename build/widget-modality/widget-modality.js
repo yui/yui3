@@ -11,6 +11,7 @@ var WIDGET       = 'widget',
     BIND_UI      = 'bindUI',
     SYNC_UI      = 'syncUI',
     BOUNDING_BOX = 'boundingBox',
+    CONTENT_BOX  = 'contentBox',
     VISIBLE      = 'visible',
     Z_INDEX      = 'zIndex',
     CHANGE       = 'Change',
@@ -128,7 +129,6 @@ var WIDGET       = 'widget',
     WidgetModal.CLASSES = MODAL_CLASSES;
 
 
-    WidgetModal._MASK = null;
     /**
      * Returns the mask if it exists on the page - otherwise creates a mask. There's only
      * one mask on a page at a given time.
@@ -136,19 +136,19 @@ var WIDGET       = 'widget',
      * This method in invoked internally by the getter of the maskNode ATTR.
      * </p>
      * @method _GET_MASK
+     * @protected
      * @static
      */
     WidgetModal._GET_MASK = function() {
 
-        var mask = WidgetModal._MASK,
+        var mask = Y.one('.' + MODAL_CLASSES.mask),
             win  = Y.one('win');
 
-        if (mask && (mask.getDOMNode() !== null) && mask.inDoc()) {
+        if (mask) {
             return mask;
         }
 
         mask = Y.Node.create('<div></div>').addClass(MODAL_CLASSES.mask);
-        WidgetModal._MASK = mask;
 
         if (supportsPosFixed) {
             mask.setStyles({
@@ -272,8 +272,9 @@ var WIDGET       = 'widget',
          * Provides mouse and tab focus to the widget's bounding box.
          *
          * @method _focus
+         * @protected
          */
-        _focus : function () {
+        _focus : function (e) {
 
             var bb = this.get(BOUNDING_BOX),
             oldTI = bb.get('tabIndex');
@@ -285,6 +286,7 @@ var WIDGET       = 'widget',
          * Blurs the widget.
          *
          * @method _blur
+         * @protected
          */
         _blur : function () {
 
@@ -295,6 +297,7 @@ var WIDGET       = 'widget',
          * Returns the Y.Node instance of the maskNode
          *
          * @method _getMaskNode
+         * @protected
          * @return {Node} The Y.Node instance of the mask, as returned from WidgetModal._GET_MASK
          */
         _getMaskNode : function () {
@@ -306,6 +309,7 @@ var WIDGET       = 'widget',
          * Performs events attaching/detaching, stack shifting and mask repositioning based on the visibility of the widget
          *
          * @method _uiSetHostVisibleModal
+         * @protected
          * @param {boolean} Whether the widget is visible or not
          */
         _uiSetHostVisibleModal : function (visible) {
@@ -372,6 +376,7 @@ var WIDGET       = 'widget',
          * Sets the z-index of the mask node.
          *
          * @method _uiSetHostZIndexModal
+         * @protected
          * @param {Number} Z-Index of the widget
          */
         _uiSetHostZIndexModal : function (zIndex) {
@@ -388,6 +393,7 @@ var WIDGET       = 'widget',
          * shifted back onto the widget.
          *
          * @method _attachUIHandlesModal
+         * @protected
          */
         _attachUIHandlesModal : function () {
 
@@ -432,7 +438,7 @@ var WIDGET       = 'widget',
             }
 
             if ( ! supportsPosFixed) {
-                uiHandles.push(Y.one('win').on('scroll', Y.bind(function(){
+                uiHandles.push(Y.one('win').on('scroll', Y.bind(function(e){
                     maskNode.setStyle('top', maskNode.get('docScrollY'));
                 }, this)));
             }
@@ -444,6 +450,7 @@ var WIDGET       = 'widget',
          * Detaches all UI Listeners that were set in _attachUIHandlesModal from the widget.
          *
          * @method _detachUIHandlesModal
+         * @protected
          */
         _detachUIHandlesModal : function () {
             Y.each(this._uiHandlesModal, function(h){
@@ -456,6 +463,7 @@ var WIDGET       = 'widget',
          * Default function that is called when visibility is changed on the widget.
          *
          * @method _afterHostVisibleChangeModal
+         * @protected
          * @param {EventFacade} e The event facade of the change
          */
         _afterHostVisibleChangeModal : function (e) {
@@ -467,6 +475,7 @@ var WIDGET       = 'widget',
          * Default function that is called when z-index is changed on the widget.
          *
          * @method _afterHostZIndexChangeModal
+         * @protected
          * @param {EventFacade} e The event facade of the change
          */
         _afterHostZIndexChangeModal : function (e) {
@@ -491,6 +500,7 @@ var WIDGET       = 'widget',
          * Repositions the mask in the DOM for nested modality cases.
          *
          * @method _repositionMask
+         * @protected
          * @param {Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
          */
         _repositionMask: function(nextElem) {
@@ -548,8 +558,9 @@ var WIDGET       = 'widget',
          * Default function called when focusOn Attribute is changed. Remove existing listeners and create new listeners.
          *
          * @method _afterFocusOnChange
+         * @protected
          */
-        _afterFocusOnChange : function() {
+        _afterFocusOnChange : function(e) {
             this._detachUIHandlesModal();
 
             if (this.get(VISIBLE)) {

@@ -9,21 +9,21 @@ var demo = Y.one('#demo'),
     FAILURE_TEMPLATE = '<div class="error">{message}</div>';
 
 function renderUser(user) {
-    demo.setHTML(Y.Lang.sub(SUCCESS_TEMPLATE, {
+    demo.append(Y.Lang.sub(SUCCESS_TEMPLATE, {
         // escape the values gotten from the GitHub API to avoid unexpected
         // HTML injection which could be an XSS vulnerability
         name: Y.Escape.html(user.login),
         link: Y.Escape.html(user.html_url)
     }));
 }
-
 function showError(err) {
-    demo.setHTML(
-        'Looks like the service might be down - would you like to <a href="?mock=true">try this example with mock data</a>?'
-    );
+    demo.append(Y.Lang.sub(FAILURE_TEMPLATE, {
+        message: Y.Escape.html(err.message)
+    }));
 }
 
 GitHub.getUser('yui').then(renderUser, showError);
+GitHub.getUser('y u i').then(renderUser, showError);
 
 });
 </script>

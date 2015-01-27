@@ -29,7 +29,7 @@ Y.Node.prototype.simulate = function (type, config) {
 
     if(type) {
         simulate.apply(Y.Event, args);
-    }
+    } 
 };
 
 var suite = new Y.Test.Suite("Slider");
@@ -481,9 +481,9 @@ suite.add( new Y.Test.Case({
 
     "thumbUrl should default at render()": function () {
         var slider = new Y.Slider();
-
+        
         Y.Assert.isNull( slider.get('thumbUrl') );
-
+        
         slider.render('#testbed');
 
         Y.Assert.isString( slider.get('thumbUrl') );
@@ -533,8 +533,7 @@ suite.add( new Y.Test.Case({
             clientY: railRegion.top + Math.floor(railRegion.height / 2),
             pageX: railRegion.left + Math.floor(railRegion.width / 2),
             pageY: railRegion.top + Math.floor(railRegion.height / 2),
-            halt: noop,
-            preventDefault: noop
+            halt: noop
         };
 
 
@@ -702,7 +701,7 @@ suite.add( new Y.Test.Case({
     tearDown: function () {
         Y.one("#testbed").remove(true);
     },
-
+    
     //TODO This test uses click simulation and will fail in touch environments
     "clicking on the rail should move the thumb": function () {
         var slider = new Y.Slider({
@@ -726,8 +725,7 @@ suite.add( new Y.Test.Case({
             clientY: railRegion.top + Math.floor(railRegion.height / 2),
             pageX: railRegion.left + Math.floor(railRegion.width / 2),
             pageY: railRegion.top + Math.floor(railRegion.height / 2),
-            halt: noop,
-            preventDefault: noop
+            halt: noop
         };
 
         Y.Assert.areNotSame(0, thumbPosition());
@@ -784,9 +782,9 @@ suite.add( new Y.Test.Case({
         thumb.key(37); // left
         thumb.key(37); // left
         Y.Assert.areEqual(59, slider.get('value'));
-        thumb.key(36); // home
+        thumb.key(36); // home 
         Y.Assert.areEqual(0, slider.get('value'));
-        thumb.key(35); // end
+        thumb.key(35); // end 
         Y.Assert.areEqual(100, slider.get('value'));
         // beyond max
         thumb.key(33); // pageUp
@@ -824,21 +822,21 @@ suite.add( new Y.Test.Case({
         thumb.on('focus', function(){
             // 33 is pageUp. Increase value = init value + majorStep
             // .key() method is at top of this file
-            thumb.key(33);
+            thumb.key(33);  
         });
-        thumb.simulate('click'); // Should set focus on thumb
+        thumb.simulate('click'); // Should set focus on thumb  
         Y.Assert.areEqual(84, slider.get('value'));
 
         slider.destroy();
     },
-
+    
     /*
      * This tests changing the value by one unit
      * that would not move the slider a full pixel
      * and because of ticket #2531498, was
      * changing the value back to previous value
      * to match the thumb position
-     */
+     */                             
     "test keyboard input and resultant value change, when Slider length is less than max - min": function () {
         var slider = new Y.Slider({
             length: '30px',  // length less than max - min
@@ -856,7 +854,7 @@ suite.add( new Y.Test.Case({
         slider.destroy();
 
     },
-
+    
     "test ARIA attributes while values change by keyboard input": function () {
         var slider = new Y.Slider({
             length: '300px',  // length less than max - min

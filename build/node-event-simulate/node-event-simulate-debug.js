@@ -10,6 +10,7 @@ YUI.add('node-event-simulate', function (Y, NAME) {
  * Simulates an event on the node.
  * @param {String} type The type of event (i.e., "click").
  * @param {Object} options (Optional) Extra options to copy onto the event object.
+ * @return {void}
  * @for Node
  * @method simulate
  */
@@ -176,6 +177,7 @@ Y.Node.prototype.simulate = function (type, options) {
  * @param {Function} [cb] The callback to execute when the asynchronouse gesture
  *      simulation is completed.
  *      @param {Error} cb.err An error object if the simulation is failed.
+ * @return {void}
  * @for Node
  */
 Y.Node.prototype.simulateGesture = function (name, options, cb) {

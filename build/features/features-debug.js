@@ -65,7 +65,7 @@ Y.mix(Y.namespace('Features'), {
         return (result.length) ? result.join(';') : '';
     },
     /**
-    * Run a specific test and return a Boolean response.
+    * Run a sepecific test and return a Boolean response.
     *
     *   ```
     *   Y.Features.test("load", "1");
@@ -388,19 +388,22 @@ add('load', '20', {
     */
     return (!Y.UA.nodejs && !Y.UA.winjs);
 },
-    "trigger": "yql"
+    "trigger": "yql",
+    "when": "after"
 });
 // yql-nodejs
 add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
-    "ua": "nodejs"
+    "ua": "nodejs",
+    "when": "after"
 });
 // yql-winjs
 add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
-    "ua": "winjs"
+    "ua": "winjs",
+    "when": "after"
 });
 
 }, '@VERSION@', {"requires": ["yui-base"]});

@@ -49,7 +49,7 @@ Y.mix(Message.prototype, {
     Template used to generate the node that will be used to report messages.
 
     @property MESSAGE_TEMPLATE
-    @type {String}
+    @type {HTML}
     @default <tbody class="{className}"><td class="{contentClass}" colspan="{colspan}"></td></tbody>
     @since 3.5.0
     **/

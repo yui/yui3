@@ -46,7 +46,7 @@
          *      <dd>center center</dd>
          * </dl>
          * @method to
-         * @param region {String|Node|HTMLElement|Object} The node or
+         * @param region {String || Node || HTMLElement || Object} The node or
          * region to align with. Defaults to the viewport region.
          * @param regionPoint {String} The point of the region to align with.
          * @param point {String} The point of the node aligned to the region.
@@ -123,7 +123,7 @@
         /**
          * Aligns the center of a node to the center of another node or region.
          * @method center
-         * @param region {Node|HTMLElement|Object} optional The node or
+         * @param region {Node || HTMLElement || Object} optional The node or
          * region to align with. Defaults to the viewport region.
          * the window is resized. If centering to viewport, this defaults
          * to true, otherwise default is false.

@@ -19,8 +19,7 @@
     "anim-base": {
         "requires": [
             "base-base",
-            "node-style",
-            "color-base"
+            "node-style"
         ]
     },
     "anim-color": {
@@ -391,8 +390,7 @@
     },
     "base-observable": {
         "requires": [
-            "attribute-observable",
-            "base-core"
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -1224,7 +1222,8 @@
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -1234,8 +1233,7 @@
             "trigger": "dom-style"
         },
         "requires": [
-            "dom-style",
-            "color-base"
+            "dom-style"
         ]
     },
     "dump": {
@@ -1541,8 +1539,7 @@
             "trigger": "graphics"
         },
         "requires": [
-            "graphics",
-            "color-base"
+            "graphics"
         ]
     },
     "graphics-canvas-default": {
@@ -1581,8 +1578,7 @@
             "trigger": "graphics"
         },
         "requires": [
-            "graphics",
-            "color-base"
+            "graphics"
         ]
     },
     "graphics-vml-default": {
@@ -1629,6 +1625,7 @@
         "use": [
             "history-base",
             "history-hash",
+            "history-hash-ie",
             "history-html5"
         ]
     },
@@ -2784,10 +2781,10 @@
         "condition": {
             "name": "yql-jsonp",
             "test": "jsonp.js",
-            "trigger": "yql"
+            "trigger": "yql",
+            "when": "after"
         },
         "requires": [
-            "yql",
             "jsonp",
             "jsonp-url"
         ]
@@ -2796,21 +2793,17 @@
         "condition": {
             "name": "yql-nodejs",
             "trigger": "yql",
-            "ua": "nodejs"
-        },
-        "requires": [
-            "yql"
-        ]
+            "ua": "nodejs",
+            "when": "after"
+        }
     },
     "yql-winjs": {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs"
-        },
-        "requires": [
-            "yql"
-        ]
+            "ua": "winjs",
+            "when": "after"
+        }
     },
     "yui": {},
     "yui-base": {},

@@ -810,8 +810,9 @@ Y.Resize = Y.extend(
              *
              * @event resize:start
              * @preventable _defResizeStartFn
-             * @param {EventFacade} event The resize start event.
+             * @param {Event.Facade} event The resize start event.
              * @bubbles Resize
+             * @type {Event.Custom}
              */
             publish(EV_RESIZE_START, this._defResizeStartFn);
 
@@ -821,8 +822,9 @@ Y.Resize = Y.extend(
              *
              * @event resize:resize
              * @preventable _defResizeFn
-             * @param {EventFacade} event The resize event.
+             * @param {Event.Facade} event The resize event.
              * @bubbles Resize
+             * @type {Event.Custom}
              */
             publish(EV_RESIZE, this._defResizeFn);
 
@@ -831,8 +833,9 @@ Y.Resize = Y.extend(
              *
              * @event resize:align
              * @preventable _defResizeAlignFn
-             * @param {EventFacade} event The resize align event.
+             * @param {Event.Facade} event The resize align event.
              * @bubbles Resize
+             * @type {Event.Custom}
              */
             publish(EV_RESIZE_ALIGN, this._defResizeAlignFn);
 
@@ -842,8 +845,9 @@ Y.Resize = Y.extend(
              *
              * @event resize:end
              * @preventable _defResizeEndFn
-             * @param {EventFacade} event The resize end event.
+             * @param {Event.Facade} event The resize end event.
              * @bubbles Resize
+             * @type {Event.Custom}
              */
             publish(EV_RESIZE_END, this._defResizeEndFn);
 
@@ -853,8 +857,9 @@ Y.Resize = Y.extend(
              *
              * @event resize:mouseUp
              * @preventable _defMouseUpFn
-             * @param {EventFacade} event The resize mouseUp event.
+             * @param {Event.Facade} event The resize mouseUp event.
              * @bubbles Resize
+             * @type {Event.Custom}
              */
             publish(EV_MOUSE_UP, this._defMouseUpFn);
         },

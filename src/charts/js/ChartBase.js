@@ -1114,7 +1114,7 @@ ChartBase.prototype = {
      *  @param {Number} index The index of the item within its series.
      *  @param {Array} seriesArray Array of series instances for each value item.
      *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.
-     *  @return {HTMLElement}
+     *  @return {String | HTML}
      * @private
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray)
@@ -1182,7 +1182,7 @@ ChartBase.prototype = {
      *      <dt>key</dt><dd>The key for the series.</dd>
      *      <dt>value</dt><dd>The value for the series item.</dd>
      *  </dl>
-     * @return {HTMLElement}
+     * @return {String | HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem)

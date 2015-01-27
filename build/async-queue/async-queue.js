@@ -243,7 +243,7 @@ Y.extend(Queue, Y.EventTarget, {
 
         if (!callback) {
             /**
-             * Event fired when there is no remaining callback in the running queue. Also fired after stop().
+             * Event fired after the last queued callback is executed.
              * @event complete
              */
             this.fire('complete');
@@ -397,12 +397,6 @@ Y.extend(Queue, Y.EventTarget, {
         // stop has been called from inside a queued callback, the _execute method
         // currenty running needs to call run() one more time for the 'complete'
         // event to be fired.
-
-        // if stop is called from outside a callback, we need to explicitely call
-        // run() once again to fire the 'complete' event.
-        if (!this._executing) {
-            this.run();
-        }
 
         return this;
     },

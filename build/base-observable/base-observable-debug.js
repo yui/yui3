@@ -218,4 +218,4 @@ YUI.add('base-observable', function (Y, NAME) {
     Y.BaseObservable = BaseObservable;
 
 
-}, '@VERSION@', {"requires": ["attribute-observable", "base-core"]});
+}, '@VERSION@', {"requires": ["attribute-observable"]});

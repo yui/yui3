@@ -292,7 +292,7 @@ PositionConstrain.prototype = {
      * Updates the UI if enabling constraints, and sets up the xyChange event listeners
      * to constrain whenever the widget is moved. Disabling constraints removes the listeners.
      *
-     * @method _enableConstraints
+     * @method enable or disable constraints listeners
      * @private
      * @param {boolean} enable Enable or disable constraints
      */

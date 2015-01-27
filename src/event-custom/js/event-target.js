@@ -173,7 +173,7 @@ ET.prototype = {
      * is configured with a default prefix.
      * @method parseType
      * @param {String} type the type
-     * @param {String} [pre] The prefix. Defaults to this._yuievt.config.prefix
+     * @param {String} [pre=this._yuievt.config.prefix] the prefix
      * @since 3.3.0
      * @return {Array} an array containing:
      *  * the detach category, if supplied,

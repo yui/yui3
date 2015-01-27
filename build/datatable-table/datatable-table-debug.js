@@ -33,21 +33,21 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     attribute is set.
 
     @property CAPTION_TEMPLATE
-    @type {String}
-    @default '<caption class="{className}"></caption>'
+    @type {HTML}
+    @default '<caption class="{className}"/>'
     @since 3.6.0
     **/
-    CAPTION_TEMPLATE: '<caption class="{className}"></caption>',
+    CAPTION_TEMPLATE: '<caption class="{className}"/>',
 
     /**
     The HTML template used to create the table Node.
 
     @property TABLE_TEMPLATE
-    @type {String}
-    @default '<table cellspacing="0" class="{className}"></table>'
+    @type {HTML}
+    @default '<table cellspacing="0" class="{className}"/>'
     @since 3.6.0
     **/
-    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"></table>',
+    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
 
     /**
     The object or instance of the class assigned to `bodyView` that is
@@ -499,6 +499,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     Creates the UI in the configured `container`.
 
     @method render
+    @return {TableView}
     @chainable
     **/
     render: function () {
@@ -523,7 +524,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     value.  Empty values result in the caption being removed.
 
     @method _uiSetCaption
-    @param {String} htmlContent The content to populate the table caption
+    @param {HTML} htmlContent The content to populate the table caption
     @protected
     @since 3.5.0
     **/

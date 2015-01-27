@@ -317,7 +317,7 @@ Y.extend(UploaderQueue, Y.Base, {
     * by cancelling its upload and immediately relaunching it.
     *
     * @method forceReupload
-    * @param file {File} The file to force reupload on.
+    * @param file {Y.File} The file to force reupload on.
     */
     forceReupload : function (file) {
         var id = file.get("id");
@@ -335,7 +335,7 @@ Y.extend(UploaderQueue, Y.Base, {
     * drops below the maximum permissible value).
     *
     * @method addToQueueTop
-    * @param file {File} The file to add to the top of the queue.
+    * @param file {Y.File} The file to add to the top of the queue.
     */
     addToQueueTop: function (file) {
             this.queuedFiles.unshift(file);
@@ -346,7 +346,7 @@ Y.extend(UploaderQueue, Y.Base, {
     * launched after all the other queued files are uploaded.)
     *
     * @method addToQueueBottom
-    * @param file {File} The file to add to the bottom of the queue.
+    * @param file {Y.File} The file to add to the bottom of the queue.
     */
     addToQueueBottom: function (file) {
             this.queuedFiles.push(file);
@@ -358,7 +358,7 @@ Y.extend(UploaderQueue, Y.Base, {
     * stopped.
     *
     * @method cancelUpload
-    * @param file {File} An optional parameter - the file whose upload
+    * @param file {Y.File} An optional parameter - the file whose upload
     * should be cancelled.
     */
     cancelUpload: function (file) {

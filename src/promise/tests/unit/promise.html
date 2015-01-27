@@ -14,21 +14,17 @@ YUI({
     coverage: ['promise'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
-        'tests-promise-utils': {
-            fullpath: './assets/tests-promise-utils.js',
-            requires: ['promise', 'test']
-        },
         'batch-tests': {
             fullpath: './assets/batch-tests.js',
-            requires: ['tests-promise-utils']
+            requires: ['promise', 'test']
         },
         'when-tests': {
             fullpath: './assets/when-tests.js',
-            requires: ['tests-promise-utils']
+            requires: ['promise', 'test']
         },
         'promise-tests':  {
             fullpath: './assets/promise-tests.js',
-            requires: ['tests-promise-utils']
+            requires: ['promise', 'test']
         }
     }
 }).use('promise-tests', 'when-tests', 'batch-tests', 'test-console', function(Y) {

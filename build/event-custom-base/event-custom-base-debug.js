@@ -11,6 +11,7 @@ Y.Env.evt = {
     plugins: {}
 };
 
+
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
@@ -68,7 +69,7 @@ DO = {
      * @param c The execution context for fn
      * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * when the event fires.
-     * @return {EventHandle} handle for the subscription
+     * @return {string} handle for the subscription
      * @static
      */
     before: function(fn, obj, sFn, c) {
@@ -106,7 +107,7 @@ DO = {
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
      * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return {EventHandle} handle for the subscription
+     * @return {string} handle for the subscription
      * @static
      */
     after: function(fn, obj, sFn, c) {
@@ -129,7 +130,7 @@ DO = {
      * @param obj the object hosting the method to displace
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
-     * @return {EventHandle} handle for the subscription
+     * @return {string} handle for the subscription
      * @private
      * @static
      */
@@ -167,7 +168,7 @@ DO = {
      * Detach a before or after subscription.
      *
      * @method detach
-     * @param handle {EventHandle} the subscription handle
+     * @param handle {string} the subscription handle
      * @static
      */
     detach: function(handle) {
@@ -618,18 +619,6 @@ Y.CustomEvent.prototype = {
      */
 
     /**
-     * Flag for the default function to execute only if the
-     * firing event is the current target. This happens only
-     * when using custom event delegation and setting the
-     * flag to `true` mimics the behavior of event delegation
-     * in the DOM.
-     *
-     * @property defaultTargetOnly
-     * @type Boolean
-     * @default false
-     */
-
-    /**
      * The function to execute if a subscriber calls
      * stopPropagation or stopImmediatePropagation
      * @property stoppedFn
@@ -938,7 +927,7 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed.
      * @param {Object}   context The context object passed to subscribe.
-     * @return {Number} returns the number of subscribers unsubscribed.
+     * @return {int} returns the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -1169,7 +1158,7 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method unsubscribeAll
-     * @return {Number} The number of listeners unsubscribed.
+     * @return {int} The number of listeners unsubscribed.
      * @deprecated use detachAll.
      */
     unsubscribeAll: function() {
@@ -1179,7 +1168,7 @@ Y.CustomEvent.prototype = {
     /**
      * Removes all listeners
      * @method detachAll
-     * @return {Number} The number of listeners unsubscribed.
+     * @return {int} The number of listeners unsubscribed.
      */
     detachAll: function() {
         return this.detach();
@@ -1415,7 +1404,7 @@ Y.EventHandle.prototype = {
     /**
      * Detaches this subscriber
      * @method detach
-     * @return {Number} the number of detached listeners
+     * @return {int} the number of detached listeners
      */
     detach: function() {
         var evt = this.evt, detached = 0, i;
@@ -1622,7 +1611,7 @@ ET.prototype = {
      * is configured with a default prefix.
      * @method parseType
      * @param {String} type the type
-     * @param {String} [pre] The prefix. Defaults to this._yuievt.config.prefix
+     * @param {String} [pre=this._yuievt.config.prefix] the prefix
      * @since 3.3.0
      * @return {Array} an array containing:
      *  * the detach category, if supplied,

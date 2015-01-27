@@ -31,7 +31,6 @@ form {
 #ft {
     height:200px;
     opacity: 0.75;
-    filter: alpha(opacity=75);
 }
 .yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
     background: #070;
@@ -213,13 +212,9 @@ form {
             },
 
             test_setStyle: function() {
-                Y.DOM.setStyle(ft, 'opacity', 1);
-                Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
-                        1, "Y.DOM.getStyle(ft, 'opacity') is not 1");
-
                 Y.DOM.setStyle(ft, 'opacity', 0.5);
                 Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
-                        0.5, "Y.DOM.getStyle(ft, 'opacity') is not 0.5");
+                        0.5, "Y.DOM.getStyle(ft, 'opacity')");
 
                 Y.DOM.setStyle(main, 'float', 'none');
                 Assert.areEqual('none', Y.DOM.getStyle(main, 'float'),
@@ -770,6 +765,49 @@ form {
                 );
 
                 Assert.areEqual(node.selectedIndex, 1);
+            },
+
+            testToHex: function() {
+                var rgb = 'rgb(97, 11, 11)',
+                    hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#610B0B", hex.toUpperCase(), 'toHex(' + rgb + ')');
+
+                rgb = 'rgb(255, 255, 255)';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
+
+                rgb = '#fff';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
+
+                rgb = 'fff';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#FFFFFF", hex.toUpperCase(), 'toHex(' + rgb + ')');
+
+                rgb = '000';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#000000", hex.toUpperCase(), 'toHex(' + rgb + ')');
+
+                rgb = "rgb(97, 56, 11)" ;
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex.toUpperCase(), "#61380B", " shoudl be #61380B");
+
+                rgb = "rgb(11, 97, 11)" ; // 0B610B
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex.toUpperCase(), "#0B610B", " shoudl be #0B610B");
+
+                rgb = "rgb(56, 11, 97)" ; //380B61
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex.toUpperCase(), "#380B61", " shoudl be #380B61");
+
+                rgb = "rgb(97, 11, 56)" ; //610B38
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex.toUpperCase(), "#610B38", " shoudl be #610B38");
             },
 
             test_inDoc: function() {

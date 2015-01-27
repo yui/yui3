@@ -465,7 +465,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'hasRoute() should return `true` if one or more routes match the given path': function () {
-        var router  = this.router = new Y.Router(),
+        var router = this.router = new Y.Router(),
             router2 = new Y.Router();
 
         function noop () {}
@@ -573,24 +573,6 @@ routerSuite.add(new Y.Test.Case({
         Assert.isFalse(router.hasRoute(origin + '/foo'));
         Assert.isFalse(router.hasRoute(origin + '/bar'));
         Assert.isFalse(router.hasRoute(origin + '/baz/quux'));
-    },
-
-    'hasRoute() should test that any named param handlers accept the URL param values': function () {
-        var router = this.router = new Y.Router();
-
-        router.set('params', {id: Number});
-        router.route('/photos/:id/*action', function () {});
-
-        // Should match.
-        Assert.isTrue(router.hasRoute('/photos/123/'));
-        Assert.isTrue(router.hasRoute('/photos/123/edit'));
-
-        // Should NOT match.
-        Assert.isFalse(router.hasRoute('/photos/123')); // Missing trailing slash.
-        Assert.isFalse(router.hasRoute('/photos/abc/'));
-        Assert.isFalse(router.hasRoute('/photos/abc/edit'));
-        Assert.isFalse(router.hasRoute('/photos/123abc/'));
-        Assert.isFalse(router.hasRoute('/photos/123abc/edit'));
     },
 
     'dispatch() should dispatch to the first route that matches the current URL': function () {
@@ -1039,12 +1021,6 @@ routerSuite.add(new Y.Test.Case({
         Assert.isFalse(check("/:foo/bar", "/baz/quux"));
         Assert.isFalse(check("/:foo/bar", "/foo/bar?a=b"));
         Assert.isFalse(check("/:foo/bar", "/foo/bar#a"));
-
-        Assert.isTrue( check("/foo/:foo/:bar/?", "/foo/foo/bar"));
-        Assert.isTrue( check("/foo/:foo/:bar/?", "/foo/foo/bar/"));
-        Assert.isFalse(check("/foo/:foo/:bar/?", "/foo/bar"));
-        Assert.isFalse(check("/foo/:foo/:bar/?", "/foo/bar/"));
-        Assert.isFalse(check("/foo/:foo/:bar/?", "/foo/bar?a=b"));
     }
 }));
 

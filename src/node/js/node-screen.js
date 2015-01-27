@@ -11,42 +11,42 @@ Y.each([
      * Returns the inner width of the viewport (exludes scrollbar).
      * @config winWidth
      * @for Node
-     * @type {Number}
+     * @type {Int}
      */
     'winWidth',
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar).
      * @config winHeight
-     * @type {Number}
+     * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width
      * @config docWidth
-     * @type {Number}
+     * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height
      * @config docHeight
-     * @type {Number}
+     * @type {Int}
      */
     'docHeight',
 
     /**
      * Pixel distance the page has been scrolled horizontally
      * @config docScrollX
-     * @type {Number}
+     * @type {Int}
      */
     'docScrollX',
 
     /**
      * Pixel distance the page has been scrolled vertically
      * @config docScrollY
-     * @type {Number}
+     * @type {Int}
      */
     'docScrollY'
     ],
@@ -122,14 +122,14 @@ Y.Node.importMethod(Y.DOM, [
 /**
  * Gets the current position of the node in page coordinates.
  * @method getX
- * @return {Number} The X position of the node
+ * @return {Int} The X position of the node
 */
     'getX',
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
  * @method setX
- * @param {Number} x X value for new position (coordinates are page-based)
+ * @param {Int} x X value for new position (coordinates are page-based)
  * @chainable
  */
     'setX',
@@ -137,14 +137,14 @@ Y.Node.importMethod(Y.DOM, [
 /**
  * Gets the current position of the node in page coordinates.
  * @method getY
- * @return {Number} The Y position of the node
+ * @return {Int} The Y position of the node
 */
     'getY',
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
  * @method setY
- * @param {Number} y Y value for new position (coordinates are page-based)
+ * @param {Int} y Y value for new position (coordinates are page-based)
  * @chainable
  */
     'setY',

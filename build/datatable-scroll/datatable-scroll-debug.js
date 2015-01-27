@@ -103,7 +103,7 @@ Y.mix(Scrollable.prototype, {
                 target = this.getRow(id);
             } else if (isString(id)) {
                 target = this._tbodyNode.one('#' + id);
-            } else if (id._node &&
+            } else if (id instanceof Y.Node &&
                     // TODO: ancestor(yScrollNode, xScrollNode)
                     id.ancestor('.yui3-datatable') === this.get('boundingBox')) {
                 target = id;
@@ -126,7 +126,7 @@ Y.mix(Scrollable.prototype, {
     the table is horizontally scrolling.
 
     @property _CAPTION_TABLE_TEMPLATE
-    @type {String}
+    @type {HTML}
     @value '<table class="{className}" role="presentation"></table>'
     @protected
     @since 3.5.0
@@ -138,7 +138,7 @@ Y.mix(Scrollable.prototype, {
     synchronize fixed header column widths.
 
     @property _SCROLL_LINER_TEMPLATE
-    @type {String}
+    @type {HTML}
     @value '<div class="{className}"></div>'
     @protected
     @since 3.5.0
@@ -149,7 +149,7 @@ Y.mix(Scrollable.prototype, {
     Template for the virtual scrollbar needed in "y" and "xy" scrolling setups.
 
     @property _SCROLLBAR_TEMPLATE
-    @type {String}
+    @type {HTML}
     @value '<div class="{className}"><div></div></div>'
     @protected
     @since 3.5.0
@@ -161,7 +161,7 @@ Y.mix(Scrollable.prototype, {
     horizontally scrolling.
 
     @property _X_SCROLLER_TEMPLATE
-    @type {String}
+    @type {HTML}
     @value '<div class="{className}"></div>'
     @protected
     @since 3.5.0
@@ -173,7 +173,7 @@ Y.mix(Scrollable.prototype, {
     vertically scrolling tables.
 
     @property _Y_SCROLL_HEADER_TEMPLATE
-    @type {String}
+    @type {HTML}
     @value '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>'
     @protected
     @since 3.5.0
@@ -185,7 +185,7 @@ Y.mix(Scrollable.prototype, {
     vertically scrolling.
 
     @property _Y_SCROLLER_TEMPLATE
-    @type {String}
+    @type {HTML}
     @value '<div class="{className}"><div class="{scrollerClassName}"></div></div>'
     @protected
     @since 3.5.0
@@ -738,7 +738,7 @@ Y.mix(Scrollable.prototype, {
     case.  All other values are invalid.
 
     @method _setScrollable
-    @param {String|Boolean} val Incoming value for the `scrollable` attribute
+    @param {String|Boolea} val Incoming value for the `scrollable` attribute
     @return {String}
     @protected
     @since 3.5.0

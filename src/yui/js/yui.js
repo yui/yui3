@@ -390,7 +390,15 @@ proto = {
                 // \/\2              then comes a / followed by the yui-* string in \2
                 // (?:-(min|debug))? optionally followed by "-min" or "-debug"
                 // .js               and ending in ".js"
-                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                ////////////////////////////////////////////////////////////////
+                //                      BEGIN WF2 CHANGE                      //
+                // Justification: To support wf2 in URL                       //
+                ////////////////////////////////////////////////////////////////
+                // _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(wf2|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                ////////////////////////////////////////////////////////////////
+                //                      END WF2 CHANGE                        //
+                ////////////////////////////////////////////////////////////////
                 parseBasePath: function(src, pattern) {
                     var match = src.match(pattern),
                         path, filter;
@@ -434,7 +442,19 @@ proto = {
 
                             // use CDN default
                             return path;
-                        }
+                        },
+                ////////////////////////////////////////////////////////////////
+                //                      BEGIN WF2 CHANGE                      //
+                // Justification: To support CSP directive of `unsafe-eval`   //
+                // see _afterConfig() method                                  //
+                ////////////////////////////////////////////////////////////////
+                getGlobal: (function () {
+                                return this;
+                            }())
+
+                ////////////////////////////////////////////////////////////////
+                //                      END WF2 CHANGE                        //
+                ////////////////////////////////////////////////////////////////
 
             };
 
@@ -524,7 +544,16 @@ proto = {
         // using eval(). This is critical for Content Security Policy enabled
         // sites and other environments like Chrome extensions
         if (!Y.config.hasOwnProperty('global')) {
-            Y.config.global = Function('return this')();
+            ////////////////////////////////////////////////////////////////
+            //                      BEGIN WF2 CHANGE                      //
+            // Justification: Below code violates CSP `unsafe-eval`       //
+            // directive, which would block execution of YUI              //
+            ////////////////////////////////////////////////////////////////
+            // Y.config.global = Function('return this')();
+            Y.config.global = Y.Env.getGlobal;
+            ////////////////////////////////////////////////////////////////
+            //                      END WF2 CHANGE                        //
+            ////////////////////////////////////////////////////////////////
         }
     },
 
@@ -541,7 +570,7 @@ proto = {
             mods = YUI.Env.mods,
             extendedCore = Y.config.extendedCore || [],
             extras = Y.config.core || [].concat(YUI.Env.core).concat(extendedCore); //Clone it..
-   
+
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
                 core.push(extras[i]);

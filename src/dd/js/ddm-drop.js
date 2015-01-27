@@ -138,6 +138,7 @@
         * @private
         * @method _addValid
         * @param {Object} drop
+        * @return {Self}
         * @chainable
         */
         _addValid: function(drop) {
@@ -149,6 +150,7 @@
         * @private
         * @method _removeValid
         * @param {Object} drop
+        * @return {Self}
         * @chainable
         */
         _removeValid: function(drop) {
@@ -233,7 +235,7 @@
         getBestMatch: function(drops, all) {
             var biggest = null, area = 0, out;
 
-            Y.Object.each(drops, function(v) {
+            Y.Array.each(drops, function(v) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
                 v.region.area = inter.area;
 
@@ -247,7 +249,7 @@
             if (all) {
                 out = [];
                 //TODO Sort the others in numeric order by area covered..
-                Y.Object.each(drops, function(v) {
+                Y.Array.each(drops, function(v) {
                     if (v !== biggest) {
                         out.push(v);
                     }
@@ -302,7 +304,7 @@
             if (this._hasActiveShim()) {
                 this._handleTargetOver();
             } else {
-                Y.Object.each(this.otherDrops, function(v) {
+                Y.Array.each(this.otherDrops, function(v) {
                     v._handleOut.apply(v, []);
                 });
             }

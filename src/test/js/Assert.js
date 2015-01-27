@@ -431,6 +431,7 @@ YUITest.Assert = {
      * @param {String} message (Optional) The message to display if the assertion
      *      fails.
      * @method throwsError
+     * @return {void}
      * @static
      */
     throwsError: function(expectedError, method, message){

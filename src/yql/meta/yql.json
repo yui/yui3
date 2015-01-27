@@ -5,10 +5,10 @@
             "yql-jsonp": {
                 "condition": {
                     "trigger": "yql",
-                    "test": "jsonp.js"
+                    "test": "jsonp.js",
+                    "when": "after"
                 },
                 "requires": [
-                    "yql",
                     "jsonp",
                     "jsonp-url"
                 ]
@@ -16,20 +16,16 @@
             "yql-winjs": {
                 "condition": {
                     "trigger": "yql",
-                    "ua": "winjs"
-                },
-                "requires": [
-                    "yql"
-                ]
+                    "ua": "winjs",
+                    "when": "after"
+                }
             },
             "yql-nodejs": {
                 "condition": {
                     "trigger": "yql",
-                    "ua": "nodejs"
-                },
-                "requires": [
-                    "yql"
-                ]
+                    "ua": "nodejs",
+                    "when": "after"
+                }
             }
         }
     }

@@ -19,10 +19,8 @@ YUI.add('upload-iframe-tests', function(Y, NAME) {
         },
 
         tearDown: function () {
-            if (typeof this.form !== 'undefined') {
-                this.form.remove();
-                delete this.form;
-            }
+            this.form.remove();
+            delete this.form;
             form.cloneNode(true).appendTo('body');
         },
 
@@ -217,31 +215,6 @@ YUI.add('upload-iframe-tests', function(Y, NAME) {
                     Y.Assert.areSame("", form.get('action'));
                     Y.Assert.areSame("", form.get('target'));
                 });
-            };
-
-            request = Y.io(Y.IO.URLS.post, config);
-
-            Test.wait();
-        },
-
-        'Form attribute resetting should not happen if the form was removed before completion': function () {
-            var Test = this,
-                form = this.form.cloneNode(true),
-                config = this.config,
-                request;
-
-            config.form.id = 'test-form-removal';
-            form.set('id', config.form.id);
-            form.appendTo('body');
-
-            config.on.end = function () {
-                Test.resume(function () {
-                    Y.Assert.isNull(Y.one('#' + config.form.id));
-                });
-            };
-
-            config.on.start = function() {
-                form.remove(true);
             };
 
             request = Y.io(Y.IO.URLS.post, config);

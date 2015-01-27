@@ -131,7 +131,7 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when a data request is received.
          *
          * @event request
-         * @param e {EventFacade} Event Facade with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -149,7 +149,7 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when raw data is received.
          *
          * @event data
-         * @param e {EventFacade} Event Facade with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -173,7 +173,7 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when response is returned.
          *
          * @event response
-         * @param e {EventFacade} Event Facade with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -207,7 +207,7 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when an error is encountered.
          *
          * @event error
-         * @param e {EventFacade} Event Facade with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -243,7 +243,7 @@ Y.extend(DSLocal, Y.Base, {
      * subclasses to achieve more complex behavior such as accessing remote data.
      *
      * @method _defRequestFn
-     * @param e {EventFacade} Event Facadewith the following properties:
+     * @param e {Event.Facade} Event Facadewith the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -280,7 +280,7 @@ Y.extend(DSLocal, Y.Base, {
      * Normalizes raw data into a response that includes results and meta properties.
      *
      * @method _defDataFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
@@ -315,7 +315,7 @@ Y.extend(DSLocal, Y.Base, {
      * Sends data as a normalized response to callback.
      *
      * @method _defResponseFn
-     * @param e {EventFacade} Event Facade with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>

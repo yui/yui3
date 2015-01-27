@@ -37,7 +37,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Designated initializer
      *
      * @method initializer
-     * @param {Object} Configuration object for the plugin
+     * @param {config} Configuration object for the plugin
      */
     initializer: function (config) {
         var paginator = this,
@@ -100,7 +100,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host render
      *
      * @method _afterHostRender
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterHostRender: function () {
@@ -139,7 +139,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host syncUI
      *
      * @method _afterHostSyncUI
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterHostSyncUI: function () {
@@ -161,7 +161,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host _uiDimensionsChange
      *
      * @method _afterHostUIDimensionsChange
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterHostUIDimensionsChange: function () {
@@ -252,7 +252,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Determines if the gesture should page prev or next (if at all)
      *
      * @method _afterHostGestureMoveEnd
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterHostGestureMoveEnd: function () {
@@ -294,7 +294,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Prevents mousewheel events in some conditions
      *
      * @method _beforeHostMousewheel
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _beforeHostMousewheel: function (e) {
@@ -323,7 +323,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Prevents flick events in some conditions
      *
      * @method _beforeHostFlick
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _beforeHostFlick: function (e) {
@@ -372,7 +372,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Runs cleanup operations
      *
      * @method _afterHostScrollEnded
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterHostScrollEnded: function () {
@@ -396,7 +396,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * index attr change handler
      *
      * @method _afterIndexChange
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterIndexChange: function (e) {
@@ -632,7 +632,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After listener for the axis attribute
      *
      * @method _afterAxisChange
-     * @param e {EventFacade} The event facade
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterAxisChange: function (e) {

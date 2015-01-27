@@ -27,4 +27,4 @@ Y.YQLRequest.prototype._send = function (url, o) {
 };
 
 
-}, '@VERSION@', {"requires": ["yql"]});
+}, '@VERSION@');

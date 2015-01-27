@@ -77,7 +77,6 @@ Y.extend(CanvasPath, Y.CanvasShape, {
     end: function()
     {
         this._draw();
-        return this;
     }
 });
 

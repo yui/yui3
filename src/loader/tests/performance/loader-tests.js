@@ -42,7 +42,8 @@ var suite = new PerfSuite('Loader performance tests', {
 });
 
 suite.add({
-    'loader resolve core modules': function () {
+    name: 'loader resolve core modules',
+    fn: function () {
         var require,
             loader;
 
@@ -61,9 +62,12 @@ suite.add({
         });
 
         loader.resolve(true);
-    },
+    }
+});
 
-    'loader resolve application modules': function () {
+suite.add({
+    name: 'loader resolve application modules',
+    fn: function () {
         var loader = new Y.Loader({
             combine: true,
             groups:  APP_META.groups,
@@ -72,24 +76,5 @@ suite.add({
         });
 
         loader.resolve(true);
-    },
-
-    'caculate dependecies': function () {
-        var loader = new Y.Loader({
-            require: ['app', 'charts']
-        });
-
-        loader.calculate();
-    },
-
-    'loader constructor with global cache': function () {
-        new Y.Loader({});
-    },
-
-    'loader constructor without cache': function () {
-        YUI.Env._renderedMods = undefined;
-        YUI.Env._conditions = undefined;
-        new Y.Loader({});
     }
-
 });

@@ -1,3 +1,5 @@
+var slice = [].slice;
+
 /**
 Returns a new promise that will be resolved when all operations have completed.
 Takes both any numer of values as arguments. If an argument is a not a promise,
@@ -10,5 +12,33 @@ it will be wrapped in a new promise, same as in `Y.when()`.
                     resolved
 **/
 Y.batch = function () {
-    return Promise.all(slice.call(arguments));
+    var funcs     = slice.call(arguments),
+        remaining = funcs.length,
+        i         = 0,
+        length    = funcs.length,
+        results   = [];
+
+    return new Y.Promise(function (fulfill, reject) {
+        var allDone = this;
+
+        function oneDone(index) {
+            return function (value) {
+                results[index] = value;
+
+                remaining--;
+
+                if (!remaining && allDone.getStatus() !== 'rejected') {
+                    fulfill(results);
+                }
+            };
+        }
+
+        if (length < 1) {
+            return fulfill(results);
+        }
+
+        for (; i < length; i++) {
+            Y.when(funcs[i], oneDone(i), reject);
+        }
+    });
 };
