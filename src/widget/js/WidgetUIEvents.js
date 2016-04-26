@@ -189,7 +189,7 @@ Y.mix(Widget.prototype, {
         if (sType && !queue[sType]) {
             Y.log("Deferring creation of " + type + " delegate until render.", "info", "widget");
 
-            this._uiEvtsInitQueue = queue[sType] = 1;
+            this._uiEvtsInitQueue[sType] = queue[sType] = 1;
 
             this.after(RENDER, function() {
                 this._createUIEvent(sType);
