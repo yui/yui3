@@ -134,7 +134,7 @@ Y.extend(UploaderQueue, Y.Base, {
             currentFile.set("xhrHeaders", this.get("uploadHeaders"));
             currentFile.set("xhrWithCredentials", this.get("withCredentials"));
 
-            currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
+            currentFile.startUpload(this.get("uploadURL"), this.get("uploadMethod"), fileParameters, this.get("fileFieldName"));
 
             this._registerUpload(currentFile);
         }
@@ -587,6 +587,17 @@ Y.extend(UploaderQueue, Y.Base, {
         */
         uploadURL: {
             value: ""
+        },
+
+        /**
+        * A String that specifies the upload method.
+        *
+        * @attribute method
+        * @type {String}
+        * @default POST
+        */
+        uploadMethod: {
+            value: "POST"
         },
 
         /**

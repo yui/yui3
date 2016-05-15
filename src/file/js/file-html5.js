@@ -217,10 +217,11 @@
         *
         * @method startUpload
         * @param url {String} The URL to upload the file to.
+        * @param method {String} The upload method.
         * @param parameters {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
         * @param fileFieldName {String} (optional) The name of the POST variable that should contain the uploaded file ('Filedata' by default)
         */
-        startUpload: function(url, parameters, fileFieldName) {
+        startUpload: function(url, method, parameters, fileFieldName) {
 
             this._set("bytesUploaded", 0);
 
@@ -249,7 +250,7 @@
             xhr.addEventListener ("loadend", boundEventHandler, false);
             xhr.addEventListener ("readystatechange", boundEventHandler, false);
 
-            xhr.open("POST", url, true);
+            xhr.open(method, url, true);
 
             xhr.withCredentials = this.get("xhrWithCredentials");
 
