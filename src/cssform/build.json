@@ -1,0 +1,12 @@
+{
+    "name": "cssform",
+    "builds": {
+        "cssform": {
+            "cssfiles": [
+                "forms-core.css",
+                "forms.css",
+                "forms-responsive.css"
+            ]
+        }
+    }
+}
