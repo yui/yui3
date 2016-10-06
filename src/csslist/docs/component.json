@@ -1,0 +1,11 @@
+{
+    "name"       : "csslist",
+    "displayName": "CSS List",
+    "description": "Simple CSS for HTML List Elements",
+    "author"     : "tilomitra",
+
+    "tags": [ "css", "beta" ],
+    "use": ["csslist"],
+    "hideAPILink": true
+}
+    
