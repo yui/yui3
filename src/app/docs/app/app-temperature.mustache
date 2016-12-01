@@ -1,0 +1,35 @@
+<style scoped>
+    label {
+        width: 80px;
+        float: left;
+        font-weight: bold;
+    }
+</style>
+
+<div class="intro">
+    <p>
+        This example demonstrates how to create a simple temperature converter
+        using the <a href="../model/index.html">Model</a>
+        and <a href="../view/index.html">View</a> components, highlighting
+        validation and change events features.
+    </p>
+</div>
+
+<div class="example">
+    {{>app-temperature-html}}
+    <script>
+        {{>app-temperature-js}}
+    </script>
+</div>
+
+<h2>Complete Example Source</h2>
+
+<h3>JavaScript</h3>
+```
+{{>app-temperature-js}}
+```
+
+<h3>HTML</h3>
+```
+{{>app-temperature-html}}
+```

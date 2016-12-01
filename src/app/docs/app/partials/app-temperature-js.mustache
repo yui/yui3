@@ -1,0 +1,182 @@
+YUI().use('model', 'view', 'event-valuechange', function (Y) {
+    var myTemperatureModel,
+        myTemperatureView;
+
+// -- Model --------------------------------------------------------------------
+
+    // The TemperatureModel class extends Y.Model and customizes it to catch the
+    // changes of the properties, setting the value of the conversion for the
+    // rest of the temperature properties.
+
+    Y.TemperatureModel = Y.Base.create('temperatureModel', Y.Model, [], {
+        // The initializer runs when a TemperatureModel instance is created and
+        // gives us an opportunity to set up the events for the attributes.
+        initializer: function () {
+            this.after([
+                'fahrenheitChange',
+                'celsiusChange',
+                'kelvinChange'
+            ], this._afterUnitChange);
+        },
+
+        // Event handler for the 'change' event.
+        _afterUnitChange: function (e) {
+            var newVal = e.newVal,
+                attrName = e.attrName,
+                // The variables containing the math of the conversion.
+                fahrenheit,
+                celsius,
+                kelvin;
+
+            // The `src` property identifies who initiated the `set()` action
+            // and prevent infinite loops or other similar situations.
+            if (e.src === 'conversion') {
+                return;
+            }
+
+            if (attrName === 'fahrenheit') {
+                fahrenheit = newVal;
+                celsius = (fahrenheit - 32) * 5 / 9;
+                kelvin = (fahrenheit + 459.67) * 5 / 9;
+            } else if (attrName === 'celsius') {
+                celsius = newVal;
+                fahrenheit = (celsius * 9 / 5) + 32;
+                kelvin = celsius + 273.15;
+            } else if (attrName === 'kelvin') {
+                kelvin = newVal;
+                fahrenheit = (kelvin * 9 / 5) - 459.67;
+                celsius = kelvin - 273.15;
+            }
+
+            this.setAttrs({
+                fahrenheit: fahrenheit,
+                celsius: celsius,
+                kelvin: kelvin
+            }, {
+                src: 'conversion'
+            });
+        }
+
+    }, {
+        // The attributes of the model with the default value and the setter
+        // method, called when the attribute is modified. The default value is
+        // not a number because the first conversion would not work if the user
+        // input would be that number: the new value would be equal to the old
+        // value, the default one.
+        ATTRS: {
+            fahrenheit: {value: NaN},
+            celsius: {value: NaN},
+            kelvin: {value: NaN}
+        }
+    });
+
+// -- View ---------------------------------------------------------------------
+
+    // The TemperatureView class extends Y.View and customizes it to represent
+    // the form containing the input fields of the temperatures. It also handles
+    // DOM events to allow the conversion.
+
+    Y.TemperatureView = Y.Base.create('temperatureView', Y.View, [], {
+        // These are custom attribute that we will use to hold a reference to
+        // the DOM input field.
+        fahrenheitNode: Y.one('#fahrenheit'),
+        celsiusNode: Y.one('#celsius'),
+        kelvinNode: Y.one('#kelvin'),
+
+        // This is where we attach DOM events for the view. The `events` object
+        // is a mapping of selectors to an object containing one or more events
+        // to attach to the node(s) matching each selector.
+        events: {
+            '#fahrenheit': { valuechange: 'fahrenheitChange' },
+            '#celsius': { valuechange: 'celsiusChange' },
+            '#kelvin': { valuechange: 'kelvinChange' }
+        },
+
+        // The initializer runs when a TemperatureView instance is created and
+        // gives us an opportunity to set up the view.
+        initializer: function () {
+            // The model property is set to a TemperatureModel instance when
+            // this view, TemperatureView, is created.
+            var temperature = this.get('model');
+
+            // Update the display when a temperature in the model is changed.
+            temperature.after("change", this.render, this);
+
+            // Events are attached lazily. They will be attached on the first
+            // call to getting the container node.
+            this.get('container');
+        },
+
+        // We format the value to display.
+        format: function (value) {
+            // If the value to display contained in the model is the default
+            // value, that is NaN, the return value is an empty string, clearing
+            // the input field.
+            return Y.Lang.isNumber(value) ?
+                    Math.round(value * 1000) / 1000 : '';
+        },
+
+        // The render function is called whenever a temperature item is changed,
+        // thanks to the list event handler we attached in the initializer
+        // above.
+        render: function () {
+            // The model provides the temperature values.
+            var temperatureModel = this.get('model'),
+                fahrenheit = temperatureModel.get('fahrenheit'),
+                celsius = temperatureModel.get('celsius'),
+                kelvin = temperatureModel.get('kelvin');
+
+            // The temperatures are displayed.
+            this.fahrenheitNode.set('value', this.format(fahrenheit));
+            this.celsiusNode.set('value', this.format(celsius));
+            this.kelvinNode.set('value', this.format(kelvin));
+        },
+
+        // The common method of the event handlers.
+        temperatureUpdate: function (e, node) {
+            var temperatureType,
+                temperatureValue,
+                temperatureModel = this.get('model');
+
+            // We trim the value to remove the spaces and force the input field
+            // to contain only numbers. A more robust approach is suggested, but
+            // it is out of scope of this example.
+            temperatureValue = parseFloat(Y.Lang.trim(node.get('value')));
+
+            if (!Y.Lang.isNumber(temperatureValue)) {
+                // If an input field is empty or is not a number, the model is
+                // reset and the view is rendered because the attributes are
+                // changed.
+                temperatureModel.reset();
+            } else {
+                // The type values are the following: fahrenheit, celsius or
+                // kelvin.
+                temperatureType = node.get('id');
+
+                // Update the temperature in the model.
+                temperatureModel.set(temperatureType, temperatureValue);
+            }
+        },
+
+        // Event handlers for the event 'valuechange'.
+        fahrenheitChange: function (e) {
+            this.temperatureUpdate(e, this.fahrenheitNode);
+        },
+
+        celsiusChange: function (e) {
+            this.temperatureUpdate(e, this.celsiusNode);
+        },
+
+        kelvinChange: function (e) {
+            this.temperatureUpdate(e, this.kelvinNode);
+        }
+    });
+
+// -- Start your engines! ------------------------------------------------------
+
+    myTemperatureModel = new Y.TemperatureModel();
+    myTemperatureView = new Y.TemperatureView({
+        container: Y.one('#temperatureView'),
+        model: myTemperatureModel
+    });
+});
