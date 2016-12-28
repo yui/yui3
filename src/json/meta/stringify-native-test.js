@@ -8,6 +8,7 @@ function (Y) {
     if ( nativeSupport ) {
         try {
             nativeSupport = ( '0' === Native.stringify(0) );
+            nativeSupport = ( '[{}]' === Native.stringify([/some regex/]) );
         } catch ( e ) {
             nativeSupport = false;
         }

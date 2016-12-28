@@ -12,6 +12,7 @@ function (Y) {
     if ( nativeSupport ) {
         try {
             nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+            nativeSupport = ( null === Native.parse(null) );
         }
         catch ( e ) {
             nativeSupport = false;
