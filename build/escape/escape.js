@@ -48,6 +48,75 @@ Escape = {
     },
 
     /**
+    Returns an encoded string that can be used in JavaScript context,
+    all alphanumeric characters are not encoded, all character less than
+    256 (hex) are encoded with \\xHH and everything else with \\uHHHH
+    
+    This implementation is based on OWASP's JavaScript Codec implementation,
+    found at http://code.google.com/p/owasp-esapi-java/source/browse/trunk/src/main/java/org/owasp/esapi/codecs/JavaScriptCodec.java
+    
+    If _string_ is not already a string, it will be coerced to a string.
+    
+    @method js
+    @param {String} string String to escape.
+    @return {String} Escaped string.
+    @static
+    **/
+    js: function (string) {
+        string += "";
+        var str_len = string.length,
+        encoded_string = "";
+        for (i=0;i<str_len;i++) {
+            if(string[i].match(/\w+/g)===null) {
+                var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
+                if(string[i].charCodeAt(0) < 256) {
+                    encoded_string += "\\x" + "00".substring(hex_value.length) + hex_value;
+                }
+                else {
+                    encoded_string += "\\u" + "0000".substring(hex_value.length) + hex_value;
+                }
+            }
+            else {
+                encoded_string += string[i];
+            }
+                     
+        }
+        return encoded_string;
+    },
+    
+    /**
+    Returns a copy of the string with if it matches one of the following format (case insensitive):
+    
+    https://yahoo.com
+    http://www.yahoo.com
+    //yahoo.com
+    /yahoo.html
+    ?param=value
+    #bookmark
+    yahoo.php?q=1
+    india-yahoo#bookmark
+    
+    If match fails, URL encoded string is returned.
+    
+    If _string_ is not already a string, it will be coerced to a string.
+    
+    @method uri
+    @param {String} string String to escape.
+    @return {String} Escaped string.
+    @static
+    **/
+    uri: function (string) {
+        string += '';
+        var match = decodeURIComponent(string).toLowerCase().match(/(https)|(http)|(\/\/)|([#?\/])/g);
+        if (match !== null && decodeURIComponent(string).toLowerCase().indexOf(match[0])==0)
+            return string;
+        else if(match !== null && string.indexOf(':')==-1)
+            return string;
+        else
+            return encodeURIComponent(string);
+    },
+    
+    /**
     Returns a copy of the specified string with special regular expression
     characters escaped, allowing the string to be used safely inside a regex.
     The following characters, and all whitespace characters, are escaped:
