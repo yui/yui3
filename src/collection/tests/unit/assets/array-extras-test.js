@@ -419,6 +419,304 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+
+
+suite.add(new Y.Test.Case({
+
+    name: "Test set methods - intersection, union and diff",
+
+    testNumbers: function () {
+        var a1 = [1,2,3,4,5],
+            a2 = [3,4,5,6],
+            answer = Y.Array.intersect(a1, a2);
+
+        ArrayAssert.itemsAreSame([3,4,5], answer, "Intersection of arrays of numbers.");
+
+    },
+
+    testStrings: function () {
+        var a1 = ["a", "b", "c", "d"],
+            a2 = ["a", "e", "c"],
+            answer = Y.Array.intersect(a1, a2);
+
+        ArrayAssert.itemsAreSame(["a", "c"], answer, "Intersection of arrays of strings.");
+
+    },            
+
+    testMixed: function () {
+        var a1 = [1, "a", {}, "b", 2, "c", "d"],
+            a2 = [2, "d", {}],
+            answer = Y.Array.intersect(a1, a2);
+
+        ArrayAssert.itemsAreSame([2, "d"], answer, "Intersection of arrays of strings.");
+
+    },
+
+    testNoIntersection: function () {
+        var a1 = ["a", 1, 2, 3, "b", "c", "d"],
+            a2 = [4, 5, "e", "f"],
+            answer = Y.Array.intersect(a1, a2);
+
+        ArrayAssert.itemsAreSame([], answer, "Intersection of arrays of strings.");
+
+    },
+
+    testError: function () {
+        var a1 = "bob",
+            a2 = function() {};
+            answer = Y.Array.intersect(a1, a2);
+
+        Assert.areEqual(false, answer, "Return false if not arrays passed.");
+
+    },
+
+   testThreeArraysOfNumbers: function () {
+        var a1 = [1,2,3,4,5],
+            a2 = [3,4,5,6],
+            a3 = [3, 5];
+            answer = Y.Array.intersect(a1, a2, a3);
+
+        ArrayAssert.itemsAreSame([3,5], answer, "Intersection of 3 arrays of numbers.");
+
+    },
+
+    testThreeArraysOfStrings: function () {
+        var a1 = ["a", "b", "c"],
+            a2 = ["d", "c"],
+            a3 = ["b", "c", "d"],
+            answer = Y.Array.intersect(a1, a2, a3); 
+        ArrayAssert.itemsAreSame(["c"], answer, "Intersections of 3 arrays of strings");
+    },
+
+    testThreeArraysWithNoIntersection: function () {
+        var a1 = ["a", "b", "c"],
+            a2 = [1, 2],
+            a3 = [5, "d"],
+            answer = Y.Array.intersect(a1, a2, a3);
+        ArrayAssert.itemsAreSame([], answer, "Intersections of 3 arrays of strings");
+    },
+
+    testIntersectionOfThreeEmptyArray: function () {
+        var a1 = ["a", "b", "c"],
+            a2 = [],
+            a3 = ["b", "c", "d"],
+            answer = Y.Array.intersect(a1, a2, a3);
+        ArrayAssert.itemsAreSame([], answer, "Intersections of an empty arrays is empty");
+
+    },
+
+    testIntersectNumbersNear: function () {
+        var a1 = [1, 7, 13],
+            a2 = [2, 3, 13, 14],
+            com = function (a,b) { return ((a-b) < 2 && (a-b) > -2)},
+            answer = Y.Array.intersect(a1, a2, com);
+
+        // manually uniqueness using a === b:
+        answer = Y.Array.unique(answer);
+        ArrayAssert.itemsAreSame([1, 2, 13, 14], answer, "Intersection of 2 arrays of numbers that are close.");
+
+    },
+
+    testIntersectDates: function () {
+        var a1 = [new Date("01/04/2012"), new Date("25/08/2012")],
+            a2 = [new Date("01/04/2012"), new Date("02/04/2012")],//"2012-04-02")],
+            com = function (a,b) { 
+                return (a.getMonth() == b.getMonth() && a.getYear() == b.getYear() && a.getDay() == b.getDay());
+            },
+            answer = Y.Array.intersect(a1, a2, com),
+            ansStr,
+            expected = new Date("01/04/2012");
+
+
+        answer = Y.Array.unique(answer, com);
+        ansStr = answer[0];
+
+        ArrayAssert.itemsAreSame(expected.toString(), ansStr.toString(), "Intersection of 2 arrays of date objects.");
+        Assert.areEqual(1, answer.length, "One value in the answer");
+
+    },
+
+    testIntersectObjectPropertyWithMoreThanTwoArrays: function () {
+        var a1 = [{p: 2}, {p: 3}, {p: 5}],
+            a2 = [{p: 3}, {p: 10}, {p: 14}],
+            a3 = [{p: 10}, {p: 3}, {p: 5}, {p: 14}],
+            com = function (a, b) { return a.p === b.p;},
+            answer = Y.Array.intersect(a1, a2, a3, com);
+
+        // manually unique-ify the response
+        answer = Y.Array.unique(answer, com);
+        ArrayAssert.itemsAreSame(3, answer[0].p, "Intersection of 3 arrays of objects with custom comparison");           
+        Assert.areEqual(1, answer.length, "One value in the answer");
+
+
+    },
+
+    testIntersectObjectPropertyWithMoreThanTwoArraysOrderDoesntMatter: function () {
+        var a3 = [{p: 2}, {p: 3}, {p: 5}],
+            a1 = [{p: 3}, {p: 10}, {p: 14}],
+            a2 = [{p: 10}, {p: 3}, {p: 5}, {p: 14}],
+            com = function (a, b) { return a.p === b.p;},
+            answer = Y.Array.intersect(a1, a2, a3, com);
+
+        answer = Y.Array.unique(answer, com);
+        ArrayAssert.itemsAreSame(3, answer[0].p, "Intersection of 3 arrays of objects with custom comparison - order of args doesnt matter");            
+        Assert.areEqual(1, answer.length, "One value in the answer");
+
+    },
+
+
+    "union of 2 numerical arrays with no duplicates should return one array" : function () {
+        var a1 = [1,2,3],
+            a2 = [4,5,6],
+            answer = Y.Array.union(a1, a2);
+
+        ArrayAssert.itemsAreSame([1,2,3,4,5,6], answer, "Straightforward union of distinct numbers");
+
+    },
+
+
+    "union of 2 numerical arrays should remove duplicates" : function () {
+        var a1 = [1,4,2,3],
+            a2 = [2,4,5,6],
+            answer = Y.Array.union(a1, a2);
+
+        ArrayAssert.itemsAreSame([1,4,2,3,5,6], answer, "Straightforward union of distinct numbers with duplicates removed");
+    },
+
+
+    "union of 2 arrays should remove duplicates with strict equality": function () {
+
+        var a1 = [1,2,3, undefined, false],
+            a2 = ["1", "2", "3", null, true, 0],
+            answer = Y.Array.union(a1, a2);
+
+        ArrayAssert.itemsAreSame([1,2,3, undefined, false, "1", "2", "3", null, true, 0], answer, "Test strict equality in removing duplicates");
+
+    },
+
+
+    "simple union of 3 arrays should return one array": function () {
+        var a1 = [1,2,3],
+            a2 = [4,5,6],
+            a3 = [7,8,9],
+            answer = Y.Array.union(a1, a2, a3);
+
+        ArrayAssert.itemsAreSame([1,2,3, 4,5,6,7,8,9], answer);
+    },
+
+
+    "simple union of 3 arrays should remove duplicates": function () {
+        var a1 = [1,2,3],
+            a2 = [2,5,6],
+            a3 = [7,1,9],
+            answer = Y.Array.union(a1, a2, a3);
+
+        ArrayAssert.itemsAreSame([1,2,3,5,6,7,9], answer);
+    },
+
+    "simple union of objects should not remove duplicates": function () {
+        var a1 = [{a:2}],
+            a2 = [{a:2}],
+            a3 = [{a:3}],
+            answer = Y.Array.union(a1, a2, a3);
+
+        Assert.areEqual(2, answer[0].a);
+        Assert.areEqual(2, answer[1].a);
+        Assert.areEqual(3, answer[2].a);
+        Assert.areEqual(3, answer.length);
+    },
+
+    "union of objects with comparison function should remove duplicates": function () {
+        var a1 = [{a:2}],
+            a2 = [{a:2}],
+            a3 = [{a:3}],
+            f = function (x, y) { return (x.a === y.a);},
+            answer = Y.Array.union(a1, a2, a3, f);
+
+        Assert.areEqual(2, answer[0].a);
+        Assert.areEqual(3, answer[1].a);
+        Assert.areEqual(2, answer.length);
+    },
+
+
+    "diff of two different numerical arrays should not remove any" : function () {
+        var a1 = [1,2,3],
+            a2 = [4,5,6],
+            answer = Y.Array.diff(a1, a2);
+
+        ArrayAssert.itemsAreSame([1,2,3], answer);
+
+    },
+
+
+    "diff of two identical numerical arrays should return empty array" : function () {
+        var a1 = [1,2,3],
+            a2 = [1,2,3],
+            answer = Y.Array.diff(a1, a2);
+
+        ArrayAssert.itemsAreSame([], answer);
+
+    },   
+
+    "diff of arrays of objects should not remove any": function () {
+        var a1 = [{a:1}],
+            a2 = [{a:1}],
+            answer = Y.Array.diff(a1, a2);
+
+       Assert.areEqual(1, answer[0].a, answer);
+       Assert.areEqual(1, answer.length, answer);
+    },
+
+    "diff of arrays of objects with comparison function should remove some" : function () {
+        var a1 = [{a:1}],
+            a2 = [{a:1}],
+            comp = function (x,y) { return (x.a === y.a);},
+            answer = Y.Array.diff(a1, a2, comp);
+
+       Assert.areEqual(0, answer.length);
+    },
+
+    "diff of mixed values with crazy comparison function should remove some" : function () {
+        var a1 = [1, "abc", {a:5}, function () {return 2}, true, undefined],
+            a2 = [{a:2}, "ab", 1],
+            comp = function (x,y) {
+                var c,d, L = Y.Lang;
+                if (L.isFunction(x)) {
+                    c = x();
+                } else if (L.isObject(x)) {
+                    c = x.a;
+                } else {
+                    c = x;
+                }
+                if (L.isFunction(y)) {
+                    d = y();
+                } else if (L.isObject(y)) {
+                    d = y.a;
+                } else {
+                    d = y;
+                }
+                // note weak comparison
+                ret = (c == d);
+
+                return ret;
+
+            },
+            answer = Y.Array.diff(a1, a2, comp);
+        // should be:
+        // ["abc", {a:5}, undefined] 
+
+        Assert.areEqual(3, answer.length, "3 items left");
+        Assert.areEqual("abc", answer[0]);
+        Assert.areEqual(5, answer[1].a);
+        Assert.areEqual(undefined, answer[2]);
+            
+
+    }
+
+
+
+}));
+
 Y.Test.Runner.add(suite);
 
 }, '3.5.0', {
