@@ -76,6 +76,14 @@
     configs listed above.  These values are used for all of the modules listed in the group</li>
 </ul>
 
+<h2>Content Type</h2>
+
+<p>
+	If you are implementing your own combo loader, you need to ensure that the correct content type is returned. Css files should have
+	the `text/css` content type and javascript files should have `application/javascript`. If the wrong content type is used, the browser
+	will be confused, resulting in files and assets being requested multiple times.
+<p>
+
 <h2>Using Loader on Node.js</h2>
 
 <p>
