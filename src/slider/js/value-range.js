@@ -376,6 +376,20 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
+         * Amount to increment/decrement the Slider value.
+         *
+         * @attribute step
+         * @type {Number}
+         * @default 1
+         */
+        step: {
+            value: 1,
+            validator: function (value) {
+                return Y.Lang.isNumber(value) && value > 0 && value <= this.get('max');
+            }
+        },
+
+        /**
          * amount to increment/decrement the Slider value
          * when the arrow up/down/left/right keys are pressed
          *
@@ -384,7 +398,11 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 1
          */
         minorStep : {
-            value: 1
+            value: 1,
+            getter: function (value) {
+                var step = this.get('step');
+                return (step==1) ? value : step+value;
+            }
         },
 
         /**
@@ -396,7 +414,11 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 10
          */
         majorStep : {
-            value: 10
+            value: 10,
+            getter: function (value) {
+                var step = this.get('step');
+                return (step==1) ? value : step+value;
+            }
         },
 
         /**
