@@ -193,6 +193,57 @@ YUITest.TestCase.prototype = {
         }, increment);
     },
 
+    /**
+     * Causes the test case to wait until a condition is true and
+     * continue executing the given code.
+     * @param {Function} condition (Required) The condition to evaluate to run the code.
+     * @param {Function} segment (Required) The function to run after the delay.
+     * @param {int} timeout (Required) The number of milliseconds to wait for the condition
+     *      to be true, An error is thrown if condition did not verify before timeout.
+     * @return {Void}
+     * @method waitFor
+     */
+    waitFor : function (condition, segment, timeout){
+        if (YUITest.TestCase.prototype.isConditionTrue(condition))
+        {
+            throw new YUITest.Wait(segment, timeout);
+            YUITest.TestCase.prototype.resume(segment);
+        }
+        else
+        {
+            YUITest.TestCase.prototype.evalCondition(condition, segment, timeout);
+            throw new YUITest.Wait(segment, timeout);
+        }
+    },
+
+    /**
+     * Function to evaluate the resume condition of function waitFor().
+     * @method evalCondition
+     */
+    evalCondition : function(condition, segment, remaining){
+        if (YUITest.TestCase.prototype.isConditionTrue(condition))
+        {
+            YUITest.TestCase.prototype.resume(segment);
+        }
+        else if (remaining >= 0)
+        {
+            setTimeout(function(){ YUITest.TestCase.prototype.evalCondition(condition, segment, remaining-100); }, 100);
+        }
+        else
+        {
+            YUITest.Assert.fail("Timeout: waitFor() called but condition was never true.");
+        }
+    },
+
+    /**
+     * Function to determine if a condition is actually verified.
+     * @method isConditionTrue
+     * @return {Boolean}
+     */
+    isConditionTrue : function(condition){
+        return condition();
+    },
+    
     //-------------------------------------------------------------------------
     // Assertion Methods
     //-------------------------------------------------------------------------
