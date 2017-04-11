@@ -532,7 +532,7 @@ Y.mix(StyleSheet, {
                     // such as :nth-of-type(2) or :not(...) not validated)
                     replace(/([^ ])::?[a-z][a-z\-]+[a-z](?:\(.*?\))?/ig,'$1').
                     // element tags
-                    replace(/(?:^| )[a-z0-6]+/ig,' ').
+                    replace(/(?:^| )[a-z0-6-]+/ig,' ').
                     // escaped characters
                     replace(/\\./g,EMPTY).
                     // class and id identifiers
