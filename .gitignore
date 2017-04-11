@@ -10,6 +10,7 @@ CVS/
 .DS_Store
 .*.swp
 .svn
+.idea
 *~
 src/build.log
 .com.apple.timemachine.supported
