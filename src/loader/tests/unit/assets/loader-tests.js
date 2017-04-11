@@ -1097,6 +1097,27 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        'test: conditional module set to load before trigger': function () {
+            var loader = new Y.Loader({
+                modules: {
+                    test4_one: {
+                        fullpath: '4one.js'
+                    },
+                    test4_two: {
+                        fullpath: '4two.js',
+                        condition: {
+                            trigger: 'test4_one',
+                            when: 'before'
+                        }
+                    }
+                },
+                require: ['test4_one']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of modules loaded');
+            Assert.areEqual('4two.js', out.js[0], 'Loaded modules in incorrect order');
+            Assert.areEqual('4one.js', out.js[1], 'Loaded modules in incorrect order');
+        },
         test_css_stamp: function() {
             var test = this,
                 links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
