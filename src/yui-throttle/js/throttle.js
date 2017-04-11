@@ -47,3 +47,44 @@ Y.throttle = function(fn, ms) {
         }
     };
 };
+
+/**
+ * Throttles a call to a method based on the time between calls.
+ *
+ * The method is called at the end of the delay period rather than the
+ * beginning.
+ *
+ * @for YUI
+ * @method lateThrottle
+ * @param {function} fn The function call to throttle.
+ * @param {Number} ms The number of milliseconds to throttle the method call.
+ * Can set globally with Y.config.throttleTime or by call. Passing a -1 will
+ * disable the throttle. Defaults to 150.
+ * @param {Boolean} [useFinalArgument=false] If true, use the arguments from the final
+ * call to the function, otherwise use the arguments from the initial call.
+ * @return {function} Retuns a wrapped function that calls fn throttled.
+ */
+Y.lateThrottle = function(fn, ms, useFinalArgument) {
+    ms = (ms) ? ms : (Y.config.throttleTime || 150);
+
+    if (ms === -1) {
+        return function() {
+            fn.apply(this, arguments);
+        };
+    }
+
+    var first = 0,
+        timer;
+    return function () {
+        var last = Y.Lang.now();
+        if (last - first > ms) {
+            // The first call was more than delay ms ago.
+            // Reset the first time and trigger a new timer.
+            first = last;
+            timer = Y.later(ms, this, fn, arguments);
+        } else if (useFinalArgument === true) {
+            timer.cancel();
+            timer = Y.later(last - first, this, fn, arguments);
+        }
+    };
+};
