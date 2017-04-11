@@ -91,7 +91,7 @@ var Selector = {
         if (nodes) {
             nodes = Y.Array(nodes, 0, true);
             if (nodes.sort) {
-                nodes.sort(Selector._compare);
+                nodes.sort(Y.Selector._compare);
             }
         }
 
@@ -141,7 +141,7 @@ var Selector = {
             // split group into seperate queries
             if (!skipNative && // already done if skipping
                     (!useNative || root.tagName)) { // split native when element scoping is needed
-                queries = Selector._splitQueries(selector, root);
+                queries = Y.Selector._splitQueries(selector, root);
             }
 
             for (i = 0; (query = queries[i++]);) {
@@ -155,7 +155,7 @@ var Selector = {
             }
 
             if (queries.length > 1) { // remove dupes and sort by doc order
-                ret = Selector._sort(Selector._deDupe(ret));
+                ret = Y.Selector._sort(Y.Selector._deDupe(ret));
             }
         }
 
@@ -174,7 +174,7 @@ var Selector = {
 
         // then replace pseudos before attrs to avoid replacing :not([foo])
         pseudos = Y.Selector._parse('pseudo', selector);
-        selector = Selector._replace('pseudo', selector);
+        selector = Y.Selector._replace('pseudo', selector);
 
         attrs = Y.Selector._parse('attr', selector);
         selector = Y.Selector._replace('attr', selector);
