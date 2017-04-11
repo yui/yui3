@@ -11,18 +11,21 @@ Getting Started
 ---------------
 (see also [Developer Workflow](https://github.com/yui/yui3/wiki/Developer-Workflow) )
 
-**Join YUILibrary.com**
+**Get Help**
+
+  * [Create bugs](https://github.com/yui/yui3/issues/new) and
+  enhancement requests.
+  * Post on the [support forum](https://groups.google.com/forum/#!forum/yui-support). The
+  * Contribute modules to the [Gallery](http://yuilibrary.com/gallery/).
+  * Contribute documentation, examples or code to the core library. (You will
+    also need a GitHub account and signed CLA - see below).
+  * Looking for the [old YUI Library Forums](http://yuilibrary.com/forum/)? It has been archived and the forum has been locked.
+
 
 Create a free account on
 [YUILibrary.com](http://yuilibrary.com/forum/ucp.php?mode=register) account so
 you can:
 
-  * [Create bugs](https://github.com/yui/yui3/issues/new) and
-  enhancement requests.
-  * Post on the [support forum](http://yuilibrary.com/forum/).
-  * Contribute modules to the [Gallery](http://yuilibrary.com/gallery/).
-  * Contribute documentation, examples or code to the core library. (You will
-    also need a GitHub account and signed CLA - see below).
 
 **Join GitHub.com**
 
