@@ -3,9 +3,8 @@
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
- * @namespace Test
  * @module test
- * @class DateAssert
+ * @class Test.DateAssert
  * @static
  */
 
@@ -15,7 +14,7 @@ YUITest.DateAssert = {
      * Asserts that a date's month, day, and year are equal to another date's.
      * @param {Date} expected The expected date.
      * @param {Date} actual The actual date to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method datesAreEqual
      * @static
      */
@@ -51,7 +50,7 @@ YUITest.DateAssert = {
      * Asserts that a date's hour, minutes, and seconds are equal to another date's.
      * @param {Date} expected The expected date.
      * @param {Date} actual The actual date to test.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method timesAreEqual
      * @static
      */

@@ -2,9 +2,8 @@
 /**
  * The ObjectAssert object provides functions to test JavaScript objects
  * for a variety of cases.
- * @namespace Test
  * @module test
- * @class ObjectAssert
+ * @class Test.ObjectAssert
  * @static
  */
 YUITest.ObjectAssert = {
@@ -14,7 +13,7 @@ YUITest.ObjectAssert = {
      * and property values as the other.
      * @param {Object} expected The object with all expected properties and values.
      * @param {Object} actual The object to inspect.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method areEqual
      * @static
      * @deprecated
@@ -44,7 +43,7 @@ YUITest.ObjectAssert = {
      * Asserts that an object has a property with the given name.
      * @param {String} propertyName The name of the property to test.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method hasKey
      * @static
      * @deprecated Use ownsOrInheritsKey() instead
@@ -57,7 +56,7 @@ YUITest.ObjectAssert = {
      * Asserts that an object has all properties of a reference object.
      * @param {Array} properties An array of property names that should be on the object.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method hasKeys
      * @static
      * @deprecated Use ownsOrInheritsKeys() instead
@@ -70,7 +69,7 @@ YUITest.ObjectAssert = {
      * Asserts that a property with the given name exists on an object's prototype.
      * @param {String} propertyName The name of the property to test.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method inheritsKey
      * @static
      */
@@ -85,7 +84,7 @@ YUITest.ObjectAssert = {
      * Asserts that all properties exist on an object prototype.
      * @param {Array} properties An array of property names that should be on the object.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method inheritsKeys
      * @static
      */
@@ -102,7 +101,7 @@ YUITest.ObjectAssert = {
      * Asserts that a property with the given name exists on an object instance (not on its prototype).
      * @param {String} propertyName The name of the property to test.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method ownsKey
      * @static
      */
@@ -117,7 +116,7 @@ YUITest.ObjectAssert = {
      * Asserts that all properties exist on an object instance (not on its prototype).
      * @param {Array} properties An array of property names that should be on the object.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method ownsKeys
      * @static
      */
@@ -133,7 +132,7 @@ YUITest.ObjectAssert = {
     /**
      * Asserts that an object owns no properties.
      * @param {Object} object The object to check.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method ownsNoKeys
      * @static
      */
@@ -151,7 +150,7 @@ YUITest.ObjectAssert = {
      * Asserts that an object has a property with the given name.
      * @param {String} propertyName The name of the property to test.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method ownsOrInheritsKey
      * @static
      */
@@ -166,7 +165,7 @@ YUITest.ObjectAssert = {
      * Asserts that an object has all properties of a reference object.
      * @param {Array} properties An array of property names that should be on the object.
      * @param {Object} object The object to search.
-     * @param {String} message (Optional) The message to display if the assertion fails.
+     * @param {String} [message] The message to display if the assertion fails.
      * @method ownsOrInheritsKeys
      * @static
      */
