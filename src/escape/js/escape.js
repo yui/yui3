@@ -16,7 +16,24 @@ var HTML_CHARS = {
         '/': '&#x2F;',
         '`': '&#x60;'
     },
-
+JS_CHARS = {
+	'(': '\u0028',
+	'<': '\u003C',
+	'>': '\u003E',
+	')': '\u0029',
+	'{': '\u007B',
+	'}': '\u007D',
+	';': '\u003B',
+	'"': '\u0022',
+	'|': '\u007C',
+	'&': '\u0026',
+	'/': '\u002F',
+	"'": '\u0027',
+	'`': '\u0060',
+	'\r': '\u005C\u0072',
+	'\n': '\u005C\u006E',
+	'\t': '\u005C\u0074' 
+    },
 Escape = {
     // -- Public Static Methods ------------------------------------------------
 
@@ -44,7 +61,40 @@ Escape = {
     html: function (string) {
         return (string + '').replace(/[&<>"'\/`]/g, Escape._htmlReplacer);
     },
+    /**
+    Returns a copy of the specified string with special JS literals
+    escaped. The following characters will be stripped off from the string:
+	
+	) ; = " ' ` } ( { \r \n \t
+	
+	This implementation is based on the Google Closure autoescaping template's implementation [1].
+	
+	If _string_ is not already a string, it will be coerced to a string.
+	
+	[1]: http://code.google.com/p/gdata-java-client/source/browse/trunk/java/src/com/google/gdata/util/common/base/CharEscapers.java
+    **/
+    js: function (string) {
+	return (string + '').replace(/([();="'`{}])|(\r)|(\n)|(\t)/g, Escape._jsReplacer);
+    },
+    /**
+    Returns a copy of the specified string with http:// prepended to it
+    if the string does not start with a http:// or https://
+	
 
+	
+	If _string_ is not already a string, it will be coerced to a string.
+    **/
+    uri: function (string) {
+         string += '';
+         if(string.indexOf('http://')==0)
+         	return string;
+         else if(string.indexOf('https://')==0)
+         	return string;
+         else if(string.indexOf('/')==0)
+         	return string;
+         else
+         	return 'http://' + string;
+    },
     /**
     Returns a copy of the specified string with special regular expression
     characters escaped, allowing the string to be used safely inside a regex.
@@ -79,6 +129,18 @@ Escape = {
      */
     _htmlReplacer: function (match) {
         return HTML_CHARS[match];
+    },
+    /**
+     * Regex replacer for JavaScript escaping.
+     *
+     * @method _jsReplacer
+     * @param {String} match Matched character (must exist in JS_CHARS).
+     * @returns {String} escaped entity.
+     * @static
+     * @protected
+     */
+    _jsReplacer: function (match) {
+       return JS_CHARS[match];
     }
 };
 
