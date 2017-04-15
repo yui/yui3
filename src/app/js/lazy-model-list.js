@@ -67,7 +67,7 @@ var AttrProto = Y.Attribute.prototype,
 Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     // -- Lifecycle ------------------------------------------------------------
     initializer: function () {
-        this.after('*:change', this._afterModelChange);
+        this.after('*:change', Y.bind(this._afterModelChange, this));
     },
 
     // -- Public Methods -------------------------------------------------------
