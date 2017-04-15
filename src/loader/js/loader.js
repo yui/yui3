@@ -1987,7 +1987,7 @@ Y.Loader.prototype = {
     * @param {String} pname The pattern to match
     */
     _patternTest: function(mname, pname) {
-        return (mname.indexOf(pname) > -1);
+        return (Y.Array.indexOf(mname, pname) > -1);
     },
     /**
     * Get's the loader meta data for the requested module
