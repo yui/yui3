@@ -47,15 +47,21 @@ YUI.add('slider-from-markup-tests', function(Y){
 			var button = Y.one('#volume_icon'),
 				slider = Y.one('#volume_slider'),
 				controls = Y.one('#volume_control'),
-				visible = slider.getComputedStyle('display') !== 'none';
+				// Note: as of Firefox 26 there is still a known FF bug as follows:
+				// If an element has CSS display:none;  ,
+				// getComputedStyle('display') returns 'inline' instead of 'none'.
+				// This test only checks to see if the getComputedStyle('display') of 
+				// the slider *changes* from the initial display value
+				// when the #volumne_icon is clicked 
+				initComputedDisplay = slider.getComputedStyle('display');
 
 			button.simulate('click');
 
-			Y.Assert.areSame(!visible, slider.getComputedStyle('display') !== 'none', 'Slider visibility has not changed');
+			Y.Assert.isTrue((initComputedDisplay !== slider.getComputedStyle('display')), 'Slider visibility failed to change after first click (to visible)');
 
 			button.simulate('click');
 
-			Y.Assert.areSame(visible, slider.getComputedStyle('display') !== 'none', 'Slider visibility has not changed.');
+			Y.Assert.isTrue((initComputedDisplay === slider.getComputedStyle('display')), 'Slider visibility failed to change back to initial state (to not visible)');
 
 		},
 
