@@ -802,7 +802,7 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // Prevent detaching (thus removing) the view we want to show. Also hard
         // to animate out and in, the same view.
-        if (newView === oldView) {
+        if (newView === oldView || options.render === false) {
             return callback && callback.call(this, newView);
         }
 
