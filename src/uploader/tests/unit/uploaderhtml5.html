@@ -42,6 +42,12 @@
         var BasicUploader = new Y.Test.Case({
             name: "Basic Uploader HTML5 Tests",
 
+            _should: {
+                ignore: {
+                    testUploadBlob: !Y.config.win.Blob
+                }
+            },
+
             setUp : function () {
 
                 var basicuploader = "<div id='basicuploader'></div>";
@@ -281,6 +287,20 @@
                 if (Y.config.win.FormData) {
                     this.basicuploader.uploadAll("testurl.html");
                     this.basicuploader.upload(new Y.FileHTML5(filearray[0]), "testurl.html", {foo: "bar"});
+                }
+            },
+
+            testUploadBlob: function() {
+               var cfg = {
+                  tabIndex: "0",
+                  width: "100%",
+                  height: "100%"
+                };
+
+                this.basicuploader = new Y.UploaderHTML5(cfg);
+                this.basicuploader.render("#basicuploader");
+                if (Y.config.win.FormData) {
+                    this.basicuploader.upload(new Y.FileHTML5(new Blob(new Array(10))), "testurl.html", {foo: "bar"});
                 }
             }
         });

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>FileHTML5 Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>FileHTML5 Tests</h1>
+<p>Select a file <input type="file" id="file"> and <input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript">
+
+(function() {
+
+    YUI({
+        coverage: ['file-html5', 'file'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    }).use("file-html5", "node", "console", "test", function(Y) {
+        var btnRun = Y.one("#btnRun"),
+            ndFile = Y.one('#file');
+        btnRun.set("disabled", false);
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            myConsole = new Y.Console().render();
+
+        var win = Y.config.win,
+            FileHTML5 = Y.FileHTML5;
+
+        btnRun.on("click", function(){
+            Y.Test.Runner.run();
+        });
+
+        var suite = new Y.Test.Suite("File HTML5");
+
+        suite.add(new Y.Test.Case({
+            name: "Blob Test",
+
+            _should: {
+                ignore: {
+                    "isValidFile() should accept Blob instance": !win.Blob
+                }
+            },
+
+            setUp : function () {
+                var hasFile = ndFile.getDOMNode().files && ndFile.getDOMNode().files.length;
+                this._should.ignore['isValidFile() should accept File instance too'] = !hasFile;
+            },
+
+            tearDown : function () {
+            },
+            "isValidFile() should accept Blob instance": function() {
+                var blob = new Blob(new Array(10));
+                ASSERT.isTrue(FileHTML5.isValidFile(blob));
+            },
+            "isValidFile() should accept File instance too": function() {
+                var file = ndFile.getDOMNode().files[0];
+                ASSERT.isTrue(FileHTML5.isValidFile(file));
+            },
+            "isValidFile() should not allow objects else": function() {
+                ASSERT.isFalse(FileHTML5.isValidFile(new Object()));
+            }
+        }));
+
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.run();
+    });
+
+})();
+</script>
+</body>
+</html>
