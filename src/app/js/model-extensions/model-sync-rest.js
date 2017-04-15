@@ -289,6 +289,23 @@ RESTSync.prototype = {
     **/
     url: '',
 
+    /**
+    indicate where the model data is located within the json returned by the
+    server and sent to the server.
+
+    Example:
+    {
+      "user": { "username": "hojberg", name: "Simon Hojberg" }
+    }
+
+    In the above example the `entityLocator` would be `'user'`
+
+    @property entityLocator
+    @type {Null|String}
+    @default null
+    **/
+    entityLocator: null,
+
     // -- Lifecycle Methods ----------------------------------------------------
 
     initializer: function (config) {
@@ -455,7 +472,7 @@ RESTSync.prototype = {
 
         // Prepare the content if we are sending data to the server.
         if (method === 'POST' || method === 'PUT') {
-            entity = this.serialize(action);
+            entity = this._serialize(action);
         } else {
             // Remove header, no content is being sent.
             delete headers['Content-Type'];
@@ -494,6 +511,23 @@ RESTSync.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
+    @method _serialize
+    @param {String} [action] Optional `sync()` action for which to generate the
+        the serialized representation of this model.
+    @return {String} serialized HTTP request entity body.
+    @protected
+    **/
+    _serialize: function (action) {
+        var serialized = this.serialize(action);
+
+        if (typeof this.entityLocator === 'string') {
+            serialized = this._addEntityLocator(serialized);
+        }
+
+        return serialized;
+    },
+
+    /**
     Joins the `root` URL to the specified `url`, normalizing leading/trailing
     "/" characters.
 
@@ -530,7 +564,6 @@ RESTSync.prototype = {
                 root + '/' + url;
     },
 
-
     /**
     Calls both public, overrideable methods: `parseIOResponse()`, then `parse()`
     and returns the result.
@@ -554,7 +587,52 @@ RESTSync.prototype = {
             response = this.parseIOResponse(response);
         }
 
+        if (typeof this.entityLocator === 'string') {
+            response = this._removeEntityLocator(response);
+        }
+
         return this.parse(response);
+    },
+
+    /**
+    parse the response using Y.Model's parse method.
+    If an entityLocator is defined and in the response,
+    return the nested object.
+
+    @method _removeEntityLocator
+    @param {Any} response Server response.
+    @return {Object} Attribute hash.
+    **/
+    _removeEntityLocator: function (response) {
+        var locator = this.entityLocator,
+            result;
+
+        // Get the nested object inside the entity locator if it exists
+        if (response) {
+            result = Y.Model.prototype.parse.call(this, response);
+            if (locator && (locator in result)) {
+                return result[locator];
+            }
+        }
+
+        return response;
+    },
+
+    /**
+    Add the entityLocator to the serialized string
+
+    @method _addEntityLocator
+    @param {String} serialized the serialized object
+    @return {String} serialized object nested with a entityLocator
+    **/
+    _addEntityLocator: function (serialized) {
+        var locator = this.entityLocator;
+
+        if (typeof locator === 'string') {
+            serialized = '{"' + locator + '":'+ serialized + '}';
+        }
+
+        return serialized;
     },
 
     /**
