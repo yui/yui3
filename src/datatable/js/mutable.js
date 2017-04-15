@@ -377,10 +377,10 @@ Y.mix(Mutable.prototype, {
         if (model && isObject(data)) {
             args = toArray(arguments, 1, true);
 
-            model.setAttrs.apply(model, args);
+            model.setAttrs(args);
 
             if (sync && !model.isNew()) {
-                model.save.apply(model, args);
+                model.save(args);
             }
         }
 
