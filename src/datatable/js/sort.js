@@ -816,7 +816,7 @@ Y.mix(Sortable.prototype, {
         for (i = 0, len = columns.length; i < len; ++i) {
             col  = columns[i];
             node = this._theadNode.one('#' + col.id);
-            desc = col.sortDir === -1;
+            desc = col.sortDir === 1;
 
             if (node) {
                 liner = node.one('.' + linerClass);
