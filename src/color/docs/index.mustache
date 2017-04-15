@@ -44,9 +44,9 @@ Y.Color.convert(color, Y.Color.TYPES.RGBA); // rgba(255, 0, 0, 1)
 <h3 id="arrays">Working with Arrays</h3>
 <p>If you wish to get the values back in an array, you can use the `toArray` method.</p>
 <pre class="code prettyprint">
-Y.Color.toArray('f00'); // ['ff', '00', '00']
-Y.Color.toArray('rgb(255, 0, 0)'); // [255, 0, 0]
-Y.Color.toArray('rgba(255, 0, 0, 1)'); // [255, 0, 0, 1]
+Y.Color.toArray('f00'); // ['ff', '00', '00', 1]
+Y.Color.toArray('rgb(255, 0, 0)'); // ['255', '0', '0', 1]
+Y.Color.toArray('rgba(255, 0, 0, 1)'); // ['255', '0', '0', 1]
 </pre>
 
 <p>{{displayName}} also provides an easy way to convert from an array to a color string value with `fromArray`. `fromArray` takes an Array as the first param and template string as the second param.</p>
