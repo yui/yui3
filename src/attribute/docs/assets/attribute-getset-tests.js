@@ -252,7 +252,7 @@ YUI.add('attribute-getset-tests', function(Y) {
             var xy = this.getBounds(),
                 xValue = xy[0][1] + this.random(10, 2000),
                 yValue = xy[1][1] + this.random(10, 2000),
-                red = "#FF0000";
+                red = "#ff0000";
 
             this.x.set("value", xValue);
             this.y.set("value", yValue);
