@@ -812,6 +812,9 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         if (callback) {
             callback.call(this, newView);
         }
+        if (Y.Lang.isFunction(newView.contentready)) {
+            newView.contentready.call(newView);
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
