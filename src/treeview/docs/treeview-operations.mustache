@@ -1,0 +1,86 @@
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset-context/cssreset-context-min.css">
+
+<style>
+.example {
+	font-size:15px;
+}
+
+.example h4 {
+	border: none;
+	text-transform: none;
+}
+
+.example th {
+	background: none;
+	color: #000;
+	text-transform: none;
+	border: none;
+}
+
+.new {
+    color : blue;
+}
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates how to add and remove new elements to a tree.
+</p>
+
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>treeview-add-remove-source}}
+</div>
+
+<p>
+First we are just going to render a simple tree:
+</p>
+
+```
+YUI().use('treeview',  function(Y) {
+    
+    // Create a new instance of treeview, placing it in 
+    // #mytree container   
+    
+    var tree = new Y.TreeView({
+       label : "This my tree",
+       children: [
+           {label: "Leaf One" },
+           {label: "Leaf Two"}
+       ]
+    });
+    
+    tree.render(#mytree);
+```
+
+<p>
+    Now let's add some more custom leaves
+</p>
+
+```
+    tree.add([{label : "<span class='new'>New leaf 1</span>"}, {label : "<span class='new'>New Leaf 2</span>"}]);
+
+```
+
+
+<p>
+    Then remove the first leaf
+</p>
+
+```
+    tree.item(0).remove();
+
+```
+
+
+
+<h2>Complete Example Source</h2>
+
+```
+ {{>treeview-add-remove-source}}
+
+```
+
+
+
