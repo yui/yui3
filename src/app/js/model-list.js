@@ -190,7 +190,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.publish(EVT_RESET,  {defaultFn: this._defResetFn});
         this.publish(EVT_REMOVE, {defaultFn: this._defRemoveFn});
 
-        this.after('*:idChange', this._afterIdChange);
+        this.after('*:idChange', Y.bind(this._afterIdChange, this));
 
         this._clear();
 
