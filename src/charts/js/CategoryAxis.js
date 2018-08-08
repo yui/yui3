@@ -89,7 +89,7 @@ Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
         for(i = 0; i < count; i = i + 1)
         {
             labelValue = dataValues[i];
-            labelIndex = Y.Array.indexOf(data, labelValue);
+            labelIndex = i;
             if(Y_Lang.isNumber(labelIndex) && labelIndex > -1)
             {
                 point = {};
