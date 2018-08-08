@@ -2505,10 +2505,10 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 });
 Y.CanvasPath = CanvasPath;
 /**
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Rect.html">`Rect`</a> class.
+ * <a href="http://www.w3.org/wiki/HTML/Elements/canvas">Canvas</a> implementation of the <a href="Rect.html">`Rect`</a> class.
  * `CanvasRect` is not intended to be used directly. Instead, use the <a href="Rect.html">`Rect`</a> class.
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Rect.html">`Rect`</a>
+ * <a href="http://www.w3.org/wiki/HTML/Elements/canvas">Canvas</a> capabilities, the <a href="Rect.html">`Rect`</a>
  * class will point to the `CanvasRect` class.
  *
  * @module graphics
