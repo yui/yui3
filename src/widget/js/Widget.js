@@ -62,8 +62,8 @@ var L = Y.Lang,
 
     WEBKIT = Y.UA.webkit,
 
-    // Widget nodeid-to-instance map.
-    _instances = {};
+    // Widget node-to-instance map.
+    _instances = new WeakMap();
 
 /**
  * A base class for widgets, providing:
@@ -346,7 +346,7 @@ Widget.getByNode = function(node) {
     if (node) {
         node = node.ancestor("." + widgetMarker, true);
         if (node) {
-            widget = _instances[Y.stamp(node, true)];
+            widget = _instances.get(node);
         }
     }
 
@@ -391,7 +391,7 @@ Y.extend(Widget, Y.Base, {
         var bb = this.get(BOUNDING_BOX);
 
         if (bb instanceof Node) {
-            this._mapInstance(Y.stamp(bb));
+            this._mapInstance(bb);
         }
 
         /**
@@ -413,11 +413,11 @@ Y.extend(Widget, Y.Base, {
      * This method can be used to populate the instance with lazily created boundingBox Node references.
      *
      * @method _mapInstance
-     * @param {String} The boundingBox id
+     * @param {Node} The boundingBox
      * @protected
      */
-    _mapInstance : function(id) {
-        _instances[id] = this;
+    _mapInstance : function(node) {
+        _instances.set(node, this);
     },
 
     /**
@@ -435,11 +435,7 @@ Y.extend(Widget, Y.Base, {
             bbGuid;
 
         if (boundingBox instanceof Node) {
-            bbGuid = Y.stamp(boundingBox,true);
-
-            if (bbGuid in _instances) {
-                delete _instances[bbGuid];
-            }
+            _instances.delete(boundingBox);
 
             this._destroyBox();
         }
