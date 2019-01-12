@@ -28,7 +28,7 @@
     },
     "scripts": {
         "postinstall": "grunt build",
-        "test": "grunt test"
+        "test": "./bin/travis-ci"
     },
     "licenses":[
         {
