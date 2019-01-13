@@ -124,6 +124,27 @@ Y_Node.re_aria = /^(?:role$|aria-)/;
 Y_Node.SHOW_TRANSITION = 'fadeIn';
 Y_Node.HIDE_TRANSITION = 'fadeOut';
 
+if (!window.WeakMap)
+{
+    window.WeakMap = function() {
+        this._map = {};
+    };
+    window.WeakMap.prototype = {
+        has: function(k) {
+            return this._map[k] ? true : false;
+        },
+        get: function(k) {
+            return this._map[k];
+        },
+        set: function(k,v) {
+            this._map[k] = v;
+        },
+        'delete': function(k) {
+            delete this._map[k];
+        }
+    };
+}
+
 /**
  * A list of Node instances that have been created
  * @private

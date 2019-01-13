@@ -11,7 +11,7 @@ method).
 **/
 
 var buildCfg  = Y.namespace('View._buildCfg'),
-    instances = {};
+    instances = new WeakMap();
 
 /**
 View extension that adds a static `getByNode()` method that returns the nearest
@@ -55,7 +55,7 @@ NodeMap.getByNode = function (node) {
     var view;
 
     Y.one(node).ancestor(function (ancestor) {
-        return (view = instances[Y.stamp(ancestor, true)]) || false;
+        return (view = instances.get(ancestor)) || false;
     }, true);
 
     return view || null;
@@ -66,15 +66,11 @@ NodeMap._instances = instances;
 
 NodeMap.prototype = {
     initializer: function () {
-        instances[Y.stamp(this.get('container'))] = this;
+        instances.set(this.get('container'), this);
     },
 
     destructor: function () {
-        var stamp = Y.stamp(this.get('container'), true);
-
-        if (stamp in instances) {
-            delete instances[stamp];
-        }
+        instances.delete(this.get('container'));
     }
 };
 
