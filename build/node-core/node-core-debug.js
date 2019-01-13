@@ -131,16 +131,20 @@ if (!window.WeakMap)
     };
     window.WeakMap.prototype = {
         has: function(k) {
-            return this._map[k] ? true : false;
+            return this._map[ this._yuid(k) ] ? true : false;
         },
         get: function(k) {
-            return this._map[k];
+            return this._map[ this._yuid(k) ];
         },
         set: function(k,v) {
-            this._map[k] = v;
+            this._map[ this._yuid(k) ] = v;
         },
         'delete': function(k) {
-            delete this._map[k];
+            delete this._map[ this._yuid(k) ];
+        },
+        _yuid: function(k) {
+            if (k._node) k = k._node;
+            return (k.uniqueID && k.nodeType !== 9) ? k.uniqueID : k[UID];
         }
     };
 }
@@ -766,7 +770,7 @@ Y.mix(Y_Node.prototype, {
 
         if (recursive) {
             Y.NodeList.each(this.all('*'), function(node) {
-                instance = Y_Node._instances.get(node._node);
+                instance = Y_Node._instances.get(node);
                 if (instance) {
                    instance.destroy();
                 } else { // purge in case added by other means
