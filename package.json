@@ -27,7 +27,6 @@
         "archiver": "0.4.10"
     },
     "scripts": {
-        "postinstall": "grunt build",
         "test": "./bin/travis-ci"
     },
     "licenses":[
