@@ -1,7 +1,7 @@
 YUI 3: The Yahoo User Interface Library
 =======================================
 
-[![Build Status](https://travis-ci.org/yui/yui3.svg?branch=master)](https://travis-ci.org/yui/yui3)
+[![Build Status](https://travis-ci.org/jafl/yui3.svg?branch=fix-node-gc-3)](https://travis-ci.org/jafl/yui3)
 
 YUI is a free, open source JavaScript and CSS framework for building richly
 interactive web applications. YUI is provided under a BSD license and is
