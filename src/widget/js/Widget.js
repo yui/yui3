@@ -63,7 +63,7 @@ var L = Y.Lang,
     WEBKIT = Y.UA.webkit,
 
     // Widget node-to-instance map.
-    _instances = new WeakMap();
+    _instances = new Y.Node.WeakMap();
 
 /**
  * A base class for widgets, providing:

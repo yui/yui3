@@ -9,7 +9,7 @@ method).
 **/
 
 var buildCfg  = Y.namespace('View._buildCfg'),
-    instances = new WeakMap();
+    instances = new Y.Node.WeakMap();
 
 /**
 View extension that adds a static `getByNode()` method that returns the nearest

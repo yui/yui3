@@ -122,12 +122,16 @@ Y_Node.re_aria = /^(?:role$|aria-)/;
 Y_Node.SHOW_TRANSITION = 'fadeIn';
 Y_Node.HIDE_TRANSITION = 'fadeOut';
 
-if (!window.WeakMap)
+if (window.WeakMap)
 {
-    window.WeakMap = function() {
+    Y_Node.WeakMap = window.WeakMap;
+}
+else
+{
+    Y_Node.WeakMap = function() {
         this._map = {};
     };
-    window.WeakMap.prototype = {
+    Y_Node.WeakMap.prototype = {
         has: function(k) {
             return this._map[ this._yuid(k) ] ? true : false;
         },
@@ -155,7 +159,7 @@ if (!window.WeakMap)
  * @static
  *
  */
-Y_Node._instances = new WeakMap();
+Y_Node._instances = new Y_Node.WeakMap();
 
 /**
  * Retrieves the DOM node bound to a Node instance
