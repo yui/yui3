@@ -189,7 +189,7 @@ YUI.add('series-tests', function(Y) {
                             //clear out the Node references
                             while(nodeReferences.length > 0)
                             {
-                                instance = instances[nodeReferences.shift()];
+                                instance = instances.get(nodeReferences.shift());
                                 if(instance)
                                 {
                                     instance.destroy();

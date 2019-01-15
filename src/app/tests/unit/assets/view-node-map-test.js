@@ -51,11 +51,9 @@ nodeMapSuite.add(new Y.Test.Case({
     },
 
     'View should be removed from the instances map when destroy() is called': function () {
-        var key = Y.stamp(this.container, true);
-
-        ObjectAssert.ownsKey(key, Y.View.NodeMap._instances, 'Node stamp should exist in the instances map.');
+        Assert.isTrue(!!Y.View.NodeMap._instances.get(this.container), 'Node stamp should exist in the instances map.');
         this.view.destroy();
-        Assert.isFalse(key in Y.View.NodeMap._instances, 'Node stamp should not exist in the instances map after the instance is destroyed.');
+        Assert.isFalse(!!Y.View.NodeMap._instances.get(this.container), 'Node stamp should not exist in the instances map after the instance is destroyed.');
         this.view = null;
     }
 }));

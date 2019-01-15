@@ -1,0 +1,32 @@
+#!/bin/bash
+
+echo ===;
+whoami;
+echo ===;
+
+YOGI=`readlink -f $(which yogi)`;
+YOGI=${YOGI%/*};
+cp -f ./bin/grover_patch_wrapper.js $YOGI/../node_modules/grover/lib/wrapper/wrapper.js;
+
+echo patched grover;
+echo ===;
+
+# build everything
+
+for d in src/*; do
+	if [[ ! -f $d/build.json ]]; then continue; fi
+
+	pushd $d
+	if ! yogi build --no-lint; then exit 1; fi
+	popd
+done
+
+# test everything after all modules have been built
+
+for d in src/*; do
+	if [[ ! -d $d/tests/unit  ]]; then continue; fi
+
+	pushd $d
+	if ! yogi test; then echo =====; fi
+	popd
+done

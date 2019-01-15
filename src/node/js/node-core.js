@@ -46,7 +46,7 @@ var DOT = '.',
 
         var uid = (node.nodeType !== 9) ? node.uniqueID : node[UID];
 
-        if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
+        if (Y_Node._instances.has(node) && Y_Node._instances.get(node)._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
@@ -122,6 +122,35 @@ Y_Node.re_aria = /^(?:role$|aria-)/;
 Y_Node.SHOW_TRANSITION = 'fadeIn';
 Y_Node.HIDE_TRANSITION = 'fadeOut';
 
+if (window.WeakMap)
+{
+    Y_Node.WeakMap = window.WeakMap;
+}
+else
+{
+    Y_Node.WeakMap = function() {
+        this._map = {};
+    };
+    Y_Node.WeakMap.prototype = {
+        has: function(k) {
+            return this._map[ this._yuid(k) ] ? true : false;
+        },
+        get: function(k) {
+            return this._map[ this._yuid(k) ];
+        },
+        set: function(k,v) {
+            this._map[ this._yuid(k) ] = v;
+        },
+        'delete': function(k) {
+            delete this._map[ this._yuid(k) ];
+        },
+        _yuid: function(k) {
+            if (k._node) k = k._node;
+            return (k.uniqueID && k.nodeType !== 9) ? k.uniqueID : k[UID];
+        }
+    };
+}
+
 /**
  * A list of Node instances that have been created
  * @private
@@ -130,7 +159,7 @@ Y_Node.HIDE_TRANSITION = 'fadeOut';
  * @static
  *
  */
-Y_Node._instances = {};
+Y_Node._instances = new Y_Node.WeakMap();
 
 /**
  * Retrieves the DOM node bound to a Node instance
@@ -273,8 +302,7 @@ Y_Node.importMethod = function(host, name, altName) {
  */
 Y_Node.one = function(node) {
     var instance = null,
-        cachedNode,
-        uid;
+        cachedNode;
 
     if (node) {
         if (typeof node == 'string') {
@@ -287,13 +315,12 @@ Y_Node.one = function(node) {
         }
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
-            uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
-            instance = Y_Node._instances[uid]; // reuse exising instances
+            instance = Y_Node._instances.get(node); // reuse exising instances
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
                 if (node.nodeType != 11) { // dont cache document fragment
-                    Y_Node._instances[instance[UID]] = instance; // cache node
+                    Y_Node._instances.set(node, instance); // cache node
                 }
             }
         }
@@ -745,7 +772,7 @@ Y.mix(Y_Node.prototype, {
 
         if (recursive) {
             Y.NodeList.each(this.all('*'), function(node) {
-                instance = Y_Node._instances[node[UID]];
+                instance = Y_Node._instances.get(node);
                 if (instance) {
                    instance.destroy();
                 } else { // purge in case added by other means
@@ -754,10 +781,10 @@ Y.mix(Y_Node.prototype, {
             });
         }
 
+        Y_Node._instances.delete(this._node);
+
         this._node = null;
         this._stateProxy = null;
-
-        delete Y_Node._instances[this._yuid];
     },
 
     /**
