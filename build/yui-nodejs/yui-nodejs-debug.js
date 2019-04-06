@@ -4383,7 +4383,11 @@ YUI.add('get', function (Y, NAME) {
         } else {
             try {
                 // Try to resolve paths relative to the module that required yui.
-                url = Module._findPath(url, Module._resolveLookupPaths(url, module.parent.parent)[1]);
+                var path = Module._resolveLookupPaths(url, module.parent.parent, true);
+
+                url = Module._findPath(url,
+                    (path.length !== 2 || typeof path[1] !== 'object') ? path : path[1]
+                );
 
                 if (Y.config.useSync) {
                     //Needs to be in useSync
