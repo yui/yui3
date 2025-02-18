@@ -7,6 +7,14 @@ YUI is a free, open source JavaScript and CSS framework for building richly
 interactive web applications. YUI is provided under a BSD license and is
 available on GitHub for forking and contribution.
 
+**This project is no longer maintained, as of August 2014. Please see 
+[this announcement](https://yahooeng.tumblr.com/post/96098168666/important-announcement-regarding-yui) 
+for more information.**
+
+Bug fixes and security fixes will no longer be supported, so usage of 
+YUI is at your own risk. The documentation will continue to be available at
+[yuilibrary.com](https://yuilibrary.com) for reference.
+
 Links
 -----
 
