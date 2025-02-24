@@ -1,4 +1,3 @@
-
     /**
      * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @module dd
@@ -211,7 +210,8 @@
             if (ah) {
                 cur = ah.getStyle('cursor');
             }
-            if (cur === 'auto') {
+            
+            if (cur === 'auto' || (cur !== 'auto' && DDM.get('dragCursor') !== 'move')) {
                 cur = DDM.get('dragCursor');
             }
 
