@@ -708,6 +708,7 @@
                 node.parent.results[testName] = {
                     result: failed ? "fail" : "pass",
                     message: error ? error.getMessage() : "Test passed",
+                    error: error,
                     type: "test",
                     name: testName,
                     duration: duration
